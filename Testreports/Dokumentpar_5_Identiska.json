@@ -1,0 +1,202 @@
+{
+  "schema_version": "3.0",
+  "metadata": {
+    "verification_timestamp": "2026-03-24T00:00:00Z",
+    "document_pair_id": null,
+    "certificate_issue_date": "2025-10-28",
+    "source_documents_received": 2
+  },
+  "task": {
+    "task_type": "customs_document_pair_verification",
+    "comparison_mode": "certificate_vs_invoice",
+    "strictness": "conservative"
+  },
+  "documents": {
+    "document_a": {
+      "label": "Document A",
+      "assumed_role": "invoice",
+      "document_type": "Commercial Invoice"
+    },
+    "document_b": {
+      "label": "Document B",
+      "assumed_role": "certificate",
+      "document_type": "Certificate of Origin"
+    }
+  },
+  "rule_activation": {
+    "lc_exception_active": false,
+    "lc_number_found": null,
+    "general_goods_description_with_invoice_reference_active": true,
+    "mixed_origins_rule_active": true,
+    "to_order_rule_active": false,
+    "quantity_exception_applied": null,
+    "eu_origin_normalization_active": false,
+    "activated_rules": [
+      {
+        "rule_id": "4.1.0",
+        "rule_name": "Koncernstruktur / consignor found elsewhere in invoice"
+      },
+      {
+        "rule_id": "4.2.2.1.1",
+        "rule_name": "Layoutavkortning för consignee i certifikatet"
+      },
+      {
+        "rule_id": "4.3.5",
+        "rule_name": "Generell varubeskrivning med fakturareferens"
+      },
+      {
+        "rule_id": "4.3.7",
+        "rule_name": "Koppling vara–ursprungsland vid flera ursprung"
+      },
+      {
+        "rule_id": "4.4.3.2",
+        "rule_name": "Försändelsekvantitet"
+      },
+      {
+        "rule_id": "4.5.3",
+        "rule_name": "Blandade ursprung"
+      }
+    ]
+  },
+  "control_points": {
+    "consignor": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.9,
+      "certificate_value": "Göta Export AB\nBuilding\nSE405 31, GÖTEBORG\nSweden",
+      "invoice_value": "Göta Export (pages 1-4 header) / Volvo Car Corporation (pages 1-4 issuer block), 405 31 Gothenburg, SWEDEN",
+      "rules_applied": [
+        {
+          "rule_id": "4.1.0",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.4",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.5",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatet anger consignor 'Göta Export AB ... Sweden'. Fakturan innehåller 'Göta Export' uttryckligen i sidhuvud på flera sidor. Enligt 4.1.0 räcker uttrycklig förekomst någonstans i fakturadokumentet för MATCH, trots att issuer-blocket visar 'Volvo Car Corporation'. Landet Sweden framgår också i fakturan."
+    },
+    "consignee": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.88,
+      "certificate_value": "Oman Marketing & Services Company L\nBox 880\n112 Ruwi\nOman",
+      "invoice_value": "OMAN MARKETING&SERVICES COMPANY LLC\nWAY 128, AL NAHDAH STREET, WATTAYAH\n112 MUSCAT\nOMAN",
+      "rules_applied": [
+        {
+          "rule_id": "4.2.0",
+          "outcome": "MATCH_CANDIDATE_FOUND"
+        },
+        {
+          "rule_id": "4.1.3.1",
+          "outcome": "NO_MATCH_EXACT"
+        },
+        {
+          "rule_id": "4.2.2.1.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.2.3",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.2.4",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatets mottagarnamn är avkortat till '... Company L', vilket är en exakt prefix av fakturans '... Company LLC'. Detta accepteras som layoutavkortning enligt 4.2.2.1.1. Landet Oman överensstämmer. Skillnader i gatuadress/postort medför inte MISMATCH enligt 4.2.4."
+    },
+    "goods_description": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.93,
+      "certificate_value": "1 CASE\nAutoparts, see attached invoice 2483048, dated 251024\nGross Weight refers to Cargospec",
+      "invoice_value": "Invoice No. 2483048, Invoice date 20251024; invoice contains detailed autoparts lines",
+      "rules_applied": [
+        {
+          "rule_id": "4.3.2",
+          "outcome": "PRIORITY_3_USED"
+        },
+        {
+          "rule_id": "4.3.5",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.3.7",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.3.8",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatet använder generell varubeskrivning 'Autoparts' men innehåller uttrycklig fakturahänvisning 'see attached invoice 2483048, dated 251024'. Fakturan har exakt fakturanummer 2483048 och datum 20251024, vilket motsvarar 251024 efter datumformatnormalisering. Flera ursprungsländer anges i certifikatet, men uttrycklig hänvisning till fakturan uppfyller kopplingskravet i 4.3.7."
+    },
+    "quantity": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.78,
+      "certificate_value": "37.0 KG Gross W",
+      "invoice_value": "1 CASE; Invoice No. 2483048 with detailed goods lines",
+      "rules_applied": [
+        {
+          "rule_id": "4.4.2.2",
+          "outcome": "CERTIFICATE_WEIGHT_FORMAT_ACCEPTED"
+        },
+        {
+          "rule_id": "4.4.3.1",
+          "outcome": "WEIGHT_NOT_EXPLICITLY_VERIFIED_IN_INVOICE"
+        },
+        {
+          "rule_id": "4.4.3.2",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.4.6",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatet anger både vikt '37.0 KG Gross W' och försändelsekvantitet '1 CASE' i ruta 6. Fakturan visar den refererade försändningen via fakturanummer 2483048 och specificerade varor. Enligt 4.4.3.2 och 4.4.3.1 räcker det att minst en kvantitetsuppgift verifieras; försändelsekvantiteten används därför som verifierad uppgift när explicit vikt inte kan identifieras i fakturan."
+    },
+    "origin": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.96,
+      "certificate_value": "DE, RO, CZ, PL, FR",
+      "invoice_value": "Origin column on invoice page 1: DE, DE, DE, RO, DE, CZ, PL, PL, FR",
+      "rules_applied": [
+        {
+          "rule_id": "4.5.1",
+          "outcome": "ORIGIN_EXPLICITLY_FOUND"
+        },
+        {
+          "rule_id": "4.5.3",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.5.4",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.5.5",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Varje ursprungsland som anges i certifikatet (DE, RO, CZ, PL, FR) framgår uttryckligen i fakturans origin-kolumn. Flera ursprung förekommer och fördelningen framgår per artikel i fakturan. Samtliga certifikatsländer kan därför verifieras."
+    }
+  },
+  "overall_assessment": {
+    "comparison_result": "IDENTICAL",
+    "workflow_recommendation": "AUTO_APPROVAL_ELIGIBLE",
+    "auto_approval_eligible": true,
+    "confidence": 0.89,
+    "critical_failures": [],
+    "manual_review_triggers": [],
+    "decision_summary": "Samtliga tillämpliga kontrollpunkter kan verifieras mot den identifierade fakturan 2483048. Consignor verifieras via koncernstrukturregeln eftersom 'Göta Export' förekommer uttryckligen i fakturans sidhuvud. Consignee verifieras via layoutavkortning. Varubeskrivning verifieras via generell varubeskrivning med uttrycklig fakturareferens och datum. Kvantitet verifieras via försändelsekvantiteten '1 CASE'. Ursprungsland verifieras explicit via origin-kolumnen i fakturan."
+  }
+}

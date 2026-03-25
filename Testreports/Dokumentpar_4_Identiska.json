@@ -1,0 +1,190 @@
+{
+  "schema_version": "3.0",
+  "metadata": {
+    "verification_timestamp": "2026-03-24T00:00:00Z",
+    "document_pair_id": null,
+    "certificate_issue_date": "2025-10-28",
+    "source_documents_received": 2
+  },
+  "task": {
+    "task_type": "customs_document_pair_verification",
+    "comparison_mode": "certificate_vs_invoice",
+    "strictness": "conservative"
+  },
+  "documents": {
+    "document_a": {
+      "label": "Document A",
+      "assumed_role": "invoice",
+      "document_type": "Commercial Invoice"
+    },
+    "document_b": {
+      "label": "Document B",
+      "assumed_role": "certificate",
+      "document_type": "Certificate of Origin"
+    }
+  },
+  "rule_activation": {
+    "lc_exception_active": false,
+    "lc_number_found": null,
+    "general_goods_description_with_invoice_reference_active": false,
+    "mixed_origins_rule_active": false,
+    "to_order_rule_active": false,
+    "quantity_exception_applied": null,
+    "eu_origin_normalization_active": true,
+    "activated_rules": [
+      {
+        "rule_id": "4.1.0",
+        "rule_name": "Koncernstruktur / consignor found anywhere in invoice text"
+      },
+      {
+        "rule_id": "4.2.1.1",
+        "rule_name": "Alternativ mottagaradress / receiver-consignee identification"
+      },
+      {
+        "rule_id": "4.3.2",
+        "rule_name": "Varubeskrivning prioritet 1 via artikelnummer"
+      },
+      {
+        "rule_id": "4.4.1",
+        "rule_name": "Förekomstkontroll kvantitet"
+      },
+      {
+        "rule_id": "4.5.4.1",
+        "rule_name": "EU-normalisering"
+      },
+      {
+        "rule_id": "4.5.4.2",
+        "rule_name": "EU-medlemsland ↔ EU"
+      }
+    ]
+  },
+  "control_points": {
+    "consignor": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.98,
+      "certificate_value": "NordicTrade\nStrandvägen 16\nSE542 39, Skövde \nSweden",
+      "invoice_value": "NordicTrade\nStandvägen 16\n524 39 Skövde Sweden",
+      "rules_applied": [
+        {
+          "rule_id": "4.1.0",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.4",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.5",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatets consignor 'NordicTrade ... Sweden' återfinns uttryckligen i fakturans sidhuvud som 'NordicTrade ... Sweden'. Landet Sweden överensstämmer. Skillnaden 'Strandvägen' vs 'Standvägen' påverkar inte utfallet eftersom consignor enligt 4.1.5 bedöms på företagsnamn och land, och företagsnamnet är explicit identifierat i fakturan."
+    },
+    "consignee": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.97,
+      "certificate_value": "Motion Australia\n17 Vella Drive\nSunshine West VIC 3020\nAustralia",
+      "invoice_value": "Receiver\nMotion Australia\n17 Vella Drive\nSunshine West VIC 3020\nAUSTRALIEN",
+      "rules_applied": [
+        {
+          "rule_id": "4.2.0.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.2.1.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.2.3",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.2.4",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatets consignee 'Motion Australia ... Australia' kan identifieras i fakturans fält 'Receiver' och även i raden 'CONSIGNEE... Motion Australia Sunshine West VIC 3020'. Landet Australia/AUSTRALIEN överensstämmer efter normalisering av landsnamn."
+    },
+    "goods_description": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.98,
+      "certificate_value": "Three boxes of couplings\nN461M4401 Breakaway Mar. 3\"-3\" ANSI Cl. 150 SS FPM",
+      "invoice_value": "1 N461M4401 ... BREAKAWAY MAR. 3\"-\nSS FPM\nBF 33 kN/TP 30bar\nPS 25 BAR\n3\" ANSI Cl.150",
+      "rules_applied": [
+        {
+          "rule_id": "4.3.2",
+          "outcome": "Priority 1 activated"
+        },
+        {
+          "rule_id": "4.3.6",
+          "outcome": "MATCH via exact article number identification"
+        },
+        {
+          "rule_id": "4.3.8",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatet anger artikelnummer 'N461M4401'. Detta artikelnummer kan exakt identifieras i fakturan. Därmed ska verifiering primärt ske via artikelnummer enligt 4.3.2 Prioritet 1. Den tillhörande beskrivningen 'Breakaway Mar. 3\"-3\" ANSI Cl. 150 SS FPM' återfinns också i fakturan med endast layoutskillnader/radbrytningar."
+    },
+    "quantity": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.99,
+      "certificate_value": "3 pcs",
+      "invoice_value": "QUANT. 3 ... for article N461M4401; PACKAGES....: 3 PCS",
+      "rules_applied": [
+        {
+          "rule_id": "4.4.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.4.2",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.4.3",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.4.6",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatet anger numeriskt värde och enhet i samma uppgift: '3 pcs'. Fakturan anger kvantitet '3' för artikel N461M4401 och även 'PACKAGES....: 3 PCS'. Det numeriska värdet 3 kan därför identifieras uttryckligen i fakturan."
+    },
+    "origin": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.95,
+      "certificate_value": "EU (Sweden)",
+      "invoice_value": "These products are of European Community preferential origin.\nCountry of origin: Sweden",
+      "rules_applied": [
+        {
+          "rule_id": "4.5.4.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.5.4.2",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.5.5",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatet anger 'EU (Sweden)'. Fakturan anger uttryckligen både 'European Community preferential origin' och 'Country of origin: Sweden'. Därmed kan både EU-samlingsbegreppet och det specifika landet Sweden identifieras explicit i fakturan enligt 4.5.4.1 och 4.5.4.2."
+    }
+  },
+  "overall_assessment": {
+    "comparison_result": "IDENTICAL",
+    "workflow_recommendation": "AUTO_APPROVAL_ELIGIBLE",
+    "auto_approval_eligible": true,
+    "confidence": 0.97,
+    "critical_failures": [],
+    "manual_review_triggers": [],
+    "decision_summary": "Samtliga tillämpliga kontrollpunkter kan verifieras direkt mot fakturan utan otillåten tolkning. Consignor, consignee, varubeskrivning, kvantitet och ursprungsland är verifierade. Ingen LC-referens aktiverar undantag och inga motsägelser har identifierats."
+  }
+}

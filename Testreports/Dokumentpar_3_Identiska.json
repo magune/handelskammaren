@@ -1,0 +1,190 @@
+{
+  "schema_version": "3.0",
+  "metadata": {
+    "verification_timestamp": "2026-03-24T00:00:00Z",
+    "document_pair_id": null,
+    "certificate_issue_date": "2025-08-29",
+    "source_documents_received": 2
+  },
+  "task": {
+    "task_type": "customs_document_pair_verification",
+    "comparison_mode": "certificate_vs_invoice",
+    "strictness": "conservative"
+  },
+  "documents": {
+    "document_a": {
+      "label": "Document A",
+      "assumed_role": "invoice",
+      "document_type": "Commercial Invoice"
+    },
+    "document_b": {
+      "label": "Document B",
+      "assumed_role": "certificate",
+      "document_type": "Certificate of Origin"
+    }
+  },
+  "rule_activation": {
+    "lc_exception_active": false,
+    "lc_number_found": null,
+    "general_goods_description_with_invoice_reference_active": false,
+    "mixed_origins_rule_active": false,
+    "to_order_rule_active": false,
+    "quantity_exception_applied": null,
+    "eu_origin_normalization_active": false,
+    "activated_rules": [
+      {
+        "rule_id": "8.5",
+        "rule_name": "PDF with multiple documents; select correct certificate-invoice pair by invoice reference and original certificate priority"
+      },
+      {
+        "rule_id": "4.1.0",
+        "rule_name": "Consignor may be verified if company name appears anywhere in invoice documents"
+      },
+      {
+        "rule_id": "4.2.1.1",
+        "rule_name": "Consignee may be identified in alternative address fields"
+      },
+      {
+        "rule_id": "4.3.2",
+        "rule_name": "Goods description verified primarily by article/item numbers when present"
+      },
+      {
+        "rule_id": "4.4.3.1",
+        "rule_name": "When multiple quantity entries exist in certificate, at least one must be verified; explicit contradiction causes mismatch"
+      },
+      {
+        "rule_id": "4.5.2",
+        "rule_name": "Single common origin in invoice is sufficient"
+      }
+    ]
+  },
+  "control_points": {
+    "consignor": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.88,
+      "certificate_value": "Components\nBox 124\n512 23, Göteborg\nSweden",
+      "invoice_value": "Components \nBox 124 \n512 23 Göteborg\nSweden",
+      "rules_applied": [
+        {
+          "rule_id": "4.1.0",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.4",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.5",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Original certificate on page 1 names consignor 'Components ... Sweden'. The selected invoice (Document A) contains the exact company name 'Components' in the page 1 header/address block together with 'Sweden'. Under rule 4.1.0, explicit occurrence anywhere in the invoice documents is sufficient even though the invoice issuer is another company."
+    },
+    "consignee": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.96,
+      "certificate_value": "Bluesafe\nCoenecoop 3D2\n2741PG Waddinxveen\nNetherlands",
+      "invoice_value": "Bluesafe\nCoenecoop 3D2\n2741 PG Waddinxveen\nNetherlands",
+      "rules_applied": [
+        {
+          "rule_id": "4.2.0",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.2.3",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.2.4",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certificate consignee 'Bluesafe, Coenecoop 3D2, 2741PG Waddinxveen, Netherlands' is explicitly present in the invoice buyer/address block and delivery address, with only spacing variation in the postal code."
+    },
+    "goods_description": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.93,
+      "certificate_value": "6402911000 ELITE Hoge veiligheidsschoen (LK)\n6403400000 ELITE Hoge veiligheidsschoen (LK)\n6403911690 ELITE Hoge veiligheidsschoen (LK)\n6403999390 STORM Lage Veiligheidsschoen (LK)\n6404199000 STORM Veiligheidsschoen Zwart (LK)\n6404199000 STORM Hoge Veiligheidsschoen (LK)",
+      "invoice_value": "6402911000lk Sri Lanka\n6403400000lk Sri Lanka\n6403911690lk Sri Lanka\n6403999390lk Sri Lanka\n6404199000lk Sri Lanka",
+      "rules_applied": [
+        {
+          "rule_id": "4.3.2",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.3.6",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.3.8",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "The certificate lists item identifiers 6402911000, 6403400000, 6403911690, 6403999390 and 6404199000. These exact identifiers are explicitly present in the invoice section headers. Because article numbers are present in the certificate, rule 4.3.2 requires primary verification by article number, which succeeds. The invoice contains two product groups under 6404199000, consistent with the certificate listing two descriptions under the same article number."
+    },
+    "quantity": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.97,
+      "certificate_value": "296 pair\n185 pair\n968 pair\n464 pair\n257 pair\n86 pair",
+      "invoice_value": "S:a 6402911000 Sri Lanka 414,40 296 22 880,80\nS:a 6403400000 Sri Lanka 259,00 185 12 811,25\nS:a 6403911690 Sri Lanka 1 258,40 968 78 650,00\nS:a 6403999390 Sri Lanka 649,60 464 43 848,00\n6404199000lk Sri Lanka ... line quantities 55, 20, 50, 60, 6, 23, 10, 51, 12, 34, 22",
+      "rules_applied": [
+        {
+          "rule_id": "4.4.2",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.4.3.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.4.5.1",
+          "outcome": "SEQUENTIAL_EXCEPTIONS_NOT_NEEDED"
+        },
+        {
+          "rule_id": "4.4.5.5",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.4.6",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certificate quantities include explicit numeric values and unit 'pair'. Invoice explicitly shows matching totals 296, 185, 968 and 464 for the first four article groups. For article 6404199000, the certificate splits the quantity into 257 and 86 pairs for two descriptions; the invoice contains the same article number on multiple rows whose quantities sum to 257 for 'STORM Veiligheidsschoen Zwart/Ge...' and 86 for 'STORM Hoge Veiligheidsschoen Zwa...' within the same invoice, satisfying exception 3D."
+    },
+    "origin": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.98,
+      "certificate_value": "Sri Lanka",
+      "invoice_value": "6402911000lk Sri Lanka\n6403400000lk Sri Lanka\n6403911690lk Sri Lanka\n6403999390lk Sri Lanka\n6404199000lk Sri Lanka",
+      "rules_applied": [
+        {
+          "rule_id": "4.5.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.5.2",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.5.5",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "The certificate states origin 'Sri Lanka'. The invoice explicitly states 'Sri Lanka' repeatedly in the goods sections for the listed products. This is an explicit origin indication and verifies the certificate origin."
+    }
+  },
+  "overall_assessment": {
+    "comparison_result": "IDENTICAL",
+    "workflow_recommendation": "AUTO_APPROVAL_ELIGIBLE",
+    "auto_approval_eligible": true,
+    "confidence": 0.94,
+    "critical_failures": [],
+    "manual_review_triggers": [],
+    "decision_summary": "The correct pair is the ORIGINAL certificate and the invoice containing referenced item/order information. All applicable control points are verified under the rules: consignor is explicitly present in the invoice documents, consignee matches, goods are verified by article numbers, quantities are verified directly and by permitted same-invoice row summation for the split 6404199000 entries, and origin 'Sri Lanka' is explicitly stated in the invoice."
+  }
+}

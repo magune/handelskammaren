@@ -1,0 +1,256 @@
+{
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+        "schema_version",
+        "metadata",
+        "task",
+        "documents",
+        "rule_activation",
+        "control_points",
+        "overall_assessment"
+    ],
+    "properties": {
+        "schema_version": {
+            "type": "string",
+            "enum": ["3.0"]
+        },
+        "metadata": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+                "verification_timestamp",
+                "document_pair_id",
+                "certificate_issue_date",
+                "source_documents_received"
+            ],
+            "properties": {
+                "verification_timestamp": {
+                    "anyOf": [{"type": "string"}, {"type": "null"}]
+                },
+                "document_pair_id": {
+                    "anyOf": [{"type": "string"}, {"type": "null"}]
+                },
+                "certificate_issue_date": {
+                    "anyOf": [{"type": "string"}, {"type": "null"}]
+                },
+                "source_documents_received": {
+                    "type": "integer"
+                }
+            }
+        },
+        "task": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["task_type", "comparison_mode", "strictness"],
+            "properties": {
+                "task_type": {
+                    "type": "string",
+                    "enum": ["customs_document_pair_verification"]
+                },
+                "comparison_mode": {
+                    "type": "string",
+                    "enum": ["certificate_vs_invoice"]
+                },
+                "strictness": {
+                    "type": "string",
+                    "enum": ["conservative"]
+                }
+            }
+        },
+        "documents": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["document_a", "document_b"],
+            "properties": {
+                "document_a": {
+                    "$ref": "#/$defs/documentDescriptor"
+                },
+                "document_b": {
+                    "$ref": "#/$defs/documentDescriptor"
+                }
+            }
+        },
+        "rule_activation": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+                "lc_exception_active",
+                "lc_number_found",
+                "general_goods_description_with_invoice_reference_active",
+                "mixed_origins_rule_active",
+                "to_order_rule_active",
+                "quantity_exception_applied",
+                "eu_origin_normalization_active",
+                "activated_rules"
+            ],
+            "properties": {
+                "lc_exception_active": {
+                    "anyOf": [{"type": "boolean"}, {"type": "null"}]
+                },
+                "lc_number_found": {
+                    "anyOf": [{"type": "string"}, {"type": "null"}]
+                },
+                "general_goods_description_with_invoice_reference_active": {
+                    "anyOf": [{"type": "boolean"}, {"type": "null"}]
+                },
+                "mixed_origins_rule_active": {
+                    "anyOf": [{"type": "boolean"}, {"type": "null"}]
+                },
+                "to_order_rule_active": {
+                    "anyOf": [{"type": "boolean"}, {"type": "null"}]
+                },
+                "quantity_exception_applied": {
+                    "anyOf": [
+                        {"type": "string", "enum": ["3A", "3B", "3C", "3D", "3E"]},
+                        {"type": "null"}
+                    ]
+                },
+                "eu_origin_normalization_active": {
+                    "anyOf": [{"type": "boolean"}, {"type": "null"}]
+                },
+                "activated_rules": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": ["rule_id", "rule_name"],
+                        "properties": {
+                            "rule_id": {
+                                "anyOf": [{"type": "string"}, {"type": "null"}]
+                            },
+                            "rule_name": {
+                                "anyOf": [{"type": "string"}, {"type": "null"}]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "control_points": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+                "consignor",
+                "consignee",
+                "goods_description",
+                "quantity",
+                "origin"
+            ],
+            "properties": {
+                "consignor": { "$ref": "#/$defs/controlPoint" },
+                "consignee": { "$ref": "#/$defs/controlPoint" },
+                "goods_description": { "$ref": "#/$defs/controlPoint" },
+                "quantity": { "$ref": "#/$defs/controlPoint" },
+                "origin": { "$ref": "#/$defs/controlPoint" }
+            }
+        },
+        "overall_assessment": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+                "comparison_result",
+                "workflow_recommendation",
+                "auto_approval_eligible",
+                "confidence",
+                "critical_failures",
+                "manual_review_triggers",
+                "decision_summary"
+            ],
+            "properties": {
+                "comparison_result": {
+                    "anyOf": [
+                        {"type": "string", "enum": ["IDENTICAL", "NOT_IDENTICAL", "MANUAL_REVIEW"]},
+                        {"type": "null"}
+                    ]
+                },
+                "workflow_recommendation": {
+                    "anyOf": [
+                        {"type": "string", "enum": ["AUTO_APPROVAL_ELIGIBLE", "MANUAL_HANDLING_REQUIRED"]},
+                        {"type": "null"}
+                    ]
+                },
+                "auto_approval_eligible": {
+                    "anyOf": [{"type": "boolean"}, {"type": "null"}]
+                },
+                "confidence": {
+                    "type": "number"
+                },
+                "critical_failures": {
+                    "type": "array",
+                    "items": { "type": "string" }
+                },
+                "manual_review_triggers": {
+                    "type": "array",
+                    "items": { "type": "string" }
+                },
+                "decision_summary": {
+                    "anyOf": [{"type": "string"}, {"type": "null"}]
+                }
+            }
+        }
+    },
+    "$defs": {
+        "documentDescriptor": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["label", "assumed_role", "document_type"],
+            "properties": {
+                "label": { "type": "string" },
+                "assumed_role": {
+                    "type": "string",
+                    "enum": ["certificate", "invoice"]
+                },
+                "document_type": { "type": "string" }
+            }
+        },
+        "controlPoint": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+                "applicable",
+                "status",
+                "confidence",
+                "certificate_value",
+                "invoice_value",
+                "rules_applied",
+                "motivation"
+            ],
+            "properties": {
+                "applicable": {
+                    "anyOf": [{"type": "boolean"}, {"type": "null"}]
+                },
+                "status": {
+                    "anyOf": [
+                        {"type": "string", "enum": ["MATCH", "MISMATCH", "MANUAL_REVIEW", "NOT_APPLICABLE", "NOT_FOUND"]},
+                        {"type": "null"}
+                    ]
+                },
+                "confidence": {
+                    "type": "number"
+                },
+                "certificate_value": {
+                    "anyOf": [{"type": "string"}, {"type": "null"}]
+                },
+                "invoice_value": {
+                    "anyOf": [{"type": "string"}, {"type": "null"}]
+                },
+                "rules_applied": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": ["rule_id", "outcome"],
+                        "properties": {
+                            "rule_id": { "type": "string" },
+                            "outcome": { "type": "string" }
+                        }
+                    }
+                },
+                "motivation": {
+                    "anyOf": [{"type": "string"}, {"type": "null"}]
+                }
+            }
+        }
+    }
+}
