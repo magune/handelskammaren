@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-03-24T00:00:00Z",
+    "verification_timestamp": "2026-03-25T00:00:00Z",
     "document_pair_id": null,
     "certificate_issue_date": "2023-03-10",
     "source_documents_received": 2
@@ -34,7 +34,7 @@
     "activated_rules": [
       {
         "rule_id": "8.5",
-        "rule_name": "PDF med flera dokument – välj korrekt dokumentpar; använd originalcertifikat och tillhörande faktura"
+        "rule_name": "PDF med flera dokument – välj korrekt dokumentpar; originalcertifikat prioriteras"
       },
       {
         "rule_id": "4.1.0",
@@ -64,104 +64,112 @@
       "status": "MATCH",
       "confidence": 0.9,
       "certificate_value": "Husqvarna Construction Products\nSE433 81, Partille\nSweden",
-      "invoice_value": "HUSQVARNA AB\n56182 HUSKVARNA Sweden",
+      "invoice_value": "Seller: HUSQVARNA AB\n56182 HUSKVARNA Sweden\nMailing address HUSQVARNA AB ...\nHUSQVARNA AB VAT no SE556000533101 ...\nHUSQVARNA AB ... 56182 HUSKVARNA Sweden",
       "rules_applied": [
         {
           "rule_id": "4.1.0",
-          "outcome": "not_applicable_no_explicit_occurrence_of_certificate_name_in_invoice_text"
+          "outcome": "NO_MATCH_ON_EXPLICIT_CONSIGNOR_NAME_IN_INVOICE_TEXT"
         },
         {
           "rule_id": "4.1.3.1",
-          "outcome": "no_match_different_legal_name"
+          "outcome": "NO_MATCH"
         },
         {
           "rule_id": "4.1.3.2",
-          "outcome": "not_applicable_not_prefix_truncation"
+          "outcome": "NO_MATCH"
         },
         {
           "rule_id": "4.1.3.3",
-          "outcome": "not_applicable_no_full_legal_name_of_certificate_party_in_invoice"
+          "outcome": "NO_MATCH"
         },
         {
           "rule_id": "4.1.3.4",
-          "outcome": "not_applicable_address_not_exact_and_no_explicit_registered_name_link"
+          "outcome": "NO_MATCH"
+        },
+        {
+          "rule_id": "4.1.3.4.1",
+          "outcome": "NO_MATCH"
         },
         {
           "rule_id": "4.1.3.5",
-          "outcome": "match_core_name_husqvarna_identifiable_generic_organizational_words_omitted_added"
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.1.4",
-          "outcome": "country_match_sweden"
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger consignor 'Husqvarna Construction Products' i Sverige. Fakturan anger utställaren 'HUSQVARNA AB' i Sverige. Certifikatets fulla namn återfinns inte uttryckligen någonstans i fakturans tre sidor, så 4.1.0 gav inte MATCH. Sekventiell prövning enligt 4.1.3 genomfördes. Skillnaden mellan 'Husqvarna Construction Products' och 'HUSQVARNA AB' bedöms här som att huvuddelen 'Husqvarna' är identisk och att tillägget 'Construction Products' är ett generiskt organisations-/verksamhetsord enligt 4.1.3.5. Landet Sverige överensstämmer enligt 4.1.4. Därför MATCH."
+      "motivation": "Certifikatet anger consignor 'Husqvarna Construction Products' i Sverige. Uttrycket återfinns inte explicit någonstans i fakturans text på sidorna 1–3, så 4.1.0 gav inte MATCH. Fakturautställaren är 'HUSQVARNA AB' i Sverige. Skillnaden består av att certifikatet använder huvudnamnet 'Husqvarna' med tillagt generiskt organisations-/verksamhetsord 'Construction Products', medan fakturan visar den juridiska parten 'HUSQVARNA AB'. Efter sekventiell prövning accepteras detta enligt 4.1.3.5 tillsammans med landmatch enligt 4.1.4. Ingen motstridig landuppgift finns."
     },
     "consignee": {
       "applicable": true,
       "status": "MISMATCH",
-      "confidence": 0.99,
+      "confidence": 0.98,
       "certificate_value": "Vision Joint Stock Co.\nBT1-17, Khu biet thu - Khu Doan ngoai giao, Nguyen Xuan Khoat, Xuan Đinh, Bac Tu Liem Hanoi\nVIETNAM",
-      "invoice_value": "INMA CO OMAN L.L.C.(SEA)\nP.O.BOX 760 RUWI\n0112 MUSCAT\nOMAN\n/ Buyer: INMA CO OMAN L.L.C.\nP.O.BOX 160 NEAR BURJ AL SAWA ROUND\n101 MAWALEH\nOMAN",
+      "invoice_value": "Consignee: INMA CO OMAN L.L.C.(SEA)\nP.O.BOX 760 RUWI\n0112 MUSCAT\nOMAN\nBuyer: INMA CO OMAN L.L.C.\nOMAN",
       "rules_applied": [
         {
           "rule_id": "4.2.0",
-          "outcome": "no_match_not_same_as_invoice_to_bill_to_ship_to"
+          "outcome": "NO_MATCH"
         },
         {
           "rule_id": "4.2.0.1",
-          "outcome": "no_explicit_occurrence_of_certificate_consignee_in_invoice"
+          "outcome": "NO_EXPLICIT_MATCH_IN_ANY_RELEVANT_INVOICE_FIELD"
         },
         {
           "rule_id": "4.2.1.1",
-          "outcome": "no_match_in_any_address_field"
+          "outcome": "NO_MATCH_IN_ALTERNATIVE_ADDRESS_FIELDS"
         },
         {
-          "rule_id": "4.1.3.1",
-          "outcome": "mismatch_different_company_name_and_country"
+          "rule_id": "4.2.3",
+          "outcome": "COUNTRY_MISMATCH"
         }
       ],
-      "motivation": "Certifikatet anger mottagaren 'Vision Joint Stock Co.' i Vietnam. Fakturan anger mottagare/köpare 'INMA CO OMAN L.L.C.(SEA)' och 'INMA CO OMAN L.L.C.' i Oman. Certifikatets mottagarnamn förekommer inte uttryckligen i något relevant adressfält i fakturan, och landet Vietnam motsägs av Oman. Enligt 4.2.0, 4.2.0.1, 4.2.1.1 och namnmatchningsgränsen i 4.1.3.1 blir resultatet MISMATCH."
+      "motivation": "Certifikatet anger mottagaren 'Vision Joint Stock Co.' i Vietnam. Fakturan anger endast mottagare/köpare i Oman ('INMA CO OMAN L.L.C.'). Ingen explicit förekomst av 'Vision Joint Stock Co.' finns i fakturans relevanta mottagar- eller adressfält, och landet Vietnam motsägs av Oman. Enligt 4.2.0, 4.2.0.1, 4.2.1.1 och 4.2.3 är detta en tydlig MISMATCH."
     },
     "goods_description": {
       "applicable": true,
       "status": "MISMATCH",
       "confidence": 0.99,
       "certificate_value": "6213224,6213918\nPOWER CUTTER K 770 RESCUE 1 unit\nVARI-CUT FR3 300 25.4/20 1 pc",
-      "invoice_value": "Invoice No. 4753137\n967 34 80-01 POWER CUTTER K 970 14\" | 20MM/ 8 PCS\n504 00 02-02 VARI-DISC STONE 356 4.0 22.2 75 PCS\nGoods specification page article list: 6201291,6206179,6206184,6206187,6206201,6212334,6212337,6212338,6212340,6212341,6212437,6212440,6212458",
+      "invoice_value": "Invoice No. 4753137\n967 34 80-01 POWER CUTTER K 970 14\" | 20MM/ 8 PCS SE*\n504 00 02-02 VARI-DISC STONE 356 4.0 22.2 75 PCS PL\n100004-202254A ... REVERSIBLE PLATE LG 204 HATZ | 8 PCS BG",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "priority_1_article_number_required"
+          "outcome": "ARTICLE_NUMBER_PRIORITY_APPLIED"
         },
         {
           "rule_id": "4.3.6",
-          "outcome": "certificate_article_numbers_not_found_exactly_in_invoice"
+          "outcome": "CERTIFICATE_ARTICLE_NUMBERS_NOT_FOUND_IN_INVOICE"
         },
         {
           "rule_id": "4.3.8",
-          "outcome": "mismatch"
+          "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Certifikatet innehåller uttryckliga artikelnummer 6213224 och 6213918. Enligt 4.3.2 ska verifiering då primärt ske via artikelnummer som exakta identifierare. Dessa artikelnummer kan inte identifieras exakt i fakturans artikelrader eller goods specification-sida. Eftersom Prioritet 1 fallerar ska resultatet vara MISMATCH enligt 4.3.8. Textbeskrivningarna motsvarar dessutom inte fakturans 'POWER CUTTER K 970' och 'VARI-DISC STONE 356 4.0 22.2'."
+      "motivation": "Certifikatet innehåller artikelnummer 6213224 och 6213918. Enligt 4.3.2 ska verifiering primärt ske via artikelnummer när sådana anges i certifikatet. Dessa artikelnummer kan inte identifieras exakt i fakturan på sidorna 1–3. Fakturans synliga artikel-/specifikationsnummer är andra nummer, t.ex. 967 34 80-01, 504 00 02-02, 6201291, 6206179 m.fl. Eftersom certifikatets artikelnummer inte återfinns i fakturan ska resultatet vara MISMATCH utan att gå vidare till fri texttolkning."
     },
     "quantity": {
       "applicable": true,
       "status": "MISMATCH",
-      "confidence": 0.98,
+      "confidence": 0.97,
       "certificate_value": "14,37\n0,08",
-      "invoice_value": "Gross weight, kg 2041,76\nNet weight, kg 1959,80\nLine quantities: 8 PCS, 75 PCS, 8 PCS",
+      "invoice_value": "Gross weight, kg 2041,76\nNet weight, kg 1959,80\nGoods specification: 9 Pall / 4 Krt / 2,041.8 / 7.51",
       "rules_applied": [
         {
           "rule_id": "4.4.2",
-          "outcome": "mismatch_numeric_values_without_explicit_unit_in_same_quantity_field"
+          "outcome": "MISMATCH_NO_EXPLICIT_UNIT_IN_CERTIFICATE_QUANTITY_FIELD"
+        },
+        {
+          "rule_id": "4.4.2.2",
+          "outcome": "MISMATCH_NO_EXPLICIT_WEIGHT_CATEGORY"
         },
         {
           "rule_id": "4.4.6",
-          "outcome": "mismatch"
+          "outcome": "MISMATCH"
         }
       ],
-      "motivation": "I certifikatets kvantitetsfält anges endast de numeriska värdena '14,37' och '0,08'. Ingen uttrycklig enhet framgår i samma uppgift, och ingen viktkategori (GW/NW) framgår heller uttryckligen i kvantitetsfältet. Enligt 4.4.2 och 4.4.2.2 medför detta MISMATCH direkt. Fakturan innehåller andra kvantiteter och vikter, men enhet får inte rekonstrueras från fakturan."
+      "motivation": "I certifikatets kvantitetsfält anges endast de numeriska värdena '14,37' och '0,08'. Ingen uttrycklig enhet anges i samma uppgift, och ingen viktkategori (GW/NW/Gross/Net) framgår uttryckligen. Enligt 4.4.2 och 4.4.2.2 medför detta direkt MISMATCH. Fakturans vikter 2041,76 kg och 1959,80 kg motsvarar dessutom inte certifikatets numeriska värden."
     },
     "origin": {
       "applicable": true,
@@ -172,26 +180,22 @@
       "rules_applied": [
         {
           "rule_id": "4.5.1",
-          "outcome": "invoice_contains_explicit_origin_per_line_but_not_vietnam"
-        },
-        {
-          "rule_id": "4.5.3",
-          "outcome": "mixed_origins_present"
+          "outcome": "EXPLICIT_ORIGIN_FOUND_IN_INVOICE_LINES"
         },
         {
           "rule_id": "4.5.4.1",
-          "outcome": "eu_normalization_verifies_sweden_via_se_and_other_eu_member_states_present"
+          "outcome": "EU_NORMALIZATION_PARTIALLY_APPLICABLE"
         },
         {
           "rule_id": "4.5.4.2",
-          "outcome": "specific_named_member_state_sweden_verifiable"
+          "outcome": "SWEDEN_VERIFIED_VIA_SE"
         },
         {
           "rule_id": "4.5.5",
-          "outcome": "mismatch_vietnam_not_explicitly_identifiable_in_invoice"
+          "outcome": "VIETNAM_NOT_FOUND_EXPLICITLY_IN_INVOICE_AS_ORIGIN"
         }
       ],
-      "motivation": "Certifikatet anger flera ursprung: 'the European Community', '(Sweden)' och 'Vietnam'. Fakturan anger uttryckliga ursprung per rad som 'SE*', 'PL' och 'BG'. EU/Sweden kan verifieras genom 4.5.4.1–4.5.4.2 eftersom SE/Polen/Bulgarien är EU-ursprung och Sweden är specifikt verifierbart via SE. Däremot förekommer Vietnam inte uttryckligen som ursprung i fakturan. Enligt 4.5.5 måste varje ursprungsland i certifikatet kunna identifieras uttryckligen i fakturan. Därför MISMATCH."
+      "motivation": "Certifikatet anger flera ursprung: 'the European Community', '(Sweden)' och 'Vietnam'. Fakturan anger uttryckliga ursprung per rad som SE, PL och BG. Sverige kan verifieras via SE och EU-samlingsbegreppet kan delvis stödjas av EU-medlemsländerna SE/PL/BG. Men Vietnam förekommer inte uttryckligen som ursprungsland i fakturan. Enligt 4.5.5 måste varje ursprungsland i certifikatet kunna identifieras uttryckligen i fakturan. Eftersom Vietnam saknas är resultatet MISMATCH."
     }
   },
   "overall_assessment": {
@@ -200,12 +204,12 @@
     "auto_approval_eligible": false,
     "confidence": 0.98,
     "critical_failures": [
-      "Consignee mismatch: certificate consignee Vision Joint Stock Co., Vietnam cannot be identified in invoice, which shows INMA CO OMAN L.L.C. in Oman (rules 4.2.0, 4.2.1.1, 4.1.3.1).",
-      "Goods description mismatch: certificate article numbers 6213224 and 6213918 are not found exactly in invoice (rules 4.3.2, 4.3.8).",
-      "Quantity mismatch: certificate quantity field lacks explicit unit and weight category in same field (rules 4.4.2, 4.4.2.2, 4.4.6).",
-      "Origin mismatch: certificate includes Vietnam as origin but invoice does not explicitly state Vietnam as origin (rules 4.5.3, 4.5.5)."
+      "Consignee mismatch: certificate consignee in Vietnam not found in invoice, which shows Oman consignee/buyer only.",
+      "Goods description mismatch: certificate article numbers 6213224 and 6213918 not found in invoice.",
+      "Quantity mismatch: certificate quantity field lacks explicit unit and weight category.",
+      "Origin mismatch: certificate includes Vietnam as origin, but invoice does not explicitly state Vietnam as origin."
     ],
     "manual_review_triggers": [],
-    "decision_summary": "Det korrekta dokumentparet identifierades som originalcertifikatet (sida 1 i certifikatfilen) och faktura 4753137 med tillhörande continuation/goods specification-sidor. LC-undantag är inte aktivt. Consignor kunde accepteras som MATCH efter sekventiell prövning, men consignee, varubeskrivning, kvantitet och ursprungsland ger tydliga MISMATCH enligt tillämpliga regler. Därför är totalbedömningen NOT_IDENTICAL och ärendet kräver manuell hantering."
+    "decision_summary": "Det korrekta dokumentparet identifierades som originalcertifikatet (sida 1 i certifikatfilen) och faktura nr 4753137 i fakturafilen. Flera kritiska kontrollpunkter ger tydlig MISMATCH enligt regelverket: mottagare, varubeskrivning, kvantitet och ursprungsland. Därför är den samlade jämförelsebedömningen NOT_IDENTICAL och ärendet kräver manuell hantering."
   }
 }
