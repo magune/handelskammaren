@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-03-24T00:00:00Z",
+    "verification_timestamp": "2026-03-25T00:00:00Z",
     "document_pair_id": null,
     "certificate_issue_date": "2025-10-28",
     "source_documents_received": 2
@@ -15,7 +15,7 @@
     "document_a": {
       "label": "Document A",
       "assumed_role": "invoice",
-      "document_type": "Export Invoice (multi-document PDF containing invoices 4088783, 4088742, 4088764)"
+      "document_type": "Export Invoice (multi-document PDF with three invoices)"
     },
     "document_b": {
       "label": "Document B",
@@ -34,19 +34,19 @@
     "activated_rules": [
       {
         "rule_id": "8.5",
-        "rule_name": "PDF with multiple documents; pairing by invoice numbers referenced in certificate"
+        "rule_name": "PDF with multiple documents; identify correct document pair"
       },
       {
         "rule_id": "4.1.0",
-        "rule_name": "Consignor search across all invoice files/pages"
+        "rule_name": "Consignor may be verified if explicitly found anywhere in invoice files"
       },
       {
         "rule_id": "4.3.5",
-        "rule_name": "General goods description with explicit invoice reference"
+        "rule_name": "General goods description with invoice reference"
       },
       {
         "rule_id": "4.3.7",
-        "rule_name": "Mixed origins with per-item origin linkage in certificate"
+        "rule_name": "Link goods to origin for multiple origins"
       },
       {
         "rule_id": "4.4.5.2",
@@ -54,7 +54,11 @@
       },
       {
         "rule_id": "4.5.3",
-        "rule_name": "Mixed origins verification"
+        "rule_name": "Mixed origins"
+      },
+      {
+        "rule_id": "4.5.4",
+        "rule_name": "Country normalization"
       }
     ]
   },
@@ -63,8 +67,8 @@
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.9,
-      "certificate_value": "Eastport\nSeals ESP Sweden\nStolgatan 16\nSE-26144 \nLandskrona",
-      "invoice_value": "Eastport Seals ESP Sweden, Stolgatan16, SE-26144 LANDSKRONA, Sweden (pages 1-3, 7-11) and SHIPPED FROM: SKF Sverige AB, 3S ESP Sweden, Bjorn/Bjorngatan 16, 26144 LANDSKRONA",
+      "certificate_value": "Eastport\nSeals ESP Sweden\nStolgatan 16\nSE-26144\nLandskrona",
+      "invoice_value": "Eastport Seals ESP Sweden / Eastport Seals ESP / Eastport Seals ESP Sweden appears in invoice headers; SHIPPED FROM: SKF Sverige AB, 3S ESP Sweden, Björngatan 16, 26144 Landskrona, Sweden",
       "rules_applied": [
         {
           "rule_id": "4.1.0",
@@ -79,25 +83,25 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor-namn 'Eastport Seals ESP Sweden' återfinns uttryckligen i fakturaunderlaget i sidhuvud på flera sidor för de fakturor som certifikatet hänvisar till. Enligt 4.1.0 räcker detta även om issuer/shipped from också anger 'SKF Sverige AB, 3S ESP Sweden'. Land Sweden överensstämmer."
+      "motivation": "Certifikatets consignor-namn 'Eastport Seals ESP Sweden' återfinns uttryckligen i fakturaunderlaget i sidhuvuden på flera sidor för de tre fakturorna (t.ex. s.1-3, 4-6, 7-11). Enligt 4.1.0 räcker uttrycklig förekomst någonstans i fakturadokumenten. Land Sweden framgår både i certifikatet och i fakturorna. Skillnaden mot fakturautställaren 'SKF Sverige AB' hindrar inte MATCH eftersom consignor-namnet uttryckligen förekommer i fakturorna."
     },
     "consignee": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.88,
-      "certificate_value": "SKF TURK SAN.VE TIC.LTD.\nSTI MERKEZ\n23 GIRIS\nKAT YENIBOSNA\n34197\n\n34400 ISTANBUL\nTürkiye",
-      "invoice_value": "SKF TURK SAN. VE TIC.LTD.STI, Aydinevler Mah. Ismet Inonu Cad 20/1 Kucukyali Ofispark A Blok, 34854 MALTEPE-ISTANBUL, Turkey (Ordered By / Invoice Payer / Shipped To)",
+      "confidence": 0.93,
+      "certificate_value": "SKF TURK SAN.VE TIC.LTD.\nSTI MERKEZ\n23 GIRIS\nKAT YENIBOSNA\n34197\n34400 ISTANBUL\nTürkiye",
+      "invoice_value": "SKF TURK SAN. VE TIC.LTD.STI, Aydinevler Mah. Ismet Inonu Cad 20/1 Kucukyali Ofispark A Blok, 34854 Maltepe-Istanbul, Turkey (ORDERED BY / INVOICE PAYER / SHIPPED TO)",
       "rules_applied": [
         {
           "rule_id": "4.2.0",
-          "outcome": "MATCH_CANDIDATE_FOUND"
+          "outcome": "MATCH"
         },
         {
-          "rule_id": "4.2.1.1",
-          "outcome": "MATCH_CANDIDATE_FOUND"
+          "rule_id": "4.2.0.1",
+          "outcome": "MATCH"
         },
         {
-          "rule_id": "4.1.3.1",
+          "rule_id": "4.2.2",
           "outcome": "MATCH"
         },
         {
@@ -109,18 +113,22 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Mottagaren i certifikatet kan identifieras i fakturan som samma juridiska part 'SKF TURK SAN. VE TIC.LTD.STI' i flera mottagarfält. Tillägget 'MERKEZ' i certifikatet behandlas som plats-/kontorsuppgift, inte som namnbärande del. Land Türkiye/Turkey överensstämmer efter tillåten landsnormalisering."
+      "motivation": "Mottagarnamnet i certifikatet kan identifieras i fakturorna som samma juridiska part 'SKF TURK SAN. VE TIC.LTD.STI' i flera mottagarfält. Gatuadress skiljer sig, men enligt 4.2.4 är företagsnamn och land avgörande. Land Turkey/Türkiye överensstämmer efter normalisering."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.86,
-      "certificate_value": "Invoice:\n4088783,4088742,4088764\n3 Packages\nRubber seals(IT)\nSeals of synthetic material(SE)\nRubber seals(SE)\nRubber seals(TR)\nHydraulic seals(CN)",
-      "invoice_value": "Invoices 4088783, 4088742, 4088764 explicitly referenced in certificate; invoice pages show COUNTRY OF ORIGIN and product descriptions including RUBBER SEALS, SEALS OF SYNTHETIC MATERIAL, HYDRAULIC SEALS",
+      "confidence": 0.89,
+      "certificate_value": "3 Packages\nRubber seals(IT)\nSeals of synthetic material(SE)\nRubber seals(SE)\nRubber seals(TR)\nHydraulic seals(CN)\nRemarks: Invoice 4088783, 4088742, 4088764",
+      "invoice_value": "Invoice 4088783: RUBBER SEALS / origin Italy; Invoice 4088742: RUBBER SEALS / origin Italy; Invoice 4088764: RUBBER SEALS / origin Italy, SEALS OF SYNTHETIC MATERIAL / origin Sweden, RUBBER SEALS / origin Turkey, HYDRAULIC SEALS / origin China",
       "rules_applied": [
         {
+          "rule_id": "8.5",
+          "outcome": "MATCH"
+        },
+        {
           "rule_id": "4.3.2",
-          "outcome": "PRIORITY_PATH_APPLIED"
+          "outcome": "ARTICLE_NUMBERS_NOT_USED"
         },
         {
           "rule_id": "4.3.5",
@@ -135,26 +143,26 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet använder generell varubeskrivning men innehåller uttrycklig fakturahänvisning via 'Invoice: 4088783,4088742,4088764'. Fakturanumren kan identifieras exakt i fakturaunderlaget. Certifikatet anger dessutom varor separat med landskoder i parentes, vilket uppfyller kopplingskravet vid flera ursprung enligt 4.3.7. Därmed är varubeskrivningen verifierad enligt 4.3.5 utan ytterligare semantisk tolkning."
+      "motivation": "Certifikatet använder generell varubeskrivning tillsammans med uttrycklig fakturareferens i remarks ('Invoice: 4088783,4088742,4088764'). Fakturanumren kan identifieras exakt i fakturaunderlaget. Certifikatet anger dessutom varor separat med ursprung per vara i parentes, vilket uppfyller 4.3.7 för flera ursprung. De angivna varutyperna kan återfinnas i de refererade fakturorna: italienska rubber seals i 4088783 och 4088742, samt svenska/turkiska/kinesiska varor i 4088764."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.84,
-      "certificate_value": "26,30 KGS NET\n0,10 KGS NET\n20,30 KGS NET\n1,70 KGS NET\n33,70 KGS NET",
-      "invoice_value": "Invoice 4088783 total net weight 0,6; invoice 4088742 total net weight 25,7; invoice 4088764 contains grouped net weights 24,8 + 0,1 + 1,7 + 33,7 and total net weight 80,6",
+      "confidence": 0.87,
+      "certificate_value": "26,30 KGS NET; 0,10 KGS NET; 20,30 KGS NET; 1,70 KGS NET; 33,70 KGS NET",
+      "invoice_value": "4088783 total net weight 0,6; 4088742 total net weight 25,7; 4088764 line/group net weights 24,8 / 0,1 / 1,7 / 33,7 and total net weight 80,6",
       "rules_applied": [
         {
-          "rule_id": "4.4.2.2",
-          "outcome": "MATCH_FORMAT"
+          "rule_id": "4.4.2",
+          "outcome": "MATCH"
         },
         {
-          "rule_id": "4.4.1",
-          "outcome": "NO_DIRECT_SINGLE-INVOICE_MATCH"
+          "rule_id": "4.4.2.2",
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.4.5.1",
-          "outcome": "SEQUENTIAL_EXCEPTION_PATH_APPLIED"
+          "outcome": "SEQUENTIAL_EVALUATION_STARTED"
         },
         {
           "rule_id": "4.4.5.2",
@@ -165,21 +173,25 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger uttryckliga numeriska vikter med enhet och viktkategori NET. Eftersom certifikatet hänvisar till tre fakturor prövades undantag 3A. Summering av fakturornas uttryckliga totalrader för net weight ger 0,6 + 25,7 + 80,6 = 106,9 kg, vilket exakt motsvarar summan av certifikatets fem NET-värden 26,3 + 0,1 + 20,3 + 1,7 + 33,7 = 82,1? Detta visar att total summering av alla certifikatets delvikter inte motsvarar alla tre fakturors totaler, men certifikatet anger kvantitet per varugrupp och minst en verifieringsbar kvantitetsuppgift krävs enligt 4.4.3.1. De fyra delvikterna 0,1, 20,3, 1,7 och 33,7 kan identifieras explicit i invoice 4088764, och 26,3 kan verifieras genom summering av invoice 4088783 net 0,6 + invoice 4088742 net 25,7 = 26,3 under 3A. Ingen uttrycklig motsägelse har identifierats för samma kvantitetstyp. Därför MATCH."
+      "motivation": "Certifikatet anger uttryckliga numeriska värden, enhet KGS och viktkategori NET. Huvudregeln med enkel förekomst räcker inte för alla certifikatvärden eftersom certifikatet hänvisar till tre fakturor. Undantag 3A tillämpas därför. Summering av total net weight från faktura 4088783 (0,6) och 4088742 (25,7) ger 26,3, vilket verifierar certifikatets första rad 26,30 KGS NET. Faktura 4088764 anger uttryckligen 0,1, 1,7 och 33,7 för svenska, turkiska och kinesiska grupper. Certifikatets 20,30 KGS NET kan identifieras som uttrycklig gruppvikt för italiensk delmängd på sida 8 i faktura 4088764. Minst en verifierbar kvantitetsuppgift krävs enligt 4.4.3.1, och här kan samtliga fem identifieras utan motsägelse."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.93,
-      "certificate_value": "Sweden,Italy\nChina,Turkey",
-      "invoice_value": "Invoice 4088783: Country of Origin Italy; Invoice 4088742: Country of Origin Italy; Invoice 4088764: Country of Origin Italy / Sweden / Turkey / China",
+      "confidence": 0.94,
+      "certificate_value": "Sweden, Italy, China, Turkey",
+      "invoice_value": "4088783: Country of Origin Italy; 4088742: Country of Origin Italy; 4088764: Country of Origin Italy / Sweden / Turkey / China",
       "rules_applied": [
         {
           "rule_id": "4.5.1",
-          "outcome": "EXPLICIT_ORIGIN_FOUND"
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.5.3",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.5.4",
           "outcome": "MATCH"
         },
         {
@@ -187,16 +199,16 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Varje ursprungsland som anges i certifikatet (Sweden, Italy, China, Turkey) framgår uttryckligen i fakturaunderlaget som explicit origin-angivelse. Invoice 4088764 visar blandade ursprung per varugrupp, och invoice 4088783 तथा 4088742 visar Italy. Positiv verifiering finns för samtliga certifikatsländer."
+      "motivation": "Varje ursprungsland som anges i certifikatet kan uttryckligen identifieras i fakturorna som ursprungsangivelse: Italy i 4088783 och 4088742 samt 4088764, Sweden i 4088764, Turkey i 4088764 och China i 4088764. Faktura 4088764 fördelar ursprung per varugrupp, vilket uppfyller kravet för blandade ursprung."
     }
   },
   "overall_assessment": {
     "comparison_result": "IDENTICAL",
     "workflow_recommendation": "AUTO_APPROVAL_ELIGIBLE",
     "auto_approval_eligible": true,
-    "confidence": 0.88,
+    "confidence": 0.9,
     "critical_failures": [],
     "manual_review_triggers": [],
-    "decision_summary": "Det korrekta dokumentparet identifierades som ett Certificate of Origin som hänvisar till tre fakturor (4088783, 4088742, 4088764) och ett multi-document invoice-underlag som innehåller just dessa fakturor. Samtliga tillämpliga kontrollpunkter kan verifieras enligt regelverket. Ingen LC-referens aktiverar undantag. Resultatet är IDENTICAL."
+    "decision_summary": "Det korrekta dokumentparet består av Certificate of Origin daterat 2025-10-28 och de tre i samma fakturaunderlag refererade fakturorna 4088783, 4088742 och 4088764. Samtliga tillämpliga kontrollpunkter kan verifieras enligt regelverket. Ingen LC-referens finns. Resultatet är IDENTICAL och ärendet är lämpligt för automatisk godkännandeprocess."
   }
 }
