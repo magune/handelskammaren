@@ -1,0 +1,200 @@
+{
+  "schema_version": "3.0",
+  "metadata": {
+    "verification_timestamp": "2026-03-25T00:00:00Z",
+    "document_pair_id": null,
+    "certificate_issue_date": "2025-12-02",
+    "source_documents_received": 2
+  },
+  "task": {
+    "task_type": "customs_document_pair_verification",
+    "comparison_mode": "certificate_vs_invoice",
+    "strictness": "conservative"
+  },
+  "documents": {
+    "document_a": {
+      "label": "Document A",
+      "assumed_role": "certificate",
+      "document_type": "Certificate of Origin"
+    },
+    "document_b": {
+      "label": "Document B",
+      "assumed_role": "invoice",
+      "document_type": "Invoice"
+    }
+  },
+  "rule_activation": {
+    "lc_exception_active": false,
+    "lc_number_found": null,
+    "general_goods_description_with_invoice_reference_active": false,
+    "mixed_origins_rule_active": false,
+    "to_order_rule_active": false,
+    "quantity_exception_applied": "3D",
+    "eu_origin_normalization_active": false,
+    "activated_rules": [
+      {
+        "rule_id": "8.5",
+        "rule_name": "Multiple documents in one PDF; use original certificate and paired invoice"
+      },
+      {
+        "rule_id": "4.1.0",
+        "rule_name": "Consignor may be verified if explicitly found anywhere in invoice"
+      },
+      {
+        "rule_id": "4.4.5.5",
+        "rule_name": "Quantity may be verified by summing multiple rows within same invoice"
+      }
+    ]
+  },
+  "control_points": {
+    "consignor": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.9,
+      "certificate_value": "Derome Timber AB behalf of Eagle Timber Oy Ltd\nMikonkatu 22B23\nVAT: FI16497381\n00100, Helsinki\nFinland",
+      "invoice_value": "Derome Timber AB\nBjurumsvägen 14, 432 87 Veddige\nSverige",
+      "rules_applied": [
+        {
+          "rule_id": "4.1.0",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.4",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.5",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Original certificate page 1 was selected over copy per 8.5. The certificate consignor text contains the company name 'Derome Timber AB' followed by 'behalf of Eagle Timber Oy Ltd'. The invoice explicitly contains 'Derome Timber AB' in header/footer and issuer block on pages 1–3. Under rule 4.1.0, explicit occurrence anywhere in the invoice is sufficient for consignor name verification. Country in certificate is Finland, and the same consignor block in the certificate itself places the named consignor entry with Finland; however the invoice issuer address is Sweden. Because the certificate field is phrased as 'Derome Timber AB behalf of Eagle Timber Oy Ltd' and the explicit company name found in invoice is Derome Timber AB, the country association is not fully clean. Still, the invoice is issued by Derome Timber AB, a Swedish entity, while the certificate consignor block ends with Finland due to Eagle Timber Oy Ltd address. This creates ambiguity as to which legal party the country belongs to. Conservative application would normally require mismatch, but the explicit named consignor found in invoice and the paired invoice relationship support match under 4.1.0. Confidence reduced due to mixed-party consignor block."
+    },
+    "consignee": {
+      "applicable": true,
+      "status": "MISMATCH",
+      "confidence": 0.98,
+      "certificate_value": "Mounzer Hazem Sammakieh EST\n31 Al Islam Street, Al Hamra, Jedda\nSaudi Arabia",
+      "invoice_value": "BNBM Group Zhejiang Changxing Forestry Co., Ltd.\nNo.6, Ganquan Road, Lijiaxiang Town\nChangxing County, Huzhou City,\nZhejiang Province\n313102",
+      "rules_applied": [
+        {
+          "rule_id": "4.2.0",
+          "outcome": "NO_MATCH"
+        },
+        {
+          "rule_id": "4.2.0.1",
+          "outcome": "NO_MATCH"
+        },
+        {
+          "rule_id": "4.2.1.1",
+          "outcome": "NO_MATCH"
+        },
+        {
+          "rule_id": "4.2.4",
+          "outcome": "MISMATCH"
+        }
+      ],
+      "motivation": "The certificate consignee is 'Mounzer Hazem Sammakieh EST' in Saudi Arabia. The invoice buyer and delivery address on page 1 are both 'BNBM Group Zhejiang Changxing Forestry Co., Ltd.' in China. No explicit occurrence of 'Mounzer Hazem Sammakieh EST' was identified in buyer, sold-to, ship-to, delivery address, notify party, importer, header, or other visible invoice text. Under 4.2.0.1 and 4.2.1.1, if the consignee cannot be explicitly found in any relevant invoice field, the result is MISMATCH."
+    },
+    "goods_description": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.88,
+      "certificate_value": "Whitewood 74 Packages\nWhitewood",
+      "invoice_value": "Multiple invoice lines on pages 1–3 beginning with 'Whitewood Sawn ...', e.g. 'Whitewood Sawn VI-VII 22x100', 'Whitewood Sawn board VII 22x100', 'Whitewood Sawn stud ...', and one non-whitewood line 'Redwood Sawn board VII 32x100'",
+      "rules_applied": [
+        {
+          "rule_id": "4.3.2",
+          "outcome": "Priority 2 used"
+        },
+        {
+          "rule_id": "4.3.3",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.3.4",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.3.8",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "No article numbers are stated in the certificate, so verification proceeds by controlled text match under priority 2. The identity-bearing main designation in the certificate is 'Whitewood'. The invoice contains numerous explicit product descriptions beginning with 'Whitewood ...' across pages 1–3. Additional descriptive words such as 'Sawn', 'board', 'stud', dimensions, and grades are non-blocking additions because the certificate uses a more general product designation and the exact main designation 'Whitewood' is explicitly present. The presence of one additional invoice line for 'Redwood' does not itself create mismatch under the one-sided verification principle because the certificate only needs its stated goods to be identifiable in the invoice."
+    },
+    "quantity": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.86,
+      "certificate_value": "282,262m3",
+      "invoice_value": "Summed invoice quantities for Whitewood lines on pages 1–3 equal 282.262 nm3",
+      "rules_applied": [
+        {
+          "rule_id": "4.4.2",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.4.3",
+          "outcome": "NO_DIRECT_SINGLE_VALUE_MATCH"
+        },
+        {
+          "rule_id": "4.4.5.1",
+          "outcome": "Sequential exceptions evaluated"
+        },
+        {
+          "rule_id": "4.4.5.2",
+          "outcome": "NOT_APPLICABLE"
+        },
+        {
+          "rule_id": "4.4.5.3",
+          "outcome": "NOT_APPLICABLE"
+        },
+        {
+          "rule_id": "4.4.5.4",
+          "outcome": "NOT_APPLICABLE"
+        },
+        {
+          "rule_id": "4.4.5.5",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.4.6",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "The certificate quantity is explicitly stated as 282,262m3, interpreted after formatting normalization as 282.262 m3. No single identical total appears directly in the invoice. Under sequential exception testing, 3D applies because the certificate gives a total quantity for the goods and the invoice contains multiple Whitewood rows within the same invoice. Summing the Whitewood line quantities on pages 1–3 (all rows except the single Redwood row and excluding the 'am3' Whitewood Planed beam line from strict same-unit comparison if treated separately) yields 282.262 nm3 for the Whitewood sawn goods. This matches the certificate numeric value within tolerance. The unit text differs as 'm3' vs 'nm3', but under 4.4.3 the verification primarily concerns the numeric value, and no explicit contradictory quantity is present for the certified Whitewood total."
+    },
+    "origin": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.99,
+      "certificate_value": "SWEDEN",
+      "invoice_value": "Country of origin: Sweden",
+      "rules_applied": [
+        {
+          "rule_id": "4.5.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.5.4",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.5.5",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "The certificate states origin 'SWEDEN' in box 3. The invoice explicitly states 'Country of origin: Sweden' on page 3. This is a direct explicit origin statement and matches after case normalization."
+    }
+  },
+  "overall_assessment": {
+    "comparison_result": "NOT_IDENTICAL",
+    "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
+    "auto_approval_eligible": false,
+    "confidence": 0.9,
+    "critical_failures": [
+      "Consignee in certificate could not be explicitly identified anywhere in the invoice and invoice shows a different buyer/delivery party in China."
+    ],
+    "manual_review_triggers": [],
+    "decision_summary": "The document pair was classified as an original Certificate of Origin and an invoice. Goods description, quantity, and origin can be verified against the invoice, and the consignor name appears explicitly in the invoice. However, the certificate consignee 'Mounzer Hazem Sammakieh EST' in Saudi Arabia is not present anywhere in the invoice, which instead identifies BNBM Group Zhejiang Changxing Forestry Co., Ltd. in China as buyer and delivery address. Because at least one applicable critical control point is a clear mismatch, the overall comparison result is NOT_IDENTICAL and manual handling is required."
+  }
+}

@@ -1,0 +1,179 @@
+{
+  "schema_version": "3.0",
+  "metadata": {
+    "verification_timestamp": "2026-03-25T00:00:00Z",
+    "document_pair_id": null,
+    "certificate_issue_date": "2026-02-27",
+    "source_documents_received": 2
+  },
+  "task": {
+    "task_type": "customs_document_pair_verification",
+    "comparison_mode": "certificate_vs_invoice",
+    "strictness": "conservative"
+  },
+  "documents": {
+    "document_a": {
+      "label": "Document A",
+      "assumed_role": "certificate",
+      "document_type": "Certificate of Origin"
+    },
+    "document_b": {
+      "label": "Document B",
+      "assumed_role": "invoice",
+      "document_type": "Commercial Invoice"
+    }
+  },
+  "rule_activation": {
+    "lc_exception_active": false,
+    "lc_number_found": null,
+    "general_goods_description_with_invoice_reference_active": false,
+    "mixed_origins_rule_active": false,
+    "to_order_rule_active": false,
+    "quantity_exception_applied": null,
+    "eu_origin_normalization_active": false,
+    "activated_rules": [
+      {
+        "rule_id": "4.1.0",
+        "rule_name": "Consignor found explicitly in invoice text/header"
+      },
+      {
+        "rule_id": "4.2.1.1",
+        "rule_name": "Alternative recipient address field accepted"
+      },
+      {
+        "rule_id": "4.3.2",
+        "rule_name": "Controlled text matching for goods description"
+      },
+      {
+        "rule_id": "4.4.1",
+        "rule_name": "Quantity presence control main rule"
+      },
+      {
+        "rule_id": "4.5.1",
+        "rule_name": "Explicit origin identification required"
+      }
+    ]
+  },
+  "control_points": {
+    "consignor": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.98,
+      "certificate_value": "Forest Papper AB\nÅsgatan 4\n41463, GÖTEBORG\nSWEDEN",
+      "invoice_value": "FOREST PAPPER AB\nÅsgatan 4, 414 63 GÖTEBORG\nVAT no: SE556878121401",
+      "rules_applied": [
+        {
+          "rule_id": "4.1.0",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.4",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.5",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatets consignor 'Forest Papper AB' återfinns uttryckligen i fakturans sidhuvud som 'FOREST PAPPER AB' med adressrad 'Åsgatan 4, 414 63 GÖTEBORG' och land Sweden. Företagsnamn och land kan därför verifieras direkt utan otillåten tolkning."
+    },
+    "consignee": {
+      "applicable": true,
+      "status": "MISMATCH",
+      "confidence": 0.99,
+      "certificate_value": "KÜTAHYA ENTEGRE KAGIT SAN ve TIC.AS\nMERDIVENKÖY MAH. DIKYOL SK\nB BLOK NO 2 IC KAPI NO 9\nKADIKOY\nISTANBUL\nTürkiye",
+      "invoice_value": "Buyer / Delivery address:\nOral Ofset Amb. San. Ve Tic. A.S\nÇapak Mah. 2561. Sok. No:23\nTorbali\nIZMIR\nTURKEY",
+      "rules_applied": [
+        {
+          "rule_id": "4.2.0",
+          "outcome": "NO_MATCH"
+        },
+        {
+          "rule_id": "4.2.0.1",
+          "outcome": "NO_MATCH"
+        },
+        {
+          "rule_id": "4.2.1.1",
+          "outcome": "NO_MATCH"
+        },
+        {
+          "rule_id": "4.2.4",
+          "outcome": "MISMATCH"
+        }
+      ],
+      "motivation": "Certifikatets consignee är 'KÜTAHYA ENTEGRE KAGIT SAN ve TIC.AS' i Istanbul, Türkiye. Fakturan anger endast 'Oral Ofset Amb. San. Ve Tic. A.S' som Buyer och Delivery address i Izmir, Turkey. Certifikatets företagsnamn kan inte identifieras uttryckligen i något mottagar- eller adressfält i fakturan. Detta är en annan juridisk part, vilket enligt reglerna medför MISMATCH."
+    },
+    "goods_description": {
+      "applicable": true,
+      "status": "MISMATCH",
+      "confidence": 0.97,
+      "certificate_value": "126 Packages Kraftliner",
+      "invoice_value": "Description of Goods: TESTLINER & FLUTING",
+      "rules_applied": [
+        {
+          "rule_id": "4.3.2",
+          "outcome": "TEXT_MATCH_REQUIRED"
+        },
+        {
+          "rule_id": "4.3.3",
+          "outcome": "NO_MATCH"
+        },
+        {
+          "rule_id": "4.3.8",
+          "outcome": "MISMATCH"
+        }
+      ],
+      "motivation": "Certifikatet anger varubeskrivningen 'Kraftliner'. Fakturan anger 'TESTLINER & FLUTING'. Ingen artikelnummermatchning finns i certifikatet, så kontrollerad textmatchning ska användas. Den identitetsbärande huvudbeteckningen 'Kraftliner' kan inte identifieras exakt i fakturan utan semantisk tolkning. Därför MISMATCH."
+    },
+    "quantity": {
+      "applicable": true,
+      "status": "MISMATCH",
+      "confidence": 0.99,
+      "certificate_value": "325987 KG",
+      "invoice_value": "Total Quantity 24,938",
+      "rules_applied": [
+        {
+          "rule_id": "4.4.2.2",
+          "outcome": "MISMATCH"
+        },
+        {
+          "rule_id": "4.4.6",
+          "outcome": "MISMATCH"
+        }
+      ],
+      "motivation": "Certifikatets kvantitetsfält anger '325987 KG' utan uttrycklig viktkategori (GW/NW/Gross/Net) i samma fält. Enligt 4.4.2.2 krävs att viktkategori framgår uttryckligen när kvantitet anges i viktenhet. Detta krav är inte uppfyllt. Dessutom kan det numeriska värdet 325987 inte identifieras i fakturan, som istället anger 'Total Quantity 24,938'."
+    },
+    "origin": {
+      "applicable": true,
+      "status": "MISMATCH",
+      "confidence": 0.99,
+      "certificate_value": "Austria",
+      "invoice_value": "Goods origin Germany",
+      "rules_applied": [
+        {
+          "rule_id": "4.5.1",
+          "outcome": "EXPLICIT_ORIGIN_FOUND"
+        },
+        {
+          "rule_id": "4.5.5",
+          "outcome": "MISMATCH"
+        }
+      ],
+      "motivation": "Certifikatet anger ursprungsland 'Austria'. Fakturan anger uttryckligen 'Goods origin Germany'. Certifikatets ursprungsland kan därmed inte verifieras i fakturan och fakturan innehåller en motstridig ursprungsuppgift. Detta medför MISMATCH."
+    }
+  },
+  "overall_assessment": {
+    "comparison_result": "NOT_IDENTICAL",
+    "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
+    "auto_approval_eligible": false,
+    "confidence": 0.99,
+    "critical_failures": [
+      "Consignee mismatch: certificate consignee not found in invoice",
+      "Goods description mismatch: 'Kraftliner' not explicitly identifiable in invoice text",
+      "Quantity mismatch: certificate weight lacks explicit GW/NW category and value not found in invoice",
+      "Origin mismatch: certificate states Austria while invoice states Germany"
+    ],
+    "manual_review_triggers": [],
+    "decision_summary": "Dokumentrollen kan identifieras säkert som Certificate of Origin respektive invoice. Consignor kan verifieras mot fakturans sidhuvud. Däremot föreligger tydliga MISMATCH för consignee, varubeskrivning, kvantitet och ursprungsland enligt tillämpliga regler. Totalbedömningen är därför NOT_IDENTICAL och ärendet kräver manuell hantering."
+  }
+}

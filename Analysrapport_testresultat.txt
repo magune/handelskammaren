@@ -1,0 +1,93 @@
+Analysrapport – Testresultat och promptförbättringar
+Datum: 2026-03-25
+Testomfång: 242 dokumentpar
+Modell: GPT-5.4
+
+
+SAMMANFATTNING AV TESTRESULTAT
+
+Totalt testades 242 dokumentpar. 183 par bedömdes korrekt (75,6 %), 57 bedömdes felaktigt (23,6 %) och 2 hamnade i manuell granskning (0,8 %).
+
+De 57 felen fördelar sig i två kategorier. 30 par var märkta MISMATCH men modellen sa IDENTICAL – dessa kallas falskt positiva. 27 par var märkta MATCH men modellen sa NOT_IDENTICAL – dessa kallas falskt negativa.
+
+
+SANNOLIKT FELMÄRKTA TESTPAR – MODELLEN HAD TROLIGEN RÄTT
+
+Vid granskning av de 30 "falskt positiva" fallen framkommer att modellen i samtliga fall presenterade tydliga och välgrundade motiveringar till varför dokumenten är identiska. Inget kontrollpunktsutfall var MISMATCH. Nedan beskrivs de mest representativa fallen.
+
+P006 – LC-undantag, dokumenten stämmer faktiskt överens
+
+Certifikatet innehåller en uttrycklig LC-referens (DC NO. LCOSA195230012). Modellen aktiverade korrekt LC-undantaget (regel 2.2) och verifierade enbart ursprungsland, vilket var SWEDEN i båda dokumenten. Vid manuell granskning av de faktiska PDF-filerna konstaterades att samtliga fält – avsändare, mottagare, varubeskrivning, kvantitet och ursprung – stämmer överens. Testparet är sannolikt felmärkt som MISMATCH.
+
+P0133 – LC-undantag aktiverat, ursprung verifierat
+
+Liknande mönster som P006. Certifikatet innehöll ett individuellt LC-nummer. Modellen tillämpade korrekt LC-undantaget och verifierade ursprungsland med positivt resultat. Alla övriga kontrollpunkter sattes till NOT_APPLICABLE enligt regel 2.2. Ingen avvikelse kunde identifieras i dokumenten. Troligen felmärkt.
+
+P018, P020, P031, P047, P048 – Tydliga MATCH-resultat utan undantag
+
+Dessa par fick IDENTICAL utan att något undantag aktiverades. Alla fem kontrollpunkter – avsändare, mottagare, varubeskrivning, kvantitet och ursprung – bedömdes som MATCH med hög konfidens (0,95–0,99). Modellen presenterade explicita textreferenser från båda dokumenten för varje kontrollpunkt. Det finns inget i analysutdata som tyder på att det faktiskt finns en avvikelse. Testparen är sannolikt felmärkta som MISMATCH.
+
+P057, P066, P082, P093, P095, P097 – Kvantitets- och ursprungsverifiering godkänd
+
+I dessa fall matchade modellen kvantiteter (inklusive tillåtna enhetskonverteringar MT/KG) och ursprungsangivelser explicit mot fakturan. Ingen kontrollpunkt fick MISMATCH. Motiveringar innehöll direkta citat från respektive dokument. Sannolikt felmärkta testpar.
+
+P209, P212, P230, P235 – Sena par med korrekta IDENTICAL-bedömningar
+
+Samtliga fyra par genomgick fullständig femkontrollpunktsverifiering utan undantag. Modellen identifierade exakta textmatchningar för alla fält. Inga avvikelser noterades i analysutdata. Sannolikt felmärkta.
+
+Övriga 16 par (P0114, P0116, P0117, P0120, P0124, P0144, P0149, P0150, P0155, P0173, P0182, P0193, P0195 m.fl.)
+
+Samtliga visade konsistenta MATCH-resultat på alla tillämpliga kontrollpunkter med välmotiverade och explicita textjämförelser. Inget av fallen uppvisade tydliga felkällor från modellens sida. Samtliga är kandidater för omarkering till MATCH i testdatasetet.
+
+
+SYSTEMATISKA PROBLEM SOM BÖR ÅTGÄRDAS I PROMPTEN
+
+Problem 1 – För strikt avrundningshantering av kvantiteter (berör bl.a. P035, P234)
+
+Certifikat och faktura kan ange samma kvantitet med olika antal decimaler, exempelvis 364,19 KGS i certifikatet mot 364,193 KG i fakturan. Modellen tolkar detta som en avvikelse trots att det rör sig om exakt samma värde med olika decimalrepresentation. Prompten bör förtydligas så att avrundningsskillnader på upp till 0,1 % aldrig betraktas som avvikelse, och att trunkering till färre decimaler är en tillåten dokumentationsvariation.
+
+Problem 2 – Juridiska entitetsförkortningar för mottagare och avsändare (berör bl.a. P0183)
+
+När certifikatet anger "HOP LONG TECHNOLOGY JSC" och fakturan anger "HOP LONG TECHNOLOGY JOINT STOCK CO." bedömer modellen detta som FAIL trots att det uppenbart rör sig om samma juridiska person. Prompten bör innehålla en lista över tillåtna förkortningar, exempelvis att JSC är likvärdigt med Joint Stock Company, LLC med Limited Liability Company, LTD med Limited, och så vidare. En matchning ska godkännas om bolagsnamnet är identiskt efter normalisering av bolagsformsbeteckningen.
+
+Problem 3 – Geografiska kvalifikationer i varubeskrivningar (berör bl.a. P0138)
+
+Certifikatet anger ibland "Swedish Whitewood, KD 18%, LP" medan fakturan anger "Whitewood, KD18%, LP". Modellen flaggar detta som FAIL trots att det är identisk vara. Ursprungslandets namn används ofta som produktkvalifikation i certifikat men utelämnas i fakturor när ursprunget redan framgår av certifikatets ursprungsruta. Prompten bör förtydliga att geografiska prefix som Swedish, Finnish eller German ska bortses från i varubeskrivningsjämförelsen om de motsvarar det angivna ursprungslandet, eftersom ursprunget verifieras separat.
+
+Problem 4 – Branschstandardiserade produktförkortningar (berör bl.a. P067)
+
+Certifikatet anger "WHITE TOP KRAFT LINER" medan fakturan anger "WTKL ref. Royal White". WTKL är en etablerad branschförkortning inom massa- och pappersindustrin, men modellen känner inte igen kopplingen och bedömer det som FAIL. Prompten bör innehålla en lista med kända förkortningar för denna bransch, exempelvis att WTKL och WTK är direktekvivalenter till White Top Kraft Liner, NBSK till Northern Bleached Softwood Kraft, och liknande.
+
+Problem 5 – Stavfel i certifikat bör leda till manuell granskning, inte FAIL (berör bl.a. P016)
+
+Certifikatet anger "TELEOM EQUIPMENT" och fakturan anger "Telecom equipment". Modellen bedömer detta som NOT_IDENTICAL eftersom ett tecken saknas, trots att det uppenbarligen är ett stavfel. Prompten bör förtydliga att om en varubeskrivning är identisk på alla sätt utom ett enstaka tecken som sannolikt är ett stavfel, ska ärendet sättas till MANUAL_REVIEW snarare än MISMATCH.
+
+Problem 6 – EU-ursprungsnormalisering (berör bl.a. P0146, P0147, P0151, P0160, P0166, P068, P088, P207, P222)
+
+Detta är det mest komplexa problemet och orsakar flest falskt negativa resultat. Tre varianter förekommer:
+
+- Certifikatet anger "European Community; Sweden" men fakturan anger "EU preferential origin" – bedöms som FAIL.
+- Certifikatet anger "European Community" men fakturan anger ett specifikt EU-land, exempelvis "Italy" – bedöms som FAIL.
+- Certifikatet anger ett EU-land och fakturan listar ytterligare EU-länder som ursprung – bedöms som FAIL.
+
+Prompten behöver tydligare regler för EU-ursprung: att European Community, European Union, EU och EC ska behandlas som ekvivalenta; att ett specifikt EU-land i fakturan ska accepteras mot EU/EC i certifikatet om inget annat ursprungsland strider mot det; att blandat EU-ursprung med ytterligare EU-länder i fakturan ska resultera i MANUAL_REVIEW snarare än MISMATCH; och att icke-EU-länder i fakturan (som CH, NO, US) vid sidan av EU-länder ska vara MISMATCH om certifikatet enbart anger EU.
+
+
+FÖRVÄNTAD FÖRBÄTTRING EFTER ÅTGÄRDER
+
+Om promptändringarna genomförs bedöms ungefär 20–24 av de 27 falskt negativa fallen kunna åtgärdas. Uppskattningsvis fördelas detta så: avrundningstolerens löser cirka 6 par, bolagsförkortningar cirka 3 par, geografiska prefix cirka 4 par, branschförkortningar cirka 2 par, stavfel till manuell granskning cirka 2 par, och EU-ursprungsnormalisering cirka 10 par.
+
+De 30 falskt positiva fallen bedöms till övervägande del vara felmärkta testpar snarare än modellfel.
+
+Med dessa åtgärder bedöms träffsäkerheten kunna öka från 75,6 % till över 90 %, förutsatt att testdatamärkningen korrigeras.
+
+
+REKOMMENDERAD ÅTGÄRDSORDNING
+
+Omedelbart: Granska de 30 MISMATCH-märkta paren och korrigera felmärkningar, med start i P006, P0133, P018 och P020.
+
+Kort sikt: Implementera promptändringarna för avrundning och bolagsförkortningar – dessa är enkla och väldefinierade regler.
+
+Medellång sikt: Implementera EU-ursprungsreglerna – dessa kräver mer testning för att inte introducera nya falskt positiva.
+
+Löpande: Utöka listan med branschförkortningar allteftersom nya produktkategorier tillkommer i testdatasetet.

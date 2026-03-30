@@ -1,0 +1,190 @@
+{
+  "schema_version": "3.0",
+  "metadata": {
+    "verification_timestamp": "2026-03-25T00:00:00Z",
+    "document_pair_id": null,
+    "certificate_issue_date": "2025-10-01",
+    "source_documents_received": 3
+  },
+  "task": {
+    "task_type": "customs_document_pair_verification",
+    "comparison_mode": "certificate_vs_invoice",
+    "strictness": "conservative"
+  },
+  "documents": {
+    "document_a": {
+      "label": "Document A",
+      "assumed_role": "certificate",
+      "document_type": "Certificate of Origin"
+    },
+    "document_b": {
+      "label": "Document B",
+      "assumed_role": "invoice",
+      "document_type": "Commercial Invoice"
+    }
+  },
+  "rule_activation": {
+    "lc_exception_active": false,
+    "lc_number_found": null,
+    "general_goods_description_with_invoice_reference_active": false,
+    "mixed_origins_rule_active": false,
+    "to_order_rule_active": false,
+    "quantity_exception_applied": "3B",
+    "eu_origin_normalization_active": false,
+    "activated_rules": [
+      {
+        "rule_id": "8.5",
+        "rule_name": "Document pairing by invoice reference and consignor consistency"
+      },
+      {
+        "rule_id": "4.1.0",
+        "rule_name": "Consignor found explicitly in invoice text/header/footer"
+      },
+      {
+        "rule_id": "4.4.5.3",
+        "rule_name": "Unit conversion MT to KG for quantity verification"
+      }
+    ]
+  },
+  "control_points": {
+    "consignor": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.96,
+      "certificate_value": "mFiber AB\nDrottninggatan 21\nSE-411 14, Gothenburg\nSweden",
+      "invoice_value": "mfiber AB\nDrottninggatan 21\nSE-411 14 Gothenburg\nSweden",
+      "rules_applied": [
+        {
+          "rule_id": "4.1.0",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.4",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.5",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatets consignor 'mFiber AB' återfinns uttryckligen i den valda fakturan i sidhuvud/footer/adressblock. Landet Sweden överensstämmer. Regel 4.1.0 har företräde och ger MATCH utan behov av vidare sekventiell prövning enligt 4.1.3."
+    },
+    "consignee": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.97,
+      "certificate_value": "CENTURY GATE CO. LTD\nP.O. BOX 14368\nC R NO. 1010277465\nRIYADH 7097\nSaudi Arabia",
+      "invoice_value": "Bill to\nCENTURY GATE CO. LTD\nP.O. BOX 14368\nRIYADH 7097, SAUDI ARABIA\nC R NO. 1010277465",
+      "rules_applied": [
+        {
+          "rule_id": "4.2.0",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.2.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.2.3",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.2.4",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Mottagaren i certifikatet kan identifieras direkt i fakturans 'Bill to'-fält med samma företagsnamn och samma land Saudi Arabia. Skillnader i radbrytning och ordningsföljd är tillåten normalisering."
+    },
+    "goods_description": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.9,
+      "certificate_value": "PAPER IN REELS\n434 reels of Tissue Paper - (Napkin & Facial)",
+      "invoice_value": "Description of goods: Tissue Paper (Napkin & Facial)\nReels: 434",
+      "rules_applied": [
+        {
+          "rule_id": "4.3.2",
+          "outcome": "Priority 2 applied"
+        },
+        {
+          "rule_id": "4.3.3",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.3.4",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.3.8",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Inga artikelnummer anges i certifikatet, därför används kontrollerad textmatchning enligt prioritet 2. Den identitetsbärande huvudbeteckningen 'Tissue Paper (Napkin & Facial)' återfinns exakt i fakturan. Tillägget 'PAPER IN REELS' och uppgiften om 434 reels ändrar inte produktidentiteten."
+    },
+    "quantity": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.88,
+      "certificate_value": "GW/NW: 88452 kg",
+      "invoice_value": "Quantity MT: 88.452\nGross weight = net weight",
+      "rules_applied": [
+        {
+          "rule_id": "4.4.2",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.4.2.2",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.4.5.1",
+          "outcome": "Main rule not sufficient; exceptions evaluated sequentially"
+        },
+        {
+          "rule_id": "4.4.5.2",
+          "outcome": "NOT_APPLICABLE"
+        },
+        {
+          "rule_id": "4.4.5.3",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.4.6",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatet anger uttryckligen viktkategori GW/NW, numeriskt värde 88452 och enhet kg. Fakturan anger 88.452 MT samt texten 'Gross weight = net weight'. Direkt förekomst i samma enhet saknas, men tillåten omräkning enligt undantag 3B ger 88.452 MT = 88,452 KG, vilket exakt motsvarar certifikatets 88452 kg. Viktkategori är verifierbar eftersom fakturan uttryckligen anger att gross weight = net weight."
+    },
+    "origin": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.98,
+      "certificate_value": "India",
+      "invoice_value": "Country of origin\nIndia\nand that the goods are of Indian origin.",
+      "rules_applied": [
+        {
+          "rule_id": "4.5.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.5.4",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.5.5",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatets ursprungsland India framgår uttryckligen i fakturan både i fältet 'Country of origin' och i texten 'the goods are of Indian origin'."
+    }
+  },
+  "overall_assessment": {
+    "comparison_result": "IDENTICAL",
+    "workflow_recommendation": "AUTO_APPROVAL_ELIGIBLE",
+    "auto_approval_eligible": true,
+    "confidence": 0.94,
+    "critical_failures": [],
+    "manual_review_triggers": [],
+    "decision_summary": "Det korrekta dokumentparet identifierades som ursprungscertifikat daterat 2025-10-01 och kommersiell faktura med referens CGC0039-2 daterad 1 October 2025. Den tredje mottagna fakturan (INV-000050) avser annan köpare, annat datum, annat fakturanummer och annan vara, och exkluderades enligt parningsregeln i 8.5. Samtliga tillämpliga kontrollpunkter för det identifierade dokumentparet verifierades som MATCH enligt regelverket. Därför är comparison_result IDENTICAL och workflow_recommendation AUTO_APPROVAL_ELIGIBLE."
+  }
+}

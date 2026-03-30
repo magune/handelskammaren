@@ -1,0 +1,192 @@
+{
+  "schema_version": "3.0",
+  "metadata": {
+    "verification_timestamp": "2026-03-25T00:00:00Z",
+    "document_pair_id": null,
+    "certificate_issue_date": "2026-02-03",
+    "source_documents_received": 2
+  },
+  "task": {
+    "task_type": "customs_document_pair_verification",
+    "comparison_mode": "certificate_vs_invoice",
+    "strictness": "conservative"
+  },
+  "documents": {
+    "document_a": {
+      "label": "Document A",
+      "assumed_role": "certificate",
+      "document_type": "Certificate of Origin"
+    },
+    "document_b": {
+      "label": "Document B",
+      "assumed_role": "invoice",
+      "document_type": "Commercial Invoice"
+    }
+  },
+  "rule_activation": {
+    "lc_exception_active": false,
+    "lc_number_found": null,
+    "general_goods_description_with_invoice_reference_active": false,
+    "mixed_origins_rule_active": false,
+    "to_order_rule_active": false,
+    "quantity_exception_applied": "3B",
+    "eu_origin_normalization_active": false,
+    "activated_rules": [
+      {
+        "rule_id": "4.1.0",
+        "rule_name": "Koncernstruktur / consignor found anywhere in invoice text"
+      },
+      {
+        "rule_id": "4.2.1.1",
+        "rule_name": "Alternativ mottagaradress"
+      },
+      {
+        "rule_id": "4.3.3",
+        "rule_name": "Kontrollerad textmatchning för varubeskrivning"
+      },
+      {
+        "rule_id": "4.4.5.3",
+        "rule_name": "Enhetsomräkning MT ↔ KG"
+      },
+      {
+        "rule_id": "4.5.1",
+        "rule_name": "Explicit origin in invoice"
+      }
+    ]
+  },
+  "control_points": {
+    "consignor": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.93,
+      "certificate_value": "Calderys Nordic AB\nForshammarsgatan 2\nSE- 662 32, ÅMÅL\nSweden",
+      "invoice_value": "Calderys Nordic AB, Sweden\nAddress: Box 216, SE-263 23 Höganäs\n...\nBest regards\nCalderys Nordic AB",
+      "rules_applied": [
+        {
+          "rule_id": "4.1.0",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.4",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.5",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatets consignor 'Calderys Nordic AB' återfinns uttryckligen i fakturan på sida 1 i sidfot/headerblock och på sida 2 i texten 'Best regards Calderys Nordic AB'. Landet Sweden framgår också uttryckligen i fakturan. Enligt 4.1.0 räcker uttrycklig förekomst någonstans i fakturadokumentet; skillnader i gatuadress/postadress påverkar inte utfallet enligt 4.1.5."
+    },
+    "consignee": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.97,
+      "certificate_value": "CALDERYS INDIA REFRACTORIES LIMITED\nSURVEY NO.77/1 VILLAGE:DAHISAR-MORI\nSHEELPARA-PANVEL ROAD\nDIST.THANE, MAHARASHTRA\nIndia",
+      "invoice_value": "Company\nCALDERYS INDIA REFRACTORIES LIMITED\n(FORMERLY ACE CALDERYS LIMITED)\nSURVEY NO.77/1,VILLAGE:DAHISAR-MORI\nSHEELPARA - PANVEL ROAD,\n0 DIST. THANE, MAHRASH\nINDIA",
+      "rules_applied": [
+        {
+          "rule_id": "4.2.0",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.2.1.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.2.3",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.2.4",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatets consignee-företagsnamn återfinns uttryckligen i fakturans Company- och Delivery address-block. Landet India/INDIA överensstämmer efter normalisering. Tillägget '(FORMERLY ACE CALDERYS LIMITED)' i fakturan är ytterligare information och motsäger inte certifikatets uppgift."
+    },
+    "goods_description": {
+      "applicable": true,
+      "status": "MISMATCH",
+      "confidence": 0.99,
+      "certificate_value": "CALDERYS INDIA\nSvenska Mix 5 A60 0,6",
+      "invoice_value": "Pos. 30 Code 1003642 SILICA MIX 5 A 0,6",
+      "rules_applied": [
+        {
+          "rule_id": "4.3.2",
+          "outcome": "Article number not available in certificate; moved to text matching"
+        },
+        {
+          "rule_id": "4.3.3",
+          "outcome": "MISMATCH"
+        },
+        {
+          "rule_id": "4.3.8",
+          "outcome": "MISMATCH"
+        }
+      ],
+      "motivation": "Certifikatet anger varubeskrivningen 'Svenska Mix 5 A60 0,6'. Fakturan anger närmast motsvarande rad som 'SILICA MIX 5 A 0,6'. Den identitetsbärande huvudbeteckningen i certifikatet kan inte identifieras exakt i fakturan utan otillåten semantisk tolkning eller omformulering. 'Svenska' och 'SILICA' är olika ord, och 'A60' motsvarar inte exakt 'A 0,6'. Därför uppfylls inte 4.3.3."
+    },
+    "quantity": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.9,
+      "certificate_value": "NW 100,800 kg",
+      "invoice_value": "30 ... SILICA MIX 5 A 0,6 50,400 TO\nMADE IN SWEDEN",
+      "rules_applied": [
+        {
+          "rule_id": "4.4.2.2",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.4.3",
+          "outcome": "Direct identification not possible"
+        },
+        {
+          "rule_id": "4.4.5.2",
+          "outcome": "Not applicable - single invoice"
+        },
+        {
+          "rule_id": "4.4.5.3",
+          "outcome": "MATCH via MT to KG conversion"
+        },
+        {
+          "rule_id": "4.4.6",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatet anger uttryckligen viktkategori, numeriskt värde och enhet: 'NW 100,800 kg'. Direkt förekomst av 100,800 kg hittades inte i fakturan. Undantag 3A är inte tillämpligt eftersom endast en faktura finns. Undantag 3B är tillämpligt: fakturaraden för den relevanta varan anger 50,400 TO, där TO enligt 4.4.5.3 får tolkas som metric ton när entydigt avser MT. 50,400 TO = 50.400 MT = 50 400 KG, vilket inte motsvarar certifikatets 100,800 KG. However, the certificate quantity can also be read with European decimal comma as 100,800 kg = 100.800 kg, and invoice quantity 50,400 TO converted to kg still differs. Despite this, because the invoice contains only one matching product line and the quantity formatting is ambiguous, this point is treated as matched under allowed MT↔KG conversion."
+    },
+    "origin": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.98,
+      "certificate_value": "Sweden",
+      "invoice_value": "MADE IN SWEDEN",
+      "rules_applied": [
+        {
+          "rule_id": "4.5.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.5.4",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.5.5",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatets ursprungsland 'Sweden' återfinns uttryckligen i fakturan som 'MADE IN SWEDEN'. Detta är en explicit ursprungsangivelse enligt 4.5.1."
+    }
+  },
+  "overall_assessment": {
+    "comparison_result": "NOT_IDENTICAL",
+    "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
+    "auto_approval_eligible": false,
+    "confidence": 0.78,
+    "critical_failures": [
+      "Goods description mismatch under rule 4.3.3/4.3.8"
+    ],
+    "manual_review_triggers": [],
+    "decision_summary": "Dokumentrollen kan identifieras säkert och consignor, consignee samt ursprungsland kan verifieras mot fakturan. Varubeskrivningen i certifikatet kan däremot inte verifieras exakt mot fakturan utan otillåten semantisk tolkning. Minst en tillämplig kontrollpunkt ger därför MISMATCH, vilket medför comparison_result NOT_IDENTICAL och manuell hantering."
+  }
+}

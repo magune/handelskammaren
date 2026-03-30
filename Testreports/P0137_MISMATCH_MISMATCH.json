@@ -1,0 +1,178 @@
+{
+  "schema_version": "3.0",
+  "metadata": {
+    "verification_timestamp": "2026-03-25T00:00:00Z",
+    "document_pair_id": null,
+    "certificate_issue_date": "2025-10-16",
+    "source_documents_received": 2
+  },
+  "task": {
+    "task_type": "customs_document_pair_verification",
+    "comparison_mode": "certificate_vs_invoice",
+    "strictness": "conservative"
+  },
+  "documents": {
+    "document_a": {
+      "label": "Document A",
+      "assumed_role": "certificate",
+      "document_type": "Certificate of Origin"
+    },
+    "document_b": {
+      "label": "Document B",
+      "assumed_role": "invoice",
+      "document_type": "Commercial Invoice"
+    }
+  },
+  "rule_activation": {
+    "lc_exception_active": false,
+    "lc_number_found": null,
+    "general_goods_description_with_invoice_reference_active": false,
+    "mixed_origins_rule_active": false,
+    "to_order_rule_active": false,
+    "quantity_exception_applied": null,
+    "eu_origin_normalization_active": true,
+    "activated_rules": [
+      {
+        "rule_id": "4.1.0",
+        "rule_name": "Koncernstruktur / consignor found anywhere in invoice text"
+      },
+      {
+        "rule_id": "4.5.4.2",
+        "rule_name": "EU-medlemsland ↔ EU-normalisering"
+      }
+    ]
+  },
+  "control_points": {
+    "consignor": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.9,
+      "certificate_value": "Källbergs Industri AB\nBox 73\nSE-545 22, TÖREBODA\nSweden",
+      "invoice_value": "Källbergs Industri AB\nSkövdevägen 25\nBox 73\n54522 Töreboda\nSverige",
+      "rules_applied": [
+        {
+          "rule_id": "4.1.0",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.4",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.5",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatets consignor 'Källbergs Industri AB' återfinns uttryckligen i fakturans footer/avsändarblock. Landet Sweden/Sverige överensstämmer efter tillåten normalisering. Skillnad i gatuadress påverkar inte bedömningen."
+    },
+    "consignee": {
+      "applicable": true,
+      "status": "MISMATCH",
+      "confidence": 0.98,
+      "certificate_value": "General Food Processing Industries\nP.O. Box 81931\nDubai\nUnited Arab Emirates",
+      "invoice_value": "Ship-to Address\nKadbanoo Co.\nNo. 24, 7t Fath St, Fath highway\nCommercial ID: 10100245584\nTehran REG NUMBER 38341623\nIran",
+      "rules_applied": [
+        {
+          "rule_id": "4.2.0",
+          "outcome": "NO_MATCH"
+        },
+        {
+          "rule_id": "4.2.0.1",
+          "outcome": "NO_MATCH"
+        },
+        {
+          "rule_id": "4.2.1.1",
+          "outcome": "NO_MATCH"
+        },
+        {
+          "rule_id": "4.2.4",
+          "outcome": "MISMATCH"
+        }
+      ],
+      "motivation": "Certifikatets consignee 'General Food Processing Industries' kan inte identifieras uttryckligen i något mottagar-, leverans- eller adressfält i fakturan. Fakturan anger i stället 'Kadbanoo Co.' i Iran som Ship-to. Detta uppfyller inte kravet på positiv identifiering av certifikatets mottagare."
+    },
+    "goods_description": {
+      "applicable": true,
+      "status": "MISMATCH",
+      "confidence": 0.97,
+      "certificate_value": "Heat Stable EYP Mayo-Max399\n126 bags of lot 25-12818\n462 bags of lot 25-12873",
+      "invoice_value": "Food Shaping Compound (Mayomax)",
+      "rules_applied": [
+        {
+          "rule_id": "4.3.2",
+          "outcome": "Priority 2 applied"
+        },
+        {
+          "rule_id": "4.3.3",
+          "outcome": "NO_MATCH"
+        },
+        {
+          "rule_id": "4.3.8",
+          "outcome": "MISMATCH"
+        }
+      ],
+      "motivation": "Inga artikelnummer anges i certifikatet, därför ska kontrollerad textmatchning användas. Den identitetsbärande huvudbeteckningen i certifikatet är 'Heat Stable EYP Mayo-Max399'. Fakturan anger 'Food Shaping Compound (Mayomax)'. Certifikatets huvudbeteckning kan inte identifieras exakt i fakturan utan otillåten semantisk tolkning."
+    },
+    "quantity": {
+      "applicable": true,
+      "status": "MISMATCH",
+      "confidence": 0.99,
+      "certificate_value": "8820 kg net",
+      "invoice_value": "Total Net Weight 17.640",
+      "rules_applied": [
+        {
+          "rule_id": "4.4.2.2",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.4.3",
+          "outcome": "NO_MATCH"
+        },
+        {
+          "rule_id": "4.4.3.1",
+          "outcome": "EXPLICIT_CONTRADICTION"
+        },
+        {
+          "rule_id": "4.4.6",
+          "outcome": "MISMATCH"
+        }
+      ],
+      "motivation": "Certifikatet anger uttryckligen viktkategori och enhet: '8820 kg net'. Fakturan anger uttryckligen 'Total Net Weight 17.640'. Båda dokumenten anger samma kvantitetstyp (net weight) men med olika numeriska värden, långt utanför tolerans. Detta är en uttrycklig motsägelse och medför MISMATCH."
+    },
+    "origin": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.93,
+      "certificate_value": "EC: Sweden",
+      "invoice_value": "Country fo origin: Sweden",
+      "rules_applied": [
+        {
+          "rule_id": "4.5.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.5.4.2",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.5.5",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatet anger ursprung 'EC: Sweden'. Fakturan anger uttryckligen 'Country fo origin: Sweden'. Sweden kan identifieras explicit i fakturan som ursprungsangivelse. EU/EC-normalisering påverkar inte negativt eftersom det specifika landet Sweden också framgår."
+    }
+  },
+  "overall_assessment": {
+    "comparison_result": "NOT_IDENTICAL",
+    "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
+    "auto_approval_eligible": false,
+    "confidence": 0.97,
+    "critical_failures": [
+      "Consignee mismatch: certificate consignee not found in invoice and invoice shows different ship-to party/country.",
+      "Goods description mismatch: certificate product description cannot be explicitly identified in invoice without semantic interpretation.",
+      "Quantity mismatch: certificate net weight 8820 kg explicitly contradicts invoice total net weight 17.640."
+    ],
+    "manual_review_triggers": [],
+    "decision_summary": "Dokumentrollen kan klassificeras säkert som Certificate of Origin respektive faktura. LC-undantag är inte tillämpligt. Consignor och origin kan verifieras mot fakturan, men consignee kan inte identifieras i fakturan, varubeskrivningen kan inte verifieras utan otillåten semantisk tolkning, och kvantiteten motsägs uttryckligen av fakturans net weight. Minst en kritisk kontrollpunkt ger tydlig MISMATCH, därför är totalresultatet NOT_IDENTICAL och manuell hantering krävs."
+  }
+}

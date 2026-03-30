@@ -1,0 +1,176 @@
+{
+  "schema_version": "3.0",
+  "metadata": {
+    "verification_timestamp": "2026-03-25T00:00:00Z",
+    "document_pair_id": null,
+    "certificate_issue_date": "2025-12-02",
+    "source_documents_received": 2
+  },
+  "task": {
+    "task_type": "customs_document_pair_verification",
+    "comparison_mode": "certificate_vs_invoice",
+    "strictness": "conservative"
+  },
+  "documents": {
+    "document_a": {
+      "label": "Document A",
+      "assumed_role": "certificate",
+      "document_type": "Certificate of Origin"
+    },
+    "document_b": {
+      "label": "Document B",
+      "assumed_role": "invoice",
+      "document_type": "Invoice"
+    }
+  },
+  "rule_activation": {
+    "lc_exception_active": false,
+    "lc_number_found": null,
+    "general_goods_description_with_invoice_reference_active": false,
+    "mixed_origins_rule_active": false,
+    "to_order_rule_active": false,
+    "quantity_exception_applied": null,
+    "eu_origin_normalization_active": false,
+    "activated_rules": [
+      {
+        "rule_id": "8",
+        "rule_name": "Dokumentklassificering genomförd"
+      },
+      {
+        "rule_id": "4.1.0",
+        "rule_name": "Koncernstruktur / consignor-sökning i hela fakturan"
+      },
+      {
+        "rule_id": "4.3.2",
+        "rule_name": "Varubeskrivning verifierad med artikelnummer som prioritet 1"
+      },
+      {
+        "rule_id": "4.4.2.2",
+        "rule_name": "Särskilt krav – viktangivelse i certifikatet"
+      },
+      {
+        "rule_id": "4.5",
+        "rule_name": "Ursprungsland verifiering"
+      }
+    ]
+  },
+  "control_points": {
+    "consignor": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.9,
+      "certificate_value": "4Intelligence AB, Marieholmsgatan 10 B, 41502 Göteborg, Sweden",
+      "invoice_value": "4INTELLIGENCE AB appears in invoice branding/header and footer address block; invoice issuer shown as CORESYS TECHNOLOGIES LIMITED; footer address: 4Intelligence AB, Marieholmsgatan 10B, 41502 GÖTEBORG, Sweden",
+      "rules_applied": [
+        {
+          "rule_id": "4.1.0",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.4",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.5",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatets consignor '4Intelligence AB' återfinns uttryckligen i fakturan på sida 1 både i logotyp/header ('4INTELLIGENCE') och i footer/adressblock som '4Intelligence AB ... Sweden'. Enligt 4.1.0 får consignor avvika från fakturautställaren när företagsnamnet uttryckligen förekommer någonstans i fakturan. Landet Sweden överensstämmer. Därför MATCH trots att issuer-fältet visar CORESYS TECHNOLOGIES LIMITED."
+    },
+    "consignee": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.9,
+      "certificate_value": "DIEP NAM HUNG TECHNOLOGY JOINT STOCK COMPANY, No 300, Cau Giay Street, Cau Giay Ward, Hanoi, Vietnam",
+      "invoice_value": "Delivery address: DIEP NAM HUNG TECHNOLOGY JOINT STOCK COMPANY, Floor 16, Daeha building, No.360 Kim Ma Ngoc Khanh Ward, Ba Dinh District, Hanoi, Viet Nam",
+      "rules_applied": [
+        {
+          "rule_id": "4.2.0.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.2.1.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.2.3",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.2.4",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Mottagarens företagsnamn återfinns uttryckligen i fakturans Delivery address på sida 1. Gatuadressen skiljer sig, men enligt 4.2.4 ska skillnader i gatuadress inte i sig medföra MISMATCH när företagsnamn och land överensstämmer. Vietnam/Viet Nam överensstämmer efter normalisering."
+    },
+    "goods_description": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.96,
+      "certificate_value": "INT-LN002, 1 pcs LOW NOISE DRILL",
+      "invoice_value": "Item no INT-LN002; Designation LOW NOISE DRILL",
+      "rules_applied": [
+        {
+          "rule_id": "4.3.2",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.3.6",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.3.8",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatet anger artikelnummer INT-LN002. Enligt prioritet 1 i 4.3.2 ska matchning primärt ske via artikelnummer. Fakturan innehåller exakt artikelnummer 'INT-LN002' samt samma varubeskrivning 'LOW NOISE DRILL'. Därför MATCH utan semantisk tolkning."
+    },
+    "quantity": {
+      "applicable": true,
+      "status": "MISMATCH",
+      "confidence": 0.98,
+      "certificate_value": "17 kilo gross W",
+      "invoice_value": "Invoice shows amount 1 for item INT-LN002; no explicit gross/net weight with unit found anywhere on invoice page",
+      "rules_applied": [
+        {
+          "rule_id": "4.4.2.2",
+          "outcome": "CERTIFICATE_WEIGHT_CATEGORY_NOT_VALID"
+        },
+        {
+          "rule_id": "4.4.6",
+          "outcome": "MISMATCH"
+        }
+      ],
+      "motivation": "Certifikatet anger vikt i kvantitetsfältet som '17 kilo gross W'. Enligt 4.4.2.2 måste viktkategori framgå uttryckligen som GW, NW, Gross Weight, Net Weight, Gross eller Net eller motsvarande. Texten 'gross W' är inte en uttrycklig godtagbar viktkategori enligt regeln, och fakturan innehåller dessutom ingen explicit viktuppgift som kan verifiera värdet 17. Därför MISMATCH."
+    },
+    "origin": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.95,
+      "certificate_value": "Sweden",
+      "invoice_value": "Made in Sweden",
+      "rules_applied": [
+        {
+          "rule_id": "4.5.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.5.5",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatet anger ursprungsland Sweden. Fakturan anger uttryckligen 'Made in Sweden' under varuraden på sida 1. Detta uppfyller kravet på explicit ursprungsangivelse i 4.5.1 och 4.5.5."
+    }
+  },
+  "overall_assessment": {
+    "comparison_result": "NOT_IDENTICAL",
+    "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
+    "auto_approval_eligible": false,
+    "confidence": 0.93,
+    "critical_failures": [
+      "Quantity control point failed: certificate quantity/weight field does not meet explicit weight-category requirement under rule 4.4.2.2 and invoice lacks explicit matching weight."
+    ],
+    "manual_review_triggers": [],
+    "decision_summary": "Dokumentparet kunde klassificeras som Certificate of Origin och Invoice. Consignor, consignee, goods description och origin kunde verifieras mot fakturan. Kvantitet/mängd kunde inte verifieras och ger tydlig MISMATCH eftersom certifikatets viktangivelse inte uppfyller det uttryckliga kravet på viktkategori enligt 4.4.2.2 samt fakturan saknar explicit viktuppgift. Därför är totalresultatet NOT_IDENTICAL och manuell hantering krävs."
+  }
+}

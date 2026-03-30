@@ -1,0 +1,180 @@
+{
+  "schema_version": "3.0",
+  "metadata": {
+    "verification_timestamp": "2026-03-25T00:00:00Z",
+    "document_pair_id": null,
+    "certificate_issue_date": "2026-03-02",
+    "source_documents_received": 2
+  },
+  "task": {
+    "task_type": "customs_document_pair_verification",
+    "comparison_mode": "certificate_vs_invoice",
+    "strictness": "conservative"
+  },
+  "documents": {
+    "document_a": {
+      "label": "Document A",
+      "assumed_role": "certificate",
+      "document_type": "Certificate of Origin"
+    },
+    "document_b": {
+      "label": "Document B",
+      "assumed_role": "invoice",
+      "document_type": "Invoice"
+    }
+  },
+  "rule_activation": {
+    "lc_exception_active": false,
+    "lc_number_found": null,
+    "general_goods_description_with_invoice_reference_active": false,
+    "mixed_origins_rule_active": false,
+    "to_order_rule_active": false,
+    "quantity_exception_applied": null,
+    "eu_origin_normalization_active": false,
+    "activated_rules": [
+      {
+        "rule_id": "4.1.0",
+        "rule_name": "Consignor found explicitly in invoice text across pages"
+      },
+      {
+        "rule_id": "4.2.1.1",
+        "rule_name": "Alternative recipient field accepted via delivery/invoice/customer fields"
+      },
+      {
+        "rule_id": "4.4.3.1",
+        "rule_name": "At least one quantity may be verified; explicit contradiction check required"
+      }
+    ]
+  },
+  "control_points": {
+    "consignor": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.98,
+      "certificate_value": "ERICSSON AB\nTORSHAMNSGATAN 21-23\n164 83, STOCKHOLM\nSweden",
+      "invoice_value": "Ericsson AB\nMail: SE-164 83 STOCKHOLM\nSweden\nOffice : Torshamnsgatan 21-23\nKista\nStockholm",
+      "rules_applied": [
+        {
+          "rule_id": "4.1.0",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.4",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.5",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatets consignor 'ERICSSON AB' återfinns uttryckligen i fakturan på båda sidorna i footer/identifieringsblock tillsammans med landet Sweden. Detta uppfyller koncernstrukturregeln 4.1.0 utan behov av sekventiell prövning enligt 4.1.3."
+    },
+    "consignee": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.96,
+      "certificate_value": "ERICSSON INDIA PRIVATE LTD.\n(FORMERLY ERICSSON INDIA GLOBAL\nS/N 3RD & 4TH FLOOR BUILDING NO 7A\nPHASE 3 DLF CYBER CITY SECTOR 25A\n122002 GURUGRAM GURUGRAM\nINDIA",
+      "invoice_value": "Invoice address 502538\nERICSSON INDIA PRIVATE LTD.\n(FORMERLY ERICSSON INDIA GLOBAL\nS/N 3RD & 4TH FLOOR BUILDING NO 7A\nPHASE 3 DLF CYBER CITY SECTOR 25A\n122002 GURUGRAM GURUGRAM\nIndia",
+      "rules_applied": [
+        {
+          "rule_id": "4.2.0",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.2.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.2.3",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.2.4",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatets consignee-namn och land kan identifieras exakt i fakturans 'Invoice address' och även i 'Customer'-fältet. Landet India överensstämmer efter normalisering av versaler/gemener."
+    },
+    "goods_description": {
+      "applicable": true,
+      "status": "MISMATCH",
+      "confidence": 0.99,
+      "certificate_value": "SHIPMENT NUMBER 6200116055\n2 PIECES\nTELEOM EQUIPMENT",
+      "invoice_value": "Information\nTelecom equipment\n...\n000100 CZ BFM8010061 84715000 EQUIPPED CABINET/RackServerTPS-W027-IVAN HW 2.00 PC",
+      "rules_applied": [
+        {
+          "rule_id": "4.3.2",
+          "outcome": "Priority 2 applied because no article number stated in certificate goods description"
+        },
+        {
+          "rule_id": "4.3.3",
+          "outcome": "MISMATCH"
+        },
+        {
+          "rule_id": "4.3.8",
+          "outcome": "MISMATCH"
+        }
+      ],
+      "motivation": "Certifikatet anger varubeskrivningen 'TELEOM EQUIPMENT'. Fakturan anger 'Telecom equipment'. Enligt strikt, konservativ verifiering får ingen fri semantisk eller stavningsmässig korrigering göras när den identitetsbärande huvudbeteckningen inte kan identifieras exakt efter tillåten normalisering. Skillnaden 'TELEOM' vs 'Telecom' kan inte verifieras utan otillåten tolkning."
+    },
+    "quantity": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.97,
+      "certificate_value": "1507 KG GW",
+      "invoice_value": "Total gross weight Kg\n1,507.000",
+      "rules_applied": [
+        {
+          "rule_id": "4.4.2.2",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.4.3",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.4.4",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.4.6",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatet anger uttryckligen numeriskt värde, enhet och viktkategori: '1507 KG GW'. Fakturan anger total gross weight '1,507.000 Kg'. Numeriskt värde kan identifieras efter tillåten normalisering av tusentalsavskiljare/formatering och avser total försändelsevikt."
+    },
+    "origin": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.99,
+      "certificate_value": "Czech Republic",
+      "invoice_value": "COO\nCZ",
+      "rules_applied": [
+        {
+          "rule_id": "4.5.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.5.4",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.5.5",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatets ursprungsland 'Czech Republic' kan uttryckligen verifieras mot fakturans COO-kod 'CZ' på artikelraden. ISO-landkod är tillåten normalisering enligt 4.5.4."
+    }
+  },
+  "overall_assessment": {
+    "comparison_result": "NOT_IDENTICAL",
+    "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
+    "auto_approval_eligible": false,
+    "confidence": 0.95,
+    "critical_failures": [
+      "Goods description mismatch: certificate states 'TELEOM EQUIPMENT' while invoice states 'Telecom equipment'; exact identification not possible under rule 4.3.3."
+    ],
+    "manual_review_triggers": [],
+    "decision_summary": "Dokumentparet har verifierats som certifikat mot faktura. Consignor, consignee, quantity och origin kan verifieras mot fakturan enligt tillämpliga regler. Varubeskrivningen kan däremot inte verifieras strikt eftersom certifikatet innehåller 'TELEOM EQUIPMENT' medan fakturan innehåller 'Telecom equipment'. Minst en tillämplig kontrollpunkt ger därför MISMATCH, vilket medför comparison_result NOT_IDENTICAL och workflow_recommendation MANUAL_HANDLING_REQUIRED."
+  }
+}
