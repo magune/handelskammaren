@@ -1,0 +1,150 @@
+{
+  "schema_version": "3.0",
+  "metadata": {
+    "verification_timestamp": "2026-03-31T00:00:00Z",
+    "document_pair_id": null,
+    "certificate_issue_date": "2026-02-26",
+    "source_documents_received": 2
+  },
+  "task": {
+    "task_type": "customs_document_pair_verification",
+    "comparison_mode": "certificate_vs_invoice",
+    "strictness": "conservative"
+  },
+  "documents": {
+    "document_a": {
+      "label": "Document A",
+      "assumed_role": "certificate",
+      "document_type": "Certificate of Origin"
+    },
+    "document_b": {
+      "label": "Document B",
+      "assumed_role": "invoice",
+      "document_type": "Customs Invoice"
+    }
+  },
+  "rule_activation": {
+    "lc_exception_active": true,
+    "lc_number_found": "ILC017/53286/25",
+    "general_goods_description_with_invoice_reference_active": false,
+    "mixed_origins_rule_active": true,
+    "to_order_rule_active": false,
+    "quantity_exception_applied": null,
+    "eu_origin_normalization_active": false,
+    "activated_rules": [
+      {
+        "rule_id": "2.2",
+        "rule_name": "LC-undantag aktiverat genom separat fältetikett 'LC NUMBER'"
+      },
+      {
+        "rule_id": "4.5.3",
+        "rule_name": "Flera ursprungsländer förekommer i certifikatet"
+      }
+    ]
+  },
+  "control_points": {
+    "consignor": {
+      "applicable": false,
+      "status": "NOT_APPLICABLE",
+      "confidence": 0.99,
+      "certificate_value": "ERICSSON AB\nSE-164 80,, STOCKHOLM,\nSWEDEN",
+      "invoice_value": "Ericsson AB\nSE-164 83 STOCKHOLM\nStockholm,Sweden",
+      "rules_applied": [
+        {
+          "rule_id": "2.2",
+          "outcome": "NOT_APPLICABLE"
+        }
+      ],
+      "motivation": "LC-undantaget aktiverades av den separata certifikattexten \"LC NUMBER: ILC017/53286/25 DATED 250320\". Enligt 2.2 ska consignor då inte verifieras och kontrollpunkten sätts till NOT_APPLICABLE."
+    },
+    "consignee": {
+      "applicable": false,
+      "status": "NOT_APPLICABLE",
+      "confidence": 0.99,
+      "certificate_value": "COMMERCIAL INTERNATIONAL BANK\n- CAIRO\nEgypt",
+      "invoice_value": "ETISALAT MISR SAE\n90TH STREET 5TH COMPOUND\nS4 BUILDING DOWN TOWN MALL\n99999 NEW CAIRO\nEGYPT",
+      "rules_applied": [
+        {
+          "rule_id": "2.2",
+          "outcome": "NOT_APPLICABLE"
+        }
+      ],
+      "motivation": "LC-undantaget aktiverades av den separata certifikattexten \"LC NUMBER: ILC017/53286/25 DATED 250320\". Enligt 2.2 ska consignee då inte verifieras och kontrollpunkten sätts till NOT_APPLICABLE."
+    },
+    "goods_description": {
+      "applicable": false,
+      "status": "NOT_APPLICABLE",
+      "confidence": 0.99,
+      "certificate_value": "27 PIECES TELECOM EQUIPMENT\nCUSTOMS INVOICE NO: 9209879237, DATED: 2026-02-16",
+      "invoice_value": "Descriptions of goods\nNew ENM Rack G10Plus BoQ - HW Modernization",
+      "rules_applied": [
+        {
+          "rule_id": "2.2",
+          "outcome": "NOT_APPLICABLE"
+        }
+      ],
+      "motivation": "LC-undantaget aktiverades av den separata certifikattexten \"LC NUMBER: ILC017/53286/25 DATED 250320\". Enligt 2.2 ska varubeskrivning då inte verifieras och kontrollpunkten sätts till NOT_APPLICABLE."
+    },
+    "quantity": {
+      "applicable": false,
+      "status": "NOT_APPLICABLE",
+      "confidence": 0.99,
+      "certificate_value": "1632,3 KGS GROSS",
+      "invoice_value": "Total gross weight\n1.632,340 KG\nNumber of packages\n27",
+      "rules_applied": [
+        {
+          "rule_id": "2.2",
+          "outcome": "NOT_APPLICABLE"
+        }
+      ],
+      "motivation": "LC-undantaget aktiverades av den separata certifikattexten \"LC NUMBER: ILC017/53286/25 DATED 250320\". Enligt 2.2 ska kvantitet då inte verifieras och kontrollpunkten sätts till NOT_APPLICABLE."
+    },
+    "origin": {
+      "applicable": true,
+      "status": "MANUAL_REVIEW",
+      "confidence": 0.68,
+      "certificate_value": "CZ, VN, IE, PL, CN, MY, EE, MK, CR",
+      "invoice_value": "CoO HS code Qty Price Price unit Amount\n...\nCZ 94032080 ...\nCN 85366990 ...\nVN 85447000 ...\nIE 84718000 ...\nPL 84718000 ...\nMY 85176200 ...\nEE 85444290 ...\nMK 85444210 ...\n* CR, CN",
+      "rules_applied": [
+        {
+          "rule_id": "2.2",
+          "outcome": "LC exception active"
+        },
+        {
+          "rule_id": "4.5.4",
+          "outcome": "ISO landkoder i certifikatet och fakturan är normaliserbara"
+        },
+        {
+          "rule_id": "4.5.3",
+          "outcome": "Mixed origins identified in invoice line items"
+        },
+        {
+          "rule_id": "2.2",
+          "outcome": "MANUAL_REVIEW because invoice origins are only found in line-level CoO column, not in an explicit dedicated origin field"
+        }
+      ],
+      "motivation": "LC-undantaget aktiveras eftersom certifikatet innehåller den exakta texten \"LC NUMBER: ILC017/53286/25 DATED 250320\" i remarks-rutan som en separat fältetikett och inte som del av ett vanligt referensnummer. Därför får endast ursprungsland verifieras enligt 2.2. Certifikatets ursprung är \"CZ, VN, IE, PL, CN, MY, EE, MK, CR\". I fakturan återfinns motsvarande landskoder endast i den radvisa kolumnen \"CoO\" på sidorna 1–2, inklusive den blandade raden \"* CR, CN\". Enligt 2.2 krävs vid LC att varje ursprungsland kan identifieras i ett explicit dedikerat origin-fält i fakturan; enbart radnivåkolumn för ursprung räcker inte för automatisk verifiering. Därför blir kontrollpunkten MANUAL_REVIEW, inte MATCH och inte MISMATCH."
+    }
+  },
+  "overall_assessment": {
+    "comparison_result": "MANUAL_REVIEW",
+    "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
+    "auto_approval_eligible": false,
+    "confidence": 0.78,
+    "critical_failures": [],
+    "manual_review_triggers": [
+      "LC-undantag enligt 2.2 aktiverat genom separat certifikatfält: \"LC NUMBER: ILC017/53286/25 DATED 250320\".",
+      "Vid LC får endast ursprungsland verifieras.",
+      "Fakturans ursprungsuppgifter finns endast i radvis \"CoO\"-kolumn, inte i ett explicit dedikerat origin-fält enligt 2.2."
+    ],
+    "decision_summary": "Dokumentparet kunde paras giltigt via certifikatets referens till customs invoice no. 9209879237 och fakturans invoice no. 9209879237 samt genom att Ericsson AB förekommer i fakturan. LC-undantaget aktiverades av den separata certifikattexten \"LC NUMBER: ILC017/53286/25 DATED 250320\". Därmed sattes consignor, consignee, goods description och quantity till NOT_APPLICABLE. Ursprungsländerna i certifikatet återfinns endast i fakturans radvisa \"CoO\"-kolumn och inte i ett explicit dedikerat origin-fält, vilket enligt 2.2 inte räcker för automatisk verifiering. Totalresultatet blir därför MANUAL_REVIEW."
+  },
+  "_meta": {
+    "tested_at": "2026-03-31T15:11:29.427174+00:00",
+    "prompt_hash": "222d6aa82bf4",
+    "pair": "P014_MATCH",
+    "expected": "IDENTICAL",
+    "actual": "MANUAL_REVIEW",
+    "status": "REVIEW"
+  }
+}

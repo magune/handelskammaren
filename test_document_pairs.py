@@ -1,3 +1,5 @@
+import datetime
+import hashlib
 import json
 import re
 import time
@@ -35,14 +37,41 @@ REGRESSION_GUARD = [
     "P231",   # NOT_IDENTICAL — hög konfidens mismatch
 ]
 
-ONLY_PAIRS = REGRESSION_GUARD  # Regressionsvakt — kör efter promptändringar
+ONLY_PAIRS = [
+    'P014', 'P0147', 'P0148', 'P0149', 'P015', 'P0150', 'P0151', 'P0152',
+    'P0153', 'P0154', 'P0155', 'P0156', 'P0157', 'P0158', 'P0159', 'P016',
+    'P0160', 'P0161', 'P0162', 'P0163', 'P0164', 'P0165', 'P0166', 'P0167',
+    'P0168', 'P0169', 'P017', 'P0170', 'P0171', 'P0172', 'P0173', 'P0174',
+    'P0175', 'P0176', 'P0177', 'P0178', 'P0179', 'P018', 'P0180', 'P0181',
+    'P0182', 'P0183', 'P0184', 'P0185', 'P0186', 'P0187', 'P0188', 'P0189',
+    'P0190', 'P0191', 'P0192', 'P0193', 'P0194', 'P020', 'P021', 'P022',
+    'P023', 'P024', 'P025', 'P026', 'P027', 'P028', 'P029', 'P030', 'P031',
+    'P032', 'P033', 'P034', 'P035', 'P036', 'P037', 'P038', 'P039', 'P040',
+    'P041', 'P042', 'P043', 'P044', 'P045', 'P046', 'P047', 'P048', 'P049',
+    'P050', 'P051', 'P052', 'P053', 'P054', 'P055', 'P056', 'P057', 'P058',
+    'P059', 'P060', 'P061', 'P062', 'P063', 'P064', 'P065', 'P066', 'P067',
+    'P068', 'P069', 'P075', 'P076', 'P077', 'P078', 'P079', 'P080', 'P081',
+    'P082', 'P083', 'P084', 'P090', 'P091', 'P092', 'P093', 'P094', 'P095',
+    'P096', 'P097', 'P098', 'P099', 'P196', 'P197', 'P198', 'P199', 'P200',
+    'P201', 'P202', 'P203', 'P204', 'P205', 'P206', 'P207', 'P208', 'P209',
+    'P210', 'P216', 'P217', 'P218', 'P219', 'P220', 'P221', 'P222', 'P223',
+    'P224', 'P225', 'P226', 'P227', 'P228', 'P229', 'P230', 'P236', 'P237',
+    'P238', 'P239', 'P240',
+]  # Fail-fast: 158 oprovade par
 
 # Max pairs per batch submission — smaller = faster first results
 BATCH_CHUNK_SIZE = 5
 
 # Max number of OpenAI batches running simultaneously.
-# OpenAI has concurrent batch limits — keep this at most 10-15.
-MAX_CONCURRENT_BATCHES = 10
+# With FAIL_FAST=True, keep this at 1-3 to avoid wasting money on already-submitted
+# batches when a FAIL is detected early. With FAIL_FAST=False, use 10-15 for speed.
+MAX_CONCURRENT_BATCHES = 2
+
+# Stop immediately when a FAIL is detected. Already-submitted batches are
+# preserved in batch_run_state.json and will be resumed on next run.
+# With small MAX_CONCURRENT_BATCHES, at most MAX_CONCURRENT_BATCHES*BATCH_CHUNK_SIZE
+# pairs are "at risk" when a FAIL is found (i.e. already submitted but not yet seen).
+FAIL_FAST = True
 
 # Retry settings for network errors
 MAX_RETRIES = 20
@@ -54,6 +83,7 @@ TESTREPORTS_DIR.mkdir(exist_ok=True)
 
 client = OpenAI()
 system_prompt = PROMPT_FILE.read_text(encoding="utf-8")
+prompt_hash = hashlib.sha256(system_prompt.encode()).hexdigest()[:12]
 schema = json.loads(SCHEMA_FILE.read_text(encoding="utf-8"))
 
 
@@ -120,8 +150,41 @@ def report_path_for(pair_name: str, category: str) -> Path:
 
 
 def already_collected(pair: dict) -> bool:
-    """True if a result file already exists for this pair."""
-    return report_path_for(pair["name"], pair["category"]).exists()
+    """True if a result file exists AND was produced by the current prompt."""
+    rp = report_path_for(pair["name"], pair["category"])
+    if not rp.exists():
+        return False
+    try:
+        meta = json.loads(rp.read_text(encoding="utf-8")).get("_meta", {})
+        return meta.get("prompt_hash") == prompt_hash
+    except Exception:
+        return False
+
+
+def report_mtime(pair: dict) -> float:
+    """Return mtime of existing report, or 0.0 if no report exists."""
+    rp = report_path_for(pair["name"], pair["category"])
+    try:
+        return rp.stat().st_mtime
+    except FileNotFoundError:
+        return 0.0
+
+
+def sort_pairs_by_test_priority(pairs: list[dict]) -> list[dict]:
+    """
+    Sort pairs so we find new problems as cheaply as possible:
+      1. Never-tested pairs first (no report file) — highest priority
+      2. Oldest-tested pairs next (stale results)
+      3. Most-recently-tested pairs last — least likely to have changed
+
+    Within each group, preserve original alphabetical order.
+    """
+    never_tested = [p for p in pairs if report_mtime(p) == 0.0]
+    tested = sorted(
+        [p for p in pairs if report_mtime(p) > 0.0],
+        key=lambda p: report_mtime(p),
+    )
+    return never_tested + tested
 
 
 # ---------------------------------------------------------------------------
@@ -334,7 +397,15 @@ def print_pair_result(pair: dict, result: dict, input_tokens: int, output_tokens
 
     print(f"\n  Tokens — Input: {input_tokens:,}, Output: {output_tokens:,}")
 
-    # Save report
+    # Save report with metadata
+    result["_meta"] = {
+        "tested_at": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+        "prompt_hash": prompt_hash,
+        "pair": name,
+        "expected": pair["expected"],
+        "actual": comparison_result,
+        "status": status,
+    }
     report_path_for(name, pair["category"]).write_text(
         json.dumps(result, indent=2, ensure_ascii=False), encoding="utf-8"
     )
@@ -425,6 +496,79 @@ def print_summary(results: list[dict]):
 # Main
 # ---------------------------------------------------------------------------
 
+def poll_until_done(pending_batches: list[dict], state: dict, pair_by_name: dict,
+                    all_results: list[dict], all_pairs: list[dict]) -> str:
+    """
+    Poll pending_batches until all finish (or FAIL_FAST triggers).
+
+    Returns:
+      "done"      — all batches finished normally
+      "fail_fast" — a FAIL was detected; state is saved for resume
+    """
+    while pending_batches:
+        still_pending = []
+        for chunk_state in pending_batches:
+            batch_id = chunk_state["batch_id"]
+            try:
+                batch_obj = api_call(client.batches.retrieve, batch_id)
+            except Exception as e:
+                print(f"  Could not retrieve batch {batch_id}: {e}")
+                still_pending.append(chunk_state)
+                continue
+
+            counts = batch_obj.request_counts
+            completed = counts.completed if counts else "?"
+            total_ct = counts.total if counts else "?"
+            idx = chunk_state["chunk_index"] + 1
+            print(f"  [chunk {idx:2d}] {batch_obj.status:12s}  {completed}/{total_ct} completed", flush=True)
+
+            if batch_obj.status in ("completed", "failed", "expired", "cancelled"):
+                print(f"\n  [chunk {idx}] Collecting results...")
+                chunk_pairs = [pair_by_name[n] for n in chunk_state["pair_names"] if n in pair_by_name]
+                chunk_pair_by_name = {p["name"]: p for p in chunk_pairs}
+                results = collect_results(batch_obj, chunk_state, chunk_pair_by_name)
+
+                completed_count = batch_obj.request_counts.completed if batch_obj.request_counts else 0
+                if completed_count == 0 and batch_obj.status == "failed":
+                    print(f"  [chunk {idx}] Batch failed with 0 results — will retry on next run.")
+                    chunk_state["results_collected"] = False
+                    chunk_state["batch_id"] = None
+                else:
+                    all_results.extend(results)
+                    chunk_state["results_collected"] = True
+
+                delete_files(chunk_state.get("file_ids", {}))
+                save_state(state)
+
+                done_batches = sum(1 for b in state["batches"] if b["results_collected"])
+                total_batches = len(state["batches"])
+                print(f"  [chunk {idx}] Done. ({done_batches}/{total_batches} batchar klara)")
+                print_progress(all_results, len(all_pairs))
+
+                # FAIL_FAST check — scan newly collected results
+                if FAIL_FAST:
+                    new_fails = [r for r in results if r.get("status") == "FAIL"]
+                    if new_fails:
+                        print(f"\n{'!'*60}")
+                        print(f"  FAIL_FAST triggered — stopping immediately.")
+                        for r in new_fails:
+                            print(f"  FAIL  {r['name']:30s}  expected={r['expected']:16s}  got={r['actual']}")
+                        print(f"  State preserved in {RUN_STATE_FILE.name} — resume after fixing prompt.")
+                        print(f"{'!'*60}")
+                        return "fail_fast"
+            else:
+                still_pending.append(chunk_state)
+
+        if still_pending:
+            pending_batches = still_pending
+            print(f"\n  {len(still_pending)} batches still running — checking again in {POLL_INTERVAL}s...")
+            time.sleep(POLL_INTERVAL)
+        else:
+            pending_batches = []
+
+    return "done"
+
+
 def main():
     all_pairs = get_document_pairs()
     active_filter = ONLY_PAIRS if ONLY_PAIRS is not None else None
@@ -434,6 +578,11 @@ def main():
     if not all_pairs:
         print(f"No document pairs found.")
         return
+
+    # When running all pairs, sort so untested/stale pairs come first.
+    # This lets FAIL_FAST catch new problems before retesting stable pairs.
+    if active_filter is None:
+        all_pairs = sort_pairs_by_test_priority(all_pairs)
 
     pair_by_name = {p["name"]: p for p in all_pairs}
     chunks = [all_pairs[i:i + BATCH_CHUNK_SIZE] for i in range(0, len(all_pairs), BATCH_CHUNK_SIZE)]
@@ -451,90 +600,10 @@ def main():
             print("WARNING: Saved state does not match current pair list — starting fresh.")
             state = None
 
-    if state is None:
-        print(f"\nRunning {len(all_pairs)} pairs in {len(chunks)} chunks of {BATCH_CHUNK_SIZE}...")
-        print(f"Max {MAX_CONCURRENT_BATCHES} concurrent batches — submitting in waves.\n")
-        batch_states = []
-
-        for i, chunk in enumerate(chunks):
-            pending = [p for p in chunk if not already_collected(p)]
-            if not pending:
-                print(f"  [chunk {i+1}] All pairs already done, skipping.")
-                batch_states.append({
-                    "chunk_index": i,
-                    "batch_id": None,
-                    "pair_names": [p["name"] for p in chunk],
-                    "file_ids": {},
-                    "results_collected": True,
-                })
-                continue
-
-            # Wait if too many batches are currently active
-            while True:
-                active = sum(
-                    1 for b in batch_states
-                    if b.get("batch_id") and not b.get("results_collected")
-                )
-                if active < MAX_CONCURRENT_BATCHES:
-                    break
-                print(f"  {active} batches active (limit {MAX_CONCURRENT_BATCHES}) — waiting {POLL_INTERVAL}s before submitting chunk {i+1}...")
-                time.sleep(POLL_INTERVAL)
-
-            chunk_state = submit_chunk(pending, i)
-            batch_states.append(chunk_state)
-            save_state({"batches": batch_states})
-
-        state = {"batches": batch_states}
-        save_state(state)
-    else:
-        print(f"\nResuming run from saved state ({len(state['batches'])} batches)...")
-
-        # Reset batches that failed with 0 results so they get resubmitted
-        for b in state["batches"]:
-            if b.get("results_collected") and b.get("batch_id"):
-                # Check if any pair from this batch actually has a report file
-                has_results = any(
-                    already_collected(pair_by_name[n])
-                    for n in b["pair_names"]
-                    if n in pair_by_name
-                )
-                if not has_results:
-                    print(f"  [chunk {b['chunk_index']+1}] Re-queuing — previously failed with 0 results.")
-                    b["results_collected"] = False
-                    b["batch_id"] = None  # Force resubmission
-        save_state(state)
-
-        # Resubmit chunks that need it
-        needs_submit = [b for b in state["batches"] if not b["results_collected"] and not b["batch_id"]]
-        if needs_submit:
-            print(f"  Resubmitting {len(needs_submit)} failed chunks in waves of {MAX_CONCURRENT_BATCHES}...")
-            for b in needs_submit:
-                while True:
-                    active = sum(
-                        1 for x in state["batches"]
-                        if x.get("batch_id") and not x.get("results_collected")
-                    )
-                    if active < MAX_CONCURRENT_BATCHES:
-                        break
-                    print(f"  {active} active — waiting {POLL_INTERVAL}s...")
-                    time.sleep(POLL_INTERVAL)
-
-                chunk = [pair_by_name[n] for n in b["pair_names"] if n in pair_by_name]
-                pending = [p for p in chunk if not already_collected(p)]
-                if pending:
-                    new_state = submit_chunk(pending, b["chunk_index"])
-                    b.update(new_state)
-                    save_state(state)
-                else:
-                    b["results_collected"] = True
-                    save_state(state)
-
     # -----------------------------------------------------------------------
-    # Poll all batches until all complete, collect results as each finishes
+    # Collect already-done pairs from existing report files (before any API calls)
     # -----------------------------------------------------------------------
-    all_results = []
-
-    # Collect already-done pairs from existing report files
+    all_results: list[dict] = []
     for p in all_pairs:
         if already_collected(p):
             rp = report_path_for(p["name"], p["category"])
@@ -559,69 +628,113 @@ def main():
             except Exception:
                 pass
 
-    pending_batches = [b for b in state["batches"] if not b["results_collected"] and b["batch_id"]]
+    if state is None:
+        # -----------------------------------------------------------------------
+        # Fresh run: submit and poll one wave at a time (fail-fast friendly)
+        # -----------------------------------------------------------------------
+        mode = "sequential waves" if FAIL_FAST else f"up to {MAX_CONCURRENT_BATCHES} concurrent"
+        print(f"\nRunning {len(all_pairs)} pairs in {len(chunks)} chunks of {BATCH_CHUNK_SIZE} ({mode})...")
+        if FAIL_FAST:
+            print(f"FAIL_FAST=True: submitting {MAX_CONCURRENT_BATCHES} batch(es) at a time — stopping on first FAIL.\n")
 
-    while pending_batches:
-        still_pending = []
-        for chunk_state in pending_batches:
-            batch_id = chunk_state["batch_id"]
-            try:
-                batch_obj = api_call(client.batches.retrieve, batch_id)
-            except Exception as e:
-                print(f"  Could not retrieve batch {batch_id}: {e}")
-                still_pending.append(chunk_state)
+        batch_states: list[dict] = []
+        chunk_queue = list(enumerate(chunks))  # (original_index, chunk)
+
+        while chunk_queue:
+            # Submit up to MAX_CONCURRENT_BATCHES new batches
+            wave: list[dict] = []
+            while chunk_queue and len(wave) < MAX_CONCURRENT_BATCHES:
+                i, chunk = chunk_queue.pop(0)
+                pending = [p for p in chunk if not already_collected(p)]
+                if not pending:
+                    print(f"  [chunk {i+1}] All pairs already done, skipping.")
+                    already_done_state = {
+                        "chunk_index": i,
+                        "batch_id": None,
+                        "pair_names": [p["name"] for p in chunk],
+                        "file_ids": {},
+                        "results_collected": True,
+                    }
+                    batch_states.append(already_done_state)
+                    # Don't count skipped chunks against wave size — keep pulling
+                    continue
+                chunk_state = submit_chunk(pending, i)
+                batch_states.append(chunk_state)
+                wave.append(chunk_state)
+
+            if not wave:
+                # All remaining chunks were already done
                 continue
 
-            counts = batch_obj.request_counts
-            completed = counts.completed if counts else "?"
-            total = counts.total if counts else "?"
-            idx = chunk_state["chunk_index"] + 1
-            print(f"  [chunk {idx:2d}] {batch_obj.status:12s}  {completed}/{total} completed", flush=True)
+            state = {"batches": batch_states}
+            save_state(state)
 
-            if batch_obj.status in ("completed", "failed", "expired", "cancelled"):
-                print(f"\n  [chunk {idx}] Collecting results...")
-                chunk_pairs = [pair_by_name[n] for n in chunk_state["pair_names"] if n in pair_by_name]
-                chunk_pair_by_name = {p["name"]: p for p in chunk_pairs}
-                results = collect_results(batch_obj, chunk_state, chunk_pair_by_name)
+            # Poll this wave to completion (or FAIL_FAST)
+            outcome = poll_until_done(wave, state, pair_by_name, all_results, all_pairs)
+            if outcome == "fail_fast":
+                return  # State saved; resume after prompt fix
 
-                # Only mark as collected if we actually got results
-                # (failed batches with 0/0 should be retried on next run)
-                completed_count = batch_obj.request_counts.completed if batch_obj.request_counts else 0
-                if completed_count == 0 and batch_obj.status == "failed":
-                    print(f"  [chunk {idx}] Batch failed with 0 results — will retry on next run.")
-                    chunk_state["results_collected"] = False
-                    chunk_state["batch_id"] = None  # Clear so it gets resubmitted
-                else:
-                    all_results.extend(results)
-                    chunk_state["results_collected"] = True
+        state = {"batches": batch_states}
+        save_state(state)
 
-                # Clean up uploaded files
-                delete_files(chunk_state.get("file_ids", {}))
+    else:
+        # -----------------------------------------------------------------------
+        # Resume from saved state
+        # -----------------------------------------------------------------------
+        print(f"\nResuming run from saved state ({len(state['batches'])} batches)...")
+
+        # Reset batches that failed with 0 results so they get resubmitted
+        for b in state["batches"]:
+            if b.get("results_collected") and b.get("batch_id"):
+                has_results = any(
+                    already_collected(pair_by_name[n])
+                    for n in b["pair_names"]
+                    if n in pair_by_name
+                )
+                if not has_results:
+                    print(f"  [chunk {b['chunk_index']+1}] Re-queuing — previously failed with 0 results.")
+                    b["results_collected"] = False
+                    b["batch_id"] = None
+        save_state(state)
+
+        # Resubmit failed chunks in waves (same fail-fast logic)
+        needs_submit = [b for b in state["batches"] if not b["results_collected"] and not b["batch_id"]]
+        if needs_submit:
+            print(f"  Resubmitting {len(needs_submit)} failed chunks in waves of {MAX_CONCURRENT_BATCHES}...")
+            queue = list(needs_submit)
+            while queue:
+                wave = queue[:MAX_CONCURRENT_BATCHES]
+                queue = queue[MAX_CONCURRENT_BATCHES:]
+                for b in wave:
+                    chunk = [pair_by_name[n] for n in b["pair_names"] if n in pair_by_name]
+                    pending = [p for p in chunk if not already_collected(p)]
+                    if pending:
+                        new_state = submit_chunk(pending, b["chunk_index"])
+                        b.update(new_state)
+                    else:
+                        b["results_collected"] = True
                 save_state(state)
 
-                done_batches = sum(1 for b in state["batches"] if b["results_collected"])
-                total_batches = len(state["batches"])
-                print(f"  [chunk {idx}] Done. ({done_batches}/{total_batches} batchar klara)")
-                print_progress(all_results, len(all_pairs))
-            else:
-                still_pending.append(chunk_state)
+                active_wave = [b for b in wave if b.get("batch_id") and not b["results_collected"]]
+                if active_wave:
+                    outcome = poll_until_done(active_wave, state, pair_by_name, all_results, all_pairs)
+                    if outcome == "fail_fast":
+                        return
 
-        if still_pending:
-            pending_batches = still_pending
-            print(f"\n  {len(still_pending)} batches still running — checking again in {POLL_INTERVAL}s...")
-            time.sleep(POLL_INTERVAL)
-        else:
-            pending_batches = []
+        # Poll any already-submitted-but-not-collected batches
+        pending_batches = [b for b in state["batches"] if not b["results_collected"] and b["batch_id"]]
+        if pending_batches:
+            outcome = poll_until_done(pending_batches, state, pair_by_name, all_results, all_pairs)
+            if outcome == "fail_fast":
+                return
 
     # -----------------------------------------------------------------------
     # Final summary and cleanup
     # -----------------------------------------------------------------------
-    # Only summarize pairs from this run
     run_pair_names = {p["name"] for p in all_pairs}
     run_results = [r for r in all_results if r["name"] in run_pair_names]
     print_summary(run_results)
 
-    # Remove state file when run is complete
     all_collected = all(b["results_collected"] for b in state["batches"] if b["batch_id"])
     if all_collected:
         RUN_STATE_FILE.unlink(missing_ok=True)
