@@ -37,27 +37,7 @@ REGRESSION_GUARD = [
     "P231",   # NOT_IDENTICAL — hög konfidens mismatch
 ]
 
-ONLY_PAIRS = [
-    # P0158 re-test after prompt fix (was FAIL); P014,P0147-P0157,P0159 skipped (tested with prev prompt, re-run later)
-    'P0158', 'P015', 'P016',
-    'P0160', 'P0161', 'P0162', 'P0163', 'P0164', 'P0165', 'P0166', 'P0167',
-    'P0168', 'P0169', 'P017', 'P0170', 'P0171', 'P0172', 'P0173', 'P0174',
-    'P0175', 'P0176', 'P0177', 'P0178', 'P0179', 'P018', 'P0180', 'P0181',
-    'P0182', 'P0183', 'P0184', 'P0185', 'P0186', 'P0187', 'P0188', 'P0189',
-    'P0190', 'P0191', 'P0192', 'P0193', 'P0194', 'P020', 'P021', 'P022',
-    'P023', 'P024', 'P025', 'P026', 'P027', 'P028', 'P029', 'P030', 'P031',
-    'P032', 'P033', 'P034', 'P035', 'P036', 'P037', 'P038', 'P039', 'P040',
-    'P041', 'P042', 'P043', 'P044', 'P045', 'P046', 'P047', 'P048', 'P049',
-    'P050', 'P051', 'P052', 'P053', 'P054', 'P055', 'P056', 'P057', 'P058',
-    'P059', 'P060', 'P061', 'P062', 'P063', 'P064', 'P065', 'P066', 'P067',
-    'P068', 'P069', 'P075', 'P076', 'P077', 'P078', 'P079', 'P080', 'P081',
-    'P082', 'P083', 'P084', 'P090', 'P091', 'P092', 'P093', 'P094', 'P095',
-    'P096', 'P097', 'P098', 'P099', 'P196', 'P197', 'P198', 'P199', 'P200',
-    'P201', 'P202', 'P203', 'P204', 'P205', 'P206', 'P207', 'P208', 'P209',
-    'P210', 'P216', 'P217', 'P218', 'P219', 'P220', 'P221', 'P222', 'P223',
-    'P224', 'P225', 'P226', 'P227', 'P228', 'P229', 'P230', 'P236', 'P237',
-    'P238', 'P239', 'P240',
-]  # Fail-fast: 145 par (13 recently tested pairs skipped; re-add after full run)
+ONLY_PAIRS = REGRESSION_GUARD  # ~$2.70 per prompt iteration; set to None for full 242-pair run
 
 # Max pairs per batch submission — smaller = faster first results
 BATCH_CHUNK_SIZE = 2
@@ -230,8 +210,7 @@ def build_request(pair: dict, file_ids: dict[str, str]) -> dict:
         "method": "POST",
         "url": "/v1/chat/completions",
         "body": {
-            "model": "gpt-5.4",
-            "reasoning_effort": "medium",
+            "model": "gpt-4.1-mini",
             "messages": [
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": user_message},
@@ -439,7 +418,7 @@ def print_progress(all_results: list[dict], total_pairs: int):
     remaining = total_pairs - done
     tokens_in  = sum(r.get("input_tokens", 0) for r in all_results)
     tokens_out = sum(r.get("output_tokens", 0) for r in all_results)
-    est_cost   = (tokens_in * 7.5 + tokens_out * 30.0) / 1_000_000
+    est_cost   = (tokens_in * 0.05 + tokens_out * 0.20) / 1_000_000
 
     print(f"\n  ┌─ PROGRESS ({'='*40})")
     print(f"  │  Klara:       {done}/{total_pairs}  ({done/total_pairs*100:.0f}%)  — {remaining} kvar")
@@ -460,7 +439,7 @@ def print_summary(results: list[dict]):
 
     total_in  = sum(r.get("input_tokens", 0) for r in results)
     total_out = sum(r.get("output_tokens", 0) for r in results)
-    est_cost  = (total_in * 7.5 + total_out * 30.0) / 1_000_000
+    est_cost  = (total_in * 0.05 + total_out * 0.20) / 1_000_000
 
     print(f"\n{'='*60}")
     print(f"  SLUTRESULTAT: {total} dokumentpar testade")

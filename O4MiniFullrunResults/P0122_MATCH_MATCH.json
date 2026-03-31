@@ -1,0 +1,154 @@
+{
+  "schema_version": "3.0",
+  "metadata": {
+    "verification_timestamp": "2026-03-05T12:00:00Z",
+    "document_pair_id": null,
+    "certificate_issue_date": "2026-03-02",
+    "source_documents_received": 2
+  },
+  "task": {
+    "task_type": "customs_document_pair_verification",
+    "comparison_mode": "certificate_vs_invoice",
+    "strictness": "conservative"
+  },
+  "documents": {
+    "document_a": {
+      "label": "Document A",
+      "assumed_role": "certificate",
+      "document_type": "Certificate of Origin"
+    },
+    "document_b": {
+      "label": "Document B",
+      "assumed_role": "invoice",
+      "document_type": "Commercial Invoice"
+    }
+  },
+  "rule_activation": {
+    "lc_exception_active": false,
+    "lc_number_found": null,
+    "general_goods_description_with_invoice_reference_active": false,
+    "mixed_origins_rule_active": false,
+    "to_order_rule_active": false,
+    "quantity_exception_applied": null,
+    "eu_origin_normalization_active": true,
+    "activated_rules": [
+      {
+        "rule_id": "4.1.0",
+        "rule_name": "Koncernstruktur för consignor"
+      },
+      {
+        "rule_id": "4.2.0.2",
+        "rule_name": "Prioritetsordning för consignee"
+      },
+      {
+        "rule_id": "4.3.2",
+        "rule_name": "Prioritet 1: Artikelnummer ej tillämplig"
+      },
+      {
+        "rule_id": "4.3.3.2",
+        "rule_name": "Huvudbeteckning som ordsekvens → MANUAL_REVIEW"
+      },
+      {
+        "rule_id": "4.4.3",
+        "rule_name": "Huvudregel kvantitet"
+      },
+      {
+        "rule_id": "4.5.4.2",
+        "rule_name": "EU ↔ medlemsland"
+      }
+    ]
+  },
+  "control_points": {
+    "consignor": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.95,
+      "certificate_value": "Elmo Sweden AB",
+      "invoice_value": "Elmo Sweden AB",
+      "rules_applied": [
+        {
+          "rule_id": "4.1.0",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Consignor \"Elmo Sweden AB\" identifieras explicit som fakturautställare via brevhuvud och betalningsuppgifter (rule 4.1.0)."
+    },
+    "consignee": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.95,
+      "certificate_value": "Brusarosco de Mexico S.A de C.Vv",
+      "invoice_value": "Brusarosco de Mexico S.A. de C.Vv",
+      "rules_applied": [
+        {
+          "rule_id": "4.2.0.2",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Consignee identifieras i fakturans Ship-to-fält som exakt \"Brusarosco de Mexico S.A. de C.Vv\" (rule 4.2.0.2)."
+    },
+    "goods_description": {
+      "applicable": true,
+      "status": "MANUAL_REVIEW",
+      "confidence": 0.7,
+      "certificate_value": "Provence Jet Black",
+      "invoice_value": "PROVENCE 600R JET BLACK I",
+      "rules_applied": [
+        {
+          "rule_id": "4.3.3.2",
+          "outcome": "MANUAL_REVIEW"
+        }
+      ],
+      "motivation": "Huvudbeteckningen \"Provence Jet Black\" förekommer i fakturan med tillägg \"600R\" och \"I\" mellan orden → MANUAL_REVIEW enligt regel 4.3.3.2."
+    },
+    "quantity": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.95,
+      "certificate_value": "1397,61 M2",
+      "invoice_value": "1397,61 M2",
+      "rules_applied": [
+        {
+          "rule_id": "4.4.3",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatets area 1397,61 M2 identifieras exakt i fakturans Total M2: 1397,61 M2 (rule 4.4.3)."
+    },
+    "origin": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.9,
+      "certificate_value": "EUROPEAN UNION; Sweden",
+      "invoice_value": "GOODS OF EUROPEAN COMMUNITY ORIGIN; Swedish Origin",
+      "rules_applied": [
+        {
+          "rule_id": "4.5.4.2",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Origin \"European Union\" och \"Sweden\" verifieras via fakturans text \"GOODS OF EUROPEAN COMMUNITY ORIGIN\" och \"Swedish Origin\" (rule 4.5.4.2)."
+    }
+  },
+  "overall_assessment": {
+    "comparison_result": "MANUAL_REVIEW",
+    "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
+    "auto_approval_eligible": false,
+    "confidence": 0.85,
+    "critical_failures": [],
+    "manual_review_triggers": [
+      "goods_description"
+    ],
+    "decision_summary": "Varubeskrivningen kräver manuell granskning på grund av tillägg i fakturans beskrivning.",
+    "human_explanation": "Beskrivningen i certifikatet skiljer sig från fakturans detaljerade text, vilket kräver manuell kontroll."
+  },
+  "_meta": {
+    "tested_at": "2026-03-31T19:55:00.247999+00:00",
+    "prompt_hash": "7e05e86256d8",
+    "model": "o4-mini",
+    "pair": "P0122_MATCH",
+    "expected": "IDENTICAL",
+    "actual": "MANUAL_REVIEW",
+    "status": "REVIEW"
+  }
+}

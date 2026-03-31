@@ -1,0 +1,143 @@
+{
+  "schema_version": "3.0",
+  "metadata": {
+    "verification_timestamp": null,
+    "document_pair_id": null,
+    "certificate_issue_date": "2023-04-27",
+    "source_documents_received": 2
+  },
+  "task": {
+    "task_type": "customs_document_pair_verification",
+    "comparison_mode": "certificate_vs_invoice",
+    "strictness": "conservative"
+  },
+  "documents": {
+    "document_a": {
+      "label": "Document A",
+      "assumed_role": "certificate",
+      "document_type": "Certificate of Origin"
+    },
+    "document_b": {
+      "label": "Document B",
+      "assumed_role": "invoice",
+      "document_type": "Invoice"
+    }
+  },
+  "rule_activation": {
+    "lc_exception_active": false,
+    "lc_number_found": null,
+    "general_goods_description_with_invoice_reference_active": true,
+    "mixed_origins_rule_active": false,
+    "to_order_rule_active": false,
+    "quantity_exception_applied": null,
+    "eu_origin_normalization_active": true,
+    "activated_rules": [
+      {
+        "rule_id": "2.2",
+        "rule_name": "LC exception not activated"
+      },
+      {
+        "rule_id": "4.3.5",
+        "rule_name": "General goods description with invoice reference"
+      },
+      {
+        "rule_id": "4.5.4.1",
+        "rule_name": "EU origin normalization rule active"
+      }
+    ]
+  },
+  "control_points": {
+    "consignor": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.9,
+      "certificate_value": "Bakels Sweden AB",
+      "invoice_value": "Bakels Sweden AB",
+      "rules_applied": [
+        {
+          "rule_id": "4.1.0",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatets consignor 'Bakels Sweden AB' kan identifieras exakt i fakturan som fakturautställare och även i adressblock som 'Bakels Sweden AB' med överensstämmande land Sverige. Normalisering av gemener/versaler och företagsbeteckningar tillämpades, och sökning omfattade fakturans alla sidor och fält. Regel 4.1.0 om koncernstruktur ger MATCH."
+    },
+    "consignee": {
+      "applicable": true,
+      "status": "MISMATCH",
+      "confidence": 0.95,
+      "certificate_value": "CBL Foods International (PVT) Ltd",
+      "invoice_value": "National Food Company Cake Division (AMERICANA)",
+      "rules_applied": [
+        {
+          "rule_id": "4.2.0.2",
+          "outcome": "MISMATCH"
+        }
+      ],
+      "motivation": "Certifikatet anger mottagaren som 'CBL Foods International (PVT) Ltd' med adress i Sri Lanka. Fakturans faktureringsfält anger 'National Food Company Cake Division (AMERICANA)' med adress i Saudi Arabien. Eftersom certifikatets consignee inte kan identifieras i fakturans primära faktureringsfält och finns ej i sekundära fält, ger detta MISMATCH enligt prioriteringsregeln 4.2.0.2."
+    },
+    "goods_description": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.9,
+      "certificate_value": "Bakery Ingredients",
+      "invoice_value": "Cake Flavour K2000 Lemon, Jilk 60",
+      "rules_applied": [
+        {
+          "rule_id": "4.3.5",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatet innehåller en generell varubeskrivning 'Bakery Ingredients' och hänvisar uttryckligen till fakturan nummer SI309081 och fakturadatum 2023-04-20. Fakturan bekräftar samma fakturanummer och datum, vilket uppfyller kraven för prioritet 3 enligt regel 4.3.5. Artikelnummer anges också i fakturan för detaljerade varor men certifikatet baserar verifieringen på fakturareferens och datum, vilket ger MATCH."
+    },
+    "quantity": {
+      "applicable": true,
+      "status": "MISMATCH",
+      "confidence": 0.85,
+      "certificate_value": "9600 kg net\n10400 kg gross",
+      "invoice_value": "Net weight: 19 908 kg\nGross weight: 21 028 kg",
+      "rules_applied": [
+        {
+          "rule_id": "4.4.1",
+          "outcome": "MISMATCH"
+        }
+      ],
+      "motivation": "Certifikatet anger kvantitet som 9600 kg netto och 10400 kg brutto. Fakturan anger nettovikt 19 908 kg och bruttovikt 21 028 kg, vilket inte överensstämmer inom den tillåtna toleransen. Ingen tillämplig undantagsregel (3A-3E) kan appliceras, och viktangivelser skiljer sig avsevärt vilket ger MISMATCH enligt regel 4.4.1."
+    },
+    "origin": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.95,
+      "certificate_value": "EC; SWEDEN",
+      "invoice_value": "Origin: SWE",
+      "rules_applied": [
+        {
+          "rule_id": "4.5.4.1",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatets ursprungsland anges som 'EC; SWEDEN' där 'EC' tolkas som 'European Community' (EU). Fakturan anger ursprung i 'SWE' (Sverige) för relevanta varor, vilket bekräftar ursprunget enligt EU-normaliseringsregeln 4.5.4.1 och landnormalisering enligt regel 4.6."
+    }
+  },
+  "overall_assessment": {
+    "comparison_result": "NOT_IDENTICAL",
+    "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
+    "auto_approval_eligible": false,
+    "confidence": 0.89,
+    "critical_failures": [
+      "consignee",
+      "quantity"
+    ],
+    "manual_review_triggers": [],
+    "decision_summary": "Consignor kan verifieras. Mottagaren i certifikatet överensstämmer inte med fakturans köpare enligt faktureringsfältet. Kvantiteter skiljer sig väsentligt mellan certifikat och faktura. Ursprungsland är verifierat enligt EU-normalisering. Totalt sett kan dokumentparet inte anses överensstämma.",
+    "human_explanation": "Certifikatet anger mottagaren som CBL Foods International (PVT) Ltd medan fakturan är ställd till National Food Company Cake Division (AMERICANA). Kvantiteten i certifikatet och fakturan skiljer sig avsevärt. Avsändare och ursprungsland kan verifieras, men mottagare och mängd kräver manuell granskning."
+  },
+  "_meta": {
+    "tested_at": "2026-03-31T20:16:27.993689+00:00",
+    "prompt_hash": "7e05e86256d8",
+    "model": "gpt-4.1-mini",
+    "pair": "P090_MISMATCH",
+    "expected": "NOT_IDENTICAL",
+    "actual": "NOT_IDENTICAL",
+    "status": "PASS"
+  }
+}

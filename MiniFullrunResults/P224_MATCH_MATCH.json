@@ -1,0 +1,146 @@
+{
+  "schema_version": "3.0",
+  "metadata": {
+    "verification_timestamp": null,
+    "document_pair_id": null,
+    "certificate_issue_date": "2025-05-15",
+    "source_documents_received": 2
+  },
+  "task": {
+    "task_type": "customs_document_pair_verification",
+    "comparison_mode": "certificate_vs_invoice",
+    "strictness": "conservative"
+  },
+  "documents": {
+    "document_a": {
+      "label": "Document A",
+      "assumed_role": "certificate",
+      "document_type": "Certificate of Origin"
+    },
+    "document_b": {
+      "label": "Document B",
+      "assumed_role": "invoice",
+      "document_type": "Invoice"
+    }
+  },
+  "rule_activation": {
+    "lc_exception_active": false,
+    "lc_number_found": null,
+    "general_goods_description_with_invoice_reference_active": false,
+    "mixed_origins_rule_active": false,
+    "to_order_rule_active": true,
+    "quantity_exception_applied": null,
+    "eu_origin_normalization_active": true,
+    "activated_rules": [
+      {
+        "rule_id": "2.2",
+        "rule_name": "Letter of Credit (LC) exception not applicable"
+      },
+      {
+        "rule_id": "4.2.2.2",
+        "rule_name": "To order consignee rule active"
+      },
+      {
+        "rule_id": "4.5.4.1",
+        "rule_name": "EU origin normalization active"
+      }
+    ]
+  },
+  "control_points": {
+    "consignor": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.9,
+      "certificate_value": "New Wave Mode AB\n-\nSE-455 83, DINGLE\nSweden",
+      "invoice_value": "New Wave GmbH\nGEIGELSTEINSTASSE 10\n83080 OBERAUDORF\nGermany\n\nNew Wave Mode AB\nÅkarevägen 18\n455 83 Dingle",
+      "rules_applied": [
+        {
+          "rule_id": "4.1.0",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatets consignor 'New Wave Mode AB' med adress i Sweden kunde identifieras i fakturans text, både som fakturautställare (New Wave GmbH) och i flera adressblock (New Wave Mode AB, Åkarevägen 18, 455 83 Dingle, Sweden). Genom tillämpning av koncernstrukturregel 4.1.0 har consignor-verifieringen godkänts trots att fakturautställaren är New Wave GmbH i Germany, eftersom 'New Wave Mode AB' uttryckligen förekommer i fakturan inklusive i adressblock och VAT-nummer som matchar. Landet Sweden matchar för consignor enligt 4.1.4."
+    },
+    "consignee": {
+      "applicable": true,
+      "status": "MANUAL_REVIEW",
+      "confidence": 0.65,
+      "certificate_value": "To order\n\nGermany",
+      "invoice_value": "New Wave GmbH\nInno Park\nAm Weingarten 7\n96160 Geiselwind\nDE\nGermany",
+      "rules_applied": [
+        {
+          "rule_id": "4.2.2.2",
+          "outcome": "MANUAL_REVIEW"
+        }
+      ],
+      "motivation": "Certifikatet anger mottagaren som 'To order' vilket enligt regel 4.2.2.2 innebär att företagsnamn inte behöver verifieras. Däremot ska landet kunna identifieras. Fakturan innehåller leveransadress i Germany, vilket överensstämmer med certifikatets land. Dock gäller enligt regeln att uppgiften blir MANUAL_REVIEW för mottagare eftersom företagsnamn inte verifieras."
+    },
+    "goods_description": {
+      "applicable": true,
+      "status": "MISMATCH",
+      "confidence": 0.5,
+      "certificate_value": "804 NE\nUtah Jacket W Reflective",
+      "invoice_value": "020943-949-4 Utah Jacket W Reflective S\n020943-949-5 Utah Jacket W Reflective M\n020943-949-6 Utah Jacket W Reflective L",
+      "rules_applied": [
+        {
+          "rule_id": "4.3.2",
+          "outcome": "MISMATCH"
+        }
+      ],
+      "motivation": "Artikelnummer i certifikatet '804 NE' kunde inte identifieras i fakturan. Fakturan innehåller artikelnummer som börjar med '020943-949-4', '020943-949-5', '020943-949-6', som inte matchar certifikatets artikelnummer exakt eller som prefix enligt regeln 4.3.2. Varubeskrivningen i fakturan innehåller storleksspecifikationer (S, M, L) som saknas i certifikatet. Ingen kontrollerad exakt textmatchning eller fakturareferens finns. Slutsatsen är MISMATCH enligt kontrollpunkt 4.3."
+    },
+    "quantity": {
+      "applicable": true,
+      "status": "MISMATCH",
+      "confidence": 0.75,
+      "certificate_value": "Gr weight 371 kg",
+      "invoice_value": "Order line total 11.381,294 (units not kg), Invoice total EUR 11.381,294",
+      "rules_applied": [
+        {
+          "rule_id": "4.4.1",
+          "outcome": "MISMATCH"
+        }
+      ],
+      "motivation": "Certifikatet anger kvantitet som vikt: 371 kg (Gross Weight). Fakturan innehåller ingen total vikt som kan identifieras i enhet kg. Fakturan visar order total som 11.381,294 EUR, och order line total 11.381,294 (antal enheter med komma som tusentalsavskiljare), men inga vikter i kg. Fakturan anger 'Country of origin: CN' som skiljer från certifikatets Myanmar-ursprung, vilket förstärker att viktinformation saknas. Ingen försändelsekvantitet eller alternativ kvantitetsuppgift kunde verifieras. Detta ger MISMATCH enligt 4.4."
+    },
+    "origin": {
+      "applicable": true,
+      "status": "MISMATCH",
+      "confidence": 0.95,
+      "certificate_value": "Myanmar",
+      "invoice_value": "Country of origin: CN",
+      "rules_applied": [
+        {
+          "rule_id": "4.5.4",
+          "outcome": "MISMATCH"
+        }
+      ],
+      "motivation": "Certifikatet anger ursprungslandet som 'Myanmar'. Fakturan anger ursprungsland som 'CN' (China). Enligt landnormalisering (4.6) är Kina respektive Hongkong ekvivalenta, men Myanmar är ett separat land. Fakturans ursprungsland (CN) kan inte verifiera certifikatets ursprungsland (Myanmar), vilket utgör en motsägelse enligt 4.5.5."
+    }
+  },
+  "overall_assessment": {
+    "comparison_result": "NOT_IDENTICAL",
+    "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
+    "auto_approval_eligible": false,
+    "confidence": 0.75,
+    "critical_failures": [
+      "goods_description",
+      "quantity",
+      "origin"
+    ],
+    "manual_review_triggers": [
+      "consignee"
+    ],
+    "decision_summary": "Certifikatet och fakturan visar avvikelse i varubeskrivning, kvantitet och ursprungsland. Mottagaren anges som 'To order' vilket kräver manuell granskning av mottagaruppgiften.",
+    "human_explanation": "Varubeskrivningen, kvantiteten och ursprungslandet i certifikatet stämmer inte med fakturans uppgifter. Mottagaren anges som \"To order\" vilket kräver manuell granskning för att bedöma giltighet. Dokumenten kan därför inte godkännas automatiskt."
+  },
+  "_meta": {
+    "tested_at": "2026-03-31T20:31:01.145387+00:00",
+    "prompt_hash": "7e05e86256d8",
+    "model": "gpt-4.1-mini",
+    "pair": "P224_MATCH",
+    "expected": "IDENTICAL",
+    "actual": "NOT_IDENTICAL",
+    "status": "FAIL"
+  }
+}

@@ -1,0 +1,152 @@
+{
+  "schema_version": "3.0",
+  "metadata": {
+    "verification_timestamp": null,
+    "document_pair_id": null,
+    "certificate_issue_date": "2026-02-27",
+    "source_documents_received": 2
+  },
+  "task": {
+    "task_type": "customs_document_pair_verification",
+    "comparison_mode": "certificate_vs_invoice",
+    "strictness": "conservative"
+  },
+  "documents": {
+    "document_a": {
+      "label": "Document A",
+      "assumed_role": "certificate",
+      "document_type": "Certificate of Origin"
+    },
+    "document_b": {
+      "label": "Document B",
+      "assumed_role": "invoice",
+      "document_type": "Commercial Invoice"
+    }
+  },
+  "rule_activation": {
+    "lc_exception_active": false,
+    "lc_number_found": null,
+    "general_goods_description_with_invoice_reference_active": false,
+    "mixed_origins_rule_active": false,
+    "to_order_rule_active": false,
+    "quantity_exception_applied": null,
+    "eu_origin_normalization_active": true,
+    "activated_rules": [
+      {
+        "rule_id": "4.1.0",
+        "rule_name": "Koncernstruktur (Consignor namn och land återfinns i fakturan)"
+      },
+      {
+        "rule_id": "4.2.0",
+        "rule_name": "Primär mottagare verifiering (Consignee)"
+      },
+      {
+        "rule_id": "4.3.2",
+        "rule_name": "Varubeskrivning – textmatchning"
+      },
+      {
+        "rule_id": "4.4.1",
+        "rule_name": "Kvantitet – förekomstkontroll och viktenhet"
+      },
+      {
+        "rule_id": "4.5.4.2",
+        "rule_name": "Ursprungsland: EU/medlemsland-normalisering"
+      }
+    ]
+  },
+  "control_points": {
+    "consignor": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 1.0,
+      "certificate_value": "Korab International AB\nMårten Krakowgatan 2\nSE411 04, GÖTEBORG\nSweden",
+      "invoice_value": "Korab International AB\nMårten Krakowgatan 2\n411 04 Göteborg, Sweden",
+      "rules_applied": [
+        {
+          "rule_id": "4.1.0",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatets consignor, 'Korab International AB, Mårten Krakowgatan 2, SE411 04, GÖTEBORG, Sweden', återfinns som utställare (sidhuvud, avsändaradress) på fakturan med identiskt namn och adress (med mindre formateringsvariation enligt tillåten normalisering), samt samma land ('Sweden')."
+    },
+    "consignee": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 1.0,
+      "certificate_value": "Fns Kagitcilik Matbaa Malz Paz San. Ve. Tic.Ltd.Sti\nEgemenlik Mah. 6106/33 Sok. No:4\nIsikkent Bornova - Izmir 35070\nTürkiye",
+      "invoice_value": "SOLD TO: Fns Kagitcilik Matbaa Malz Paz San. Ve.\nTic.Ltd.Sti\nEgemenlik Mah. 6106/33 Sok. No:4\nIsikkent Bornova - Izmir 35070\nTurkey",
+      "rules_applied": [
+        {
+          "rule_id": "4.2.0",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Mottagarens (consignee) namn och adress i certifikatet återfinns i fakturans 'SOLD TO' fält med exakt samma företagsnamn och adress (enkel normalisering av landsnamn och radbrytningar), samt samma land ('Türkiye' ↔ 'Turkey')."
+    },
+    "goods_description": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 1.0,
+      "certificate_value": "20 Reels\nDuplex Board",
+      "invoice_value": "11 Reels: Duplex Board\nSubs 300~400gsm, RW 730~2200mm\n28.749 MT AT EUR 395.00/MT\n9 Reels: Duplex Board\nSubs 425~450gsm, RW 1220~2200mm\n20.827 MT AT EUR 375.00/MT",
+      "rules_applied": [
+        {
+          "rule_id": "4.3.2",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Varubeskrivningen i certifikatet ('20 Reels Duplex Board') kan explicit identifieras i fakturans två radbeskrivningar ('11 Reels: Duplex Board', '9 Reels: Duplex Board'), summerat 20 Reels Duplex Board. Produktnamnet 'Duplex Board' matchar exakt."
+    },
+    "quantity": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 1.0,
+      "certificate_value": "GROSS 49,576 KGS",
+      "invoice_value": "TOTAL GROSS WEIGHT: 49,576 KG",
+      "rules_applied": [
+        {
+          "rule_id": "4.4.1",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatets kvantitet ('GROSS 49,576 KGS') återfinns exakt i fakturans 'TOTAL GROSS WEIGHT: 49,576 KG'. Numeriskt och enhet överensstämmer utan avvikelse."
+    },
+    "origin": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 1.0,
+      "certificate_value": "SWEDEN",
+      "invoice_value": "COUNTRY OF ORIGIN: Sweden",
+      "rules_applied": [
+        {
+          "rule_id": "4.5.4.2",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Ursprungsland anges som 'SWEDEN' i certifikatet och explicit som 'COUNTRY OF ORIGIN: Sweden' i fakturan. Ekvivalensen är fullständig."
+    }
+  },
+  "overall_assessment": {
+    "comparison_result": "IDENTICAL",
+    "workflow_recommendation": "AUTO_APPROVAL_ELIGIBLE",
+    "auto_approval_eligible": true,
+    "confidence": 1.0,
+    "critical_failures": [],
+    "manual_review_triggers": [],
+    "decision_summary": "Samtliga kontrollpunkter mellan certifikatet och fakturan kan verifieras explicit utan avvikelse.",
+    "human_explanation": "Alla uppgifter på certifikatet kan verifieras mot bifogad faktura. Leverantör, mottagare, varubeskrivning, kvantitet och ursprungsland överensstämmer exakt. Alla detaljer stämmer och dokumenten kan godkännas automatiskt."
+  },
+  "_meta": {
+    "config_id": "B",
+    "config_label": "4.1",
+    "pair_id": "P008",
+    "expected": "IDENTICAL",
+    "actual": "IDENTICAL",
+    "status": "PASS",
+    "prompt_hash": "7e05e86256d8",
+    "tested_at": "2026-03-31T19:28:51.370316+00:00",
+    "input_tokens": 32286,
+    "output_tokens": 1589,
+    "cost_usd": 0.03546
+  }
+}

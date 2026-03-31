@@ -1,0 +1,171 @@
+{
+  "schema_version": "3.0",
+  "metadata": {
+    "verification_timestamp": null,
+    "document_pair_id": null,
+    "certificate_issue_date": "2025-04-11",
+    "source_documents_received": 2
+  },
+  "task": {
+    "task_type": "customs_document_pair_verification",
+    "comparison_mode": "certificate_vs_invoice",
+    "strictness": "conservative"
+  },
+  "documents": {
+    "document_a": {
+      "label": "Document A",
+      "assumed_role": "certificate",
+      "document_type": "Certificate of Origin"
+    },
+    "document_b": {
+      "label": "Document B",
+      "assumed_role": "invoice",
+      "document_type": "Pro Forma Invoice"
+    }
+  },
+  "rule_activation": {
+    "lc_exception_active": false,
+    "lc_number_found": null,
+    "general_goods_description_with_invoice_reference_active": false,
+    "mixed_origins_rule_active": false,
+    "to_order_rule_active": false,
+    "quantity_exception_applied": null,
+    "eu_origin_normalization_active": false,
+    "activated_rules": [
+      {
+        "rule_id": "8.6",
+        "rule_name": "Parningsvalidering passerad via identifierbar consignee i fakturan"
+      },
+      {
+        "rule_id": "4.3.2",
+        "rule_name": "Artikelnummerstyrd verifiering av varubeskrivning"
+      }
+    ]
+  },
+  "control_points": {
+    "consignor": {
+      "applicable": true,
+      "status": "MISMATCH",
+      "confidence": 0.98,
+      "certificate_value": "Nobel Biocare AB\nBox 5190\nSE-402 26, GÖTEBORG\nSweden",
+      "invoice_value": "Medicim NV\nStationsstraat 102\n2800 Mechelen\nBelgium",
+      "rules_applied": [
+        {
+          "rule_id": "4.1.0",
+          "outcome": "Certifikatets consignor-namn kunde inte identifieras någonstans i fakturans text."
+        },
+        {
+          "rule_id": "4.1.3.1",
+          "outcome": "Fakturautställaren är ett annat bolag än certifikatets consignor."
+        },
+        {
+          "rule_id": "4.1.4",
+          "outcome": "Land motsäger certifikatet: Sweden i certifikatet, Belgium i fakturan."
+        }
+      ],
+      "motivation": "Certifikatet anger consignor som \"Nobel Biocare AB\" i Sverige. Fakturan är utställd av \"Medicim NV\" i Belgien, och \"Nobel Biocare\" återfinns inte i header, adressblock, footer eller övrig fakturatext. Detta är en direkt avvikelse i både företagsnamn och land."
+    },
+    "consignee": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.91,
+      "certificate_value": "Envista (Shanghai)\n5-6F,Bldg T2 North, 377 Songhong Ro\nEBA, Changning District\nShanghai\n200335\nChina",
+      "invoice_value": "Envista Shanghai\n5-6F,Bldg T2 North, 377 Songhong Road,\nEBA, Changning District\n200335 Shanghai\nChina",
+      "rules_applied": [
+        {
+          "rule_id": "4.2.1",
+          "outcome": "Mottagaren identifierades i fakturans mottagar-/adressblock."
+        },
+        {
+          "rule_id": "4.2.2.1",
+          "outcome": "Tillåten normalisering av versaler/gemener, mellanslag och mindre formateringsskillnader användes."
+        },
+        {
+          "rule_id": "4.2.3",
+          "outcome": "Land China överensstämmer."
+        }
+      ],
+      "motivation": "Certifikatets \"Envista (Shanghai)\" kan identifieras i fakturan som \"Envista Shanghai\" med samma adresskärna och samma land, China. Skillnaderna begränsas till formatering och stavning av gatutyp (Ro/Road), vilket inte motsäger samma mottagare."
+    },
+    "goods_description": {
+      "applicable": true,
+      "status": "MISMATCH",
+      "confidence": 0.97,
+      "certificate_value": "300547_V4.0_WIN64\nDTX StudioTM Core 4.0 for Windows",
+      "invoice_value": "DTX Studio Core License",
+      "rules_applied": [
+        {
+          "rule_id": "4.3.2",
+          "outcome": "Artikelnummer fanns i certifikatet och skulle därför verifieras primärt via artikelnummer."
+        },
+        {
+          "rule_id": "4.3.6",
+          "outcome": "Certifikatets artikelnummer 300547_V4.0_WIN64 kunde inte identifieras exakt i fakturan."
+        }
+      ],
+      "motivation": "Certifikatet innehåller artikelnummer/produktkod \"300547_V4.0_WIN64\". Fakturan visar endast beskrivningen \"DTX Studio Core License\" och innehåller inte det artikelnummer som certifikatet anger. När artikelnummer finns i certifikatet krävs primär exakt artikelnummermatchning; det kravet är inte uppfyllt."
+    },
+    "quantity": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.9,
+      "certificate_value": "1 pcs",
+      "invoice_value": "Amount 1",
+      "rules_applied": [
+        {
+          "rule_id": "4.4.2",
+          "outcome": "Certifikatet anger numeriskt värde och enhet uttryckligen."
+        },
+        {
+          "rule_id": "4.4.3",
+          "outcome": "Det numeriska värdet 1 kan identifieras i fakturan för motsvarande vara."
+        }
+      ],
+      "motivation": "Certifikatet anger kvantiteten \"1 pcs\". Fakturan anger mängden \"1\" för den enda varuraden. Enligt reglerna behöver fakturan inte använda samma enhet när det numeriska värdet tydligt kan identifieras för motsvarande vara."
+    },
+    "origin": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.99,
+      "certificate_value": "Belgium",
+      "invoice_value": "Country of Origin: Belgium",
+      "rules_applied": [
+        {
+          "rule_id": "4.5.1",
+          "outcome": "Ursprungslandet identifierades i ett explicit origin-fält i fakturan."
+        },
+        {
+          "rule_id": "4.5.5",
+          "outcome": "Belgium i certifikatet kan uttryckligen identifieras i fakturan."
+        }
+      ],
+      "motivation": "Certifikatet anger ursprungsland \"Belgium\". Fakturan innehåller den explicita uppgiften \"Country of Origin: Belgium\". Ursprungslandet är därför verifierat utan ytterligare tolkning."
+    }
+  },
+  "overall_assessment": {
+    "comparison_result": "NOT_IDENTICAL",
+    "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
+    "auto_approval_eligible": false,
+    "confidence": 0.96,
+    "critical_failures": [
+      "Consignor mismatch: certifikatet anger Nobel Biocare AB, Sweden medan fakturan är utställd av Medicim NV, Belgium.",
+      "Goods description mismatch: certifikatets artikelnummer 300547_V4.0_WIN64 kan inte identifieras i fakturan."
+    ],
+    "manual_review_triggers": [],
+    "decision_summary": "Dokumentparet passerar parningskontrollen eftersom consignee kan identifieras i fakturan, men minst två tillämpliga kontrollpunkter ger tydlig MISMATCH: consignor och varubeskrivning/artikelnummer. Därför är dokumenten inte identiska.",
+    "human_explanation": "Certifikatet anger avsändaren som Nobel Biocare AB i Sverige, men fakturan är utställd av Medicim NV i Belgien. Certifikatet anger också artikelnummer 300547_V4.0_WIN64, vilket inte finns i fakturan. Därför stämmer dokumenten inte överens och behöver manuell hantering."
+  },
+  "_meta": {
+    "config_id": "A",
+    "config_label": "5.4/med",
+    "pair_id": "P231",
+    "expected": "NOT_IDENTICAL",
+    "actual": "NOT_IDENTICAL",
+    "status": "PASS",
+    "prompt_hash": "7e05e86256d8",
+    "tested_at": "2026-03-31T19:28:50.228088+00:00",
+    "input_tokens": 34547,
+    "output_tokens": 3902,
+    "cost_usd": 0.18808
+  }
+}

@@ -1,0 +1,146 @@
+{
+  "schema_version": "3.0",
+  "metadata": {
+    "verification_timestamp": null,
+    "document_pair_id": null,
+    "certificate_issue_date": null,
+    "source_documents_received": 2
+  },
+  "task": {
+    "task_type": "customs_document_pair_verification",
+    "comparison_mode": "certificate_vs_invoice",
+    "strictness": "conservative"
+  },
+  "documents": {
+    "document_a": {
+      "label": "Document A",
+      "assumed_role": "certificate",
+      "document_type": "Certificate of Origin"
+    },
+    "document_b": {
+      "label": "Document B",
+      "assumed_role": "invoice",
+      "document_type": "Invoice"
+    }
+  },
+  "rule_activation": {
+    "lc_exception_active": false,
+    "lc_number_found": null,
+    "general_goods_description_with_invoice_reference_active": false,
+    "mixed_origins_rule_active": false,
+    "to_order_rule_active": false,
+    "quantity_exception_applied": null,
+    "eu_origin_normalization_active": false,
+    "activated_rules": [
+      {
+        "rule_id": "4.2.1",
+        "rule_name": "Consignee identifiering i fakturan"
+      },
+      {
+        "rule_id": "4.2.4",
+        "rule_name": "Consignee landkontroll"
+      }
+    ]
+  },
+  "control_points": {
+    "consignor": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.95,
+      "certificate_value": "FORPAC INTERNATIONAL AB",
+      "invoice_value": "Forpac International AB",
+      "rules_applied": [
+        {
+          "rule_id": "4.1.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.4",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Consignor ‘FORPAC INTERNATIONAL AB’ identifieras tydligt i fakturans Seller-block med matchande land ‘Sweden’ (4.1.1, 4.1.4)."
+    },
+    "consignee": {
+      "applicable": true,
+      "status": "MISMATCH",
+      "confidence": 0.5,
+      "certificate_value": "SARL IBARAR EMBALLAGE",
+      "invoice_value": null,
+      "rules_applied": [
+        {
+          "rule_id": "4.2.1",
+          "outcome": "MISMATCH"
+        }
+      ],
+      "motivation": "Consignee ‘SARL IBARAR EMBALLAGE’ saknas helt i fakturan – inget fakturerings- eller leveransfält innehåller mottagaren (4.2.1)."
+    },
+    "goods_description": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.85,
+      "certificate_value": "TESTLINER & FLUTING",
+      "invoice_value": "Testliner / Fluting varurader",
+      "rules_applied": [
+        {
+          "rule_id": "4.3.2",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.3.3",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Varubeskrivning ‘TESTLINER’ och ‘FLUTING’ förekommer explicit i fakturans varurader (4.3.2, 4.3.3)."
+    },
+    "quantity": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.95,
+      "certificate_value": "208,874 MT",
+      "invoice_value": "208,874 MT",
+      "rules_applied": [
+        {
+          "rule_id": "4.4.3",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Totalvikt ‘208,874 MT’ matchar exakt fakturans totalviktsrad efter normalisering (4.4.3)."
+    },
+    "origin": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.85,
+      "certificate_value": "FRANCE",
+      "invoice_value": "origine français",
+      "rules_applied": [
+        {
+          "rule_id": "4.5.1",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Ursprungsland ‘FRANCE’ hittas explicit i fakturan genom texten ‘origine français’ under varutabellen (4.5.1)."
+    }
+  },
+  "overall_assessment": {
+    "comparison_result": "NOT_IDENTICAL",
+    "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
+    "auto_approval_eligible": false,
+    "confidence": 0.82,
+    "critical_failures": [
+      "consignee"
+    ],
+    "manual_review_triggers": [],
+    "decision_summary": "En mismatch upptäckt för mottagare (consignee) vilket medför att dokumenten inte är identiska.",
+    "human_explanation": "Certifikatet anger mottagaren som SARL IBARAR EMBALLAGE i Algeriet medan fakturan inte innehåller någon motsvarande mottagaruppgift."
+  },
+  "_meta": {
+    "tested_at": "2026-03-31T19:51:01.849401+00:00",
+    "prompt_hash": "7e05e86256d8",
+    "model": "o4-mini",
+    "pair": "P0101_MATCH",
+    "expected": "IDENTICAL",
+    "actual": "NOT_IDENTICAL",
+    "status": "FAIL"
+  }
+}

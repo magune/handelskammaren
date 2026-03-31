@@ -1,0 +1,160 @@
+{
+  "schema_version": "3.0",
+  "metadata": {
+    "verification_timestamp": "2024-06-28T14:40:00Z",
+    "document_pair_id": null,
+    "certificate_issue_date": "2026-02-25",
+    "source_documents_received": 2
+  },
+  "task": {
+    "task_type": "customs_document_pair_verification",
+    "comparison_mode": "certificate_vs_invoice",
+    "strictness": "conservative"
+  },
+  "documents": {
+    "document_a": {
+      "label": "Document A",
+      "assumed_role": "certificate",
+      "document_type": "Certificate of Origin"
+    },
+    "document_b": {
+      "label": "Document B",
+      "assumed_role": "invoice",
+      "document_type": "Commercial Invoice"
+    }
+  },
+  "rule_activation": {
+    "lc_exception_active": false,
+    "lc_number_found": null,
+    "general_goods_description_with_invoice_reference_active": false,
+    "mixed_origins_rule_active": true,
+    "to_order_rule_active": false,
+    "quantity_exception_applied": null,
+    "eu_origin_normalization_active": true,
+    "activated_rules": [
+      {
+        "rule_id": "4.5.4.1",
+        "rule_name": "EU-normalisering: European Union/EU/EU Community normaliseras mot medlemslandsursprung"
+      },
+      {
+        "rule_id": "4.5.4.1.2",
+        "rule_name": "Utvidgad tillämpning – Blandade EU/icke-EU-listor"
+      },
+      {
+        "rule_id": "4.5.3",
+        "rule_name": "Blandade ursprung – entydig koppling krävs"
+      }
+    ]
+  },
+  "control_points": {
+    "consignor": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 1.0,
+      "certificate_value": "Fortex International AB\nVallgatan 22\n41116 GOTHENBURG\nSWEDEN",
+      "invoice_value": "Fortex International AB\nVallgatan 22\nGothenburg, Sweden 411 16",
+      "rules_applied": [
+        {
+          "rule_id": "4.1.3.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.4",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Företagsnamn och adress (med tillåten normalisering av radbrytningar, postnummerformat och landsangivelse) är identiska; företagsnamnets kärna och landet överensstämmer exakt."
+    },
+    "consignee": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 1.0,
+      "certificate_value": "Arab cardboard Manufacturing CO.LTD\nSahab - King Abdullah II Industrial area -\nGate 1\nAmman,\nJordan",
+      "invoice_value": "Arab cardboard Manufacturing CO.LTD\nSahab - King Abdullah II Industrial area -\nGate 1\nAmman,\nJordan",
+      "rules_applied": [
+        {
+          "rule_id": "4.2.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.2.3",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Mottagaren/köparen i certifikatet och fakturans 'CUSTOMER'/'CONSIGNED TO' är exakt desamma gällande namn och adress; landet Jordan överensstämmer."
+    },
+    "goods_description": {
+      "applicable": true,
+      "status": "MANUAL_REVIEW",
+      "confidence": 0.65,
+      "certificate_value": "Bleached/Unbleached Sulphate Ble Pulp\nGross: 66.000 MT",
+      "invoice_value": "Fluting Medium, Testliner 3, High Performance Testliner\n(31 Reels, ca. 54.146 MT total; varierande grammatur och bredd)",
+      "rules_applied": [
+        {
+          "rule_id": "4.3.3",
+          "outcome": "MANUAL_REVIEW"
+        }
+      ],
+      "motivation": "Varubeskrivningen i certifikatet ('Bleached/Unbleached Sulphate Ble Pulp') motsvarar inte exakt någon varubeskrivning i fakturan (där den angivna varan är olika sorters 'Fluting Medium' och 'Testliner'). Ingen entydig identitetsbärande huvudbeteckning kan matchas utan semantisk tolkning. MANUAL_REVIEW anges då systemet inte får anta varaekvivalens utan tydlig korrelation."
+    },
+    "quantity": {
+      "applicable": true,
+      "status": "MISMATCH",
+      "confidence": 1.0,
+      "certificate_value": "66.000 MT",
+      "invoice_value": "54.146 MT",
+      "rules_applied": [
+        {
+          "rule_id": "4.4.1",
+          "outcome": "MISMATCH"
+        }
+      ],
+      "motivation": "Kvantiteten i certifikatet (66.000 MT) kan inte identifieras i fakturan där summan av totalvikten enbart är 54.146 MT. Ingen tillåten summerings- eller omräkningsregel är tillämplig. Avvikelsen är större än tillåten tolerans."
+    },
+    "origin": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.9,
+      "certificate_value": "European Union",
+      "invoice_value": "Germany, Netherlands, Switzerland (och text på sid 2: \"European Community Germany, Netherlands & Switzerland preferential origin\")",
+      "rules_applied": [
+        {
+          "rule_id": "4.5.4.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.5.4.1.2",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatet anger 'European Union'. Fakturan anger 'Germany' och 'Netherlands' (båda EU-medlemmar) samt Switzerland. Enligt EU-normaliseringsregeln omfattas de angivna EU-medlemsländerna. Switzerland kan ignoreras då den utgör ytterligare information och inte motsäger EU-ursprung."
+    }
+  },
+  "overall_assessment": {
+    "comparison_result": "NOT_IDENTICAL",
+    "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
+    "auto_approval_eligible": false,
+    "confidence": 0.95,
+    "critical_failures": [
+      "quantity"
+    ],
+    "manual_review_triggers": [
+      "goods_description"
+    ],
+    "decision_summary": "Verifieringen misslyckas på kontrollpunkten för kvantitet då certifikatets angivna mängd inte kan styrkas mot underlaget i fakturan. Varubeskrivningen kräver dessutom manuell granskning för säker bedömning.",
+    "human_explanation": "Det finns en avvikelse för kvantitet: certifikatet anger 66.000 MT medan fakturan bara visar 54.146 MT. Varubeskrivningen är dessutom inte entydigt samma i båda dokumenten. Övriga kontrollpunkter stämmer, men ärendet måste hanteras manuellt på grund av avvikelsen i kvantitet."
+  },
+  "_meta": {
+    "config_id": "E",
+    "config_label": "4.1 150dpi",
+    "pair_id": "P003",
+    "expected": "NOT_IDENTICAL",
+    "actual": "NOT_IDENTICAL",
+    "status": "PASS",
+    "prompt_hash": "7e05e86256d8",
+    "tested_at": "2026-03-31T19:20:06.268673+00:00",
+    "input_tokens": 32556,
+    "output_tokens": 1650,
+    "cost_usd": 0.03586
+  }
+}

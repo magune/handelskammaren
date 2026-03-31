@@ -1,0 +1,148 @@
+{
+  "schema_version": "3.0",
+  "metadata": {
+    "verification_timestamp": null,
+    "document_pair_id": null,
+    "certificate_issue_date": "2026-02-27",
+    "source_documents_received": 2
+  },
+  "task": {
+    "task_type": "customs_document_pair_verification",
+    "comparison_mode": "certificate_vs_invoice",
+    "strictness": "conservative"
+  },
+  "documents": {
+    "document_a": {
+      "label": "Document A",
+      "assumed_role": "certificate",
+      "document_type": "Certificate of Origin"
+    },
+    "document_b": {
+      "label": "Document B",
+      "assumed_role": "invoice",
+      "document_type": "Commercial Invoice"
+    }
+  },
+  "rule_activation": {
+    "lc_exception_active": false,
+    "lc_number_found": null,
+    "general_goods_description_with_invoice_reference_active": false,
+    "mixed_origins_rule_active": false,
+    "to_order_rule_active": false,
+    "quantity_exception_applied": null,
+    "eu_origin_normalization_active": true,
+    "activated_rules": [
+      {
+        "rule_id": "4.5.4.1",
+        "rule_name": "EU-origin normalization - certificate states European Union"
+      }
+    ]
+  },
+  "control_points": {
+    "consignor": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.9,
+      "certificate_value": "Korab International AB\nMårten Krakowgatan 2\nSE411 04, GÖTEBORG\nSweden",
+      "invoice_value": "Korab International AB\nMårten Krakowgatan 2\n411 04 Göteborg, Sweden",
+      "rules_applied": [
+        {
+          "rule_id": "4.1.0",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.4",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Consignor \"Korab International AB\" with address and country Sweden in the certificate matches the invoice issuer \"Korab International AB\" with corresponding address and country Sweden after allowed normalization. Consignor name found explicitly in invoice header and VAT details. Land matches exactly after normalization. Rule 4.1.0 applied allowing consignor name presence anywhere in invoice; rule 4.1.4 confirms land match."
+    },
+    "consignee": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.9,
+      "certificate_value": "Fns Kagitcilik Matbaa Malz Paz\nSan. Ve. Tic.Ltd.Sti\nEgemenlik Mah. 6106/33 Sok. No:4\nIsikkent Bornova - Izmir 35070\nTürkiye",
+      "invoice_value": "Fns Kagitcilik Matbaa Malz Paz San. Ve.\nTic.Ltd.Sti\nEgemenlik Mah. 6106/33 Sok. No:4\nIsikkent Bornova - Izmir 35070\nTurkey",
+      "rules_applied": [
+        {
+          "rule_id": "4.2.0.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.2.3",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Consignee \"Fns Kagitcilik Matbaa Malz Paz San. Ve. Tic.Ltd.Sti\" with address and country Turkey in the certificate matches the invoice 'Sold To' field \"Fns Kagitcilik Matbaa Malz Paz San. Ve. Tic.Ltd.Sti\" at same address and country Turkey after allowed normalization. Land matches after normalization (Turkey vs Türkiye). Rule 4.2.0.1 priorities the 'Sold To' field in invoice as consignee and 4.2.3 confirms land match."
+    },
+    "goods_description": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.9,
+      "certificate_value": "20 Reels\nDuplex Board",
+      "invoice_value": "11 Reels: Duplex Board\nSubs 300~400gsm, RW 730~2200mm\n9 Reels: Duplex Board\nSubs 425~450gsm, RW 1220~2200mm",
+      "rules_applied": [
+        {
+          "rule_id": "4.3.5",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certificate states general goods description '20 Reels Duplex Board' and references invoice no 64866 and date 2026-02-27. Invoice 64866 describes 11 and 9 Reels of Duplex Board totaling 20 Reels. Because certificate explicitly references invoice (rule 4.3.5) and invoice confirms quantities and product description, goods description is verified as MATCH."
+    },
+    "quantity": {
+      "applicable": true,
+      "status": "MANUAL_REVIEW",
+      "confidence": 0.65,
+      "certificate_value": "GROSS 49,576 KGS",
+      "invoice_value": "TOTAL NET WEIGHT: 49.576 MT\nTOTAL GROSS WEIGHT: 49,576 KG",
+      "rules_applied": [
+        {
+          "rule_id": "4.4.2.2",
+          "outcome": "MANUAL_REVIEW"
+        },
+        {
+          "rule_id": "4.4.3",
+          "outcome": "MANUAL_REVIEW"
+        }
+      ],
+      "motivation": "Certificate states Gross Weight '49,576 KGS' (interpreted as 49.576 KG after normalizing thousand separator) while invoice states Total Gross Weight '49,576 KG' and Total Net Weight '49.576 MT'. The notation inconsistency and comma usage in weight values cause ambiguity. The mixed notation of decimal comma and thousand separator triggers MANUAL_REVIEW according to rule 4.4.2.2 and 4.4.3 because the weight units and decimals are not clearly disambiguated, requiring manual verification."
+    },
+    "origin": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.9,
+      "certificate_value": "Sweden",
+      "invoice_value": "COUNTRY OF ORIGIN: Sweden",
+      "rules_applied": [
+        {
+          "rule_id": "4.5.4.1",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certificate origin 'Sweden' explicitly appears in invoice's 'COUNTRY OF ORIGIN: Sweden' field. EU normalization rule applies but only EU as collection not limiting Sweden individually. The land normalization and exact country name match confirms MATCH."
+    }
+  },
+  "overall_assessment": {
+    "comparison_result": "MANUAL_REVIEW",
+    "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
+    "auto_approval_eligible": false,
+    "confidence": 0.8,
+    "critical_failures": [
+      "quantity"
+    ],
+    "manual_review_triggers": [
+      "quantity"
+    ],
+    "decision_summary": "All control points except quantity match after normalization and rule application. Quantity matching requires manual review due to ambiguous weight notation and differing units in invoice and certificate.",
+    "human_explanation": "Alla kontrollpunkter förutom kvantitet stämmer mellan certifikatet och fakturan. Kvantiteten behöver manuell granskning på grund av oklar viktangivelse och skillnader i enheter och notation."
+  },
+  "_meta": {
+    "tested_at": "2026-03-31T19:39:57.232686+00:00",
+    "prompt_hash": "7e05e86256d8",
+    "model": "gpt-4.1-mini",
+    "pair": "P008_MATCH",
+    "expected": "IDENTICAL",
+    "actual": "MANUAL_REVIEW",
+    "status": "REVIEW"
+  }
+}

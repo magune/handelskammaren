@@ -1,0 +1,156 @@
+{
+  "schema_version": "3.0",
+  "metadata": {
+    "verification_timestamp": "2026-03-01T12:00:00Z",
+    "document_pair_id": null,
+    "certificate_issue_date": "2026-02-25",
+    "source_documents_received": 2
+  },
+  "task": {
+    "task_type": "customs_document_pair_verification",
+    "comparison_mode": "certificate_vs_invoice",
+    "strictness": "conservative"
+  },
+  "documents": {
+    "document_a": {
+      "label": "Document A",
+      "assumed_role": "certificate",
+      "document_type": "Certificate of Origin"
+    },
+    "document_b": {
+      "label": "Document B",
+      "assumed_role": "invoice",
+      "document_type": "Invoice"
+    }
+  },
+  "rule_activation": {
+    "lc_exception_active": false,
+    "lc_number_found": null,
+    "general_goods_description_with_invoice_reference_active": false,
+    "mixed_origins_rule_active": false,
+    "to_order_rule_active": false,
+    "quantity_exception_applied": "3B",
+    "eu_origin_normalization_active": true,
+    "activated_rules": [
+      {
+        "rule_id": "4.1.0",
+        "rule_name": "Special rule – Koncernstruktur for consignor"
+      },
+      {
+        "rule_id": "4.2.1.1",
+        "rule_name": "Fallback to secondary fields for consignee"
+      },
+      {
+        "rule_id": "4.3.3",
+        "rule_name": "Identitetsbärande huvudbeteckning for goods description"
+      },
+      {
+        "rule_id": "4.4.5.3",
+        "rule_name": "Undantag 3B – Enhetsomräkning MT ↔ KG"
+      },
+      {
+        "rule_id": "4.4.2.2",
+        "rule_name": "Single weight value without category"
+      },
+      {
+        "rule_id": "4.5.4.2",
+        "rule_name": "EU ↔ EU member state normalization for origin"
+      }
+    ]
+  },
+  "control_points": {
+    "consignor": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.9,
+      "certificate_value": "Calderys Nordic AB",
+      "invoice_value": "Calderys Nordic AB",
+      "rules_applied": [
+        {
+          "rule_id": "4.1.0",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Consignor Calderys Nordic AB från certifikatet identifieras uttryckligen som fakturautställare i fakturan (rule 4.1.0), land Sweden överensstämmer."
+    },
+    "consignee": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.9,
+      "certificate_value": "Calderys India Refractories Limited",
+      "invoice_value": "Calderys India Refractories Limited",
+      "rules_applied": [
+        {
+          "rule_id": "4.2.1.1",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Consignee Calderys India Refractories Limited återfinns i leveransadressfältet i fakturan (fallback secondary field, rule 4.2.1.1), land India överensstämmer."
+    },
+    "goods_description": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.9,
+      "certificate_value": "Svenska Mix 7 A60 0,8",
+      "invoice_value": "SVENSKA™ MIX 7 A60 0.8",
+      "rules_applied": [
+        {
+          "rule_id": "4.3.3",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Identitetsbärande huvudbeteckning ’Svenska Mix 7 A60 0,8’ matchar fakturans ’SVENSKA™ MIX 7 A60 0.8’ efter normalisering (rule 4.3.3)."
+    },
+    "quantity": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.85,
+      "certificate_value": "NW 25,200 kg",
+      "invoice_value": "25,200 TO",
+      "rules_applied": [
+        {
+          "rule_id": "4.4.2.2",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.4.5.3",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Single weight value 25,200 kg matchar fakturans 25,200 TO (metric ton) efter enhetsomräkning 1 MT=1000 kg (rules 4.4.5.3 & 4.4.2.2)."
+    },
+    "origin": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.9,
+      "certificate_value": "EU Sweden",
+      "invoice_value": "MADE IN SWEDEN",
+      "rules_applied": [
+        {
+          "rule_id": "4.5.4.2",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatet anger EU och Sweden, fakturan visar ’MADE IN SWEDEN’, EU ↔ medlemsstat-normalisering tillämpad (rule 4.5.4.2)."
+    }
+  },
+  "overall_assessment": {
+    "comparison_result": "IDENTICAL",
+    "workflow_recommendation": "AUTO_APPROVAL_ELIGIBLE",
+    "auto_approval_eligible": true,
+    "confidence": 0.89,
+    "critical_failures": [],
+    "manual_review_triggers": [],
+    "decision_summary": "Samtliga kontrollpunkter har status MATCH enligt tillämpliga regler utan avvikelser.",
+    "human_explanation": "Alla uppgifter i certifikatet stämmer med fakturan och dokumenten kan godkännas automatiskt."
+  },
+  "_meta": {
+    "tested_at": "2026-03-31T19:55:00.249467+00:00",
+    "prompt_hash": "7e05e86256d8",
+    "model": "o4-mini",
+    "pair": "P0127_MATCH",
+    "expected": "IDENTICAL",
+    "actual": "IDENTICAL",
+    "status": "PASS"
+  }
+}

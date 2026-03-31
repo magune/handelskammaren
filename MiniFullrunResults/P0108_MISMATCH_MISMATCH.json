@@ -1,0 +1,150 @@
+{
+  "schema_version": "3.0",
+  "metadata": {
+    "verification_timestamp": null,
+    "document_pair_id": null,
+    "certificate_issue_date": "2026-02-27",
+    "source_documents_received": 2
+  },
+  "task": {
+    "task_type": "customs_document_pair_verification",
+    "comparison_mode": "certificate_vs_invoice",
+    "strictness": "conservative"
+  },
+  "documents": {
+    "document_a": {
+      "label": "Document A",
+      "assumed_role": "certificate",
+      "document_type": "Certificate of Origin"
+    },
+    "document_b": {
+      "label": "Document B",
+      "assumed_role": "invoice",
+      "document_type": "Invoice"
+    }
+  },
+  "rule_activation": {
+    "lc_exception_active": false,
+    "lc_number_found": null,
+    "general_goods_description_with_invoice_reference_active": true,
+    "mixed_origins_rule_active": false,
+    "to_order_rule_active": false,
+    "quantity_exception_applied": null,
+    "eu_origin_normalization_active": true,
+    "activated_rules": [
+      {
+        "rule_id": "2.2",
+        "rule_name": "LC-undantag"
+      },
+      {
+        "rule_id": "4.3.5",
+        "rule_name": "Generell varubeskrivning med fakturareferens"
+      },
+      {
+        "rule_id": "4.5.4.1",
+        "rule_name": "EU-normalisering av ursprungsland"
+      }
+    ]
+  },
+  "control_points": {
+    "consignor": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.9,
+      "certificate_value": "Forest Papper AB\nÅsgatan 4\n41463, GÖTEBORG\nSWEDEN",
+      "invoice_value": "Forest Papper AB\nÅsgatan 4, 414 63 GÖTEBORG\nSWEDEN",
+      "rules_applied": [
+        {
+          "rule_id": "4.1.0",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Consignor-namnet 'Forest Papper AB' från certifikatet kan identifieras tydligt i fakturan inklusive adress och land 'Sweden'. Namnet är identiskt efter standardiserad normalisering och fakturan innehåller även VAT-nummer samt adressuppgifter som bekräftar samma juridiska part. Landet överensstämmer exakt efter normalisering (4.1.4). Regler för koncernstruktur (4.1.0) tillämpades då företagets namn förekommer i fakturan utöver utställaruppgifter."
+    },
+    "consignee": {
+      "applicable": true,
+      "status": "MISMATCH",
+      "confidence": 0.95,
+      "certificate_value": "KÜTAHYA ENTEGRE KAGIT SAN ve TIC.AS\nMERDIVENKÖY MAH. DIKYOL SK\nB BLOK NO 2 IC KAPI NO 9\nKADIKOY\nISTANBUL\nTürkiye",
+      "invoice_value": "Oral Ofset Amb. San. Ve Tic. A.S\nÇapak Mah. 2561. Sok. No:23\nTorbali\nIZMIR\nTURKEY",
+      "rules_applied": [
+        {
+          "rule_id": "4.2.0",
+          "outcome": "MISMATCH"
+        }
+      ],
+      "motivation": "Certifikatets consignee 'KÜTAHYA ENTEGRE KAGIT SAN ve TIC.AS, Türkiye' kan inte identifieras i fakturan. Fakturans köpare och leveransadress är 'Oral Ofset Amb. San. Ve Tic. A.S, Turkey', vilket skiljer sig från certifikatets consignee. Fakturan har ett klart faktureringsfält med 'Buyer' som är en annan juridisk part än consignen i certifikatet. Därmed uppfylls inte krav för MATCH enligt 4.2.0 då mottagaren i certifikatet inte finns i fakturans primära faktureringsfält eller leveransadress."
+    },
+    "goods_description": {
+      "applicable": true,
+      "status": "MANUAL_REVIEW",
+      "confidence": 0.6,
+      "certificate_value": "126 Packages Kraftliner",
+      "invoice_value": "Description of Goods TESTLINER & FLUTING",
+      "rules_applied": [
+        {
+          "rule_id": "4.3.5",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatet innehåller en generell varubeskrivning '126 Packages Kraftliner' med hänvisning till fakturan (nummer och datum). Fakturans varubeskrivning är 'TESTLINER & FLUTING' vilket inte exakt motsvarar certifikatets term \"Kraftliner\". Då generell varubeskrivning med fakturareferens tillämpades enligt 4.3.5 och fakturan innehåller en exakt fakturareferens stämmer verifieringsprincipen, men varubeskrivningen i övrigt skiljer sig betydligt varför bedömningen är MANUAL_REVIEW för denna punkt."
+    },
+    "quantity": {
+      "applicable": true,
+      "status": "MISMATCH",
+      "confidence": 0.9,
+      "certificate_value": "325987 KG",
+      "invoice_value": "Total Quantity 24,938",
+      "rules_applied": [
+        {
+          "rule_id": "4.4.1",
+          "outcome": "MISMATCH"
+        },
+        {
+          "rule_id": "4.4.3.1",
+          "outcome": "MISMATCH"
+        }
+      ],
+      "motivation": "Certifikatet anger en kvantitet om 325987 KG (gross/net weight) medan fakturan anger total kvantitet som 24,938 (enhetsobestämd, men sannolikt styckantal). Ingen vikt är angiven i fakturan som motsvarar 325987 KG. Skillnaden mellan den angivna vikten i certifikatet och den totala kvantiteten i fakturan är betydande och kan inte identifieras som samma uppgift. Därmed är kvantiteten i certifikatet inte verifierbar mot fakturan enligt huvudreglerna."
+    },
+    "origin": {
+      "applicable": true,
+      "status": "MISMATCH",
+      "confidence": 0.95,
+      "certificate_value": "Austria",
+      "invoice_value": "Goods origin Germany",
+      "rules_applied": [
+        {
+          "rule_id": "4.5.1",
+          "outcome": "MISMATCH"
+        }
+      ],
+      "motivation": "Certifikatet anger ursprungsland som 'Austria' medan fakturan uttryckligen angiver 'Goods origin Germany'. Enligt reglerna (4.5.1 och 4.5.5) ska ursprungslandet i certifikatet kunna identifieras uttryckligen i fakturan, vilket saknas. Landen överensstämmer inte och därför är ursprungslandspunkten MISMATCH."
+    }
+  },
+  "overall_assessment": {
+    "comparison_result": "NOT_IDENTICAL",
+    "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
+    "auto_approval_eligible": false,
+    "confidence": 0.46,
+    "critical_failures": [
+      "consignee",
+      "quantity",
+      "origin"
+    ],
+    "manual_review_triggers": [
+      "goods_description"
+    ],
+    "decision_summary": "Mottagare, kvantitet och ursprungsland skiljer sig tydligt mellan certifikat och faktura. Varubeskrivningen är otydlig och kräver manuell kontroll. Consignor är verifierad.",
+    "human_explanation": "Mottagaren i certifikatet skiljer sig från den som anges i fakturan. Kvantitet och ursprungsland överensstämmer inte mellan dokumenten. Varubeskrivningen kräver manuell granskning."
+  },
+  "_meta": {
+    "tested_at": "2026-03-31T19:39:57.238620+00:00",
+    "prompt_hash": "7e05e86256d8",
+    "model": "gpt-4.1-mini",
+    "pair": "P0108_MISMATCH",
+    "expected": "NOT_IDENTICAL",
+    "actual": "NOT_IDENTICAL",
+    "status": "PASS"
+  }
+}

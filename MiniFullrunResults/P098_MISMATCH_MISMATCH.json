@@ -1,0 +1,173 @@
+{
+  "schema_version": "3.0",
+  "metadata": {
+    "verification_timestamp": null,
+    "document_pair_id": null,
+    "certificate_issue_date": "2025-11-20",
+    "source_documents_received": 2
+  },
+  "task": {
+    "task_type": "customs_document_pair_verification",
+    "comparison_mode": "certificate_vs_invoice",
+    "strictness": "conservative"
+  },
+  "documents": {
+    "document_a": {
+      "label": "Document A",
+      "assumed_role": "certificate",
+      "document_type": "certificate_of_origin"
+    },
+    "document_b": {
+      "label": "Document B",
+      "assumed_role": "invoice",
+      "document_type": "invoice"
+    }
+  },
+  "rule_activation": {
+    "lc_exception_active": false,
+    "lc_number_found": null,
+    "general_goods_description_with_invoice_reference_active": false,
+    "mixed_origins_rule_active": false,
+    "to_order_rule_active": false,
+    "quantity_exception_applied": null,
+    "eu_origin_normalization_active": true,
+    "activated_rules": [
+      {
+        "rule_id": "2.2",
+        "rule_name": "LC-undantag"
+      },
+      {
+        "rule_id": "4.1.0",
+        "rule_name": "Koncernstruktur"
+      },
+      {
+        "rule_id": "4.1.3.1",
+        "rule_name": "Juridisk part"
+      },
+      {
+        "rule_id": "4.1.4",
+        "rule_name": "Landkontroll"
+      },
+      {
+        "rule_id": "4.2.0.2",
+        "rule_name": "Prioritetsordning för consignee"
+      },
+      {
+        "rule_id": "4.2.2.1",
+        "rule_name": "Normalisering consulnee"
+      },
+      {
+        "rule_id": "4.5.4.1",
+        "rule_name": "EU-normalisering"
+      }
+    ]
+  },
+  "control_points": {
+    "consignor": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.9,
+      "certificate_value": "SKF Sverige AB Kvibergs Broväg 8 SE-415 05, GÖTEBORG Sweden",
+      "invoice_value": "SKF Sverige AB von Utfallsgatan 4 415 50 Göteborg Sweden",
+      "rules_applied": [
+        {
+          "rule_id": "4.1.0",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.3.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.4",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Consignor 'SKF Sverige AB' från certifikatet identifieras exakt i fakturan både i företagsnamn och land. Landöverensstämmelse kontrollerad. Adressavvikelse inte relevant enligt 4.1.4. Koncernrelation eller fri tolkning ej gjord. Resultatet är MATCH enligt regler 4.1.0, 4.1.3.1, 4.1.4."
+    },
+    "consignee": {
+      "applicable": true,
+      "status": "MISMATCH",
+      "confidence": 0.95,
+      "certificate_value": "SKF Vietnam CO Ltd 105 Ton Dat Tien,Tan Phu Ward 700000 Ho Chi Minh Viet Nam",
+      "invoice_value": "Invoice does not identify consignee explicitly as SKF Vietnam CO Ltd; no matching consignee found in invoice primary or secondary fields. Ship to address: Türkiye",
+      "rules_applied": [
+        {
+          "rule_id": "4.2.0.2",
+          "outcome": "MISMATCH"
+        },
+        {
+          "rule_id": "4.2.1",
+          "outcome": "MISMATCH"
+        }
+      ],
+      "motivation": "Consignee i certifikatet 'SKF Vietnam CO Ltd, Viet Nam' kan ej identifieras i fakturan varken i primära faktureringsfält eller i leveransadresser. Fakturan är ställd till Sverige-filial (SKF Sverige AB) och leveransadress i fakturan anges som Türkiye, vilket motsäger certifikatets mottagare. Resultatet är MISMATCH enligt regler 4.2.0.2 och 4.2.1."
+    },
+    "goods_description": {
+      "applicable": true,
+      "status": "MANUAL_REVIEW",
+      "confidence": 0.75,
+      "certificate_value": "LOCK WASHER NUTS",
+      "invoice_value": "Multiple detailed product entries with specific article numbers and descriptions in invoice for bearings and related components",
+      "rules_applied": [
+        {
+          "rule_id": "4.3.2",
+          "outcome": "MANUAL_REVIEW"
+        }
+      ],
+      "motivation": "Artikelnummer i certifikatet 'SEG-25D-400602' kan identifieras i fakturans första sida som 'SEG-25D-400602' (potentiellt med suffix enligt fakturans varurad), men fakturan innehåller flera detaljposter för olika varor med olika artikelnummer och beskrivningar. Den exakta kopplingen mellan varubeskrivningen 'LOCK WASHER NUTS' och fakturans radvaror kräver manuell granskning för att undvika felaktiga antaganden. Resultatet är MANUAL_REVIEW enligt regel 4.3.2."
+    },
+    "quantity": {
+      "applicable": true,
+      "status": "MISMATCH",
+      "confidence": 0.9,
+      "certificate_value": "2 pcs, 2 pcs",
+      "invoice_value": "Quantity totals in invoice image far exceed certifikatets angivna styckantal; fakturans kvantiteter visar 87 pcs total samt flera rader med större mängder",
+      "rules_applied": [
+        {
+          "rule_id": "4.4.1",
+          "outcome": "MISMATCH"
+        }
+      ],
+      "motivation": "Mängden i certifikatet anges som totalt '2 pcs' och '2 pcs' för varorna, medan fakturan på sid 1 och följande sidor visar betydligt högre kvantiteter (upp till flera tusen styck i olika rader och totalt 87 styck på första sidan). Denna större mängd i fakturan motsäger certifikatets låga angivelse. Resultatet är MISMATCH enligt huvudregel 4.4.1."
+    },
+    "origin": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.9,
+      "certificate_value": "SWEDEN",
+      "invoice_value": "Country of origin: Sweden (explicit på fakturasida 1 och bekräftad i fakturans ursprungsfält och varuspecifikation)",
+      "rules_applied": [
+        {
+          "rule_id": "4.5.4.1",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Ursprungslandet 'SWEDEN' i certifikatet kan entydigt identifieras i fakturan i ett dedikerat landursprungsfält och i artikelbeskrivningarna per rad. EU-normaliseringsregler tillämpas då certifikatet anger 'EUROPEAN UNION' samt 'SWEDEN'. Inga icke-EU-ursprungsländer som motstrider certifikatet finns i fakturan. Resultatet är MATCH enligt regler 4.5.4.1."
+    }
+  },
+  "overall_assessment": {
+    "comparison_result": "NOT_IDENTICAL",
+    "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
+    "auto_approval_eligible": false,
+    "confidence": 0.85,
+    "critical_failures": [
+      "consignee",
+      "quantity"
+    ],
+    "manual_review_triggers": [
+      "goods_description"
+    ],
+    "decision_summary": "Consignee i certifikatet kan inte återfinnas i fakturan och kvantiteter skiljer sig väsentligt mellan certifikat och faktura. Varubeskrivningen kräver manuell granskning för att säkerställa korrekt koppling.",
+    "human_explanation": "Mottagaren i certifikatet kan inte identifieras i fakturan och kvantiteterna skiljer sig avsevärt. Varubeskrivningen är oklar och behöver manuell kontroll. Dessa skillnader gör att dokumenten inte kan godkännas automatiskt."
+  },
+  "_meta": {
+    "tested_at": "2026-03-31T20:16:27.998650+00:00",
+    "prompt_hash": "7e05e86256d8",
+    "model": "gpt-4.1-mini",
+    "pair": "P098_MISMATCH",
+    "expected": "NOT_IDENTICAL",
+    "actual": "NOT_IDENTICAL",
+    "status": "PASS"
+  }
+}

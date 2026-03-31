@@ -1,0 +1,144 @@
+{
+  "schema_version": "3.0",
+  "metadata": {
+    "verification_timestamp": "2024-06-19T14:25:00Z",
+    "document_pair_id": null,
+    "certificate_issue_date": null,
+    "source_documents_received": 2
+  },
+  "task": {
+    "task_type": "customs_document_pair_verification",
+    "comparison_mode": "certificate_vs_invoice",
+    "strictness": "conservative"
+  },
+  "documents": {
+    "document_a": {
+      "label": "Document A",
+      "assumed_role": "certificate",
+      "document_type": "Certificate of Origin"
+    },
+    "document_b": {
+      "label": "Document B",
+      "assumed_role": "invoice",
+      "document_type": "Invoice"
+    }
+  },
+  "rule_activation": {
+    "lc_exception_active": false,
+    "lc_number_found": null,
+    "general_goods_description_with_invoice_reference_active": false,
+    "mixed_origins_rule_active": false,
+    "to_order_rule_active": false,
+    "quantity_exception_applied": null,
+    "eu_origin_normalization_active": true,
+    "activated_rules": [
+      {
+        "rule_id": "4.5.4.1",
+        "rule_name": "EU-normalisering – samlingsbeteckning för ursprungsland"
+      }
+    ]
+  },
+  "control_points": {
+    "consignor": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.94,
+      "certificate_value": "Elof Hansson Trade AB\nSE-401 80 Göteborg\nSweden",
+      "invoice_value": "Elof Hansson Trade AB\nSE-401 80 Gothenburg\nSweden",
+      "rules_applied": [
+        {
+          "rule_id": "4.1.3.1",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Consignor-namnet ('Elof Hansson Trade AB') och landet (Sweden) i certifikatet stämmer exakt överens med avsändaruppgifterna (Issuer/Seller) i fakturan efter normalisering av adress (Göteborg/Gothenburg och layoutskillnad räknas ej som avvikelse enligt reglerna)."
+    },
+    "consignee": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.94,
+      "certificate_value": "ECLAT PAPER FZ LLC\nCOMPASS BUILDING AL SHOHDHA ROAD\nAL HAMRA INDUSTRIAL ZONE - FZ\nRAS AL KHAIMAH\nUNITED ARAB EMIRATES",
+      "invoice_value": "ECLAT PAPER FZ LLC\nCOMPASS BUILDING AL SHOHDHA ROAD\nAL HAMRA INDUSTRIAL ZONE - FZ\nRAS AL KHAIMAH\nUNITED ARAB EMIRATES",
+      "rules_applied": [
+        {
+          "rule_id": "4.2.1",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Mottagaren (ECLAT PAPER FZ LLC, UAE) anges identiskt i både certifikat och faktura (faktureringsfält). Adress och land matchar direkt enligt huvudregeln."
+    },
+    "goods_description": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.93,
+      "certificate_value": "Coated Kraftback Board, 273 GSM, 1620 mm\nInvoice: CAM0083447, 24,605 MT\n1200 sheets of above goods per reel 24,605 mt",
+      "invoice_value": "Coated Kraftback Board 273 GSM, 1620 mm\nQuantity: 24,605 MT",
+      "rules_applied": [
+        {
+          "rule_id": "4.3.3",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Den identitetsbärande huvudbeteckningen ('Coated Kraftback Board 273 GSM 1620 mm') i certifikatet återfinns identiskt i fakturans varubeskrivning efter normalisering och bindestrecksreduktion. Kvantiteten och fakturareferensen överensstämmer."
+    },
+    "quantity": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.93,
+      "certificate_value": "24,605 MT",
+      "invoice_value": "24,605 MT",
+      "rules_applied": [
+        {
+          "rule_id": "4.4.1",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Den kvantitet (24,605 MT) som anges i certifikatet återfinns identiskt i fakturan under kvantitetsfältet. Ingen beräkning eller undantag behövs; värdet identifieras direkt."
+    },
+    "origin": {
+      "applicable": true,
+      "status": "MISMATCH",
+      "confidence": 0.92,
+      "certificate_value": "EUROPEAN UNION\nEUROPEISKA UNIONEN",
+      "invoice_value": "Country of Origin: SWEDEN",
+      "rules_applied": [
+        {
+          "rule_id": "4.5.4.1.1",
+          "outcome": "MISMATCH"
+        },
+        {
+          "rule_id": "4.5.4.1",
+          "outcome": "MATCH (för EU-medlemsstat som verifierar samlingsbeteckning)"
+        }
+      ],
+      "motivation": "Certifikatet anger ursprung som 'EUROPEAN UNION', men fakturan anger endast 'Country of Origin: SWEDEN' och har ingen generell EU-ursprungsangivelse för varan eller hela fakturan. Reglerna kräver explicit EU-ursprung eller motsvarande samlingsangivelse vid samlingsbegrepp i certifikatet; här saknas sådan explicit EU-referens i fakturan."
+    }
+  },
+  "overall_assessment": {
+    "comparison_result": "NOT_IDENTICAL",
+    "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
+    "auto_approval_eligible": false,
+    "confidence": 0.91,
+    "critical_failures": [
+      "Ursprungsland i certifikat (EUROPEAN UNION) kan inte identifieras explicit i fakturan, som endast anger 'Country of Origin: SWEDEN'."
+    ],
+    "manual_review_triggers": [
+      "Ursprungsland i fakturan bekräftar endast Sverige och saknar generellt EU-uttalande, vilket krävs för att verifiera certifikatets samlingsursprung."
+    ],
+    "decision_summary": "Samtliga uppgifter utom ursprungsland kan verifieras, men fakturan anger endast Sverige som ursprung. En explicit EU-angivelse krävs för att verifiera certifikatet när det anger EU som ursprung.",
+    "human_explanation": "Alla uppgifter utom ursprungsland stämmer överens. Certifikatet anger ursprung som Europeiska unionen, men fakturan bekräftar endast Sverige. Dokumenten behöver granskas manuellt eftersom explicit EU-ursprungsangivelse saknas i fakturan."
+  },
+  "_meta": {
+    "config_id": "E",
+    "config_label": "4.1 150dpi",
+    "pair_id": "P005",
+    "expected": "NOT_IDENTICAL",
+    "actual": "NOT_IDENTICAL",
+    "status": "PASS",
+    "prompt_hash": "7e05e86256d8",
+    "tested_at": "2026-03-31T19:20:06.269516+00:00",
+    "input_tokens": 31448,
+    "output_tokens": 1581,
+    "cost_usd": 0.03461
+  }
+}

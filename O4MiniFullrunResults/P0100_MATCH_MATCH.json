@@ -1,0 +1,138 @@
+{
+  "schema_version": "3.0",
+  "metadata": {
+    "verification_timestamp": null,
+    "document_pair_id": null,
+    "certificate_issue_date": null,
+    "source_documents_received": 2
+  },
+  "task": {
+    "task_type": "customs_document_pair_verification",
+    "comparison_mode": "certificate_vs_invoice",
+    "strictness": "conservative"
+  },
+  "documents": {
+    "document_a": {
+      "label": "Document A",
+      "assumed_role": "certificate",
+      "document_type": "Certificate of Origin"
+    },
+    "document_b": {
+      "label": "Document B",
+      "assumed_role": "invoice",
+      "document_type": "Invoice"
+    }
+  },
+  "rule_activation": {
+    "lc_exception_active": false,
+    "lc_number_found": null,
+    "general_goods_description_with_invoice_reference_active": false,
+    "mixed_origins_rule_active": false,
+    "to_order_rule_active": false,
+    "quantity_exception_applied": null,
+    "eu_origin_normalization_active": false,
+    "activated_rules": [
+      {
+        "rule_id": "8.5",
+        "rule_name": "Filbaserad dokumentparning"
+      },
+      {
+        "rule_id": "8.6",
+        "rule_name": "Parningsvalidering"
+      }
+    ]
+  },
+  "control_points": {
+    "consignor": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.95,
+      "certificate_value": "FORPAC INTERNATIONAL AB",
+      "invoice_value": "Forpac International AB",
+      "rules_applied": [
+        {
+          "rule_id": "4.1.1",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatets consignor \"FORPAC INTERNATIONAL AB\" identifieras exakt som fakturans utställare \"Forpac International AB\" efter normalisering av versaler och företagsbeteckningar (rule 4.1.1). Land SWEDEN överensstämmer (rule 4.1.4)."
+    },
+    "consignee": {
+      "applicable": true,
+      "status": "MISMATCH",
+      "confidence": 1.0,
+      "certificate_value": "NAPACK, Tunisia",
+      "invoice_value": null,
+      "rules_applied": [
+        {
+          "rule_id": "4.2.1",
+          "outcome": "NOT_FOUND"
+        }
+      ],
+      "motivation": "Certifikatets consignee \"NAPACK\" med land \"Tunisia\" kan inte identifieras i fakturan; fakturan saknar fält för köpare eller leveransmottagare med denna information (rule 4.2.1)."
+    },
+    "goods_description": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.9,
+      "certificate_value": "FLUTING & TESTLINER",
+      "invoice_value": "Fluting de 80 a 115gsm. rw:200 a / TL3 80 a 115gsm. rw:200 a",
+      "rules_applied": [
+        {
+          "rule_id": "4.3.2",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatets artikelbeskrivning matchar fakturans radbeskrivning via artikelnummeridentifiering: SEG-26D-464425 återfinns på fakturarader med motsvarande varubeskrivning (rule 4.3.2)."
+    },
+    "quantity": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.85,
+      "certificate_value": "187,905 MT/GW",
+      "invoice_value": "187,905 MT",
+      "rules_applied": [
+        {
+          "rule_id": "4.4.3",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatets vikt \"187,905 MT/GW\" kan identifieras i fakturan som total netto-/grossvikt \"187,905 MT\" efter trunkering av GW-kategori (rule 4.4.3)."
+    },
+    "origin": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.95,
+      "certificate_value": "European Union",
+      "invoice_value": "EU preferential origin",
+      "rules_applied": [
+        {
+          "rule_id": "4.5.4.2",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatets ursprung \"European Union\" verifieras mot fakturans angivelse \"EU preferential origin\" i exporter-deklarationen (rule 4.5.4.2)."
+    }
+  },
+  "overall_assessment": {
+    "comparison_result": "NOT_IDENTICAL",
+    "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
+    "auto_approval_eligible": false,
+    "confidence": 0.9,
+    "critical_failures": [
+      "consignee"
+    ],
+    "manual_review_triggers": [],
+    "decision_summary": "Consignee mismatch leads to NOT_IDENTICAL.",
+    "human_explanation": "Mottagaren på certifikatet (NAPACK, Tunisia) går inte att hitta i fakturan. Andra punkter matchar men avsaknad av mottagare medför manuell hantering."
+  },
+  "_meta": {
+    "tested_at": "2026-03-31T19:51:01.849130+00:00",
+    "prompt_hash": "7e05e86256d8",
+    "model": "o4-mini",
+    "pair": "P0100_MATCH",
+    "expected": "IDENTICAL",
+    "actual": "NOT_IDENTICAL",
+    "status": "FAIL"
+  }
+}

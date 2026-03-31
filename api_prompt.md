@@ -1008,6 +1008,13 @@ En uttrycklig motsägelse föreligger när certifikatet och fakturan BÅDA anger
 
 Regeln att "MINST EN kvantitetsuppgift ska verifieras" innebär att systemet får godkänna matchning om t.ex. GW matchar även om NW inte kan verifieras i fakturan (dvs. NW saknas i fakturan). MEN om fakturan UTTRYCKLIGEN anger ett NW-värde som SKILJER SIG från certifikatets NW-värde, utgör detta en uttrycklig motsägelse och resultatet ska vara MISMATCH — även om GW matchar.
 
+**FÖRTYDLIGANDE – Motsägelse gäller OAVSETT om en annan kvantitet matchar:**
+Om certifikatet anger BÅDE GW och NW, och fakturan anger BÅDE GW och NW:
+- Om GW i certifikatet SKILJER SIG från GW i fakturan → uttrycklig motsägelse för GW → MISMATCH, oavsett om NW matchar.
+- Om NW matchar men GW inte matchar → MISMATCH. Att NW matchar "räddar" INTE en GW-motsägelse.
+- Exempel: Certifikat 986 000 kg GW / 684 327 kg NW, faktura 825 331 kg GW / 684 327 kg NW → GW motsäger varandra explicit → MISMATCH (trots att NW matchar).
+Regeln "MINST EN ska verifieras" gäller enbart när den andra kvantiteten SAKNAS i fakturan — inte när den FINNS och avviker.
+
 Om osäkerhet uppstår om kvantitetsuppgifternas inbördes relation → MANUAL_REVIEW.
 
 #### 4.4.3.2 Försändelsekvantitet
@@ -1271,6 +1278,9 @@ Systemet ska verifiera att det ursprungsland som anges i certifikatet uttrycklig
 Verifieringen är ensidig.
 Systemet får INTE göra tolkning eller anta ursprung baserat på företagsadress, exportland eller annan indirekt information.
 
+**KRITISK REGEL – Ursprungsland har ingen koppling till consignorns land:**
+Ursprungslandet (Country of Origin) avser var VARORNA är tillverkade eller producerade — inte var avsändaren (consignor) är etablerad. Det är fullt normalt och korrekt att ursprungslandet skiljer sig från consignorns hemland. Systemet ska ALDRIG ifrågasätta eller underkänna ett ursprungsland enbart för att det skiljer sig från consignorns land. Exempel: Consignor i Sverige, ursprung Norge → fullt giltigt, ingen grund för MISMATCH eller MANUAL_REVIEW.
+
 ### 4.5.1 Identifiering i fakturan
 Relevanta benämningar:
 - Country of Origin
@@ -1366,6 +1376,17 @@ Regel 4.5.4.1.1 ska ENBART tillämpas när fakturan introducerar EU-medlemsländ
 - Om certifikatet anger ett specifikt EU-medlemsland och fakturan anger "European Union" → verifierad.
 - Om certifikatet anger "EU"/"European Union"/"European Community" och fakturan anger ett specifikt EU-medlemsland → verifierad.
 - Gäller ENBART medlemsstater vid certifikatets utfärdandedatum.
+
+**FÖRTYDLIGANDE – 4.5.4.2 gäller även när fakturan listar flera ursprungsländer:**
+Verifieringsprincipen är ENRIKTAD: systemet kontrollerar att certifikatets ursprungsländer KAN ÅTERFINNAS i fakturan. Att fakturan dessutom innehåller FLER ursprungsländer (utöver de som certifikatet anger) är i sig inte grund för MISMATCH — se 4.5.4.1.1 och 4.5.4.1.2 för hantering av extra länder i fakturan.
+
+Exempel: Certifikatet anger "Romania". Fakturan listar "Romania, Italy, Poland, Germany". Romania finns i fakturan → certifikatets ursprung är verifierat. De extra länderna (Italy, Poland, Germany) är alla EU-medlemsstater → tillämpa 4.5.4.1.2 → MATCH.
+
+Exempel: Certifikatet anger "France". Fakturan anger "European Union" (utan att namnge France specifikt) → tillämpa 4.5.4.2 punkt 1 → verifierad (EU inkluderar France).
+
+**KRITISK DISTINKTION – Riktning på verifieringen:**
+- Certifikat → Faktura: ALLA ursprungsländer som certifikatet anger ska kunna identifieras i fakturan.
+- Faktura → Certifikat: Extra ursprungsländer i fakturan som INTE finns i certifikatet medför MISMATCH ENBART om de är icke-EU-länder och certifikatet inte täcker dem. Extra EU-länder i fakturan medför INTE MISMATCH (4.5.4.1.1/4.5.4.1.2).
 
 **KRITISK REGEL – Specifikt namngivna EU-medlemsländer i certifikatet:**
 När certifikatet UTTRYCKLIGEN namnger specifika EU-medlemsländer i ursprungsfältet (t.ex. "EUROPEAN COMMUNITY; SWEDEN & FRANCE") ska VARJE namngivet land kunna identifieras individuellt i fakturan. EU-normaliseringen i 4.5.4.2 får INTE användas för att "absorbera" ett specifikt namngivet land som saknas i fakturan. Om certifikatet har valt att namnge "France" separat — utöver "European Community" — innebär detta att certifikatet gör anspråk på att varor med franskt ursprung ingår. Om fakturan INTE uttryckligen anger France (eller "FR" eller "Made in France") som ursprung, kan denna specifika angivelse inte verifieras, och resultatet ska vara MISMATCH.

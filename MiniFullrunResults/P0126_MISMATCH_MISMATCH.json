@@ -1,0 +1,141 @@
+{
+  "schema_version": "3.0",
+  "metadata": {
+    "verification_timestamp": null,
+    "document_pair_id": null,
+    "certificate_issue_date": "2023-11-15",
+    "source_documents_received": 2
+  },
+  "task": {
+    "task_type": "customs_document_pair_verification",
+    "comparison_mode": "certificate_vs_invoice",
+    "strictness": "conservative"
+  },
+  "documents": {
+    "document_a": {
+      "label": "Document A",
+      "assumed_role": "certificate",
+      "document_type": "Certificate of Origin"
+    },
+    "document_b": {
+      "label": "Document B",
+      "assumed_role": "invoice",
+      "document_type": "Invoice"
+    }
+  },
+  "rule_activation": {
+    "lc_exception_active": false,
+    "lc_number_found": null,
+    "general_goods_description_with_invoice_reference_active": false,
+    "mixed_origins_rule_active": false,
+    "to_order_rule_active": false,
+    "quantity_exception_applied": null,
+    "eu_origin_normalization_active": true,
+    "activated_rules": [
+      {
+        "rule_id": "2.2",
+        "rule_name": "Letter of Credit (LC) exception"
+      },
+      {
+        "rule_id": "4.5.4.1",
+        "rule_name": "EU origin normalization and additional EU members"
+      }
+    ]
+  },
+  "control_points": {
+    "consignor": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.9,
+      "certificate_value": "Elmo Sweden AB",
+      "invoice_value": "Elmo Sweden AB",
+      "rules_applied": [
+        {
+          "rule_id": "4.1.0",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Consignor 'Elmo Sweden AB' från certifikatet identifieras explicit i fakturan som fakturautställare och i adressblocket med korrekt land (Sweden). Enligt regel 4.1.0 matchar consignor-namnet i fakturan i flera fält och land överensstämmer."
+    },
+    "consignee": {
+      "applicable": true,
+      "status": "MISMATCH",
+      "confidence": 0.95,
+      "certificate_value": "Al Muhalhel General Trading & Contracting Co",
+      "invoice_value": "Boretius Objekt Nähservice für Dekorationen GmbH",
+      "rules_applied": [
+        {
+          "rule_id": "4.2.0.2",
+          "outcome": "MISMATCH"
+        }
+      ],
+      "motivation": "Certifikatets consignee är 'Al Muhalhel General Trading & Contracting Co' med land Kuwait, medan fakturans köpare och leveransmottagare är 'Boretius Objekt Nähservice für Dekorationen GmbH' med land Germany. Ingen match hittas i fakturans faktureringsfält eller leveransadress som motsvarar certifikatets consignee. Enligt 4.2.0.2 gäller verifiering mot faktureringsfältet, där namnet inte överensstämmer."
+    },
+    "goods_description": {
+      "applicable": true,
+      "status": "MISMATCH",
+      "confidence": 0.95,
+      "certificate_value": "Elmobaltique 97001 Basket Weave I",
+      "invoice_value": "ELMOSOFT 97038 I Upholstery Leather Swedish Origin",
+      "rules_applied": [
+        {
+          "rule_id": "4.3.2",
+          "outcome": "MISMATCH"
+        }
+      ],
+      "motivation": "Artikelnummer i certifikatet '97001' kan inte identifieras exakt i fakturan där artikelnumret anges som '97038'. Varubeskrivningen skiljer sig också: 'Elmobaltique Basket Weave I' kontra 'ELMOSOFT Upholstery Leather Swedish Origin'. Regler för artikelnummermatchning (4.3.2) kräver exakt match, vilket saknas."
+    },
+    "quantity": {
+      "applicable": true,
+      "status": "MISMATCH",
+      "confidence": 0.95,
+      "certificate_value": "5 Pkgs / 288,610 M2",
+      "invoice_value": "1 Pkg / 4,850 M2",
+      "rules_applied": [
+        {
+          "rule_id": "4.4.1",
+          "outcome": "MISMATCH"
+        }
+      ],
+      "motivation": "Certifikatet anger kvantitet 5 Pkgs och 288,610 M2, medan fakturan anger 1 Pkg och 4,850 M2 för artikeln. Dessa värden kan inte verifieras som matchande enligt 4.4.1 huvudregel för kvantitetsverifiering."
+    },
+    "origin": {
+      "applicable": true,
+      "status": "MISMATCH",
+      "confidence": 1.0,
+      "certificate_value": "EUROPEAN UNION",
+      "invoice_value": "SWEDISH Origin",
+      "rules_applied": [
+        {
+          "rule_id": "4.5.4.1",
+          "outcome": "MISMATCH"
+        }
+      ],
+      "motivation": "Certifikatet anger ursprung 'EUROPEAN UNION', men fakturan anger uttrycklig ursprungsangivelse som 'Swedish Origin' för varan. Då certifikatet endast anger 'EUROPEAN UNION' ska fakturan ange minst ett EU-medlemsland som ursprung. Fakturan nämner 'Swedish Origin' vilket är ett specifikt namngivet land inom EU, men certifikatet saknar detta, vilket utgör en motsägelse enligt 4.5.4.1 kraven."
+    }
+  },
+  "overall_assessment": {
+    "comparison_result": "NOT_IDENTICAL",
+    "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
+    "auto_approval_eligible": false,
+    "confidence": 0.9,
+    "critical_failures": [
+      "consignee",
+      "goods_description",
+      "quantity",
+      "origin"
+    ],
+    "manual_review_triggers": [],
+    "decision_summary": "Flera skillnader identifierades: mottagaren i certifikatet skiljer sig från fakturans köpare, artikelnummer och varubeskrivning överensstämmer inte, kvantiteter skiljer sig avsevärt, och ursprungsland i fakturan är mer specifikt än certifikatet. Dessa medför NOT_IDENTICAL.",
+    "human_explanation": "Mottagaren i certifikatet är 'Al Muhalhel General Trading & Contracting Co' medan fakturan är ställd till 'Boretius Objekt Nähservice für Dekorationen GmbH'. Artikelnummer, varubeskrivning och kvantitet i certifikatet och fakturan överensstämmer inte. Certifikatet anger ursprung 'European Union' medan fakturan anges med 'Swedish Origin'."
+  },
+  "_meta": {
+    "tested_at": "2026-03-31T19:43:21.560386+00:00",
+    "prompt_hash": "7e05e86256d8",
+    "model": "gpt-4.1-mini",
+    "pair": "P0126_MISMATCH",
+    "expected": "NOT_IDENTICAL",
+    "actual": "NOT_IDENTICAL",
+    "status": "PASS"
+  }
+}

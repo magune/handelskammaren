@@ -1,0 +1,168 @@
+{
+  "schema_version": "3.0",
+  "metadata": {
+    "verification_timestamp": null,
+    "document_pair_id": null,
+    "certificate_issue_date": "2026-02-25",
+    "source_documents_received": 2
+  },
+  "task": {
+    "task_type": "customs_document_pair_verification",
+    "comparison_mode": "certificate_vs_invoice",
+    "strictness": "conservative"
+  },
+  "documents": {
+    "document_a": {
+      "label": "Document A",
+      "assumed_role": "certificate",
+      "document_type": "Certificate of Origin"
+    },
+    "document_b": {
+      "label": "Document B",
+      "assumed_role": "invoice",
+      "document_type": "Commercial Invoice"
+    }
+  },
+  "rule_activation": {
+    "lc_exception_active": false,
+    "lc_number_found": null,
+    "general_goods_description_with_invoice_reference_active": false,
+    "mixed_origins_rule_active": true,
+    "to_order_rule_active": false,
+    "quantity_exception_applied": null,
+    "eu_origin_normalization_active": false,
+    "activated_rules": [
+      {
+        "rule_id": "4.1.0",
+        "rule_name": "Koncernstruktur consignor"
+      },
+      {
+        "rule_id": "4.1.3.6",
+        "rule_name": "Förkortning av juridisk bolagsform"
+      },
+      {
+        "rule_id": "4.2.0",
+        "rule_name": "Consignee måste motsvara Invoice to/Bill to/Sold to"
+      },
+      {
+        "rule_id": "4.3.2",
+        "rule_name": "Varubeskrivning prioritet artikelnummer"
+      },
+      {
+        "rule_id": "4.5.3",
+        "rule_name": "Blandade ursprung - per vara"
+      }
+    ]
+  },
+  "control_points": {
+    "consignor": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 1.0,
+      "certificate_value": "Th.Brunius & Co AB\nPO Box 2516\nSE-403 17, Gothenburg\nSweden",
+      "invoice_value": "Th. Brunius & Co AB\nPo Box 2516\nSE-403 17 Gothenburg, Sweden",
+      "rules_applied": [
+        {
+          "rule_id": "4.1.0",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.3.6",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Consignor 'Th.Brunius & Co AB' med adress i Sverige förekommer som fakturautställare på fakturan (Th. Brunius & Co AB, SE-403 17 Gothenburg, Sweden), efter tillåten normalisering (bolagsform, versaler/gemener, adresstyp). Land stämmer överens."
+    },
+    "consignee": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 1.0,
+      "certificate_value": "Xiamen New Paper Source E-Commerce Co., Ltd\nUnit B,24/F,C and D International \nBuilding, No.1699,Huandao East Road\nSiming District, Xiamen\nTel:0592-2263960\nEmail: Lyunle@cndpaper.com;\nYutinghuang@cndpaper.com\nChina",
+      "invoice_value": "Xiamen New Paper Source E-Commerce Co., Ltd\nUnit B, 24/F, C&D International Building., No.1699\nHuandao East Road, Siming District Xiamen, China",
+      "rules_applied": [
+        {
+          "rule_id": "4.2.0",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.3.6",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Consignee i certifikatet ('Xiamen New Paper Source E-Commerce Co., Ltd, China') överensstämmer exakt med 'SOLD TO' och 'CONSIGNED TO' på fakturan, inklusive adress och land. Endast layout- och små kommersiella förkortningar skiljer, vilka accepteras enligt reglerna."
+    },
+    "goods_description": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 1.0,
+      "certificate_value": "27 reels of Saica Testliner 90gsm",
+      "invoice_value": "Saica Testliner 90gsm\nTotal Weight Quantity: 49.770 MT\nTotal Unit Count: 27 Reels",
+      "rules_applied": [
+        {
+          "rule_id": "4.3.2",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.3.3",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatets varubeskrivning '27 reels of Saica Testliner 90gsm' kan exakt identifieras i fakturans varubeskrivning ('Saica Testliner 90gsm', 27 Reels) efter normalisering. Ingen motsägelse eller avvikelse föreligger."
+    },
+    "quantity": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 1.0,
+      "certificate_value": "49.770 mt\ngross/net",
+      "invoice_value": "Total Weight Quantity: 49.770 MT",
+      "rules_applied": [
+        {
+          "rule_id": "4.4.1",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatet anger 49.770 mt gross/net, vilket exakt överensstämmer med fakturans 'Total Weight Quantity: 49.770 MT'. Benämning av viktkategori och enhet är accepterad efter normalisering."
+    },
+    "origin": {
+      "applicable": true,
+      "status": "MISMATCH",
+      "confidence": 1.0,
+      "certificate_value": "SWEDEN\nFRANCE",
+      "invoice_value": "COUNTRY OF ORIGIN: FRANCE",
+      "rules_applied": [
+        {
+          "rule_id": "4.5.3",
+          "outcome": "MISMATCH"
+        }
+      ],
+      "motivation": "Certifikatet anger både SWEDEN och FRANCE som ursprungsland. Fakturan anger enbart FRANCE som ursprungsland på ett dedikerat fält (COUNTRY OF ORIGIN: FRANCE). SWEDEN kan inte identifieras i fakturans text eller ursprungsfält, vilket utgör en motsägelse enligt reglerna för blandat ursprung."
+    }
+  },
+  "overall_assessment": {
+    "comparison_result": "NOT_IDENTICAL",
+    "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
+    "auto_approval_eligible": false,
+    "confidence": 1.0,
+    "critical_failures": [
+      "origin"
+    ],
+    "manual_review_triggers": [
+      "Ursprungslandet SWEDEN kan inte verifieras i fakturan."
+    ],
+    "decision_summary": "Alla kontrollpunkter utom ursprungsland matchar. Certifikatet anger SWEDEN och FRANCE som ursprungsland, men fakturan bekräftar endast FRANCE. Detta är en explicit motsägelse.",
+    "human_explanation": "Certifikatet anger både Sverige och Frankrike som ursprungsland, men fakturan bekräftar endast Frankrike som ursprungsland. Sverige kan inte identifieras någonstans i fakturan, vilket innebär att uppgifterna inte stämmer överens. En manuell granskning krävs därför."
+  },
+  "_meta": {
+    "config_id": "B",
+    "config_label": "4.1",
+    "pair_id": "P0118",
+    "expected": "IDENTICAL",
+    "actual": "NOT_IDENTICAL",
+    "status": "FAIL",
+    "prompt_hash": "7e05e86256d8",
+    "tested_at": "2026-03-31T19:28:51.372062+00:00",
+    "input_tokens": 32329,
+    "output_tokens": 1703,
+    "cost_usd": 0.03574
+  }
+}

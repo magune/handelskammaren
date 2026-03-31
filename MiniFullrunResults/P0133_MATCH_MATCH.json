@@ -1,0 +1,161 @@
+{
+  "schema_version": "3.0",
+  "metadata": {
+    "verification_timestamp": null,
+    "document_pair_id": null,
+    "certificate_issue_date": "2025-07-30",
+    "source_documents_received": 2
+  },
+  "task": {
+    "task_type": "customs_document_pair_verification",
+    "comparison_mode": "certificate_vs_invoice",
+    "strictness": "conservative"
+  },
+  "documents": {
+    "document_a": {
+      "label": "Document A",
+      "assumed_role": "certificate",
+      "document_type": "Certificate of Origin"
+    },
+    "document_b": {
+      "label": "Document B",
+      "assumed_role": "invoice",
+      "document_type": "Commercial Invoice"
+    }
+  },
+  "rule_activation": {
+    "lc_exception_active": true,
+    "lc_number_found": "L/C NO. 733301LC25000099",
+    "general_goods_description_with_invoice_reference_active": false,
+    "mixed_origins_rule_active": false,
+    "to_order_rule_active": false,
+    "quantity_exception_applied": null,
+    "eu_origin_normalization_active": true,
+    "activated_rules": [
+      {
+        "rule_id": "2.2",
+        "rule_name": "Letter of Credit exception active - only origin verified"
+      },
+      {
+        "rule_id": "4.6",
+        "rule_name": "Land normalization China/Hongkong equivalence"
+      },
+      {
+        "rule_id": "4.5.4.1",
+        "rule_name": "EU origin normalization active"
+      }
+    ]
+  },
+  "control_points": {
+    "consignor": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.9,
+      "certificate_value": "GLOBAL FOREST PRODUCTS SWEDEN AB",
+      "invoice_value": "GLOBAL FOREST PRODUCTS SWEDEN AB",
+      "rules_applied": [
+        {
+          "rule_id": "4.1.0",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.3.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.4",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Consignor 'GLOBAL FOREST PRODUCTS SWEDEN AB' identified exactly in invoice as issuer and corporate name, with matching country Sweden. Verified by explicit occurrence in invoice header, address block and VAT ID matching. Land Sweden matches exactly after normalization. No conflicting entries found."
+    },
+    "consignee": {
+      "applicable": true,
+      "status": "MISMATCH",
+      "confidence": 0.95,
+      "certificate_value": "MINFENG SPECIAL PAPER CO.,LTD.",
+      "invoice_value": "SHANDONG PUBLISHING FOREIGN TRADE COMPANY LIMITED",
+      "rules_applied": [
+        {
+          "rule_id": "4.2.0.2",
+          "outcome": "MISMATCH"
+        }
+      ],
+      "motivation": "Consignee in certificate is 'MINFENG SPECIAL PAPER CO.,LTD.', which is not found as buyer or consignee in invoice. Invoice buyer is 'SHANDONG PUBLISHING FOREIGN TRADE COMPANY LIMITED' and no match or reference to certificate consignee found in primary invoice consignee fields. Therefore, consignee mismatch per rule 4.2."
+    },
+    "goods_description": {
+      "applicable": true,
+      "status": "MANUAL_REVIEW",
+      "confidence": 0.7,
+      "certificate_value": "SODRA BLUE Z BLEACHED SOFTWOOD KRAFT PULP",
+      "invoice_value": "COMMODITY: SODRA BLUE SOFTWOOD KRAFT PULP",
+      "rules_applied": [
+        {
+          "rule_id": "4.3.3",
+          "outcome": "MANUAL_REVIEW"
+        }
+      ],
+      "motivation": "Article number not specified in certificate; text match shows close similarity but not exact identical wording between certificate and invoice descriptions. Minor differences such as presence of 'BLEACHED' and 'COMMODITY:' prefix, possible slight variation. Without exact article number, system cannot confirm exact match. Conservative outcome is MANUAL_REVIEW."
+    },
+    "quantity": {
+      "applicable": true,
+      "status": "MISMATCH",
+      "confidence": 0.9,
+      "certificate_value": "1508 ADMT",
+      "invoice_value": "1014 ADMT",
+      "rules_applied": [
+        {
+          "rule_id": "4.4.1",
+          "outcome": "MISMATCH"
+        },
+        {
+          "rule_id": "4.4.6",
+          "outcome": "MISMATCH"
+        }
+      ],
+      "motivation": "Quantity/net weight in certificate is 1508 ADMT while invoice states 1014 ADMT. These numeric values differ significantly beyond tolerance and represent a clear mismatch per the strict occurrence check rule 4.4.1 and mismatch rule 4.4.6."
+    },
+    "origin": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.92,
+      "certificate_value": "SWEDEN",
+      "invoice_value": "COUNTRY OF ORIGIN: SWEDEN",
+      "rules_applied": [
+        {
+          "rule_id": "4.5.4.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.6",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certificate origin 'SWEDEN' explicitly appears in invoice as 'COUNTRY OF ORIGIN: SWEDEN'. EU normalization rules apply given certificate's EU reference and invoice's Sweden origin, resulting in match. No conflicting origin information noted."
+    }
+  },
+  "overall_assessment": {
+    "comparison_result": "NOT_IDENTICAL",
+    "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
+    "auto_approval_eligible": false,
+    "confidence": 0.75,
+    "critical_failures": [
+      "consignee",
+      "quantity"
+    ],
+    "manual_review_triggers": [
+      "goods_description"
+    ],
+    "decision_summary": "Consignor and origin verified as matching. Consignee value in certificate does not match invoice buyer, and quantity/net weight differs substantially. Goods description is uncertain requiring manual review. Overall verification result is NOT_IDENTICAL.",
+    "human_explanation": "Mottagaren i certifikatet är MINFENG SPECIAL PAPER CO.,LTD. medan fakturan är ställd till SHANDONG PUBLISHING FOREIGN TRADE COMPANY LIMITED. Kvantiteten skiljer sig mellan certifikatet (1508 ADMT) och fakturan (1014 ADMT). Varubeskrivningen kräver manuell granskning på grund av osäkerhet."
+  },
+  "_meta": {
+    "tested_at": "2026-03-31T20:31:01.120148+00:00",
+    "prompt_hash": "7e05e86256d8",
+    "model": "gpt-4.1-mini",
+    "pair": "P0133_MATCH",
+    "expected": "IDENTICAL",
+    "actual": "NOT_IDENTICAL",
+    "status": "FAIL"
+  }
+}

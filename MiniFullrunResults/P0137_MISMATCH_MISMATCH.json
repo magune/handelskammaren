@@ -1,0 +1,138 @@
+{
+  "schema_version": "3.0",
+  "metadata": {
+    "verification_timestamp": null,
+    "document_pair_id": null,
+    "certificate_issue_date": "2025-10-16",
+    "source_documents_received": 2
+  },
+  "task": {
+    "task_type": "customs_document_pair_verification",
+    "comparison_mode": "certificate_vs_invoice",
+    "strictness": "conservative"
+  },
+  "documents": {
+    "document_a": {
+      "label": "Document A",
+      "assumed_role": "certificate",
+      "document_type": "Certificate of Origin"
+    },
+    "document_b": {
+      "label": "Document B",
+      "assumed_role": "invoice",
+      "document_type": "Invoice"
+    }
+  },
+  "rule_activation": {
+    "lc_exception_active": false,
+    "lc_number_found": null,
+    "general_goods_description_with_invoice_reference_active": false,
+    "mixed_origins_rule_active": false,
+    "to_order_rule_active": false,
+    "quantity_exception_applied": null,
+    "eu_origin_normalization_active": true,
+    "activated_rules": []
+  },
+  "control_points": {
+    "consignor": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.9,
+      "certificate_value": "Källbergs Industri AB\nBox 73\nSE-545 22, TÖREBODA\nSweden",
+      "invoice_value": "Källbergs Industri AB\nSkövdevägen 25\nBox 73\n54522 Töreboda\nSverige",
+      "rules_applied": [
+        {
+          "rule_id": "4.1.0",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.3.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.4",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Företagsnamnet 'Källbergs Industri AB' i certifikatet identifieras exakt som fakturans fakturautställare och även i fakturans adressblock inklusive 'Box 73' och land med normaliserad stavning 'Sweden'/'Sverige'. Landen matchar efter normalisering. Ingen annan juridisk part med liknande namnstruktur förekommer. Därmed match enligt reglerna 4.1.0, 4.1.3.1 och 4.1.4."
+    },
+    "consignee": {
+      "applicable": true,
+      "status": "MISMATCH",
+      "confidence": 0.85,
+      "certificate_value": "General Food Processing Industries\nP.O. Box 81931\nDubai\nUnited Arab Emirates",
+      "invoice_value": "Kadbanoo Co.\nNo. 24, 7t Fath St, Fath highway\nCommercial ID: 10100245584\nTehran REG NUMBER 38341623\nIran",
+      "rules_applied": [
+        {
+          "rule_id": "4.2.0.2",
+          "outcome": "MISMATCH"
+        }
+      ],
+      "motivation": "Certifikatets mottagare är 'General Food Processing Industries' i Förenade Arabemiraten medan fakturan är ställd till 'Kadbanoo Co.' i Iran som fakturans köpare och leveransadress. Fakturan har ett tydligt faktureringsfält (Buyer) med ett företag som skiljer sig helt från certifikatets angivelse. Ingen alternativ part i fakturan motsvarar certifikatets consignee. Därmed MISMATCH enligt regel 4.2.0.2."
+    },
+    "goods_description": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.9,
+      "certificate_value": "Heat Stable EYP Mayo-Max399\n126 bags of lot 25-12818\n462 bags of lot 25-12873",
+      "invoice_value": "Food Shaping Compound (Mayomax)",
+      "rules_applied": [
+        {
+          "rule_id": "4.3.3",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Varubeskrivningen i certifikatet 'Heat Stable EYP Mayo-Max399' matchar textmässigt mot fakturans produkt 'Food Shaping Compound (Mayomax)' där 'Mayomax' identifieras som huvudbeteckning. Artikelnummer saknas i certifikatet vilket gör textmatchning till huvudmetod. Varubeskrivningen är entydig och kan verifieras med normalisering enligt 4.3 utan motsägelser."
+    },
+    "quantity": {
+      "applicable": true,
+      "status": "MISMATCH",
+      "confidence": 0.9,
+      "certificate_value": "8820 kg net",
+      "invoice_value": "Total Net Weight 17.640 kg",
+      "rules_applied": [
+        {
+          "rule_id": "4.4.1",
+          "outcome": "MISMATCH"
+        }
+      ],
+      "motivation": "Certifikatets vikt är 8820 kg net medan fakturan anger total nettovikt som 17.640 kg. Det föreligger en tydlig och uttrycklig avvikelse i numeriska värden för samma viktkategori (Net Weight). En andra vikt (Total Gross Weight 18.346) i fakturan matchar inte heller certifikatets vikt. Ingen tillåten summering eller omräkning kan tillämpas. Därmed MISMATCH enligt 4.4.1."
+    },
+    "origin": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.95,
+      "certificate_value": "European Union\nEC: Sweden",
+      "invoice_value": "Country fo origin: Sweden",
+      "rules_applied": [
+        {
+          "rule_id": "4.5.4.1",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Ursprungslandet 'European Union' och 'Sweden' i certifikatet verifieras explicit mot fakturans uttryckliga angivelse 'Country fo origin: Sweden'. Normalisering för EU och svenska ursprungsbeteckningar har tillämpats enligt 4.5.4.1 och 4.5.4.2. Inga motstridiga ursprungsuppgifter i fakturan finns."
+    }
+  },
+  "overall_assessment": {
+    "comparison_result": "NOT_IDENTICAL",
+    "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
+    "auto_approval_eligible": false,
+    "confidence": 0.88,
+    "critical_failures": [
+      "consignee",
+      "quantity"
+    ],
+    "manual_review_triggers": [],
+    "decision_summary": "Mottagaren i certifikatet skiljer sig från fakturans angivna köpare, och kvantitetsvärdet på 8820 kg net i certifikatet avviker från fakturans nettovikt 17,640 kg. Övriga kontrollpunkter matchar.",
+    "human_explanation": "Mottagaren i certifikatet är General Food Processing Industries i Förenade Arabemiraten, medan fakturan är ställd till Kadbanoo Co. i Iran. Dessutom skiljer sig den angivna vikten 8820 kg net i certifikatet från fakturans nettovikt 17,640 kg. Dessa avvikelser kräver manuell granskning."
+  },
+  "_meta": {
+    "tested_at": "2026-03-31T19:48:25.206645+00:00",
+    "prompt_hash": "7e05e86256d8",
+    "model": "gpt-4.1-mini",
+    "pair": "P0137_MISMATCH",
+    "expected": "NOT_IDENTICAL",
+    "actual": "NOT_IDENTICAL",
+    "status": "PASS"
+  }
+}

@@ -1,0 +1,154 @@
+{
+  "schema_version": "3.0",
+  "metadata": {
+    "verification_timestamp": null,
+    "document_pair_id": null,
+    "certificate_issue_date": "2026-02-26",
+    "source_documents_received": 2
+  },
+  "task": {
+    "task_type": "customs_document_pair_verification",
+    "comparison_mode": "certificate_vs_invoice",
+    "strictness": "conservative"
+  },
+  "documents": {
+    "document_a": {
+      "label": "Document A",
+      "assumed_role": "certificate",
+      "document_type": "Certificate of Origin"
+    },
+    "document_b": {
+      "label": "Document B",
+      "assumed_role": "invoice",
+      "document_type": "Invoice"
+    }
+  },
+  "rule_activation": {
+    "lc_exception_active": false,
+    "lc_number_found": null,
+    "general_goods_description_with_invoice_reference_active": true,
+    "mixed_origins_rule_active": false,
+    "to_order_rule_active": false,
+    "quantity_exception_applied": null,
+    "eu_origin_normalization_active": true,
+    "activated_rules": [
+      {
+        "rule_id": "4.3.5",
+        "rule_name": "Generell varubeskrivning med fakturareferens"
+      },
+      {
+        "rule_id": "4.5.4.1",
+        "rule_name": "EU-normalisering och tillägg av EU-medlemsländer i fakturan"
+      }
+    ]
+  },
+  "control_points": {
+    "consignor": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.9,
+      "certificate_value": "FORPAC INTERNATIONAL AB\nKUNGSPORTEN 4E\nSE-427 50, BILLDAL\nSWEDEN",
+      "invoice_value": "Forpac International AB\nKungsporten 4E\n427 50 Billdal\nSweden",
+      "rules_applied": [
+        {
+          "rule_id": "4.1.0",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.3.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.4",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Consignor \"FORPAC INTERNATIONAL AB\" i certifikatet exakt identifierbar som fakturautställare \"Forpac International AB\" i fakturan efter normalisering av versaler, mellanslag och företagsbeteckningar (regel 4.1.0 och 4.1.3.1). Land \"SWEDEN\" i certifikatet överensstämmer med land i fakturan enligt 4.1.4."
+    },
+    "consignee": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.9,
+      "certificate_value": "NAPACK\n4 RUE NABEUL ZONE INDUSTRIELLE\nMGHIRA II\n2082 FOUCHANA\nBEN AROUS\nTunisia",
+      "invoice_value": "N/A (Invoice does not explicitly name consignee in extracted text but consignee matches Delivery address not explicitly shown)",
+      "rules_applied": [
+        {
+          "rule_id": "4.2.0",
+          "outcome": "MANUAL_REVIEW"
+        }
+      ],
+      "motivation": "Consignee \"NAPACK\" anges i certifikatet med adress i Tunisia. Fakturan visar inte ett tydligt faktureringsfält med mottagare utan endast säljaruppgifter och varubeskrivning. Då fakturantext är otillgänglig (PDF är bildbaserad) kan consignee inte verifieras automatiskt och kräver manuell granskning enligt 4.2.0."
+    },
+    "goods_description": {
+      "applicable": true,
+      "status": "MANUAL_REVIEW",
+      "confidence": 0.55,
+      "certificate_value": "FLUTING & TESTLINER",
+      "invoice_value": "Natural Kraft Extensible 80 gsm\nNatural Kraft Bag 49 gsm",
+      "rules_applied": [
+        {
+          "rule_id": "4.3.5",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Varubeskrivning i certifikatet \"FLUTING & TESTLINER\" verifieras via uttrycklig fakturahänvisning (fakturanummer och datum) enligt regel 4.3.5. Då artikelnummer saknas används fakturareferensen som stöd. Då fakturans varubeskrivning skiljer sig kan inte full automatisk matchning göras, därför MANUAL_REVIEW."
+    },
+    "quantity": {
+      "applicable": true,
+      "status": "MISMATCH",
+      "confidence": 0.7,
+      "certificate_value": "187,905 MT/GW",
+      "invoice_value": "Total qty. 28 Reel 23,861 MT",
+      "rules_applied": [
+        {
+          "rule_id": "4.4.3",
+          "outcome": "MISMATCH"
+        }
+      ],
+      "motivation": "Certifikatet anger kvantitet och vikt 187,905 MT/GW. Fakturan anger total kvantitet 28 Reel och total vikt 23,861 MT. Värden är ej överensstämmande och kvantiteten i certifikatet kan inte identifieras i fakturan, därför MISMATCH enligt 4.4.3."
+    },
+    "origin": {
+      "applicable": true,
+      "status": "MISMATCH",
+      "confidence": 0.9,
+      "certificate_value": "FRANCE",
+      "invoice_value": "Country of Origin: Tunisia (implied from consignee address and text)",
+      "rules_applied": [
+        {
+          "rule_id": "4.5.1",
+          "outcome": "NOT_FOUND"
+        },
+        {
+          "rule_id": "4.5.4.1",
+          "outcome": "MISMATCH"
+        }
+      ],
+      "motivation": "Ursprungsland i certifikatet anges som FRANCE. Fakturan saknar uttrycklig ursprungsangivelse i dedikerade fält. Avsändarland är SWEDEN, mottagarland Tunisia, men fakturan anger ej ursprungsland France. Ingen uttrycklig pris- eller ursprungsreferens till Frankrike kan identifieras i fakturan, vilket utgör MISMATCH enligt 4.5.1 och 4.5.4.1."
+    }
+  },
+  "overall_assessment": {
+    "comparison_result": "NOT_IDENTICAL",
+    "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
+    "auto_approval_eligible": false,
+    "confidence": 0.75,
+    "critical_failures": [
+      "quantity",
+      "origin"
+    ],
+    "manual_review_triggers": [
+      "consignee",
+      "goods_description"
+    ],
+    "decision_summary": "Avsändare matchar, men kvantitet och ursprungsland överensstämmer inte mellan certifikatet och fakturan. Consignee och varubeskrivning kräver manuell granskning på grund av avsaknad av verifierbar information i fakturan.",
+    "human_explanation": "Kvantiteten och ursprungslandet i certifikatet stämmer inte överens med fakturan. Consignee och varubeskrivning kunde inte verifieras automatiskt. Manuell granskning krävs."
+  },
+  "_meta": {
+    "tested_at": "2026-03-31T19:39:57.234856+00:00",
+    "prompt_hash": "7e05e86256d8",
+    "model": "gpt-4.1-mini",
+    "pair": "P0102_MISMATCH",
+    "expected": "NOT_IDENTICAL",
+    "actual": "NOT_IDENTICAL",
+    "status": "PASS"
+  }
+}

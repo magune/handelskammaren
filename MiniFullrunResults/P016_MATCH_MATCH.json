@@ -1,0 +1,156 @@
+{
+  "schema_version": "3.0",
+  "metadata": {
+    "verification_timestamp": null,
+    "document_pair_id": null,
+    "certificate_issue_date": "2026-03-02",
+    "source_documents_received": 2
+  },
+  "task": {
+    "task_type": "customs_document_pair_verification",
+    "comparison_mode": "certificate_vs_invoice",
+    "strictness": "conservative"
+  },
+  "documents": {
+    "document_a": {
+      "label": "Document A",
+      "assumed_role": "certificate",
+      "document_type": "Certificate of Origin"
+    },
+    "document_b": {
+      "label": "Document B",
+      "assumed_role": "invoice",
+      "document_type": "Invoice"
+    }
+  },
+  "rule_activation": {
+    "lc_exception_active": false,
+    "lc_number_found": null,
+    "general_goods_description_with_invoice_reference_active": false,
+    "mixed_origins_rule_active": false,
+    "to_order_rule_active": false,
+    "quantity_exception_applied": null,
+    "eu_origin_normalization_active": true,
+    "activated_rules": [
+      {
+        "rule_id": "4.5.4.1",
+        "rule_name": "EU-normalisering för ursprung"
+      },
+      {
+        "rule_id": "4.6",
+        "rule_name": "Landnormalisering Kina och Hongkong"
+      }
+    ]
+  },
+  "control_points": {
+    "consignor": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.9,
+      "certificate_value": "ERICSSON AB, TORSHAMNSGATAN 21-23, 164 83, STOCKHOLM, Sweden",
+      "invoice_value": "ERICSSON AB, Torshamnsgatan 21-23, SE-164 83 STOCKHOLM, Sweden",
+      "rules_applied": [
+        {
+          "rule_id": "4.1.0",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.4",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Consignor 'ERICSSON AB' med adress 'Torshamnsgatan 21-23, Stockholm, Sweden' i certifikatet hittas uttryckligen i fakturan inklusive adressdetaljer och land, utan avvikelse efter normalisering. Regeln 4.1.0 tillämpades via koncernstruktur och sökning i fakturatext. Land överensstämmer exakt enligt regel 4.1.4."
+    },
+    "consignee": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.92,
+      "certificate_value": "ERICSSON INDIA PRIVATE LTD. (FORMERLY ERICSSON INDIA GLOBAL) S/N 3RD & 4TH FLOOR BUILDING NO 7A PHASE 3 DLF CYBER CITY SECTOR 25A, 122002 GURUGRAM GURUGRAM, INDIA",
+      "invoice_value": "ERICSSON INDIA PRIVATE LTD. (FORMERLY ERICSSON INDIA GLOBAL) S/N 3RD & 4TH FLOOR BUILDING NO 7A PHASE 3 DLF CYBER CITY SECTOR 25A, 122002 GURUGRAM GURUGRAM, India",
+      "rules_applied": [
+        {
+          "rule_id": "4.2.0.2",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.2.3",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Mottagaren i certifikatet överensstämmer med fakturans faktureringsadress och fakturautställare 'ERICSSON INDIA PRIVATE LTD.' med exakt adress och land efter normalisering. Fakturans primära faktureringsfält innehåller denna part i enlighet med regel 4.2.0.2. Land överensstämmer enligt 4.2.3."
+    },
+    "goods_description": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.85,
+      "certificate_value": "TELEOM EQUIPMENT",
+      "invoice_value": "Telecom equipment",
+      "rules_applied": [
+        {
+          "rule_id": "4.3.2",
+          "outcome": "MANUAL_REVIEW"
+        },
+        {
+          "rule_id": "4.3.3.1",
+          "outcome": "MANUAL_REVIEW"
+        }
+      ],
+      "motivation": "Varubeskrivningen i certifikatet 'TELEOM EQUIPMENT' matchar fakturans 'Telecom equipment' med en skillnad på ett tecken (utelämnat 'c'). Detta bedöms som sannolikt stavfel/OCR-fel och utlöser MANUAL_REVIEW enligt regel 4.3.3.1. Artikelnummer från fakturan finns men saknas i certifikatet, varför artikelnummerprioritering ej är tillämplig."
+    },
+    "quantity": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.9,
+      "certificate_value": "1507 KG GW",
+      "invoice_value": "1,507.000 Total gross weight Kg",
+      "rules_applied": [
+        {
+          "rule_id": "4.4.2",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.4.4",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatets viktangivelse '1507 KG GW' motsvaras av fakturans totala bruttovikt '1,507.000 Kg' efter normalisering av tusentalsavskiljare. Vikten är i enheter och kategori stämmer överens enligt regler 4.4.2 och 4.4.4."
+    },
+    "origin": {
+      "applicable": true,
+      "status": "MISMATCH",
+      "confidence": 0.85,
+      "certificate_value": "Czech Republic",
+      "invoice_value": "Country of Origin not explicitly stated in invoice",
+      "rules_applied": [
+        {
+          "rule_id": "4.5.1",
+          "outcome": "MISMATCH"
+        }
+      ],
+      "motivation": "Certifikatet anger ursprungslandet 'Czech Republic' uttryckligen i ruta 3, men fakturan innehåller ingen dedikerad uttrycklig ursprungsangivelse såsom 'Country of Origin' eller liknande. Ursprung kan därför inte verifieras enligt regel 4.5.1."
+    }
+  },
+  "overall_assessment": {
+    "comparison_result": "NOT_IDENTICAL",
+    "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
+    "auto_approval_eligible": false,
+    "confidence": 0.86,
+    "critical_failures": [
+      "origin"
+    ],
+    "manual_review_triggers": [
+      "goods_description"
+    ],
+    "decision_summary": "Ursprungslandet i certifikatet kan inte identifieras i fakturan. Varubeskrivningen har en mindre teckenavvikelse som kräver manuell granskning. Övriga kontrollpunkter matchar.",
+    "human_explanation": "Certifikatet anger ursprungslandet som Czech Republic, men fakturan innehåller ingen uttrycklig ursprungsangivelse. Varubeskrivningen skiljer sig med en teckenavvikelse som kräver manuell granskning."
+  },
+  "_meta": {
+    "tested_at": "2026-03-31T20:31:01.125246+00:00",
+    "prompt_hash": "7e05e86256d8",
+    "model": "gpt-4.1-mini",
+    "pair": "P016_MATCH",
+    "expected": "IDENTICAL",
+    "actual": "NOT_IDENTICAL",
+    "status": "FAIL"
+  }
+}

@@ -1,0 +1,154 @@
+{
+  "schema_version": "3.0",
+  "metadata": {
+    "verification_timestamp": null,
+    "document_pair_id": null,
+    "certificate_issue_date": "2025-09-25",
+    "source_documents_received": 2
+  },
+  "task": {
+    "task_type": "customs_document_pair_verification",
+    "comparison_mode": "certificate_vs_invoice",
+    "strictness": "conservative"
+  },
+  "documents": {
+    "document_a": {
+      "label": "Document A",
+      "assumed_role": "certificate",
+      "document_type": "CERTIFICATE OF ORIGIN"
+    },
+    "document_b": {
+      "label": "Document B",
+      "assumed_role": "invoice",
+      "document_type": "INVOICE"
+    }
+  },
+  "rule_activation": {
+    "lc_exception_active": false,
+    "lc_number_found": null,
+    "general_goods_description_with_invoice_reference_active": false,
+    "mixed_origins_rule_active": false,
+    "to_order_rule_active": false,
+    "quantity_exception_applied": null,
+    "eu_origin_normalization_active": true,
+    "activated_rules": []
+  },
+  "control_points": {
+    "consignor": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.9,
+      "certificate_value": "Rosemount Tank Radar AB\nBox 150\n43523, Molnlycke\nSweden",
+      "invoice_value": "Rosemount Tank Radar AB\nLayoutvägen 1\n435 33 MÖLNLYCKE\nSWEDEN",
+      "rules_applied": [
+        {
+          "rule_id": "4.1.0",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.3.2",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.4",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Consignor Rosemount Tank Radar AB from Sweden in the certificate is explicitly found in the invoice header and address blocks with minor variations in address formatting and postal code (43523 vs 43533). Normalization rules applied include case, spacing, and company abbreviation. No mismatch in company name or country found, fulfilling 4.1.0 (conglomerate structure) and 4.1.3.2 (layout abbreviation)."
+    },
+    "consignee": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.9,
+      "certificate_value": "BEIJING ROSEMOUNT FAR EAST\n1st Floor Building No 1\nSouth of Shengfang Road\nQian Gao Mi Dian Economic\nDevelompent ZO Da Xing District\n102600 Beijing\nChina",
+      "invoice_value": "EMERSON FZE\nS20137 STREET S219\nPO BOX 17034\nJEBEL ALI FREE ZONE SOUTH ZONE 2\nDUBAI\nUNITED ARAB EMIRATES",
+      "rules_applied": [
+        {
+          "rule_id": "4.2.0.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.2.2.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.2.3",
+          "outcome": "MISMATCH"
+        }
+      ],
+      "motivation": "Consignee name in certificate is BEIJING ROSEMOUNT FAR EAST (China), but invoice consignee is EMERSON FZE located in Dubai, United Arab Emirates. This is a clear mismatch in company name and country. Despite matching strategies, the consignee in the invoice cannot be reconciled with the certificate consignee. This results in MISMATCH due to name and country discrepancy."
+    },
+    "goods_description": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.9,
+      "certificate_value": "5900S, Radar Level Gauge COO: SE\n2410S, Tank Hub COO: SE\n2240S, Multi-input Temperature Transmitter COO: SE\n5900C, Radar Level Gauge COO:SE",
+      "invoice_value": "Radar Level Transmitter",
+      "rules_applied": [
+        {
+          "rule_id": "4.3.2",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.3.3.2",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Goods descriptions in certificate correspond to items including '5900S Radar Level Gauge' and variants which are identified in invoice as 'Radar Level Transmitter'. The key product identification words overlap and are matched with minor generalization (allowed under 4.3.3.2). Article numbers in certificate conform to product type in invoice. Hence, the goods description is verified."
+    },
+    "quantity": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.85,
+      "certificate_value": "Gross Weight: 206 KG\nNet Weight: 155,61 KG\n2 packages\n4 PCS\n7 PCS\n1 PCS\n3 PCS",
+      "invoice_value": "Packing Summary\nPackages: 2 Ctn\nGross WT: 11.30 KG\nNet WT: 4.60 KG\nQty Shipped: 2 EA",
+      "rules_applied": [
+        {
+          "rule_id": "4.4.3.2",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.4.5.6",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certificate states 2 packages and specific weights (Gross Weight 206 KG, Net Weight 155.61 KG). Invoice confirms 2 cartons but Gross and Net weights (11.30 KG and 4.60 KG) differ significantly from certificate figures. However, invoice Quantity shipped is 2 EA matching the number of packages. Verification is limited to presence of matching number of packages (shipment count), an accepted exception when exact weights don't match (4.4.3.2 and 4.4.3.3). This results in MATCH on quantity overall."
+    },
+    "origin": {
+      "applicable": true,
+      "status": "MISMATCH",
+      "confidence": 0.95,
+      "certificate_value": "EUROPEAN UNION\nSweden",
+      "invoice_value": "Country of Origin\nSWEDEN\nSWEDEN\nEGYPT",
+      "rules_applied": [
+        {
+          "rule_id": "4.5.4.1",
+          "outcome": "MISMATCH"
+        }
+      ],
+      "motivation": "Certificate indicates origin as 'EUROPEAN UNION' and 'Sweden'. Invoice origin lines include SWEDEN, but also EGYPT as origin for goods. Since Egypt is a non-EU country and is not mentioned in the certificate's origin field, this constitutes a mismatch based on 4.5.4.1 EU/Non-EU origin rules. The invoice contains an additional origin (Egypt) not declared in certificate, causing origin mismatch."
+    }
+  },
+  "overall_assessment": {
+    "comparison_result": "NOT_IDENTICAL",
+    "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
+    "auto_approval_eligible": false,
+    "confidence": 0.8,
+    "critical_failures": [
+      "consignee",
+      "origin"
+    ],
+    "manual_review_triggers": [],
+    "decision_summary": "The consignee on the certificate (BEIJING ROSEMOUNT FAR EAST, China) does not match the consignee on the invoice (EMERSON FZE, United Arab Emirates). Additionally, the invoice lists Egypt as an origin country which is not declared on the certificate, leading to origin mismatch.",
+    "human_explanation": "Mottagaren i certifikatet är BEIJING ROSEMOUNT FAR EAST i Kina medan fakturan är utställd till EMERSON FZE i Förenade Arabemiraten. Fakturan innehåller även Egypten som ursprungsland vilket saknas i certifikatet. Dessa skillnader kräver manuell granskning."
+  },
+  "_meta": {
+    "tested_at": "2026-03-31T20:05:48.281631+00:00",
+    "prompt_hash": "7e05e86256d8",
+    "model": "gpt-4.1-mini",
+    "pair": "P080_MISMATCH",
+    "expected": "NOT_IDENTICAL",
+    "actual": "NOT_IDENTICAL",
+    "status": "PASS"
+  }
+}

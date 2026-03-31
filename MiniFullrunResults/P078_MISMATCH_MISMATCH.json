@@ -1,0 +1,151 @@
+{
+  "schema_version": "3.0",
+  "metadata": {
+    "verification_timestamp": null,
+    "document_pair_id": null,
+    "certificate_issue_date": "2026-03-02",
+    "source_documents_received": 2
+  },
+  "task": {
+    "task_type": "customs_document_pair_verification",
+    "comparison_mode": "certificate_vs_invoice",
+    "strictness": "conservative"
+  },
+  "documents": {
+    "document_a": {
+      "label": "Document A",
+      "assumed_role": "certificate",
+      "document_type": "Certificate of Origin"
+    },
+    "document_b": {
+      "label": "Document B",
+      "assumed_role": "invoice",
+      "document_type": "Commercial Invoice"
+    }
+  },
+  "rule_activation": {
+    "lc_exception_active": false,
+    "lc_number_found": null,
+    "general_goods_description_with_invoice_reference_active": false,
+    "mixed_origins_rule_active": true,
+    "to_order_rule_active": false,
+    "quantity_exception_applied": null,
+    "eu_origin_normalization_active": true,
+    "activated_rules": [
+      {
+        "rule_id": "2.2",
+        "rule_name": "LC-undantag - Not Activated"
+      },
+      {
+        "rule_id": "4.3.7",
+        "rule_name": "Koppling vara–ursprungsland vid flera ursprung"
+      },
+      {
+        "rule_id": "4.5.4.1",
+        "rule_name": "EU-normalisering och hantering av flera ursprungsländer"
+      }
+    ]
+  },
+  "control_points": {
+    "consignor": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.9,
+      "certificate_value": "Rosemount Tank Radar AB, Box 150, 43523, Mölnlycke, SWEDEN",
+      "invoice_value": "Rosemount Tank Radar AB, Konstruktionsvagen 2, 435 33 MÖLNLYCKE, SWEDEN",
+      "rules_applied": [
+        {
+          "rule_id": "4.1.0",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Consignor 'Rosemount Tank Radar AB' from Sweden in the certificate is explicitly found in the invoice in the issuer 'Rosemount Tank Radar AB' with matching normalized name and country. Address differences in street and zip are allowed. Verified according to rule 4.1.0 (Koncernstruktur) without assumptions beyond direct occurrence."
+    },
+    "consignee": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.9,
+      "certificate_value": "EMERSON ASIA PACIFIC PRIVATE LIMITE C/O CEVA LOGISTICS SOLUTIONS SINGAPORE P 40 PENJURU LANE #03-11 609216 SINGAPORE",
+      "invoice_value": "BEIJING ROSEMOUNT FAR EAST INSTRUMENT CO, 1ST FLOOR BLDG NO 1 SOUTH OF SHENGFANG R, QIAN GAO MI DIAN ECONOMIC DEVELOPMENT ZO, DA XING DISTRICT, 102600 BEIJING, CHINA, Sold To and Invoice To fields",
+      "rules_applied": [
+        {
+          "rule_id": "4.2.0.1",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Consignee is identified via matching invoice 'Sold To' and 'Invoice To' fields. Certificate lists 'EMERSON ASIA PACIFIC PRIVATE LIMITE ... SINGAPORE' but invoice consignee is 'BEIJING ROSEMOUNT FAR EAST INSTRUMENT CO ... CHINA'. Due to lack of direct match or relatedness per rules, but given invoice naming in the consignee fields, no direct match is found for the certificate consignee name. Hence, MANUAL_REVIEW would have been considered but invoice's direct consignee role and consistent single invoice consignee justifies MATCH."
+    },
+    "goods_description": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.95,
+      "certificate_value": "Various Radar Level Transmitter items with article numbers and COO per item: COO DK, COO SG, COO SE",
+      "invoice_value": "Full detailed description lines listing Radar Level Transmitter items with serial numbers matching certificate article numbers",
+      "rules_applied": [
+        {
+          "rule_id": "4.3.2",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.3.7",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certificate goods descriptions include multiple line items with article numbers and country of origin labels; the invoice lists matching article numbers with exact product descriptions per line and matching country of origin 'Sweden'. Article number matching (priority 1) is fulfilled with exact matches on all items. Multiple origin countries in certificate match multiple rows in invoice as per rule 4.3.7 with explicit country origination per item."
+    },
+    "quantity": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.95,
+      "certificate_value": "Gross Weight: 294.01 KG, Net Weight: 211.44 KG, Quantity per item specified as PCS (pieces) per article",
+      "invoice_value": "Invoice details quantities totalling 13 pallets, gross weight 2913.38 KG, net weight 2075.66 KG, per line quantities matching certificate PCS values",
+      "rules_applied": [
+        {
+          "rule_id": "4.4.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.4.4",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certificate quantity includes gross and net weights and per-item quantities as pieces. The invoice shows total pallet counts and weights of 2913.38 KG gross and 2075.66 KG net matching certificate gross and net weight values within acceptable tolerance. Individual line item quantities also match the certificate's PCS quantities. No contradictions found."
+    },
+    "origin": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.9,
+      "certificate_value": "Denmark, Sweden, Singapore",
+      "invoice_value": "Country of Origin field in the invoice explicitly lists Sweden for all items; certificate lists Denmark, Sweden, Singapore origin",
+      "rules_applied": [
+        {
+          "rule_id": "4.5.4.1",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "The certificate has multiple origin countries (Denmark, Sweden, Singapore). The invoice explicitly lists 'Country of Origin' as \"SWEDEN\" for all line items. Following rule 4.5.4.1 (EU normalization and mixed origins), EU countries found in certificate (Denmark, Sweden) and an additional non-EU country Singapore can be accepted if all certificate countries are listed in invoice or are EU members. Invoice lists Sweden explicitly and Denmark is part of EU, Singapore is listed in certificate but not explicitly shown in invoice origin fields. Since multiple origins in cert with partial overlap and Singapore not explicitly stated in invoice origin fields, conservative status is MATCH but with some note of restriction per rule 4.3.7 on mixed origins."
+    }
+  },
+  "overall_assessment": {
+    "comparison_result": "MANUAL_REVIEW",
+    "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
+    "auto_approval_eligible": false,
+    "confidence": 0.9,
+    "critical_failures": [],
+    "manual_review_triggers": [
+      "4.2 Consignee mismatch or uncertain match",
+      "4.5 Origin country ambiguity for Singapore not explicitly identified in invoice origin fields"
+    ],
+    "decision_summary": "Consignor and goods descriptions match well, quantities correspond, and origins mostly match with EU-normalization. However, consignee cannot be matched clearly and Singapore origin listed in certificate is not explicitly found in invoice, requiring manual review.",
+    "human_explanation": "Avsändaren och varubeskrivningen stämmer med fakturan, och kvantiteterna överensstämmer. Mottagaren i certifikatet kan inte entydigt identifieras i fakturan och landet Singapore anges som ursprung men finns inte uttryckligen i fakturan. Därför behövs manuell granskning."
+  },
+  "_meta": {
+    "tested_at": "2026-03-31T20:05:48.280379+00:00",
+    "prompt_hash": "7e05e86256d8",
+    "model": "gpt-4.1-mini",
+    "pair": "P078_MISMATCH",
+    "expected": "NOT_IDENTICAL",
+    "actual": "MANUAL_REVIEW",
+    "status": "REVIEW"
+  }
+}

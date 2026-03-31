@@ -1,0 +1,166 @@
+{
+  "schema_version": "3.0",
+  "metadata": {
+    "verification_timestamp": null,
+    "document_pair_id": null,
+    "certificate_issue_date": "2025-11-07",
+    "source_documents_received": 2
+  },
+  "task": {
+    "task_type": "customs_document_pair_verification",
+    "comparison_mode": "certificate_vs_invoice",
+    "strictness": "conservative"
+  },
+  "documents": {
+    "document_a": {
+      "label": "Document A",
+      "assumed_role": "certificate",
+      "document_type": "Certificate of Origin"
+    },
+    "document_b": {
+      "label": "Document B",
+      "assumed_role": "invoice",
+      "document_type": "Invoice"
+    }
+  },
+  "rule_activation": {
+    "lc_exception_active": false,
+    "lc_number_found": null,
+    "general_goods_description_with_invoice_reference_active": false,
+    "mixed_origins_rule_active": false,
+    "to_order_rule_active": false,
+    "quantity_exception_applied": null,
+    "eu_origin_normalization_active": false,
+    "activated_rules": [
+      {
+        "rule_id": "4.1.3.1",
+        "rule_name": "Juridisk part match"
+      },
+      {
+        "rule_id": "4.1.4",
+        "rule_name": "Landkontroll av consignor"
+      },
+      {
+        "rule_id": "4.2.2",
+        "rule_name": "Verifiering av consignee"
+      },
+      {
+        "rule_id": "4.2.3",
+        "rule_name": "Landkontroll av consignee"
+      },
+      {
+        "rule_id": "4.3.2",
+        "rule_name": "Artikelnummer matchning"
+      },
+      {
+        "rule_id": "4.4.3",
+        "rule_name": "Förekomstkontroll kvantitet"
+      },
+      {
+        "rule_id": "4.5.5",
+        "rule_name": "MATCH/MISMATCH ursprungsland"
+      }
+    ]
+  },
+  "control_points": {
+    "consignor": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.95,
+      "certificate_value": "Elmo Sweden AB",
+      "invoice_value": "Elmo Sweden AB",
+      "rules_applied": [
+        {
+          "rule_id": "4.1.3.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.4",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Företagsnamnet 'Elmo Sweden AB' i certifikatet matchar exakt fakturans utställare 'Elmo Sweden AB' (4.1.3.1) och landet Sweden överensstämmer (4.1.4)."
+    },
+    "consignee": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.95,
+      "certificate_value": "Kallfeldts Läder AB",
+      "invoice_value": "Kallfeldts Läder AB",
+      "rules_applied": [
+        {
+          "rule_id": "4.2.2",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.2.3",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Consigneen 'Kallfeldts Läder AB' återfinns i fakturans Godsmottagare och landet Sweden överensstämmer (4.2.2, 4.2.3)."
+    },
+    "goods_description": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.95,
+      "certificate_value": "Elmosoft 99999 III",
+      "invoice_value": "ELMOSOFT 99999 III",
+      "rules_applied": [
+        {
+          "rule_id": "4.3.2",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Artikelnummer/varubeskrivning 'Elmosoft 99999 III' matchas exakt mellan certifikat och faktura (4.3.2)."
+    },
+    "quantity": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.95,
+      "certificate_value": "709,56 M2",
+      "invoice_value": "Total M2: 709,56 M2",
+      "rules_applied": [
+        {
+          "rule_id": "4.4.3",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatets totala area '709,56 M2' identifieras exakt i fakturans Total M2: 709,56 M2 (4.4.3)."
+    },
+    "origin": {
+      "applicable": true,
+      "status": "MISMATCH",
+      "confidence": 0.95,
+      "certificate_value": "EUROPEAN UNION; Sweden",
+      "invoice_value": "Swedish Origin",
+      "rules_applied": [
+        {
+          "rule_id": "4.5.5",
+          "outcome": "MISMATCH"
+        }
+      ],
+      "motivation": "Certifikatet anger både 'European Union' och 'Sweden' som ursprung, medan fakturan endast visar 'Swedish Origin' (Sweden), saknar uttrycklig 'European Union' (4.5.5)."
+    }
+  },
+  "overall_assessment": {
+    "comparison_result": "NOT_IDENTICAL",
+    "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
+    "auto_approval_eligible": false,
+    "confidence": 0.95,
+    "critical_failures": [
+      "origin"
+    ],
+    "manual_review_triggers": [],
+    "decision_summary": null,
+    "human_explanation": "Certifikatet anger ursprungslanden Europeiska unionen och Sverige. Fakturan anger endast 'Swedish Origin' vilket motsvarar Sverige men inte Europeiska unionen. Därför kan ursprungslanden inte verifieras fullständigt och manuell granskning krävs."
+  },
+  "_meta": {
+    "tested_at": "2026-03-31T19:55:00.248404+00:00",
+    "prompt_hash": "7e05e86256d8",
+    "model": "o4-mini",
+    "pair": "P0123_MATCH",
+    "expected": "IDENTICAL",
+    "actual": "NOT_IDENTICAL",
+    "status": "FAIL"
+  }
+}

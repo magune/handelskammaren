@@ -1,0 +1,132 @@
+{
+  "schema_version": "3.0",
+  "metadata": {
+    "verification_timestamp": "2025-08-20T12:00:00Z",
+    "document_pair_id": null,
+    "certificate_issue_date": null,
+    "source_documents_received": 2
+  },
+  "task": {
+    "task_type": "customs_document_pair_verification",
+    "comparison_mode": "certificate_vs_invoice",
+    "strictness": "conservative"
+  },
+  "documents": {
+    "document_a": {
+      "label": "Document A",
+      "assumed_role": "certificate",
+      "document_type": "Certificate of Origin"
+    },
+    "document_b": {
+      "label": "Document B",
+      "assumed_role": "invoice",
+      "document_type": "Invoice"
+    }
+  },
+  "rule_activation": {
+    "lc_exception_active": false,
+    "lc_number_found": null,
+    "general_goods_description_with_invoice_reference_active": false,
+    "mixed_origins_rule_active": false,
+    "to_order_rule_active": false,
+    "quantity_exception_applied": null,
+    "eu_origin_normalization_active": false,
+    "activated_rules": []
+  },
+  "control_points": {
+    "consignor": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.9,
+      "certificate_value": "Volvo Merchandise AB, Bror Nilssons gata 5, SE-40508, GÖTEBORG, Sweden",
+      "invoice_value": "Volvo Merchandise AB, Bror Nilssons gata 5, 40508 GÖTEBORG, Sweden",
+      "rules_applied": [
+        {
+          "rule_id": "4.1.0",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatets consignor Volvo Merchandise AB identifierades i fakturan i Visiting address-blocket med samma namn och land enligt regel 4.1.0."
+    },
+    "consignee": {
+      "applicable": true,
+      "status": "MISMATCH",
+      "confidence": 0.95,
+      "certificate_value": "Volvo Group Korea Ltd, Volvo Bldg., 5th fl., 726-173 Hannam-dong, Yongsan-gu 140-210 Seoul, Korea, Republic of",
+      "invoice_value": "Volvo Trucks Korea Co., Ltd, 64-106, Dongtangiheung-Ro, GYEONGGI-DO, 18488 HWASEONG-SI, Korea",
+      "rules_applied": [
+        {
+          "rule_id": "4.2.0.2",
+          "outcome": "MISMATCH"
+        }
+      ],
+      "motivation": "Certifikatets consignee Volvo Group Korea Ltd matchade inte fakturans Invoice to Volvo Trucks Korea Co., Ltd enligt regel 4.2.0.2."
+    },
+    "goods_description": {
+      "applicable": true,
+      "status": "MISMATCH",
+      "confidence": 1.0,
+      "certificate_value": "7 pcs - 113066 Short Winter Jacket, CLR 99, Size M, CN; 4 pcs - 113066 Short Winter Jacket, CLR 99, Size L, CN; 13 pcs - 113470 Iron Mark Pin (10 pack), CN",
+      "invoice_value": "113871 Passport Holder; 113834 Travel Neck Pillow",
+      "rules_applied": [
+        {
+          "rule_id": "4.3.2",
+          "outcome": "MISMATCH"
+        }
+      ],
+      "motivation": "Ingen av artikelnummer eller varubeskrivning i certifikatet återfanns i fakturan, vilket är en tydlig avvikelse enligt regel 4.3.2."
+    },
+    "quantity": {
+      "applicable": true,
+      "status": "MANUAL_REVIEW",
+      "confidence": 0.5,
+      "certificate_value": "14,69 KG NET",
+      "invoice_value": null,
+      "rules_applied": [
+        {
+          "rule_id": "4.4.6.1",
+          "outcome": "MANUAL_REVIEW"
+        }
+      ],
+      "motivation": "Fakturan saknar totalvikt, och inga av undantagen 3A–3E kunde tillämpas, vilket kräver manuell granskning enligt regel 4.4.6.1."
+    },
+    "origin": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.95,
+      "certificate_value": "CN",
+      "invoice_value": "CN",
+      "rules_applied": [
+        {
+          "rule_id": "4.5.1",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Ursprungsland CN identifierades i fakturans CoO-kolumn utan motsägelse enligt regel 4.5.1."
+    }
+  },
+  "overall_assessment": {
+    "comparison_result": "NOT_IDENTICAL",
+    "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
+    "auto_approval_eligible": false,
+    "confidence": 0.76,
+    "critical_failures": [
+      "consignee",
+      "goods_description"
+    ],
+    "manual_review_triggers": [
+      "quantity"
+    ],
+    "decision_summary": "Consignee och varubeskrivning stämmer inte, och kvantitet kräver manuell granskning.",
+    "human_explanation": "Certifikatets mottagare Volvo Group Korea Ltd stämmer inte med fakturans mottagare Volvo Trucks Korea Co., Ltd. Varubeskrivningen och artikelnumren överensstämmer inte. Kvantiteten saknar bekräftad vikt i fakturan och behöver manuell granskning."
+  },
+  "_meta": {
+    "tested_at": "2026-03-31T19:55:00.245677+00:00",
+    "prompt_hash": "7e05e86256d8",
+    "model": "o4-mini",
+    "pair": "P0113_MISMATCH",
+    "expected": "NOT_IDENTICAL",
+    "actual": "NOT_IDENTICAL",
+    "status": "PASS"
+  }
+}

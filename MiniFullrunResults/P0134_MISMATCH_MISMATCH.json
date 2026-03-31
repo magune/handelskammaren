@@ -1,0 +1,176 @@
+{
+  "schema_version": "3.0",
+  "metadata": {
+    "verification_timestamp": "2024-09-28T12:00:00Z",
+    "document_pair_id": null,
+    "certificate_issue_date": "2024-09-19",
+    "source_documents_received": 2
+  },
+  "task": {
+    "task_type": "customs_document_pair_verification",
+    "comparison_mode": "certificate_vs_invoice",
+    "strictness": "conservative"
+  },
+  "documents": {
+    "document_a": {
+      "label": "Document A",
+      "assumed_role": "certificate",
+      "document_type": "Certificate of Origin"
+    },
+    "document_b": {
+      "label": "Document B",
+      "assumed_role": "invoice",
+      "document_type": "Commercial Invoice"
+    }
+  },
+  "rule_activation": {
+    "lc_exception_active": false,
+    "lc_number_found": null,
+    "general_goods_description_with_invoice_reference_active": false,
+    "mixed_origins_rule_active": false,
+    "to_order_rule_active": false,
+    "quantity_exception_applied": null,
+    "eu_origin_normalization_active": true,
+    "activated_rules": [
+      {
+        "rule_id": "4.1.0",
+        "rule_name": "Koncernstruktur - search consignor in invoice"
+      },
+      {
+        "rule_id": "4.1.4",
+        "rule_name": "Landkontroll för avsändare"
+      },
+      {
+        "rule_id": "4.2.0.2",
+        "rule_name": "Prioritetsordning för consignee identifiering"
+      },
+      {
+        "rule_id": "4.2.3",
+        "rule_name": "Landkontroll för mottagare"
+      },
+      {
+        "rule_id": "4.3.2",
+        "rule_name": "Varubeskrivning med artikelnummer"
+      },
+      {
+        "rule_id": "4.5.4.1",
+        "rule_name": "EU-normalisering och kontroll av blandade ursprung"
+      }
+    ]
+  },
+  "control_points": {
+    "consignor": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.9,
+      "certificate_value": "DHL Global Forwarding AB \nBoplatsgatan 4\nON BEHALF OF JS InterTrade\n213 76 , malmö \nSverige",
+      "invoice_value": "SHRUNK to 'DHL Global Forwarding AB' found in invoice header/address block",
+      "rules_applied": [
+        {
+          "rule_id": "4.1.0",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.3.6",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.4",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Consignor 'DHL Global Forwarding AB' from certificate is explicitly found in invoice header and address sections with matching country 'Sweden'. Land matches after normalization including country name variations. No conflicting consignor names found in invoice."
+    },
+    "consignee": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.9,
+      "certificate_value": "Shenzhen Gofly Limited\n4B201 Yingxin Garden\nXinwei Community, Xili, Nanshan\n518055 Shenzhen\nChina",
+      "invoice_value": "Shenzhen Gofly Limited\n4B201 Yingxin Garden\nXinwei Community, Xili, Nanshan\n518055 Shenzhen\nChina",
+      "rules_applied": [
+        {
+          "rule_id": "4.2.0.2",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.2.4",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Consignee named 'Shenzhen Gofly Limited' in certificate appears identically in invoice consignee and address fields with matching country 'China' after normalization."
+    },
+    "goods_description": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.95,
+      "certificate_value": "001\nCRISP BREAD",
+      "invoice_value": "001\nCrisp bread",
+      "rules_applied": [
+        {
+          "rule_id": "4.3.2",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Article number '001' and product description 'CRISP BREAD' in certificate matches exactly '001' and 'Crisp bread' in invoice after normalization (case)."
+    },
+    "quantity": {
+      "applicable": true,
+      "status": "MANUAL_REVIEW",
+      "confidence": 0.65,
+      "certificate_value": "300",
+      "invoice_value": "300",
+      "rules_applied": [
+        {
+          "rule_id": "4.4.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.4.2",
+          "outcome": "MISMATCH"
+        }
+      ],
+      "motivation": "Quantity '300' is present and matching numerically in both certificate and invoice. However, certificate lacks explicit unit (e.g. PCS, KG) in quantity field 7 which is mandatory (4.4.2). Due to missing unit, result is MANUAL_REVIEW according to rules."
+    },
+    "origin": {
+      "applicable": true,
+      "status": "MISMATCH",
+      "confidence": 0.9,
+      "certificate_value": "EUROPEAN UNION\nSWEDEN",
+      "invoice_value": "Country of Origin: Sweden",
+      "rules_applied": [
+        {
+          "rule_id": "4.5.4.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.5.5",
+          "outcome": "MISMATCH"
+        }
+      ],
+      "motivation": "Certificate lists origin as 'European Union' and 'Sweden' in box 3. Invoice origin field states only 'Sweden', country of origin. The certificate includes both 'European Union' and 'Sweden' as origins implying multiple origins, but the invoice shows only one origin 'Sweden'. The EU origin from certificate is not explicitly present as such in the invoice, causing mismatch since all certificate origins must be explicitly found in invoice."
+    }
+  },
+  "overall_assessment": {
+    "comparison_result": "NOT_IDENTICAL",
+    "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
+    "auto_approval_eligible": false,
+    "confidence": 0.68,
+    "critical_failures": [
+      "origin"
+    ],
+    "manual_review_triggers": [
+      "quantity"
+    ],
+    "decision_summary": "Certificate and invoice match for consignor, consignee, and goods description. Quantity matches but lacks unit in certificate, requiring manual review. Origin mismatch due to EU origin not fully confirmed in invoice. Result is NOT_IDENTICAL with recommendation for manual handling.",
+    "human_explanation": "Ursprungslandet i certifikatet anges som både Europeiska unionen och Sverige, men fakturan bekräftar endast Sverige. Kvantiteten saknar enhet i certifikatet. Övriga uppgifter stämmer, men dokumenten kräver manuell granskning på grund av ursprungsland och kvantitet."
+  },
+  "_meta": {
+    "tested_at": "2026-03-31T19:48:25.204259+00:00",
+    "prompt_hash": "7e05e86256d8",
+    "model": "gpt-4.1-mini",
+    "pair": "P0134_MISMATCH",
+    "expected": "NOT_IDENTICAL",
+    "actual": "NOT_IDENTICAL",
+    "status": "PASS"
+  }
+}
