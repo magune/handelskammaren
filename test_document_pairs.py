@@ -60,12 +60,12 @@ ONLY_PAIRS = [
 ]  # Fail-fast: 158 oprovade par
 
 # Max pairs per batch submission — smaller = faster first results
-BATCH_CHUNK_SIZE = 5
+BATCH_CHUNK_SIZE = 2
 
 # Max number of OpenAI batches running simultaneously.
-# With FAIL_FAST=True, keep this at 1-3 to avoid wasting money on already-submitted
-# batches when a FAIL is detected early. With FAIL_FAST=False, use 10-15 for speed.
-MAX_CONCURRENT_BATCHES = 2
+# With FAIL_FAST=True, keep this at 1 to stop immediately on first FAIL with
+# minimal wasted cost (at most BATCH_CHUNK_SIZE pairs already submitted).
+MAX_CONCURRENT_BATCHES = 1
 
 # Stop immediately when a FAIL is detected. Already-submitted batches are
 # preserved in batch_run_state.json and will be resumed on next run.

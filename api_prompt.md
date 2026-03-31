@@ -624,6 +624,22 @@ Om skillnaden avser mer än ett tecken → pröva 4.1.3.7 eller MISMATCH.
 
 **VIKTIGT:** Denna regel gäller även för mottagare (consignee) enligt 4.2.
 
+### 4.1.3.9 Consignor som fakturautställare utan explicit säljaradress – MANUAL_REVIEW
+
+Om consignor-namnet (efter normalisering) kan identifieras som fakturautställare (t.ex. i fakturans sidhuvud, branding, företagslogotyp eller rubrik) men fakturan SAKNAR ett explicit säljar-/issuer-adressblock med land för den parten, ska resultatet vara MANUAL_REVIEW — inte MISMATCH — förutsatt att SAMTLIGA villkor är uppfyllda:
+
+1. Consignor-namnets kärna kan identifieras i fakturans header/branding/företagsnamn (efter normalisering av versaler/gemener, mellanslag och juridisk bolagsform).
+2. Fakturan saknar ett dedikerat säljar-/issuer-adressblock med explicit land för fakturautställaren.
+3. Fakturan innehåller MINST ETT av följande landkorroborerande element som är konsistent med certifikatets consignor-land:
+   - "Country of Origin: [land]" där landet stämmer med certifikatets consignor-land
+   - "Port of Loading: [hamn i landet]" eller "Port of loading: Any port in [land]"
+   - Valuta, VAT-prefix eller bankkod som entydigt pekar på samma land
+4. Fakturan innehåller INGA uppgifter som direkt motsäger att utställaren tillhör certifikatets consignor-land.
+
+Motivering: En faktura utställd under ett företagsnamn som matchar certifikatets consignor, där kontextuella landindikatorer är konsistenta, kan inte entydigt avfärdas som fel — men kan inte heller verifieras med full säkerhet utan ett explicit säljaradressblock. MANUAL_REVIEW ger handläggaren möjlighet att bekräfta.
+
+Om villkoren ovan INTE är uppfyllda (t.ex. inga korroborerande landindikationer eller konsignornamnet inte alls kan identifieras) → fortsätt till 4.1.4 och MISMATCH om land inte kan verifieras.
+
 ### 4.1.4 Landkontroll
 Land som anges för avsändaren i certifikatet ska överensstämma EXAKT med det land som anges för motsvarande part i fakturan efter normalisering av landsnamn (versaler/gemener, fullständigt namn vs vedertagen kortform/ISO-kod).
 Om land inte överensstämmer → MISMATCH.
@@ -655,6 +671,17 @@ Systemet ska inte göra antaganden om koncernrelationer, agentförhållanden ell
 ### 4.2.0 Grundregel
 Consignee ska normalt motsvara fakturans "Invoice to", "Bill to", "Sold to" eller "Ship to".
 
+**KRITISK REGEL – Prioritetsordning för consignee-identifiering (avsnitt 4.2.0.2):**
+Fakturan kan innehålla flera parter i olika roller. Systemet ska tillämpa följande prioritetsordning:
+
+1. **Faktureringsfält har alltid prioritet.** Om fakturan innehåller ett tydligt faktureringsfält ("Invoice to", "Bill to", "Sold to", "To", "Buyer" eller motsvarande) med en namngiven part, är denna part den auktoritativa consignee. Certifikatets consignee ska verifieras mot denna part — inte mot leveransadresser.
+
+2. **Leveransadress är sekundär.** Fält märkta "Ship to", "Delivery address", "Recipient address", "Deliver to" eller motsvarande anger enbart fysisk leveransort. De utgör INTE consignee i rättslig och handelsmässig mening och ska INTE användas för consignee-verifiering om ett faktureringsfält finns.
+
+3. **Leveransadress som fallback.** Om fakturan SAKNAR ett faktureringsfält (dvs. inget "Invoice to"/"Bill to"/liknande fält finns), eller om faktureringsfältet innehåller en speditör/transportör som uppenbart inte är den kommersiella motparten, får systemet söka i leveransadressfält och andra adressblock enligt 4.2.1.1.
+
+Konsekvens: Om fakturan har ett tydligt faktureringsfält med part X men certifikatet anger consignee Y (och Y enbart förekommer i ett leveransadressfält), är verifieringskravet INTE uppfyllt — resultatet ska vara MISMATCH, inte MATCH. Att Y förekommer i fakturan som leveransmottagare räcker inte när fakturans faktureringsfält anger en annan part.
+
 ### 4.2.0.1 Särskilda regler
 **Koncernstruktur:** Consignee får avvika från ovanstående fält om företagsnamnet uttryckligen förekommer i fakturans sidhuvud eller i adress-/identifieringsblock (t.ex. VAT-block).
 
@@ -669,26 +696,28 @@ Företagsnamnet ska vara exakt identifierbart i fakturatexten.
 Om consignee inte kan återfinnas uttryckligen i något av ovanstående fält/avsnitt → MISMATCH.
 
 ### 4.2.1 Identifiering i fakturan
-Relevanta benämningar:
-- Buyer
-- Sold To
-- Consignee
-- Ship To
-- Delivery Address
-- Notify Party
-- Importer
-- eller motsvarande
+Sök i följande fält i prioritetsordning (enligt 4.2.0.2):
 
-Om flera parter anges i fakturan ska systemet kontrollera samtliga relevanta mottagarroller.
+**Primära faktureringsfält (söks alltid först):**
+- Invoice to / Bill to / Sold To / Buyer / To
+- Consignee (om fakturan har ett explicit sådant fält)
+
+**Sekundära fält (söks enbart om inget primärt faktureringsfält finns, eller om primärt fält innehåller en speditör/transportör):**
+- Ship To / Delivery Address / Recipient address
+- Notify Party / Importer
+
+Om flera parter anges i fakturan ska systemet tillämpa prioritetsordningen ovan — inte välja den part som "råkar matcha bäst".
 
 #### 4.2.1.1 Alternativ mottagaradress
-Om mottagaren i certifikatet inte återfinns under fakturans fält Consignee får systemet identifiera mottagaren i andra adressfält i fakturan.
-Om en speditör, transportör eller logistikleverantör anges som Consignee i fakturan ska detta i sig INTE medföra MISMATCH, förutsatt att mottagaren som anges i certifikatet kan identifieras i något annat adressfält.
-Om mottagaren i certifikatet återfinns under t.ex. Delivery Address, Ship To eller Notify Party ska detta accepteras, förutsatt att:
+Om fakturan SAKNAR ett primärt faktureringsfält, eller om det primära faktureringsfältet innehåller en speditör, transportör eller logistikleverantör som uppenbart inte är den kommersiella motparten, får systemet söka i sekundära fält (Delivery Address, Ship To, Notify Party m.fl.).
+
+Om mottagaren i certifikatet återfinns i ett sekundärt fält under dessa omständigheter ska detta accepteras, förutsatt att:
 - samma juridiska part kan identifieras, OCH
 - ingen annan uppgift i fakturan motsäger att det rör sig om samma mottagare.
 
-Om mottagaren i certifikatet inte kan identifieras i NÅGOT adressfält i fakturan → MISMATCH.
+**VIKTIGT:** Om fakturan har ett tydligt primärt faktureringsfält med en namngiven kommersiell part, och certifikatets consignee enbart förekommer i ett sekundärt leveransadressfält, är detta INTE tillräckligt för MATCH — certifikatets consignee ska kunna identifieras i det primära faktureringsfältet.
+
+Om mottagaren i certifikatet inte kan identifieras i NÅGOT relevant fält i fakturan → MISMATCH.
 
 ### 4.2.2 Verifiering
 Företagsnamnet som anges som mottagare i certifikatet ska kunna identifieras i fakturan efter tillåten normalisering.
@@ -1315,6 +1344,19 @@ Regel 4.5.4.1.1 ska ENBART tillämpas när fakturan introducerar EU-medlemsländ
 När certifikatet UTTRYCKLIGEN namnger specifika EU-medlemsländer i ursprungsfältet (t.ex. "EUROPEAN COMMUNITY; SWEDEN & FRANCE") ska VARJE namngivet land kunna identifieras individuellt i fakturan. EU-normaliseringen i 4.5.4.2 får INTE användas för att "absorbera" ett specifikt namngivet land som saknas i fakturan. Om certifikatet har valt att namnge "France" separat — utöver "European Community" — innebär detta att certifikatet gör anspråk på att varor med franskt ursprung ingår. Om fakturan INTE uttryckligen anger France (eller "FR" eller "Made in France") som ursprung, kan denna specifika angivelse inte verifieras, och resultatet ska vara MISMATCH.
 
 Regeln i 4.5.4.2 om att EU ↔ medlemsland är utbytbara gäller när certifikatet anger ENBART "EU" eller ENBART ett medlemsland — inte när certifikatet explicit listar specifika länder vid sidan av EU-samlingsbegreppet.
+
+**UNDANTAG – Generellt EU-ursprungsuttalande täcker "EU [land]" (avsnitt 4.5.4.2.1):**
+När certifikatet anger "EU [land]" — dvs. EU-samlingsbegreppet kombinerat med ETT specifikt EU-medlemsland — och fakturan innehåller ett explicit generellt EU-ursprungsuttalande (t.ex. "preferential origin: EU", "Origin: European Union", "products of EU origin" eller liknande formulering i ett dedikerat ursprungs- eller exportörsfält) ska detta accepteras som MATCH.
+
+Motivering: När certifikatet anger "EU [land]" är EU-ursprung det operative anspråket. Det enskilda EU-landet är en preciserande uppgift som identifierar vilket EU-land varan härstammar från, men kräver inte separat bekräftelse i fakturan när fakturan redan bekräftar EU-ursprung. EU-ursprung subsumerar ursprung från enskilda EU-medlemsländer.
+
+Villkor:
+1. Certifikatets ursprungsfält anger EU-samlingsbegreppet kombinerat med ETT (1) specifikt EU-medlemsland (inte flera).
+2. Fakturan innehåller ett explicit EU-ursprungsuttalande i ett dedikerat ursprungs- eller exportörsfält — inte enbart i avsändarens adress eller godstext.
+3. Fakturan innehåller INGA ursprungsuppgifter som motsäger EU-ursprung.
+
+Om dessa villkor uppfylls → MATCH.
+Om certifikatet listar FLERA specifika länder vid sidan av EU och fakturan enbart har ett generellt EU-uttalande → tillämpa 4.5.4.1.1 (MANUAL_REVIEW) istället.
 
 #### 4.5.4.3 Kina och Hongkong
 Se avsnitt 4.6 för landnormalisering av Kina/Hongkong. Ekvivalensen gäller även för ursprungslandjämförelse.
