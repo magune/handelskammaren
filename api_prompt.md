@@ -1057,8 +1057,8 @@ Skillnad i benämning mellan viktkategori i certifikatet och fakturan ska i sig 
 **Strikt krav på viktuppgift i certifikatet:**
 - När vikt anges ska BÅDE numeriskt värde OCH måttenhet framgå uttryckligen i samma fält.
 - Om GW, NW, Gross eller Net anges ska även viktenheten (t.ex. KG, MT, LB) anges uttryckligen.
-- Angivelse av enbart numeriskt värde tillsammans med GW/NW UTAN uttrycklig enhet → MISMATCH.
-- Enheten får INTE fastställas genom tolkning mot fakturan.
+- Angivelse av enbart numeriskt värde tillsammans med GW/NW UTAN uttrycklig enhet: om fakturan bekräftar samma numeriska värde med en enhet (och ingen motstridande enhetsinformation finns i certifikatet) → MANUAL_REVIEW. Om fakturan INTE bekräftar värdet → MISMATCH.
+- Enheten får INTE fastställas om fakturan inte uttryckligen anger en enhet för samma numeriska värde.
 
 ### 4.4.5 Ingen summering eller beräkning – huvudregel
 Systemet får INTE:
@@ -1226,7 +1226,7 @@ Om avvikelsen överstiger toleransen → MISMATCH.
 - enhet anges i både certifikat och faktura och dessa motsäger varandra
 - avvikelsen överstiger toleransgränsen
 - KG anges utan att GW/NW specificeras i certifikatet (och inte omfattas av undantag)
-- GW/NW anges utan att viktenhet uttryckligen framgår i certifikatet
+- GW/NW anges utan att viktenhet uttryckligen framgår i certifikatet OCH fakturan bekräftar inte heller värdet med en enhet (→ MISMATCH); om fakturan bekräftar värdet med enhet → MANUAL_REVIEW enligt 4.4.4
 
 **MANUAL_REVIEW (avsnitt 4.4.6.1) – Fakturan saknar kvantitets-/viktuppgift helt:**
 Om certifikatet anger en kvantitet eller vikt men fakturan HELT SAKNAR motsvarande typ av uppgift (dvs. fakturan innehåller INGEN viktangivelse, INGEN kvantitetsangivelse, eller INGET fält som kan jämföras med certifikatets kvantitetsuppgift), och inget undantag (3A–3E) eller försändelsekvantitetsregeln (4.4.3.2) kan tillämpas, ska resultatet vara MANUAL_REVIEW — inte MISMATCH.
@@ -1505,7 +1505,19 @@ Använd exakt:
 - `AUTO_APPROVAL_ELIGIBLE`
 - `MANUAL_HANDLING_REQUIRED`
 
-### 18.4 Human-readable report
+### 18.4 Fältet human_explanation
+
+Fältet `overall_assessment.human_explanation` ska innehålla en kort förklaring på svenska, skriven för en handläggare utan teknisk bakgrund.
+
+**Regler:**
+- Inga regelreferenser (inga avsnittsnummer, inga koder som "4.2.0.2").
+- Konkret och faktabaserad: nämn de faktiska värdena som skiljer sig, t.ex. "Certifikatet anger mottagaren som Företag A medan fakturan är ställd till Företag B."
+- Maxlängd: 3 meningar.
+- Om resultatet är IDENTICAL: ange kort att alla kontrollpunkter stämmer och dokumenten kan godkännas automatiskt.
+- Om resultatet är NOT_IDENTICAL: förklara tydligt vad som inte stämmer.
+- Om resultatet är MANUAL_REVIEW: förklara vad som är oklart och varför manuell granskning behövs.
+
+### 18.6 Human-readable report
 
 Varje sektion i `human_readable_report.sections` MÅSTE innehålla:
 - `certificate_value`: exakt råtext från certifikatet, inte normaliserad

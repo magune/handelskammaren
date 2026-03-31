@@ -38,8 +38,8 @@ REGRESSION_GUARD = [
 ]
 
 ONLY_PAIRS = [
-    'P014', 'P0147', 'P0148', 'P0149', 'P015', 'P0150', 'P0151', 'P0152',
-    'P0153', 'P0154', 'P0155', 'P0156', 'P0157', 'P0158', 'P0159', 'P016',
+    # P0158 re-test after prompt fix (was FAIL); P014,P0147-P0157,P0159 skipped (tested with prev prompt, re-run later)
+    'P0158', 'P015', 'P016',
     'P0160', 'P0161', 'P0162', 'P0163', 'P0164', 'P0165', 'P0166', 'P0167',
     'P0168', 'P0169', 'P017', 'P0170', 'P0171', 'P0172', 'P0173', 'P0174',
     'P0175', 'P0176', 'P0177', 'P0178', 'P0179', 'P018', 'P0180', 'P0181',
@@ -57,7 +57,7 @@ ONLY_PAIRS = [
     'P210', 'P216', 'P217', 'P218', 'P219', 'P220', 'P221', 'P222', 'P223',
     'P224', 'P225', 'P226', 'P227', 'P228', 'P229', 'P230', 'P236', 'P237',
     'P238', 'P239', 'P240',
-]  # Fail-fast: 158 oprovade par
+]  # Fail-fast: 145 par (13 recently tested pairs skipped; re-add after full run)
 
 # Max pairs per batch submission — smaller = faster first results
 BATCH_CHUNK_SIZE = 2

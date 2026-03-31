@@ -1,0 +1,202 @@
+{
+  "schema_version": "3.0",
+  "metadata": {
+    "verification_timestamp": null,
+    "document_pair_id": null,
+    "certificate_issue_date": "2023-07-11",
+    "source_documents_received": 2
+  },
+  "task": {
+    "task_type": "customs_document_pair_verification",
+    "comparison_mode": "certificate_vs_invoice",
+    "strictness": "conservative"
+  },
+  "documents": {
+    "document_a": {
+      "label": "Document A",
+      "assumed_role": "certificate",
+      "document_type": "Certificate of Origin"
+    },
+    "document_b": {
+      "label": "Document B",
+      "assumed_role": "invoice",
+      "document_type": "Commercial invoice"
+    }
+  },
+  "rule_activation": {
+    "lc_exception_active": false,
+    "lc_number_found": null,
+    "general_goods_description_with_invoice_reference_active": false,
+    "mixed_origins_rule_active": false,
+    "to_order_rule_active": false,
+    "quantity_exception_applied": null,
+    "eu_origin_normalization_active": false,
+    "activated_rules": [
+      {
+        "rule_id": "4.1.3.3",
+        "rule_name": "Kommersiell förkortning av consignor-namn"
+      },
+      {
+        "rule_id": "4.2.0.2",
+        "rule_name": "Prioritetsordning för consignee-identifiering"
+      },
+      {
+        "rule_id": "4.4.2.2",
+        "rule_name": "Ett enda viktvärde utan viktkategori ger MANUAL_REVIEW"
+      },
+      {
+        "rule_id": "4.5.4",
+        "rule_name": "Landnormalisering fullständigt namn kontra ISO-kod"
+      }
+    ]
+  },
+  "control_points": {
+    "consignor": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.89,
+      "certificate_value": "Berg Prop Prod. AB\nTärnvägen 15\nSE-475 40, HÖNÖ\nSweden",
+      "invoice_value": "Berg Propulsion Production AB\nTärnvägen 15\n475 40 HÖNÖ\nSWEDEN",
+      "rules_applied": [
+        {
+          "rule_id": "4.1.0",
+          "outcome": "not_matched_direct_string_search"
+        },
+        {
+          "rule_id": "4.1.3.3",
+          "outcome": "matched"
+        },
+        {
+          "rule_id": "4.1.4",
+          "outcome": "matched"
+        },
+        {
+          "rule_id": "4.1.5",
+          "outcome": "matched"
+        }
+      ],
+      "motivation": "Certifikatet anger consignor som \"Berg Prop Prod. AB\" i Sverige. Fakturan anger utställaren som \"Berg Propulsion Production AB\" och innehåller även besöksadress \"Tärnvägen 15, 475 40 HÖNÖ, SWEDEN\". Skillnaden består av tydliga förkortningar av orden Propulsion och Production, det fullständiga namnet framgår uttryckligen i fakturan, adressen och landet överensstämmer och ingen annan liknande juridisk part förekommer. Därför MATCH enligt 4.1.3.3 och 4.1.4."
+    },
+    "consignee": {
+      "applicable": true,
+      "status": "MISMATCH",
+      "confidence": 0.97,
+      "certificate_value": "Master M/V Skoul Ruz\nLlyr Marine Gabon\nRue du Colonel Parant Littoral\nBP 584 Port Gentil\nGabon",
+      "invoice_value": "Invoice address:\nMachinefabriek Bolier BV\nGrevelingenweg 21\n3313 LB Dordrecht\nTHE NETHERLANDS\n\nDelivery address:\nMaster M/V Skoul Ruz\nC/o Navitrans CDG\nZA du Moulin Rue de la Croix\n95734 Roissy en France\nFRANCE",
+      "rules_applied": [
+        {
+          "rule_id": "4.2.0.2",
+          "outcome": "primary_billing_field_controls"
+        },
+        {
+          "rule_id": "4.2.1.1",
+          "outcome": "secondary_delivery_field_not_acceptable_when_primary_billing_field_exists"
+        },
+        {
+          "rule_id": "4.2.3",
+          "outcome": "country_mismatch"
+        },
+        {
+          "rule_id": "4.2.4",
+          "outcome": "mismatch"
+        }
+      ],
+      "motivation": "Fakturan innehåller ett tydligt primärt faktureringsfält, \"Invoice address\", för Machinefabriek Bolier BV i Nederländerna. Enligt 4.2.0.2 ska certifikatets consignee verifieras mot detta primära faktureringsfält, inte mot leveransadress. Certifikatets consignee är \"Master M/V Skoul Ruz / Llyr Marine Gabon ... Gabon\" och kan inte identifieras som samma juridiska part i fakturans faktureringsfält. Även om \"Master M/V Skoul Ruz\" förekommer i leveransadressen är landet där Frankrike, inte Gabon. Detta är därför MISMATCH enligt 4.2.0.2, 4.2.3 och 4.2.4."
+    },
+    "goods_description": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.87,
+      "certificate_value": "One case - Skoul Ruz 5467T\n83x63x67 cm\nHS CODE: 84836020\nCountry of origin: ES",
+      "invoice_value": "Goods label\nSkoul Ruz\n5467T\n\nCN code: 84836020\n\n83x63x67cm 180kg",
+      "rules_applied": [
+        {
+          "rule_id": "4.3.2",
+          "outcome": "priority_2_text_match_used"
+        },
+        {
+          "rule_id": "4.3.3",
+          "outcome": "identity_bearing_main_designation_found"
+        },
+        {
+          "rule_id": "4.3.4",
+          "outcome": "non_identity_bearing_additions_ignored"
+        },
+        {
+          "rule_id": "4.3.8",
+          "outcome": "matched"
+        }
+      ],
+      "motivation": "Certifikatets identitetsbärande huvudbeteckning \"Skoul Ruz 5467T\" återfinns uttryckligen i fakturan under \"Goods label\" som \"Skoul Ruz 5467T\". Den kompletterande uppgiften \"HS CODE: 84836020\" återfinns också i fakturan som \"CN code: 84836020\", och dimensionen \"83x63x67 cm\" återfinns som \"83x63x67cm\". Tillägget \"One case\" är förpackningsinformation och ändrar inte produktidentiteten. Därför MATCH enligt 4.3.2, 4.3.3 och 4.3.4."
+    },
+    "quantity": {
+      "applicable": true,
+      "status": "MANUAL_REVIEW",
+      "confidence": 0.64,
+      "certificate_value": "180 kg",
+      "invoice_value": "83x63x67cm 180kg\n\nTotal by CN code:\n84836020 2,00 pcs 0,00 kg",
+      "rules_applied": [
+        {
+          "rule_id": "4.4.2",
+          "outcome": "unit_present"
+        },
+        {
+          "rule_id": "4.4.2.2",
+          "outcome": "single_weight_without_category"
+        },
+        {
+          "rule_id": "4.4.3",
+          "outcome": "numeric_value_found_in_invoice"
+        },
+        {
+          "rule_id": "4.4.6.1",
+          "outcome": "not_applied"
+        }
+      ],
+      "motivation": "Certifikatet anger ett enda viktvärde, \"180 kg\", men utan uttrycklig viktkategori som GW eller NW. Fakturan innehåller värdet \"180kg\", så det numeriska värdet kan identifieras. Samtidigt innehåller fakturan också en separat uppgift \"Net weight 0,00 kg\", vilket gör viktkategorin oklar. Enligt 4.4.2.2 punkt 2 ska ett enda viktvärde utan viktkategori som kan identifieras i fakturan ge MANUAL_REVIEW, inte MATCH eller MISMATCH."
+    },
+    "origin": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.95,
+      "certificate_value": "ES",
+      "invoice_value": "Country of origin: Spain",
+      "rules_applied": [
+        {
+          "rule_id": "4.5.1",
+          "outcome": "explicit_origin_field_found"
+        },
+        {
+          "rule_id": "4.5.4",
+          "outcome": "iso_code_to_country_name_normalization"
+        },
+        {
+          "rule_id": "4.5.5",
+          "outcome": "matched"
+        }
+      ],
+      "motivation": "Certifikatet anger ursprungsland \"ES\" i box 3. Fakturan innehåller ett explicit origin-fält med texten \"Country of origin: Spain\". ISO-koden ES och landsnamnet Spain är tillåten landnormalisering enligt 4.5.4. Därför MATCH enligt 4.5.1, 4.5.4 och 4.5.5."
+    }
+  },
+  "overall_assessment": {
+    "comparison_result": "NOT_IDENTICAL",
+    "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
+    "auto_approval_eligible": false,
+    "confidence": 0.91,
+    "critical_failures": [
+      "Consignee i certifikatet kan inte verifieras mot fakturans primära faktureringsfält och landuppgiften överensstämmer inte."
+    ],
+    "manual_review_triggers": [
+      "Kvantiteten anges som ett enda viktvärde utan uttrycklig viktkategori i certifikatet, vilket enligt regel 4.4.2.2 kräver MANUAL_REVIEW."
+    ],
+    "decision_summary": "Dokumentrollen kan klassificeras säkert som Certificate of Origin respektive Commercial invoice. LC-undantaget är inte tillämpligt. Consignor matchar via kommersiell förkortning av företagsnamnet och samma svenska adress. Varubeskrivning och ursprungsland kan verifieras mot fakturan. Kvantiteten 180 kg kan identifieras men saknar viktkategori i certifikatet och kräver därför manuell granskning. Avgörande är dock att consignee inte matchar fakturans auktoritativa faktureringsfält; certifikatet anger mottagare i Gabon medan fakturan anger fakturaadress i Nederländerna och endast en leveransadress i Frankrike. Minst en tillämplig kontrollpunkt är därför MISMATCH, vilket medför comparison_result NOT_IDENTICAL och workflow_recommendation MANUAL_HANDLING_REQUIRED."
+  },
+  "_meta": {
+    "tested_at": "2026-03-31T15:46:55.882148+00:00",
+    "prompt_hash": "85a867ddfcca",
+    "pair": "P0153_MISMATCH",
+    "expected": "NOT_IDENTICAL",
+    "actual": "NOT_IDENTICAL",
+    "status": "PASS"
+  }
+}
