@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-03-25T00:00:00Z",
+    "verification_timestamp": null,
     "document_pair_id": null,
     "certificate_issue_date": "2023-03-07",
     "source_documents_received": 2
@@ -33,208 +33,117 @@
     "eu_origin_normalization_active": false,
     "activated_rules": [
       {
-        "rule_id": "4.1.0",
-        "rule_name": "Koncernstruktur / consignor found anywhere in invoice text was checked and not satisfied"
+        "rule_id": "8.5.0",
+        "rule_name": "Filbaserad dokumentparning"
       },
       {
-        "rule_id": "4.3.2",
-        "rule_name": "Varubeskrivning verifierad via kontrollerad textmatchning eftersom artikelnummer saknas i certifikatet"
-      },
-      {
-        "rule_id": "4.4.1",
-        "rule_name": "Huvudregel förekomstkontroll för kvantitet"
-      },
-      {
-        "rule_id": "4.5.1",
-        "rule_name": "Ursprungsland måste framgå uttryckligen i fakturan"
+        "rule_id": "8.5.2",
+        "rule_name": "Fakturareferens i certifikatet måste återfinnas i fakturafilen"
       }
     ]
   },
   "control_points": {
     "consignor": {
       "applicable": true,
-      "status": "MISMATCH",
-      "confidence": 0.98,
+      "status": "MANUAL_REVIEW",
+      "confidence": 0.88,
       "certificate_value": "Korab International AB\nMårten Krakowgatan 2\nSE411 04, GÖTEBORG\nSweden",
       "invoice_value": "KorCo AB\nMårten Krakowgatan 2\n411 04 Göteborg, Sweden",
       "rules_applied": [
         {
-          "rule_id": "4.1.0",
-          "outcome": "NO_MATCH"
+          "rule_id": "8.5.2",
+          "outcome": "triggered"
         },
         {
-          "rule_id": "4.1.3.1",
-          "outcome": "MISMATCH"
-        },
-        {
-          "rule_id": "4.1.3.2",
-          "outcome": "NOT_APPLICABLE"
-        },
-        {
-          "rule_id": "4.1.3.3",
-          "outcome": "NOT_APPLICABLE"
-        },
-        {
-          "rule_id": "4.1.3.4",
-          "outcome": "NOT_APPLICABLE"
-        },
-        {
-          "rule_id": "4.1.3.5",
-          "outcome": "NOT_APPLICABLE"
-        },
-        {
-          "rule_id": "4.1.3.6",
-          "outcome": "NOT_APPLICABLE"
-        },
-        {
-          "rule_id": "4.1.4",
-          "outcome": "MATCH"
+          "rule_id": "4.1",
+          "outcome": "deferred_due_invalid_pairing"
         }
       ],
-      "motivation": "Certifikatet anger consignor 'Korab International AB' i Sverige. Fakturan anger utställaren 'KorCo AB' i Sverige. Obligatorisk sökning enligt 4.1.0 i hela fakturatexten visar inte att 'Korab International AB' förekommer någonstans i fakturan. Namnskillnaden gäller den identitetsbärande delen av företagsnamnet ('Korab International' vs 'KorCo') och kan inte accepteras som layoutavkortning, kommersiell förkortning, kommersiellt namn vs registrerat namn, generiskt organisationsord eller enbart bolagsform. Landet matchar, men företagsnamnet kan inte verifieras som samma juridiska part."
+      "motivation": "Certifikatet hänvisar uttryckligen till \"Invoice no: 51572\" medan den separata fakturafilen visar \"INVOICE NO: 51843\". Enligt regel 8.5.2 får systemet då inte använda den bifogade fakturan som ersättning för den refererade fakturan. Därför kan consignor-kontrollen inte avgöras säkert mot ett giltigt dokumentpar och sätts till MANUAL_REVIEW."
     },
     "consignee": {
       "applicable": true,
-      "status": "MISMATCH",
-      "confidence": 0.99,
+      "status": "MANUAL_REVIEW",
+      "confidence": 0.88,
       "certificate_value": "Jamana Printers Limited\nPlot No. 9 Nyerere Road, Pugu Road\nP.O Box 5584\nDar es Salaam\nTanzania",
-      "invoice_value": "SOLD TO: Graftek Matbaa Ve Ambalaj San.Tic.Ltd.Sti.\nAkçaburgaz Mah. 3437 Sok No:28/2\nEsenyurt / Istanbul\nTurkey",
+      "invoice_value": "SOLD TO: Graftek Matbaa Ve Ambalaj\nSan.Tic.Ltd.Sti.\nAkçaburgaz Mah. 3437 Sok No:28/2\nEsenyurt / Istanbul\nTurkey",
       "rules_applied": [
         {
-          "rule_id": "4.2.0",
-          "outcome": "NO_MATCH"
+          "rule_id": "8.5.2",
+          "outcome": "triggered"
         },
         {
-          "rule_id": "4.2.0.1",
-          "outcome": "NO_MATCH"
-        },
-        {
-          "rule_id": "4.2.1.1",
-          "outcome": "NO_MATCH"
-        },
-        {
-          "rule_id": "4.1.3.1",
-          "outcome": "MISMATCH"
-        },
-        {
-          "rule_id": "4.2.3",
-          "outcome": "MISMATCH"
+          "rule_id": "4.2",
+          "outcome": "deferred_due_invalid_pairing"
         }
       ],
-      "motivation": "Certifikatet anger consignee 'Jamana Printers Limited' i Tanzania. Fakturan innehåller endast mottagarrollen 'Graftek Matbaa Ve Ambalaj San.Tic.Ltd.Sti.' i Turkiet och ingen uttrycklig förekomst av 'Jamana Printers Limited' i buyer, sold to, ship to, delivery address, notify party, importer, dealer eller annat adress-/identifieringsblock. Därmed kan mottagaren i certifikatet inte identifieras i fakturan, och landet motsvarar inte heller Tanzania."
+      "motivation": "Mottagarkontrollen kan inte slutföras mot ett säkert valt dokumentpar eftersom certifikatet refererar till faktura 51572 men fakturafilen innehåller faktura 51843. Enligt 8.5.2 får systemet inte verifiera mottagaren mot en annan faktura än den certifikatet uttryckligen hänvisar till. Kontrollpunkten sätts därför till MANUAL_REVIEW."
     },
     "goods_description": {
       "applicable": true,
-      "status": "MISMATCH",
-      "confidence": 0.97,
+      "status": "MANUAL_REVIEW",
+      "confidence": 0.9,
       "certificate_value": "756 Reels\nNewsprint",
       "invoice_value": "25 Reels: Fully Bleached Liner\nSubs 90gsm, RW 840~1100mm",
       "rules_applied": [
         {
-          "rule_id": "4.3.2",
-          "outcome": "ARTICLE_NUMBER_NOT_USED"
+          "rule_id": "8.5.2",
+          "outcome": "triggered"
         },
         {
-          "rule_id": "4.3.3",
-          "outcome": "MISMATCH"
-        },
-        {
-          "rule_id": "4.3.4",
-          "outcome": "NO_MATCH"
-        },
-        {
-          "rule_id": "4.3.5",
-          "outcome": "NOT_APPLICABLE"
+          "rule_id": "4.3",
+          "outcome": "deferred_due_invalid_pairing"
         }
       ],
-      "motivation": "Certifikatet innehåller ingen artikelnummeruppgift för varan, så verifiering ska ske via kontrollerad textmatchning. Den identitetsbärande huvudbeteckningen i certifikatet är 'Newsprint'. Fakturan anger i stället 'Fully Bleached Liner Subs 90gsm, RW 840~1100mm'. 'Newsprint' kan inte identifieras exakt i fakturan och skillnaden kan inte lösas genom tillåten normalisering eller som icke-identitetsbärande tillägg. Certifikatet innehåller visserligen ett fakturanummer i remarks, men ingen uttrycklig hänvisning av typen 'according to attached invoice' i varubeskrivningen, så 4.3.5 kan inte användas."
+      "motivation": "Varubeskrivningen i certifikatet får inte verifieras mot den bifogade fakturan eftersom den refererade fakturanummerkopplingen saknas i fakturafilen. Certifikatet anger \"Invoice no: 51572\" men fakturafilen anger \"INVOICE NO: 51843\". Enligt 8.5.2 krävs manuell handläggning i detta läge, och kontrollpunkten sätts till MANUAL_REVIEW."
     },
     "quantity": {
       "applicable": true,
-      "status": "MISMATCH",
-      "confidence": 0.99,
+      "status": "MANUAL_REVIEW",
+      "confidence": 0.89,
       "certificate_value": "496.616 MT",
-      "invoice_value": "TOTAL NET WEIGHT: 25.356 MT\nTOTAL GROSS WEIGHT: 25,356 KG\n25 Reels: Fully Bleached Liner\n25.356 MT AT EUR 900.00/MT",
+      "invoice_value": "TOTAL NET WEIGHT: 25.356 MT\nTOTAL GROSS WEIGHT: 25,356 KG",
       "rules_applied": [
         {
-          "rule_id": "4.4.2",
-          "outcome": "MATCH_FORMAL_REQUIREMENT"
+          "rule_id": "8.5.2",
+          "outcome": "triggered"
         },
         {
-          "rule_id": "4.4.2.2",
-          "outcome": "NOT_APPLICABLE"
-        },
-        {
-          "rule_id": "4.4.3",
-          "outcome": "NO_MATCH"
-        },
-        {
-          "rule_id": "4.4.3.3",
-          "outcome": "NOT_APPLICABLE"
-        },
-        {
-          "rule_id": "4.4.5.1",
-          "outcome": "EXCEPTIONS_REVIEWED"
-        },
-        {
-          "rule_id": "4.4.5.2",
-          "outcome": "NOT_APPLICABLE"
-        },
-        {
-          "rule_id": "4.4.5.3",
-          "outcome": "NO_MATCH"
-        },
-        {
-          "rule_id": "4.4.5.4",
-          "outcome": "NOT_APPLICABLE"
-        },
-        {
-          "rule_id": "4.4.5.5",
-          "outcome": "NOT_APPLICABLE"
-        },
-        {
-          "rule_id": "4.4.5.6",
-          "outcome": "NOT_APPLICABLE"
+          "rule_id": "4.4",
+          "outcome": "deferred_due_invalid_pairing"
         }
       ],
-      "motivation": "Certifikatet anger kvantiteten uttryckligen som '496.616 MT', vilket uppfyller kravet på numeriskt värde och enhet. Fakturan innehåller uttryckliga kvantitets-/viktvärden 25.356 MT och 25,356 KG, inte 496.616 MT. Ingen tillåten förekomstkontroll ger träff. Undantag 3A kan inte användas eftersom endast en faktura finns. Undantag 3B MT↔KG hjälper inte eftersom 496.616 MT motsvarar 496616 KG och inget sådant värde finns i fakturan. Övriga undantag är inte tillämpliga. Därmed kan certifikatets kvantitet inte verifieras mot fakturan."
+      "motivation": "Kvantitetskontrollen kan inte genomföras mot ett giltigt dokumentpar eftersom certifikatet uttryckligen refererar till faktura 51572 och denna faktura inte återfinns i den separata fakturafilen, som i stället visar 51843. Regel 8.5.2 förbjuder att använda en annan faktura som ersättning. Kontrollpunkten sätts därför till MANUAL_REVIEW."
     },
     "origin": {
       "applicable": true,
-      "status": "MISMATCH",
-      "confidence": 0.99,
+      "status": "MANUAL_REVIEW",
+      "confidence": 0.9,
       "certificate_value": "Norway",
       "invoice_value": "COUNTRY OF ORIGIN: Sweden",
       "rules_applied": [
         {
-          "rule_id": "4.5.1",
-          "outcome": "IDENTIFIED"
+          "rule_id": "8.5.2",
+          "outcome": "triggered"
         },
         {
-          "rule_id": "4.5.4",
-          "outcome": "NORMALIZATION_CONSIDERED"
-        },
-        {
-          "rule_id": "4.5.5",
-          "outcome": "MISMATCH"
+          "rule_id": "4.5",
+          "outcome": "deferred_due_invalid_pairing"
         }
       ],
-      "motivation": "Certifikatet anger ursprungsland 'Norway'. Fakturan anger uttryckligen 'COUNTRY OF ORIGIN: Sweden'. Ursprungslandet i certifikatet kan därför inte identifieras i fakturan, och fakturan innehåller dessutom en direkt motstridig ursprungsuppgift."
+      "motivation": "Ursprungslandet får inte slutligt verifieras mot den bifogade fakturan eftersom certifikatet hänvisar till en annan faktura än den som finns i fakturafilen. Enligt 8.5.2 ska ärendet då skickas till manuell granskning i stället för att verifieras mot den felnummererade fakturan. Kontrollpunkten sätts till MANUAL_REVIEW."
     }
   },
   "overall_assessment": {
-    "comparison_result": "NOT_IDENTICAL",
+    "comparison_result": "MANUAL_REVIEW",
     "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
     "auto_approval_eligible": false,
-    "confidence": 0.99,
-    "critical_failures": [
-      "Consignor mismatch: certificate consignor cannot be identified in invoice and invoice issuer is a different company name (4.1.3.1).",
-      "Consignee mismatch: certificate consignee cannot be identified anywhere in invoice and country differs (4.2.0.1, 4.2.3).",
-      "Goods description mismatch: 'Newsprint' is not identifiable in invoice description (4.3.3).",
-      "Quantity mismatch: 496.616 MT in certificate is not found in invoice and no quantity exception applies (4.4.3, 4.4.5.1-4.4.5.6).",
-      "Origin mismatch: certificate states Norway while invoice explicitly states Sweden (4.5.5)."
+    "confidence": 0.96,
+    "critical_failures": [],
+    "manual_review_triggers": [
+      "Regel 8.5.2: Certifikatet anger \"Invoice no: 51572\" men ingen faktura med detta nummer finns i den separata fakturafilen.",
+      "Den separata fakturafilen innehåller i stället \"INVOICE NO: 51843\", vilket gör att ett säkert och regelrätt dokumentpar inte kan fastställas för verifiering."
     ],
-    "manual_review_triggers": [],
-    "decision_summary": "Minst en tillämplig kontrollpunkt ger tydlig MISMATCH; i detta fall ger samtliga fem kontrollpunkter MISMATCH. Därför är totalresultatet NOT_IDENTICAL och ärendet kräver manuell hantering."
+    "decision_summary": "MANUAL_REVIEW eftersom certifikatet uttryckligen refererar till faktura 51572 medan den separata fakturafilen innehåller faktura 51843. Enligt regel 8.5.2 får systemet inte falla tillbaka på en annan faktura eller använda certifikatfilens innehåll som ersättning. Ärendet kräver därför manuell handläggning."
   }
 }

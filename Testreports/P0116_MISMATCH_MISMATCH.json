@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-03-25T00:00:00Z",
+    "verification_timestamp": "2026-03-31T00:00:00Z",
     "document_pair_id": null,
     "certificate_issue_date": "2025-11-05",
     "source_documents_received": 2
@@ -15,12 +15,12 @@
     "document_a": {
       "label": "Document A",
       "assumed_role": "certificate",
-      "document_type": "Certificate of Origin"
+      "document_type": "certificate of origin file with embedded invoice copy pages"
     },
     "document_b": {
       "label": "Document B",
       "assumed_role": "invoice",
-      "document_type": "Commercial Invoice"
+      "document_type": "commercial invoice"
     }
   },
   "rule_activation": {
@@ -29,170 +29,130 @@
     "general_goods_description_with_invoice_reference_active": false,
     "mixed_origins_rule_active": false,
     "to_order_rule_active": false,
-    "quantity_exception_applied": "3B",
+    "quantity_exception_applied": null,
     "eu_origin_normalization_active": false,
     "activated_rules": [
       {
-        "rule_id": "8.5",
-        "rule_name": "Document pairing by invoice reference"
+        "rule_id": "8.5.0",
+        "rule_name": "Use the certificate from the certificate file and the invoice only from the separate invoice file"
       },
       {
-        "rule_id": "4.1.0",
-        "rule_name": "Consignor found explicitly in invoice documents"
+        "rule_id": "8.5.2",
+        "rule_name": "If the certificate references a specific invoice number and no invoice in the separate invoice file bears that number, the result must be MANUAL_REVIEW"
       },
       {
-        "rule_id": "4.4.5.3",
-        "rule_name": "Unit conversion MT to KG"
+        "rule_id": "8.6",
+        "rule_name": "Post-pairing sanity check"
       }
     ]
   },
   "control_points": {
     "consignor": {
       "applicable": true,
-      "status": "MATCH",
-      "confidence": 0.96,
+      "status": "MANUAL_REVIEW",
+      "confidence": 0.93,
       "certificate_value": "mfiber AB\nDrottninggatan 21\nSE-411 14, Gothenburg\nSweden",
       "invoice_value": "mFiber AB\nDrottninggatan 21\nSE-411 14 Gothenburg\nSweden",
       "rules_applied": [
         {
-          "rule_id": "8.5",
-          "outcome": "MATCH"
+          "rule_id": "8.5.2",
+          "outcome": "manual_review_triggered"
         },
         {
           "rule_id": "4.1.0",
-          "outcome": "MATCH"
+          "outcome": "consignor_name_found_in_invoice_file"
         },
         {
-          "rule_id": "4.1.4",
-          "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.1.5",
-          "outcome": "MATCH"
+          "rule_id": "8.6",
+          "outcome": "sanity_check_partially_passed_via_consignor"
         }
       ],
-      "motivation": "Certificate consignor 'mfiber AB' is explicitly present in the invoice on page 1 in the issuer/header/footer text with matching country Sweden. Case normalization only."
+      "motivation": "The certificate explicitly references invoice number INV-000125 in the remarks field. The separate invoice file is invoice INV-000099. Under rule 8.5.2, the system may not use another invoice from the separate invoice file as a fallback when the referenced invoice number is missing. The consignor name mFiber AB is visible in the invoice file header/footer, so sanity-check criterion 2 in rule 8.6 is met, but final consignor verification cannot be accepted as a valid document-pair verification because the independently supplied invoice does not match the certificate's stated invoice reference."
     },
     "consignee": {
       "applicable": true,
-      "status": "MATCH",
-      "confidence": 0.98,
+      "status": "MANUAL_REVIEW",
+      "confidence": 0.95,
       "certificate_value": "CENTURY GATE CO. LTD\nP.O. BOX 14368\nC R NO. 1010277465\nRIYADH 7097\nSaudi Arabia",
-      "invoice_value": "Ship To / Consignee\nCentury Gate Co. Ltd\nP.O. Box 14368\nRiyadh\n7097\nSaudi Arabia\nC R no: 1010277465",
+      "invoice_value": "Paper Vantage Point Pvt Ltd\n403, 4th Floor, Orion Business Park\nGhodbunder Road, Next to Cinemax Wonder Mall,\nKapurbawdi Sandozbaugh\nThane West\n400607 Maharashtra\nIndia",
       "rules_applied": [
         {
+          "rule_id": "8.5.2",
+          "outcome": "manual_review_triggered"
+        },
+        {
           "rule_id": "4.2.0",
-          "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.2.1",
-          "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.2.2",
-          "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.2.3",
-          "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.2.4",
-          "outcome": "MATCH"
+          "outcome": "not_finalized_due_pairing_block"
         }
       ],
-      "motivation": "Certificate consignee is explicitly identified in the invoice 'Ship To / Consignee' block with same company name and country Saudi Arabia after allowed normalization of case and punctuation."
+      "motivation": "The certificate names Century Gate Co. Ltd, Saudi Arabia. The separate invoice file names Paper Vantage Point Pvt Ltd, India. However, rule 8.5.2 controls first: because the certificate specifically points to INV-000125 and the separate invoice file contains INV-000099, the supplied invoice file cannot be treated as the independent verification invoice for a definitive consignee mismatch finding. This control point is therefore escalated to manual review rather than concluded against the certificate."
     },
     "goods_description": {
       "applicable": true,
-      "status": "MATCH",
-      "confidence": 0.88,
+      "status": "MANUAL_REVIEW",
+      "confidence": 0.95,
       "certificate_value": "PAPER IN REELS\ngross weight = net weight\nShipped in container(s)\n293 reels of MG Bleached Kraft",
-      "invoice_value": "MG Bleached Kraft, 80 gsm, 74 cm\nMG Bleached Kraft, 80 gsm, 102 cm",
+      "invoice_value": "Kraft Liner Board\nHS Code: 4804 41 00",
       "rules_applied": [
         {
+          "rule_id": "8.5.2",
+          "outcome": "manual_review_triggered"
+        },
+        {
           "rule_id": "4.3.2",
-          "outcome": "Priority 2 used"
-        },
-        {
-          "rule_id": "4.3.3",
-          "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.3.4",
-          "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.3.8",
-          "outcome": "MATCH"
+          "outcome": "not_finalized_due_pairing_block"
         }
       ],
-      "motivation": "No article number was stated in the certificate goods field. The identity-bearing main designation 'MG Bleached Kraft' from the certificate is explicitly present in both invoice line descriptions. Additional invoice qualifiers '80 gsm, 74 cm' and '80 gsm, 102 cm' are non-identity-changing additions under the rule."
+      "motivation": "The certificate goods are tied to the explicit certificate remark Ref no: INV-000125. The separate invoice file instead contains invoice INV-000099 with goods text Kraft Liner Board. Because rule 8.5.2 forbids replacing the certificate-referenced invoice with another invoice from the separate invoice file, the system cannot make a final goods-description comparison on the wrong independent invoice. Manual review is required."
     },
     "quantity": {
       "applicable": true,
-      "status": "MATCH",
-      "confidence": 0.9,
+      "status": "MANUAL_REVIEW",
+      "confidence": 0.95,
       "certificate_value": "GW/NW: 150695 kg",
-      "invoice_value": "Total MT: 150.6950",
+      "invoice_value": "Total MT: 24.6860",
       "rules_applied": [
         {
-          "rule_id": "4.4.2",
-          "outcome": "MATCH"
+          "rule_id": "8.5.2",
+          "outcome": "manual_review_triggered"
         },
         {
-          "rule_id": "4.4.2.2",
-          "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.4.4",
-          "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.4.5.1",
-          "outcome": "Main rule not directly identical unit; exception sequence started"
-        },
-        {
-          "rule_id": "4.4.5.2",
-          "outcome": "NOT_APPLICABLE"
-        },
-        {
-          "rule_id": "4.4.5.3",
-          "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.4.6",
-          "outcome": "MATCH"
+          "rule_id": "4.4.1",
+          "outcome": "not_finalized_due_pairing_block"
         }
       ],
-      "motivation": "Certificate states explicit weight category and unit: GW/NW 150695 kg. Invoice states total weight as 'Total MT: 150.6950'. Using allowed MT↔KG conversion, 150.6950 MT = 150695 KG exactly. Certificate also states gross weight = net weight, so the single total weight value does not contradict the certificate."
+      "motivation": "The certificate quantity belongs to the certificate entry that references INV-000125. The separate invoice file is INV-000099 and therefore is not the referenced independent invoice. Under rule 8.5.2, the system may not use INV-000099 as a substitute verification basis. Quantity verification is therefore stopped and routed to manual review."
     },
     "origin": {
       "applicable": true,
-      "status": "MATCH",
-      "confidence": 0.99,
+      "status": "MANUAL_REVIEW",
+      "confidence": 0.96,
       "certificate_value": "India",
-      "invoice_value": "Country of Origin\nIndia",
+      "invoice_value": "Portugal",
       "rules_applied": [
         {
-          "rule_id": "4.5.1",
-          "outcome": "MATCH"
+          "rule_id": "8.5.2",
+          "outcome": "manual_review_triggered"
         },
         {
-          "rule_id": "4.5.5",
-          "outcome": "MATCH"
+          "rule_id": "4.5.1",
+          "outcome": "not_finalized_due_pairing_block"
         }
       ],
-      "motivation": "Certificate origin India is explicitly stated in the invoice in the 'Country of Origin' field as India."
+      "motivation": "The certificate states origin India and explicitly references invoice INV-000125. The separate invoice file is INV-000099 and states Portugal as origin. Because rule 8.5.2 requires manual review when the certificate-referenced invoice number cannot be found in the separate invoice file, the system cannot use INV-000099 to issue a final origin mismatch against the certificate. Manual review is required."
     }
   },
   "overall_assessment": {
-    "comparison_result": "IDENTICAL",
-    "workflow_recommendation": "AUTO_APPROVAL_ELIGIBLE",
-    "auto_approval_eligible": true,
-    "confidence": 0.94,
+    "comparison_result": "MANUAL_REVIEW",
+    "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
+    "auto_approval_eligible": false,
+    "confidence": 0.97,
     "critical_failures": [],
-    "manual_review_triggers": [],
-    "decision_summary": "The correct document pair was identified by the certificate reference 'INV-000125', which matches invoice INV-000125 and excludes the additional invoice INV-000099. All applicable control points are verified as MATCH under the rules: consignor, consignee, goods description, quantity, and origin."
+    "manual_review_triggers": [
+      "Rule 8.5.2 triggered: the certificate explicitly references invoice number INV-000125, but no invoice in the separate invoice file bears that number; the separate invoice file contains INV-000099.",
+      "Document A includes an embedded copy of invoice INV-000125 on later pages, but rule 8.5.0 forbids using an invoice embedded in the certificate file as the independent verification invoice.",
+      "Rule 8.6 sanity check is only partially satisfied through consignor presence in the separate invoice file and does not override rule 8.5.2."
+    ],
+    "decision_summary": "Document A is the certificate file and contains a certificate on page 1 plus embedded invoice-copy pages for INV-000125 on later pages. Document B is the separate invoice file and contains commercial invoice INV-000099. Because the certificate explicitly refers to INV-000125 and that number is not present in the separate invoice file, rule 8.5.2 requires MANUAL_REVIEW. The embedded invoice copy inside the certificate file cannot be used as the independent verification invoice under rule 8.5.0. Therefore the document pair cannot be verified automatically."
   }
 }

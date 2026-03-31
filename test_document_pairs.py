@@ -4,7 +4,7 @@ import time
 from pathlib import Path
 
 from dotenv import load_dotenv
-from openai import OpenAI
+from openai import OpenAI, APIConnectionError, APITimeoutError
 
 load_dotenv()
 
@@ -14,39 +14,89 @@ TESTSYSTEM_DIR = TESTDATA_DIR / "Testsystem företag"
 TESTREPORTS_DIR = BASE_DIR / "Testreports"
 PROMPT_FILE = BASE_DIR / "api_prompt.md"
 SCHEMA_FILE = BASE_DIR / "schema_slim_strict.json"
-BATCH_STATE_FILE = BASE_DIR / "batch_state.json"
+RUN_STATE_FILE = BASE_DIR / "batch_run_state.json"
 
-# Set to None to run all pairs, or an integer to limit (e.g. 10)
-MAX_PAIRS = None
+# Set to a list of pair IDs to run ONLY those pairs, or None to run all.
+# Regressionsvakt — 12 stabila par som täcker alla viktiga regelområden.
+# Kör dessa efter VARJE promptändring för att fånga regressioner (~$3-4).
+# Välj dessa vid regression-kontroll, annars sätt till None för full körning.
+REGRESSION_GUARD = [
+    "P001",   # IDENTICAL, enkel — basfall consignor/consignee/goods
+    "P003",   # NOT_IDENTICAL, hög konfidens — tydlig MISMATCH
+    "P005",   # NOT_IDENTICAL — consignee mismatch
+    "P008",   # IDENTICAL — EU-normalisering origin
+    "P019",   # IDENTICAL — HK/China-normalisering (vår fix)
+    "P072",   # IDENTICAL — summering rader + EU origin
+    "P087",   # IDENTICAL — artikelnummer-matchning
+    "P0103",  # NOT_IDENTICAL — fakturareferens + origin mismatch
+    "P0118",  # IDENTICAL — fullständig verifiering
+    "P0120",  # NOT_IDENTICAL — consignee annan adress
+    "P0132",  # IDENTICAL — LC-undantag (täcker LC-reglerna)
+    "P231",   # NOT_IDENTICAL — hög konfidens mismatch
+]
 
-# Max pairs per batch submission (keeps enqueued tokens under org limit)
-BATCH_CHUNK_SIZE = 50
+ONLY_PAIRS = REGRESSION_GUARD  # Regressionsvakt — kör efter promptändringar
+
+# Max pairs per batch submission — smaller = faster first results
+BATCH_CHUNK_SIZE = 5
+
+# Max number of OpenAI batches running simultaneously.
+# OpenAI has concurrent batch limits — keep this at most 10-15.
+MAX_CONCURRENT_BATCHES = 10
+
+# Retry settings for network errors
+MAX_RETRIES = 20
+RETRY_BASE_DELAY = 15   # seconds
+RETRY_MAX_DELAY = 300   # 5 minutes cap
+POLL_INTERVAL = 30      # seconds between batch status checks
 
 TESTREPORTS_DIR.mkdir(exist_ok=True)
 
 client = OpenAI()
-
 system_prompt = PROMPT_FILE.read_text(encoding="utf-8")
 schema = json.loads(SCHEMA_FILE.read_text(encoding="utf-8"))
 
 
-def get_document_pairs():
-    """Discover all document pairs from Testsystem föreatg using P001_MATCH/MISMATCH_certificate/invoice.pdf naming."""
+# ---------------------------------------------------------------------------
+# Resilient API wrapper
+# ---------------------------------------------------------------------------
+
+def api_call(func, *args, **kwargs):
+    """Call an OpenAI API function, retrying forever on network/timeout errors."""
+    delay = RETRY_BASE_DELAY
+    attempt = 0
+    while True:
+        try:
+            return func(*args, **kwargs)
+        except (APIConnectionError, APITimeoutError) as e:
+            attempt += 1
+            print(f"  [network error #{attempt}] {e}")
+            print(f"  Retrying in {delay}s... (disconnect laptop safe, will resume)")
+            time.sleep(delay)
+            delay = min(delay * 2, RETRY_MAX_DELAY)
+        except Exception as e:
+            # Re-raise non-network errors immediately
+            raise
+
+
+# ---------------------------------------------------------------------------
+# Document pair discovery
+# ---------------------------------------------------------------------------
+
+def get_document_pairs() -> list[dict]:
+    """Discover all document pairs from Testsystem företag."""
     if not TESTSYSTEM_DIR.exists():
         print(f"WARNING: {TESTSYSTEM_DIR} not found")
         return []
 
-    # Group files by pair key: "{id}_{MATCH|MISMATCH}"
     pair_files: dict[str, dict[str, Path]] = {}
     for pdf in sorted(TESTSYSTEM_DIR.glob("*.pdf")):
-        # Expected format: P001_MATCH_certificate.pdf or P001_MISMATCH_invoice.pdf
-        parts = pdf.stem.split("_")  # e.g. ["P001", "MATCH", "certificate"]
+        parts = pdf.stem.split("_")
         if len(parts) < 3 or parts[1] not in ("MATCH", "MISMATCH") or parts[2] not in ("certificate", "invoice"):
             print(f"WARNING: Unexpected filename format, skipping: {pdf.name}")
             continue
-        pair_key = f"{parts[0]}_{parts[1]}"  # e.g. "P001_MATCH"
-        doc_type = parts[2]  # "certificate" or "invoice"
-        pair_files.setdefault(pair_key, {})[doc_type] = pdf
+        pair_key = f"{parts[0]}_{parts[1]}"
+        pair_files.setdefault(pair_key, {})[parts[2]] = pdf
 
     pairs = []
     for pair_key in sorted(pair_files):
@@ -55,57 +105,69 @@ def get_document_pairs():
             print(f"WARNING: {pair_key} missing certificate or invoice, skipping")
             continue
         match_status = pair_key.split("_")[1]
-        expected = "IDENTICAL" if match_status == "MATCH" else "NOT_IDENTICAL"
         pairs.append({
             "name": pair_key,
             "category": match_status,
-            "expected": expected,
-            "files": [docs["certificate"], docs["invoice"]],
+            "expected": "IDENTICAL" if match_status == "MATCH" else "NOT_IDENTICAL",
+            "files": [str(docs["certificate"]), str(docs["invoice"])],
         })
-
     return pairs
 
 
-def upload_pdfs(pairs: list[dict]) -> dict[str, str]:
-    """Upload all unique PDFs to OpenAI Files API. Returns {local_path_str: file_id}."""
-    all_paths = {str(f) for p in pairs for f in p["files"]}
+def report_path_for(pair_name: str, category: str) -> Path:
+    safe = re.sub(r"[^\w\-]", "_", pair_name)
+    return TESTREPORTS_DIR / f"{safe}_{category}.json"
+
+
+def already_collected(pair: dict) -> bool:
+    """True if a result file already exists for this pair."""
+    return report_path_for(pair["name"], pair["category"]).exists()
+
+
+# ---------------------------------------------------------------------------
+# File upload
+# ---------------------------------------------------------------------------
+
+def upload_pdfs(paths: list[str]) -> dict[str, str]:
+    """Upload PDF files to OpenAI. Returns {local_path: file_id}."""
     file_ids = {}
-    print(f"Uploading {len(all_paths)} PDF files to OpenAI...")
-    for i, path_str in enumerate(sorted(all_paths), 1):
+    for path_str in paths:
         path = Path(path_str)
-        print(f"  [{i}/{len(all_paths)}] {path.name}", flush=True)
+        print(f"    Uploading {path.name}...", flush=True)
         with path.open("rb") as fh:
-            uploaded = client.files.create(file=(path.name, fh, "application/pdf"), purpose="user_data")
+            uploaded = api_call(
+                client.files.create,
+                file=(path.name, fh, "application/pdf"),
+                purpose="user_data",
+            )
         file_ids[path_str] = uploaded.id
     return file_ids
 
 
-def delete_uploaded_files(file_ids: dict[str, str]):
-    """Delete all previously uploaded files from OpenAI."""
-    print(f"Cleaning up {len(file_ids)} uploaded files...")
-    for file_id in file_ids.values():
+def delete_files(file_ids: dict[str, str]):
+    for fid in file_ids.values():
         try:
-            client.files.delete(file_id)
+            client.files.delete(fid)
         except Exception:
             pass
 
 
-def build_batch_request(pair: dict, file_ids: dict[str, str]) -> dict:
-    """Build a single batch JSONL request for a document pair using pre-uploaded file IDs."""
-    content = []
-    for pdf_path in pair["files"]:
-        content.append({
-            "type": "file",
-            "file": {"file_id": file_ids[str(pdf_path)]},
-        })
+# ---------------------------------------------------------------------------
+# Batch construction & submission
+# ---------------------------------------------------------------------------
+
+def build_request(pair: dict, file_ids: dict[str, str]) -> dict:
+    content = [
+        {"type": "file", "file": {"file_id": file_ids[f]}}
+        for f in pair["files"]
+    ]
     return {
         "custom_id": pair["name"],
         "method": "POST",
         "url": "/v1/chat/completions",
         "body": {
             "model": "gpt-5.4",
-            "temperature": 0,
-            "seed": 42,
+            "reasoning_effort": "high",
             "messages": [
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": content},
@@ -122,202 +184,160 @@ def build_batch_request(pair: dict, file_ids: dict[str, str]) -> dict:
     }
 
 
-def submit_batch(pairs: list[dict]) -> str:
-    """Upload PDFs, build JSONL, create a batch job, save state and return batch_id."""
-    file_ids = upload_pdfs(pairs)
+def submit_chunk(chunk: list[dict], chunk_index: int) -> dict:
+    """Upload PDFs and submit batch for one chunk. Returns chunk state dict."""
+    print(f"\n  [chunk {chunk_index+1}] Uploading {len(chunk)*2} PDFs...")
+    all_paths = list({f for p in chunk for f in p["files"]})
+    file_ids = upload_pdfs(all_paths)
 
-    print(f"Building batch with {len(pairs)} requests...")
-    lines = [json.dumps(build_batch_request(p, file_ids), ensure_ascii=False) for p in pairs]
+    lines = [json.dumps(build_request(p, file_ids), ensure_ascii=False) for p in chunk]
     jsonl_bytes = "\n".join(lines).encode("utf-8")
-    print(f"Uploading batch input ({len(jsonl_bytes) / 1024:.1f} KB)...")
 
-    uploaded = client.files.create(
+    print(f"  [chunk {chunk_index+1}] Submitting batch ({len(jsonl_bytes)/1024:.1f} KB)...")
+    uploaded = api_call(
+        client.files.create,
         file=("batch_input.jsonl", jsonl_bytes, "application/jsonl"),
         purpose="batch",
     )
-    batch = client.batches.create(
+    batch = api_call(
+        client.batches.create,
         input_file_id=uploaded.id,
         endpoint="/v1/chat/completions",
         completion_window="24h",
     )
-    print(f"Batch submitted: {batch.id}")
+    print(f"  [chunk {chunk_index+1}] Batch submitted: {batch.id}")
 
-    # Persist state so the collect phase can resume after restart
-    state = {
+    return {
+        "chunk_index": chunk_index,
         "batch_id": batch.id,
+        "pair_names": [p["name"] for p in chunk],
         "file_ids": file_ids,
-        "pairs": [
-            {
-                "name": p["name"],
-                "category": p["category"],
-                "expected": p["expected"],
-                "files": [str(f) for f in p["files"]],
-            }
-            for p in pairs
-        ],
+        "results_collected": False,
     }
-    BATCH_STATE_FILE.write_text(json.dumps(state, indent=2, ensure_ascii=False), encoding="utf-8")
-    return batch.id
 
 
-def poll_batch(batch_id: str):
-    """Poll until the batch reaches a terminal state and return the batch object."""
-    while True:
-        batch = client.batches.retrieve(batch_id)
-        counts = batch.request_counts
-        completed = counts.completed if counts else "?"
-        total = counts.total if counts else "?"
-        print(f"  [{batch.status}]  {completed}/{total} completed", flush=True)
-        if batch.status in ("completed", "failed", "expired", "cancelled"):
-            return batch
-        time.sleep(30)
+# ---------------------------------------------------------------------------
+# State persistence
+# ---------------------------------------------------------------------------
 
+def save_state(state: dict):
+    RUN_STATE_FILE.write_text(json.dumps(state, indent=2, ensure_ascii=False), encoding="utf-8")
+
+
+def load_state():
+    if RUN_STATE_FILE.exists():
+        return json.loads(RUN_STATE_FILE.read_text(encoding="utf-8"))
+    return None
+
+
+# ---------------------------------------------------------------------------
+# Result collection
+# ---------------------------------------------------------------------------
+
+def collect_results(batch_obj, chunk_state: dict, pair_by_name: dict[str, dict]) -> list[dict]:
+    """Download and process results for a completed batch."""
+    if not getattr(batch_obj, "output_file_id", None):
+        print(f"  [chunk {chunk_state['chunk_index']+1}] No output file — batch may have failed entirely.")
+        if getattr(batch_obj, "error_file_id", None):
+            errors = api_call(client.files.content, batch_obj.error_file_id).text
+            print("  Batch errors:")
+            for line in errors.strip().splitlines()[:10]:
+                print(f"    {line}")
+        return []
+
+    output_text = api_call(client.files.content, batch_obj.output_file_id).text
+    results = []
+    for line in output_text.strip().splitlines():
+        entry = json.loads(line)
+        custom_id = entry["custom_id"]
+        pair = pair_by_name.get(custom_id)
+        if pair is None:
+            print(f"  WARNING: unknown custom_id: {custom_id}")
+            continue
+        error = entry.get("error")
+        response_body = entry.get("response", {}).get("body", {})
+        if error or not response_body:
+            print(f"  ERROR for {custom_id}: {error}")
+            results.append({"name": custom_id, "error": str(error)})
+            continue
+        message = response_body["choices"][0]["message"]
+        result = json.loads(message["content"])
+        usage = response_body.get("usage", {})
+        results.append(print_pair_result(
+            pair, result,
+            usage.get("prompt_tokens", 0),
+            usage.get("completion_tokens", 0),
+        ))
+    return results
+
+
+# ---------------------------------------------------------------------------
+# Output formatting
+# ---------------------------------------------------------------------------
 
 def print_pair_result(pair: dict, result: dict, input_tokens: int, output_tokens: int) -> dict:
-    """Print detailed output for one pair and return a summary dict."""
     name = pair["name"]
-    file_names = [Path(f).name for f in pair["files"]]
     overall = result["overall_assessment"]
     comparison_result = overall["comparison_result"]
 
     is_pass = comparison_result == pair["expected"]
     is_manual_review = comparison_result == "MANUAL_REVIEW"
-    if is_pass:
-        status = "PASS"
-    elif is_manual_review:
-        status = "REVIEW"
-    else:
-        status = "FAIL"
+    status = "PASS" if is_pass else ("REVIEW" if is_manual_review else "FAIL")
 
-    print(f"\n{'=' * 60}")
+    print(f"\n{'='*60}")
     print(f"  {name} ({pair['category']})")
-    print(f"  File A: {file_names[0]}")
-    print(f"  File B: {file_names[1]}")
-    print(f"  Expected: {pair['expected']}")
-    print(f"\n  Result: {comparison_result} — {status}")
-    print(f"  Overall confidence: {overall.get('confidence', 'N/A')}")
-    print(f"  Workflow: {overall.get('workflow_recommendation', 'N/A')}")
+    print(f"  Expected: {pair['expected']}  |  Result: {comparison_result} — {status}")
+    print(f"  Confidence: {overall.get('confidence','N/A')}  |  Workflow: {overall.get('workflow_recommendation','N/A')}")
     if overall.get("decision_summary"):
-        print(f"\n  Decision summary:")
-        print(f"    {overall['decision_summary']}")
+        print(f"\n  {overall['decision_summary']}")
 
-    # Print activated rules
     ra = result.get("rule_activation", {})
-    active_flags = []
-    for flag_key, flag_label in [
+    active_flags = [lbl for key, lbl in [
         ("lc_exception_active", "LC exception"),
         ("general_goods_description_with_invoice_reference_active", "General goods + invoice ref"),
         ("mixed_origins_rule_active", "Mixed origins"),
         ("to_order_rule_active", "To order"),
         ("eu_origin_normalization_active", "EU normalization"),
-    ]:
-        if ra.get(flag_key):
-            active_flags.append(flag_label)
+    ] if ra.get(key)]
     if ra.get("quantity_exception_applied"):
         active_flags.append(f"Quantity exception {ra['quantity_exception_applied']}")
     if active_flags:
-        print(f"\n  Active rules: {', '.join(active_flags)}")
+        print(f"  Active rules: {', '.join(active_flags)}")
 
-    # Print detailed control point trace
     cp = result.get("control_points", {})
     cp_labels = {
-        "consignor": "4.1 Consignor (Avsändare)",
-        "consignee": "4.2 Consignee (Mottagare)",
-        "goods_description": "4.3 Goods Description (Varubeskrivning)",
-        "quantity": "4.4 Quantity (Kvantitet/Mängd)",
-        "origin": "4.5 Origin (Ursprungsland)",
+        "consignor": "4.1 Consignor",
+        "consignee": "4.2 Consignee",
+        "goods_description": "4.3 Varubeskrivning",
+        "quantity": "4.4 Kvantitet",
+        "origin": "4.5 Ursprung",
     }
-    print(f"\n  {'─' * 56}")
-    print(f"  CONTROL POINT TRACE")
-    print(f"  {'─' * 56}")
-
+    print(f"\n  {'─'*56}")
     for cp_name, cp_label in cp_labels.items():
         point = cp.get(cp_name, {})
         cp_status = point.get("status", "N/A")
-        cp_conf = point.get("confidence", "N/A")
-        marker = "PASS" if cp_status == "MATCH" else "FAIL" if cp_status == "MISMATCH" else "SKIP" if cp_status == "NOT_APPLICABLE" else "WARN"
-        conf_str = f"{cp_conf:.2f}" if isinstance(cp_conf, (int, float)) else str(cp_conf)
-
-        print(f"\n  [{marker}] {cp_label}")
-        print(f"  Status: {cp_status}  |  Confidence: {conf_str}")
-
-        cp_cert = point.get("certificate_value")
-        cp_inv = point.get("invoice_value")
-        if cp_cert:
-            cert_lines = str(cp_cert).split("\n")
-            print(f"    Certificate: {cert_lines[0]}")
-            for line in cert_lines[1:]:
-                print(f"                 {line}")
-        if cp_inv:
-            inv_lines = str(cp_inv).split("\n")
-            print(f"    Invoice:     {inv_lines[0]}")
-            for line in inv_lines[1:]:
-                print(f"                 {line}")
-
-        rules = point.get("rules_applied", [])
-        if rules:
-            print(f"    Rules evaluated:")
-            for rule in rules:
-                rid = rule.get("rule_id", "?")
-                outcome = rule.get("outcome", "?")
-                icon = "+" if "match" in outcome.lower() or "accept" in outcome.lower() or "pass" in outcome.lower() or "verified" in outcome.lower() else "-" if "mismatch" in outcome.lower() or "fail" in outcome.lower() or "reject" in outcome.lower() else "~"
-                print(f"      {icon} [{rid}] {outcome}")
-
-        motivation = point.get("motivation")
-        if motivation:
-            print(f"    Motivation:")
-            words = motivation.split()
-            line = "      "
-            for word in words:
-                if len(line) + len(word) + 1 > 74:
-                    print(line)
-                    line = "      " + word
-                else:
-                    line += (" " if line.strip() else "") + word
-            if line.strip():
-                print(line)
+        marker = {"MATCH": "PASS", "MISMATCH": "FAIL", "NOT_APPLICABLE": "SKIP", "MANUAL_REVIEW": "WARN"}.get(cp_status, "?")
+        print(f"  [{marker}] {cp_label}: {cp_status}  (conf={point.get('confidence','?')})")
+        if cp_status in ("MISMATCH", "MANUAL_REVIEW", "NOT_FOUND"):
+            m = point.get("motivation", "")
+            if m:
+                print(f"        {m[:200]}")
 
     if overall.get("critical_failures"):
-        print(f"\n  {'─' * 56}")
-        print(f"  CRITICAL FAILURES:")
+        print(f"\n  CRITICAL FAILURES:")
         for f in overall["critical_failures"]:
             print(f"    ✗ {f}")
     if overall.get("manual_review_triggers"):
-        print(f"\n  {'─' * 56}")
-        print(f"  MANUAL REVIEW TRIGGERS:")
+        print(f"\n  MANUAL REVIEW TRIGGERS:")
         for t in overall["manual_review_triggers"]:
             print(f"    ? {t}")
 
-    if is_manual_review:
-        print(f"\n  {'─' * 56}")
-        print(f"  MANUAL REVIEW REQUIRED — reason:")
-        if overall.get("decision_summary"):
-            words = overall["decision_summary"].split()
-            line = "    "
-            for word in words:
-                if len(line) + len(word) + 1 > 74:
-                    print(line)
-                    line = "    " + word
-                else:
-                    line += (" " if line.strip() else "") + word
-            if line.strip():
-                print(line)
-        for cp_name_key, cp_label_val in cp_labels.items():
-            pt = cp.get(cp_name_key, {})
-            pt_status = pt.get("status", "")
-            if pt_status in ("MANUAL_REVIEW", "NOT_FOUND", "MISMATCH"):
-                pt_motivation = pt.get("motivation", "")
-                print(f"    [{pt_status}] {cp_label_val}")
-                if pt_motivation:
-                    print(f"      {pt_motivation[:200]}")
+    print(f"\n  Tokens — Input: {input_tokens:,}, Output: {output_tokens:,}")
 
-    print(f"\n  {'─' * 56}")
-    print(f"  Tokens — Input: {input_tokens:,}, Output: {output_tokens:,}")
-
-    # Save per-pair report
-    safe_name = re.sub(r"[^\w\-]", "_", name)
-    report_path = TESTREPORTS_DIR / f"{safe_name}_{pair['category']}.json"
-    report_path.write_text(json.dumps(result, indent=2, ensure_ascii=False), encoding="utf-8")
+    # Save report
+    report_path_for(name, pair["category"]).write_text(
+        json.dumps(result, indent=2, ensure_ascii=False), encoding="utf-8"
+    )
 
     return {
         "name": name,
@@ -332,110 +352,280 @@ def print_pair_result(pair: dict, result: dict, input_tokens: int, output_tokens
     }
 
 
+def print_progress(all_results: list[dict], total_pairs: int):
+    """Print a compact running progress line after each collected batch."""
+    done = len(all_results)
+    if done == 0:
+        return
+    correct   = sum(1 for r in all_results if r.get("status") == "PASS")
+    review    = sum(1 for r in all_results if r.get("status") == "REVIEW")
+    wrong     = sum(1 for r in all_results if r.get("status") == "FAIL" or "error" in r)
+    acceptable = correct + review
+    pct_ok    = acceptable / done * 100
+    pct_wrong = wrong / done * 100
+    remaining = total_pairs - done
+    tokens_in  = sum(r.get("input_tokens", 0) for r in all_results)
+    tokens_out = sum(r.get("output_tokens", 0) for r in all_results)
+    est_cost   = (tokens_in * 7.5 + tokens_out * 30.0) / 1_000_000
+
+    print(f"\n  ┌─ PROGRESS ({'='*40})")
+    print(f"  │  Klara:       {done}/{total_pairs}  ({done/total_pairs*100:.0f}%)  — {remaining} kvar")
+    print(f"  │  Rätt (PASS): {correct:4d}  ({correct/done*100:.1f}%)")
+    print(f"  │  Review:      {review:4d}  ({review/done*100:.1f}%)  ← acceptabelt")
+    print(f"  │  Fel  (FAIL): {wrong:4d}  ({wrong/done*100:.1f}%)")
+    print(f"  │  Acceptabla:  {acceptable:4d}  ({pct_ok:.1f}%)  │  Felaktiga: {wrong}  ({pct_wrong:.1f}%)")
+    print(f"  │  Kostnad hittills: ~${est_cost:.2f} USD")
+    print(f"  └{'─'*50}")
+
+
 def print_summary(results: list[dict]):
     total = len(results)
-    passed = sum(1 for r in results if r.get("status") in ("PASS", "REVIEW"))
-    failed = sum(1 for r in results if r.get("status") == "FAIL") + sum(1 for r in results if "error" in r)
-    review_count = sum(1 for r in results if r.get("status") == "REVIEW")
+    correct     = sum(1 for r in results if r.get("status") == "PASS")
+    review      = sum(1 for r in results if r.get("status") == "REVIEW")
+    wrong       = sum(1 for r in results if r.get("status") == "FAIL" or "error" in r)
+    acceptable  = correct + review
 
-    print(f"\n{'=' * 60}")
-    print(f"  SUMMARY: {total} pairs tested — {passed} passed, {failed} failed")
-    print(f"  {'─' * 56}")
-    if review_count:
-        print(f"  ({review_count} marked MANUAL_REVIEW — not wrong, but needs human check)")
-    print(f"  {'─' * 56}")
-    for r in results:
-        if "error" in r:
-            print(f"    ERROR  {r['name']}: {r['error']}")
-        else:
-            icon = r["status"]
-            line = f"    {icon:6s} {r['name']:30s}  expected={r['expected']:16s}  got={r['actual']}"
-            if r["status"] == "REVIEW":
-                line += f"  workflow={r['workflow']}"
-            print(line)
-            if r["status"] == "REVIEW" and r.get("manual_review_triggers"):
-                for trigger in r["manual_review_triggers"]:
-                    print(f"           ? {trigger}")
-    print(f"  {'─' * 56}")
-    total_in = sum(r.get("input_tokens", 0) for r in results)
+    total_in  = sum(r.get("input_tokens", 0) for r in results)
     total_out = sum(r.get("output_tokens", 0) for r in results)
-    print(f"  Total tokens — Input: {total_in:,}, Output: {total_out:,}")
-    print(f"{'=' * 60}")
+    est_cost  = (total_in * 7.5 + total_out * 30.0) / 1_000_000
+
+    print(f"\n{'='*60}")
+    print(f"  SLUTRESULTAT: {total} dokumentpar testade")
+    print(f"  {'─'*56}")
+    print(f"  Rätt         (PASS):          {correct:4d}  ({correct/total*100:.1f}%)")
+    print(f"  Manuell gr.  (REVIEW):        {review:4d}  ({review/total*100:.1f}%)  ← ej fel")
+    print(f"  Fel          (FAIL):          {wrong:4d}  ({wrong/total*100:.1f}%)")
+    print(f"  {'─'*56}")
+    print(f"  Acceptabel precision:         {acceptable:4d}/{total}  ({acceptable/total*100:.1f}%)")
+    print(f"  Felprocent:                   {wrong:4d}/{total}  ({wrong/total*100:.1f}%)")
+    print(f"  {'─'*56}")
+
+    if wrong > 0 or any("error" in r for r in results):
+        print(f"\n  FELKLASSADE PAR:")
+        for r in results:
+            if "error" in r:
+                print(f"    ERROR   {r['name']}: {r['error']}")
+            elif r.get("status") == "FAIL":
+                print(f"    FAIL    {r['name']:30s}  expected={r['expected']:16s}  got={r['actual']}")
+
+    if review > 0:
+        print(f"\n  MANUAL_REVIEW (kräver mänsklig granskning):")
+        for r in results:
+            if r.get("status") == "REVIEW":
+                print(f"    REVIEW  {r['name']:30s}  expected={r['expected']}")
+                for t in r.get("manual_review_triggers", []):
+                    print(f"            ? {t}")
+
+    print(f"\n  Tokens — Input: {total_in:,}, Output: {total_out:,}")
+    print(f"  Kostnad (Batch API ~50% rabatt): ~${est_cost:.2f} USD")
+    print(f"{'='*60}")
 
 
-def run_chunk(chunk: list[dict], chunk_num: int, total_chunks: int) -> list[dict]:
-    """Upload, submit, wait, and collect results for one chunk of pairs."""
-    print(f"\n{'=' * 60}")
-    print(f"  CHUNK {chunk_num}/{total_chunks}  ({len(chunk)} pairs)")
-
-    batch_id = submit_batch(chunk)
-    file_ids = json.loads(BATCH_STATE_FILE.read_text(encoding="utf-8")).get("file_ids", {})
-    pair_by_id = {p["name"]: p for p in chunk}
-
-    print(f"Polling batch status (checks every 30 s)...")
-    batch = poll_batch(batch_id)
-
-    if batch.status != "completed":
-        print(f"Batch ended with status: {batch.status}")
-        if getattr(batch, "error_file_id", None):
-            errors = client.files.content(batch.error_file_id).text
-            print("--- Batch errors ---")
-            for line in errors.strip().splitlines()[:10]:
-                print(line)
-        elif getattr(batch, "errors", None):
-            print(f"Errors: {batch.errors}")
-        delete_uploaded_files(file_ids)
-        BATCH_STATE_FILE.unlink(missing_ok=True)
-        return []
-
-    output_content = client.files.content(batch.output_file_id).text
-    results = []
-    for line in output_content.strip().splitlines():
-        entry = json.loads(line)
-        custom_id = entry["custom_id"]
-        pair = pair_by_id.get(custom_id)
-        if pair is None:
-            print(f"WARNING: unknown custom_id in results: {custom_id}")
-            continue
-        response_body = entry.get("response", {}).get("body", {})
-        error = entry.get("error")
-        if error or not response_body:
-            print(f"ERROR for {custom_id}: {error}")
-            results.append({"name": custom_id, "error": str(error)})
-            continue
-        message = response_body["choices"][0]["message"]
-        result = json.loads(message["content"])
-        usage = response_body.get("usage", {})
-        input_tokens = usage.get("prompt_tokens", 0)
-        output_tokens = usage.get("completion_tokens", 0)
-        results.append(print_pair_result(pair, result, input_tokens, output_tokens))
-
-    delete_uploaded_files(file_ids)
-    BATCH_STATE_FILE.unlink(missing_ok=True)
-    return results
-
+# ---------------------------------------------------------------------------
+# Main
+# ---------------------------------------------------------------------------
 
 def main():
     all_pairs = get_document_pairs()
-    if MAX_PAIRS is not None:
-        all_pairs = all_pairs[:MAX_PAIRS]
+    active_filter = ONLY_PAIRS if ONLY_PAIRS is not None else None
+    if active_filter is not None:
+        # p["name"] is like "P002_MATCH" — match on pair ID prefix (up to first underscore)
+        all_pairs = [p for p in all_pairs if p["name"].split("_")[0] in active_filter]
     if not all_pairs:
-        print(f"No document pairs found in {TESTSYSTEM_DIR}")
+        print(f"No document pairs found.")
         return
 
+    pair_by_name = {p["name"]: p for p in all_pairs}
     chunks = [all_pairs[i:i + BATCH_CHUNK_SIZE] for i in range(0, len(all_pairs), BATCH_CHUNK_SIZE)]
-    print(f"Running {len(all_pairs)} pairs in {len(chunks)} chunks of up to {BATCH_CHUNK_SIZE}...")
 
+    # -----------------------------------------------------------------------
+    # Load or build run state
+    # -----------------------------------------------------------------------
+    state = load_state()
+
+    if state is not None:
+        # Verify the saved run matches the current pair list
+        saved_names = {n for b in state["batches"] for n in b["pair_names"]}
+        current_names = {p["name"] for p in all_pairs}
+        if saved_names != current_names:
+            print("WARNING: Saved state does not match current pair list — starting fresh.")
+            state = None
+
+    if state is None:
+        print(f"\nRunning {len(all_pairs)} pairs in {len(chunks)} chunks of {BATCH_CHUNK_SIZE}...")
+        print(f"Max {MAX_CONCURRENT_BATCHES} concurrent batches — submitting in waves.\n")
+        batch_states = []
+
+        for i, chunk in enumerate(chunks):
+            pending = [p for p in chunk if not already_collected(p)]
+            if not pending:
+                print(f"  [chunk {i+1}] All pairs already done, skipping.")
+                batch_states.append({
+                    "chunk_index": i,
+                    "batch_id": None,
+                    "pair_names": [p["name"] for p in chunk],
+                    "file_ids": {},
+                    "results_collected": True,
+                })
+                continue
+
+            # Wait if too many batches are currently active
+            while True:
+                active = sum(
+                    1 for b in batch_states
+                    if b.get("batch_id") and not b.get("results_collected")
+                )
+                if active < MAX_CONCURRENT_BATCHES:
+                    break
+                print(f"  {active} batches active (limit {MAX_CONCURRENT_BATCHES}) — waiting {POLL_INTERVAL}s before submitting chunk {i+1}...")
+                time.sleep(POLL_INTERVAL)
+
+            chunk_state = submit_chunk(pending, i)
+            batch_states.append(chunk_state)
+            save_state({"batches": batch_states})
+
+        state = {"batches": batch_states}
+        save_state(state)
+    else:
+        print(f"\nResuming run from saved state ({len(state['batches'])} batches)...")
+
+        # Reset batches that failed with 0 results so they get resubmitted
+        for b in state["batches"]:
+            if b.get("results_collected") and b.get("batch_id"):
+                # Check if any pair from this batch actually has a report file
+                has_results = any(
+                    already_collected(pair_by_name[n])
+                    for n in b["pair_names"]
+                    if n in pair_by_name
+                )
+                if not has_results:
+                    print(f"  [chunk {b['chunk_index']+1}] Re-queuing — previously failed with 0 results.")
+                    b["results_collected"] = False
+                    b["batch_id"] = None  # Force resubmission
+        save_state(state)
+
+        # Resubmit chunks that need it
+        needs_submit = [b for b in state["batches"] if not b["results_collected"] and not b["batch_id"]]
+        if needs_submit:
+            print(f"  Resubmitting {len(needs_submit)} failed chunks in waves of {MAX_CONCURRENT_BATCHES}...")
+            for b in needs_submit:
+                while True:
+                    active = sum(
+                        1 for x in state["batches"]
+                        if x.get("batch_id") and not x.get("results_collected")
+                    )
+                    if active < MAX_CONCURRENT_BATCHES:
+                        break
+                    print(f"  {active} active — waiting {POLL_INTERVAL}s...")
+                    time.sleep(POLL_INTERVAL)
+
+                chunk = [pair_by_name[n] for n in b["pair_names"] if n in pair_by_name]
+                pending = [p for p in chunk if not already_collected(p)]
+                if pending:
+                    new_state = submit_chunk(pending, b["chunk_index"])
+                    b.update(new_state)
+                    save_state(state)
+                else:
+                    b["results_collected"] = True
+                    save_state(state)
+
+    # -----------------------------------------------------------------------
+    # Poll all batches until all complete, collect results as each finishes
+    # -----------------------------------------------------------------------
     all_results = []
-    for i, chunk in enumerate(chunks, 1):
-        chunk_results = run_chunk(chunk, i, len(chunks))
-        all_results.extend(chunk_results)
-        if chunk_results:
-            passed = sum(1 for r in chunk_results if r.get("status") in ("PASS", "REVIEW") and "error" not in r)
-            failed = sum(1 for r in chunk_results if r.get("status") == "FAIL" or "error" in r)
-            print(f"\n  Chunk {i} done: {passed} passed, {failed} failed  ({len(all_results)}/{len(all_pairs)} total so far)")
 
-    print_summary(all_results)
+    # Collect already-done pairs from existing report files
+    for p in all_pairs:
+        if already_collected(p):
+            rp = report_path_for(p["name"], p["category"])
+            try:
+                result = json.loads(rp.read_text(encoding="utf-8"))
+                overall = result["overall_assessment"]
+                comparison_result = overall["comparison_result"]
+                is_pass = comparison_result == p["expected"]
+                is_manual = comparison_result == "MANUAL_REVIEW"
+                status = "PASS" if is_pass else ("REVIEW" if is_manual else "FAIL")
+                all_results.append({
+                    "name": p["name"],
+                    "category": p["category"],
+                    "expected": p["expected"],
+                    "actual": comparison_result,
+                    "status": status,
+                    "workflow": overall.get("workflow_recommendation", "N/A"),
+                    "manual_review_triggers": overall.get("manual_review_triggers", []),
+                    "input_tokens": 0,
+                    "output_tokens": 0,
+                })
+            except Exception:
+                pass
+
+    pending_batches = [b for b in state["batches"] if not b["results_collected"] and b["batch_id"]]
+
+    while pending_batches:
+        still_pending = []
+        for chunk_state in pending_batches:
+            batch_id = chunk_state["batch_id"]
+            try:
+                batch_obj = api_call(client.batches.retrieve, batch_id)
+            except Exception as e:
+                print(f"  Could not retrieve batch {batch_id}: {e}")
+                still_pending.append(chunk_state)
+                continue
+
+            counts = batch_obj.request_counts
+            completed = counts.completed if counts else "?"
+            total = counts.total if counts else "?"
+            idx = chunk_state["chunk_index"] + 1
+            print(f"  [chunk {idx:2d}] {batch_obj.status:12s}  {completed}/{total} completed", flush=True)
+
+            if batch_obj.status in ("completed", "failed", "expired", "cancelled"):
+                print(f"\n  [chunk {idx}] Collecting results...")
+                chunk_pairs = [pair_by_name[n] for n in chunk_state["pair_names"] if n in pair_by_name]
+                chunk_pair_by_name = {p["name"]: p for p in chunk_pairs}
+                results = collect_results(batch_obj, chunk_state, chunk_pair_by_name)
+
+                # Only mark as collected if we actually got results
+                # (failed batches with 0/0 should be retried on next run)
+                completed_count = batch_obj.request_counts.completed if batch_obj.request_counts else 0
+                if completed_count == 0 and batch_obj.status == "failed":
+                    print(f"  [chunk {idx}] Batch failed with 0 results — will retry on next run.")
+                    chunk_state["results_collected"] = False
+                    chunk_state["batch_id"] = None  # Clear so it gets resubmitted
+                else:
+                    all_results.extend(results)
+                    chunk_state["results_collected"] = True
+
+                # Clean up uploaded files
+                delete_files(chunk_state.get("file_ids", {}))
+                save_state(state)
+
+                done_batches = sum(1 for b in state["batches"] if b["results_collected"])
+                total_batches = len(state["batches"])
+                print(f"  [chunk {idx}] Done. ({done_batches}/{total_batches} batchar klara)")
+                print_progress(all_results, len(all_pairs))
+            else:
+                still_pending.append(chunk_state)
+
+        if still_pending:
+            pending_batches = still_pending
+            print(f"\n  {len(still_pending)} batches still running — checking again in {POLL_INTERVAL}s...")
+            time.sleep(POLL_INTERVAL)
+        else:
+            pending_batches = []
+
+    # -----------------------------------------------------------------------
+    # Final summary and cleanup
+    # -----------------------------------------------------------------------
+    # Only summarize pairs from this run
+    run_pair_names = {p["name"] for p in all_pairs}
+    run_results = [r for r in all_results if r["name"] in run_pair_names]
+    print_summary(run_results)
+
+    # Remove state file when run is complete
+    all_collected = all(b["results_collected"] for b in state["batches"] if b["batch_id"])
+    if all_collected:
+        RUN_STATE_FILE.unlink(missing_ok=True)
+        print("Run complete. State file removed.")
 
 
 if __name__ == "__main__":

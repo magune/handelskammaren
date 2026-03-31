@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-03-25T00:00:00Z",
+    "verification_timestamp": null,
     "document_pair_id": null,
     "certificate_issue_date": "2023-03-21",
     "source_documents_received": 2
@@ -20,7 +20,7 @@
     "document_b": {
       "label": "Document B",
       "assumed_role": "invoice",
-      "document_type": "Invoice"
+      "document_type": "Commercial Invoice"
     }
   },
   "rule_activation": {
@@ -34,15 +34,19 @@
     "activated_rules": [
       {
         "rule_id": "4.1.0",
-        "rule_name": "Koncernstruktur / consignor found explicitly in invoice support text"
+        "rule_name": "Consignor found elsewhere in invoice / group structure search"
       },
       {
         "rule_id": "4.5.4.1",
-        "rule_name": "EU-normalisering"
+        "rule_name": "EU normalization"
       },
       {
         "rule_id": "4.5.4.2",
-        "rule_name": "EU-medlemsland"
+        "rule_name": "EU and EU member state equivalence"
+      },
+      {
+        "rule_id": "8.6",
+        "rule_name": "Mandatory pairing validation"
       }
     ]
   },
@@ -50,7 +54,7 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.93,
+      "confidence": 0.94,
       "certificate_value": "Borealis AG c/o Borealis AB\nIndustrivägen 3\n444 86, STENUNGSUND\nSverige",
       "invoice_value": "Exporter:\nBorealis AG, Vienna VAT ID No.: SE502065098101\nc/o Borealis AB\nSE - 444 86 STENUNGSUND, SWEDEN",
       "rules_applied": [
@@ -67,48 +71,40 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor-namn återfinns uttryckligen i fakturan på sida 2 i exportörsblocket som 'Borealis AG ... c/o Borealis AB ... STENUNGSUND, SWEDEN'. Detta uppfyller koncernstrukturregeln 4.1.0 utan behov av vidare sekventiell prövning. Landet Sverige/Sweden överensstämmer efter tillåten normalisering."
+      "motivation": "Certifikatets consignor-namn 'Borealis AG c/o Borealis AB' återfinns uttryckligen i fakturan på sida 2 i exportörsblocket. Landet i certifikatet är 'Sverige' och i fakturan 'SWEDEN', vilket är tillåten landsnormalisering. Gatuadressdetalj skiljer sig, men detta påverkar inte bedömningen enligt 4.1.5 eftersom företagsnamn och land kan verifieras."
     },
     "consignee": {
       "applicable": true,
       "status": "MISMATCH",
-      "confidence": 0.98,
+      "confidence": 0.99,
       "certificate_value": "Tuncman Plastik San.ve Tic.Ltd.Sti.\nPirincci Mh. Pirincci Koy No: 37/1\n34076 HABIPLER EYUPSULTAN ISTANBUL\nTurkey",
-      "invoice_value": "Customer Name / Mailing address\nTeknopack Plastik Amb.\nSan. ve Tic. A.S.\n5.OSB 83545 Nolu Cad. No: 3\n27600 SEHITKAMIL GAZIANTEP\nTURKEY\n\nCustomer name/address\nTeknopack Plastik Amb.\nSan. ve Tic. A.S.\n5.OSB 83545 Nolu Cad. No: 3\n27600 SEHITKAMIL GAZIANTEP\nTURKEY\n\nDelivery address\nTeknopack Plastik Amb.\nSan. ve Tic. A.S.\n5.OSB 83545 Nolu Cad. No: 3\n27600 SEHITKAMIL GAZIANTEP\nTURKEY",
+      "invoice_value": "Customer Name / Mailing address\nTeknopack Plastik Amb.\nSan. ve Tic. A.S.\n5.OSB 83545 Nolu Cad. No: 3\n27600 SEHITKAMIL GAZIANTEP\nTURKEY",
       "rules_applied": [
         {
           "rule_id": "4.2.0",
-          "outcome": "relevant invoice recipient fields identified"
+          "outcome": "CHECKED"
         },
         {
           "rule_id": "4.2.0.1",
-          "outcome": "consignee name not found explicitly"
-        },
-        {
-          "rule_id": "4.1.3.1",
           "outcome": "MISMATCH"
-        },
-        {
-          "rule_id": "4.2.3",
-          "outcome": "MATCH"
         },
         {
           "rule_id": "4.2.4",
           "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Certifikatets consignee är 'Tuncman Plastik San.ve Tic.Ltd.Sti.' i Turkiet. Fakturan anger endast 'Teknopack Plastik Amb. San. ve Tic. A.S.' som customer och delivery address. Certifikatets företagsnamn kan inte identifieras uttryckligen i något mottagarfält eller annat relevant adress-/identifieringsblock i fakturan. Samma land räcker inte när företagsnamnet saknas. Därför MISMATCH."
+      "motivation": "Certifikatet anger mottagaren som 'Tuncman Plastik San.ve Tic.Ltd.Sti.' i Turkiet. Fakturan anger köpare/kund/leveransadress som 'Teknopack Plastik Amb. San. ve Tic. A.S.' i Turkiet. Namnet 'Tuncman' återfinns inte uttryckligen i något mottagar-, leverans- eller identifieringsfält i fakturan. Samma land räcker inte; företagsnamnet kan inte identifieras i fakturan."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.9,
-      "certificate_value": "FT3200 Bag LD Polyethylene",
+      "confidence": 0.97,
+      "certificate_value": "36PAL = 1980 BAG (25 kg net / bag)\nFT3200 Bag LD Polyethylene",
       "invoice_value": "FT3200 Bag LD Polyethylene",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "article-number priority not applicable as article number not stated in goods field"
+          "outcome": "PRIORITY_2_USED"
         },
         {
           "rule_id": "4.3.3",
@@ -119,44 +115,44 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Den identitetsbärande huvudbeteckningen 'FT3200 Bag LD Polyethylene' i certifikatet kan identifieras exakt i fakturan på sida 1 i två artikelrader. Ingen otillåten semantisk tolkning behövs."
+      "motivation": "Något verifieringsgrundande artikelnummer identifierades inte som artikelnummer i certifikatets varufält. Den identitetsbärande huvudbeteckningen 'FT3200 Bag LD Polyethylene' kan däremot identifieras exakt i fakturan på sida 1. Extra kvantitets-/förpackningstext i certifikatet ändrar inte den verifierade huvudbeteckningen."
     },
     "quantity": {
       "applicable": true,
       "status": "MISMATCH",
-      "confidence": 0.99,
-      "certificate_value": "Gross 50.688,00kg",
-      "invoice_value": "Total gross weight 76.032,00 KG",
+      "confidence": 0.95,
+      "certificate_value": "Gross 50.688,00kg ; 36PAL = 1980 BAG (25 kg net / bag)",
+      "invoice_value": "Total number of packages 54 PAL\n(=2970 BAG)\n; Total gross weight 76.032,00 KG",
       "rules_applied": [
         {
           "rule_id": "4.4.2.2",
-          "outcome": "certificate weight category and unit explicitly stated"
-        },
-        {
-          "rule_id": "4.4.3",
-          "outcome": "certificate numeric value not identified in invoice"
+          "outcome": "CERTIFICATE_WEIGHT_FORMAT_OK"
         },
         {
           "rule_id": "4.4.3.2",
-          "outcome": "shipment quantity present in goods field but not sufficient because invoice reference rule 4.3.5 not met"
+          "outcome": "CHECKED"
         },
         {
           "rule_id": "4.4.5.1",
-          "outcome": "no exception applicable"
+          "outcome": "EXCEPTIONS_CHECKED"
+        },
+        {
+          "rule_id": "4.4.5.5",
+          "outcome": "REJECTED"
         },
         {
           "rule_id": "4.4.6",
           "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Certifikatet anger kvantiteten i fält 7 som 'Gross 50.688,00kg'. Fakturan anger total gross weight '76.032,00 KG' och total net weight '74.250,00 KG'. Certifikatets numeriska värde 50.688,00 kan inte identifieras i fakturan. Certifikatet innehåller visserligen även '36PAL = 1980 BAG (25 kg net / bag)' i varubeskrivningen, men försändelsekvantitetsregeln 4.4.3.2 kräver verifierbar fakturareferens enligt 4.3.5 för att användas som ensam verifieringsgrund när vikten inte kan verifieras; sådan uttrycklig fakturahänvisning saknas. Därför MISMATCH."
+      "motivation": "Certifikatet anger dels försändelsekvantiteten '36PAL = 1980 BAG', dels vikten 'Gross 50.688,00kg'. Dessa numeriska värden kan inte identifieras uttryckligen i fakturan. Fakturan anger istället '54 PAL (=2970 BAG)' och 'Total gross weight 76.032,00 KG'. Inget tillåtet undantag 3A-3E ger certifikatets värden. Därför är kvantiteten inte verifierbar mot den bifogade fakturan."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.9,
+      "confidence": 0.91,
       "certificate_value": "European Community; Sweden",
-      "invoice_value": "Country of origin: Sweden",
+      "invoice_value": "Country of origin ... Sweden",
       "rules_applied": [
         {
           "rule_id": "4.5.4.1",
@@ -171,19 +167,19 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger 'European Community; Sweden'. Fakturan anger uttryckligen 'Country of origin Sweden' för de relevanta FT3200-raderna. Sweden är ett uttryckligt ursprungsland i fakturan och är även EU-medlemsstat, vilket verifierar både den specifika landsangivelsen Sweden och samlingsbegreppet European Community enligt EU-normaliseringsreglerna."
+      "motivation": "Certifikatet anger 'European Community; Sweden'. Fakturan anger ursprung 'Sweden' på varuraderna. 'Sweden' verifierar det uttryckligen namngivna landet i certifikatet, och eftersom Sverige är en EU-medlemsstat verifierar fakturans 'Sweden' även certifikatets samlingsbeteckning 'European Community' enligt EU-normaliseringsreglerna. Inga ytterligare icke-EU-ursprung förekommer."
     }
   },
   "overall_assessment": {
     "comparison_result": "NOT_IDENTICAL",
     "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
     "auto_approval_eligible": false,
-    "confidence": 0.97,
+    "confidence": 0.96,
     "critical_failures": [
-      "Consignee mismatch: certificate consignee not found in invoice recipient fields or other relevant invoice text.",
-      "Quantity mismatch: certificate gross weight 50.688,00 kg not identified in invoice, which states 76.032,00 kg total gross weight."
+      "Consignee mismatch: certifikatets mottagare 'Tuncman Plastik San.ve Tic.Ltd.Sti.' kan inte identifieras i fakturan, som istället anger 'Teknopack Plastik Amb. San. ve Tic. A.S.' (regel 4.2.0.1/4.2.4).",
+      "Quantity mismatch: certifikatets '36PAL = 1980 BAG' och 'Gross 50.688,00kg' kan inte verifieras mot fakturans '54 PAL (=2970 BAG)' och 'Total gross weight 76.032,00 KG' (regel 4.4.6)."
     ],
     "manual_review_triggers": [],
-    "decision_summary": "Dokumentrollen kan klassificeras säkert som Certificate of Origin respektive Invoice. Consignor, goods description och origin kan verifieras mot fakturan. Consignee kan inte verifieras eftersom certifikatet anger Tuncman Plastik medan fakturan anger Teknopack som kund och leveransmottagare. Quantity kan inte verifieras eftersom certifikatet anger Gross 50.688,00 kg medan fakturan anger Total gross weight 76.032,00 kg och ingen tillämplig undantagsregel räddar matchning. Minst en tillämplig kontrollpunkt ger tydlig MISMATCH, därför är totalresultatet NOT_IDENTICAL och workflow MANUAL_HANDLING_REQUIRED."
+    "decision_summary": "Dokumentrollerna kunde klassificeras säkert: Document A är ett Certificate of Origin och Document B är en faktura. LC-undantaget är inte tillämpligt. Parningsvalideringen passerar endast därför att consignor 'Borealis AG' kan identifieras i fakturan. Vid kontrollpunktsverifieringen matchar consignor, varubeskrivning och ursprungsland, men mottagaren matchar inte och kvantiteten kan inte verifieras mot fakturan. Eftersom minst en tillämplig kontrollpunkt har status MISMATCH är totalbedömningen NOT_IDENTICAL."
   }
 }

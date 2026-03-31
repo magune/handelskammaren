@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-03-25T00:00:00Z",
+    "verification_timestamp": null,
     "document_pair_id": null,
     "certificate_issue_date": "2023-11-15",
     "source_documents_received": 2
@@ -33,150 +33,152 @@
     "eu_origin_normalization_active": true,
     "activated_rules": [
       {
-        "rule_id": "4.1.0",
-        "rule_name": "Koncernstruktur / consignor found anywhere in invoice text"
+        "rule_id": "8.5.0",
+        "rule_name": "Filbaserad dokumentparning"
       },
       {
-        "rule_id": "4.5.4.1",
-        "rule_name": "EU-normalisering"
+        "rule_id": "8.6",
+        "rule_name": "Obligatorisk parningsvalidering"
+      },
+      {
+        "rule_id": "4.1.0",
+        "rule_name": "Koncernstruktur / consignor-sökning i hela fakturan"
+      },
+      {
+        "rule_id": "4.5.4.2",
+        "rule_name": "EU-medlemsland-normalisering"
       }
     ]
   },
   "control_points": {
     "consignor": {
       "applicable": true,
-      "status": "MATCH",
-      "confidence": 0.9,
-      "certificate_value": "Elmo Sweden AB",
-      "invoice_value": "Elmo Sweden AB",
+      "status": "MANUAL_REVIEW",
+      "confidence": 0.71,
+      "certificate_value": "Elmo Sweden AB\nKyrkogatan 18\n51250, Svenljunga",
+      "invoice_value": "POSTADRESS/POSTAL ADRESS:\nElmo Sweden AB\nSE-512 81 SVENLJUNGA\nSWEDEN",
       "rules_applied": [
         {
           "rule_id": "4.1.0",
-          "outcome": "MATCH"
+          "outcome": "Company name found explicitly in invoice footer"
         },
         {
           "rule_id": "4.1.4",
-          "outcome": "MATCH"
+          "outcome": "Independent country comparison not fully evidenced because certificate box 1 does not show a separate explicit country token"
         },
         {
           "rule_id": "4.1.5",
-          "outcome": "MATCH"
+          "outcome": "MANUAL_REVIEW"
         }
       ],
-      "motivation": "Certifikatets consignor 'Elmo Sweden AB' återfinns uttryckligen i fakturans footer/postadressblock. Landet Sweden framgår också i fakturan. Enligt 4.1.0 räcker uttrycklig förekomst någonstans i fakturan/fakturaunderlaget."
+      "motivation": "Certifikatets consignor-namn \"Elmo Sweden AB\" återfinns uttryckligen i fakturans footer, vilket uppfyller sökkravet i 4.1.0. Däremot visar box 1 i certifikatet inget separat, tydligt landsfält för consignor; därför kan full landkontroll enligt 4.1.4 inte styrkas enbart från box 1-texten utan viss tolkning. Enligt osäkerhetsprincipen sätts kontrollpunkten till MANUAL_REVIEW."
     },
     "consignee": {
       "applicable": true,
       "status": "MISMATCH",
-      "confidence": 0.98,
-      "certificate_value": "Al Muhalhel General Trading & Contracting Co, KUWAIT",
-      "invoice_value": "Boretius Objekt Nähservice für Dekorationen GmbH, Germany",
+      "confidence": 0.99,
+      "certificate_value": "Al Muhalhel General Trading\n& Contracting Co\nAl Ardhiya Ind. Area. Block: 1\nBuilding: 81\n15257\nKUWAIT",
+      "invoice_value": "Payer\nBoretius Objekt Nähservice ( 11007861 )\nfür Dekorationen GmbH\nSüdring 4\nDE 76473 - Iffezheim , Germany\n\nShip-to\nBoretius Objekt Nähservice ( 11007861 )\nfür Dekorationen GmbH\nSüdring 4\nDE 76473 - Iffezheim , Germany",
       "rules_applied": [
         {
           "rule_id": "4.2.0",
-          "outcome": "NO_MATCH"
+          "outcome": "Relevant buyer/ship-to fields identified"
         },
         {
           "rule_id": "4.2.0.1",
-          "outcome": "NO_MATCH"
-        },
-        {
-          "rule_id": "4.2.1.1",
-          "outcome": "NO_MATCH"
-        },
-        {
-          "rule_id": "4.2.3",
-          "outcome": "MISMATCH"
+          "outcome": "Certificate consignee not found anywhere in invoice text"
         },
         {
           "rule_id": "4.2.4",
           "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Certifikatets consignee kan inte identifieras i något buyer/payer/ship-to/delivery/importer/notify-fält i fakturan. Fakturan anger endast Boretius Objekt Nähservice für Dekorationen GmbH i Germany, medan certifikatet anger Al Muhalhel General Trading & Contracting Co i Kuwait. Detta är en tydlig avvikelse."
+      "motivation": "Certifikatet anger mottagaren som \"Al Muhalhel General Trading & Contracting Co\" i Kuwait. Fakturan anger endast \"Boretius Objekt Nähservice ... Germany\" som payer och ship-to. Det certifierade mottagarnamnet kan inte identifieras i något relevant adress- eller mottagarfält i fakturan, och landet är också annat. Detta är en tydlig MISMATCH enligt 4.2.0.1 och 4.2.4."
     },
     "goods_description": {
       "applicable": true,
       "status": "MISMATCH",
-      "confidence": 0.97,
+      "confidence": 0.99,
       "certificate_value": "Elmobaltique 97001 Basket Weave I",
-      "invoice_value": "ELMOSOFT 97038 I / Upholstery Leather",
+      "invoice_value": "ELMOSOFT 97038 I\nUpholstery Leather",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "Priority 2 used"
+          "outcome": "No certificate article number available for priority-1 exact article-number match"
         },
         {
           "rule_id": "4.3.3",
-          "outcome": "MISMATCH"
+          "outcome": "Identity-bearing goods designation from certificate not found in invoice"
         },
         {
           "rule_id": "4.3.8",
           "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Inga artikelnummer för varan framgår i certifikatet, så verifiering sker via kontrollerad textmatchning. Certifikatets identitetsbärande huvudbeteckning 'Elmobaltique 97001 Basket Weave I' kan inte identifieras exakt i fakturan, som i stället anger 'ELMOSOFT 97038 I' och den generella texten 'Upholstery Leather'. Semantisk tolkning är inte tillåten."
+      "motivation": "Den identitetsbärande huvudbeteckningen i certifikatet är \"Elmobaltique 97001 Basket Weave I\". Fakturan innehåller istället \"ELMOSOFT 97038 I\" och den generiska texten \"Upholstery Leather\". Certifikatets huvudbeteckning kan inte identifieras exakt eller enligt någon tillåten specialregel i fakturan. Detta ger MISMATCH enligt 4.3.3 och 4.3.8."
     },
     "quantity": {
       "applicable": true,
       "status": "MISMATCH",
       "confidence": 0.99,
       "certificate_value": "288,610 M2",
-      "invoice_value": "4,850 M2",
+      "invoice_value": "Q-ty 4,850 M2",
       "rules_applied": [
         {
           "rule_id": "4.4.2",
-          "outcome": "VALID_CERTIFICATE_QUANTITY"
+          "outcome": "Certificate quantity contains numeric value and unit"
+        },
+        {
+          "rule_id": "4.4.2.1",
+          "outcome": "Primary verification based on quantity field in box 7"
         },
         {
           "rule_id": "4.4.3",
-          "outcome": "MISMATCH"
-        },
-        {
-          "rule_id": "4.4.3.2",
-          "outcome": "NOT_APPLICABLE"
+          "outcome": "Numeric value in certificate cannot be identified in invoice"
         },
         {
           "rule_id": "4.4.6",
           "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Certifikatet anger uttrycklig kvantitet med numeriskt värde och enhet: 288,610 M2. Fakturan anger 4,850 M2 för varan. Det numeriska värdet från certifikatet kan inte identifieras i fakturan, och fakturan innehåller ett uttryckligt annat numeriskt värde för motsvarande vara."
+      "motivation": "Certifikatets verifieringsgrundande mängd i ruta 7 är \"288,610 M2\". Fakturans uttryckliga kvantitet för varan är \"4,850 M2\". Dessa numeriska värden överensstämmer inte och ingen tillåten tolerans- eller undantagsregel gör dem lika. Därför är kontrollpunkten MISMATCH enligt 4.4.3 och 4.4.6."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.88,
+      "confidence": 0.9,
       "certificate_value": "EUROPEAN UNION",
       "invoice_value": "Swedish Origin",
       "rules_applied": [
         {
           "rule_id": "4.5.1",
-          "outcome": "EXPLICIT_ORIGIN_FOUND"
+          "outcome": "Explicit origin statement found in invoice"
         },
         {
-          "rule_id": "4.5.4.1",
-          "outcome": "MATCH"
+          "rule_id": "4.5.4.2",
+          "outcome": "Specific EU member state in invoice verifies EU origin in certificate"
         },
         {
           "rule_id": "4.5.5",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger 'EUROPEAN UNION'. Fakturan anger uttryckligen 'Swedish Origin'. Sverige är en EU-medlemsstat, varför ursprunget är verifierat enligt EU-normalisering i 4.5.4.1."
+      "motivation": "Certifikatet anger ursprung \"EUROPEAN UNION\". Fakturan anger uttryckligen \"Swedish Origin\". Sverige är ett EU-medlemsland vid certifikatets utfärdandedatum, vilket gör ursprunget verifierat genom EU-medlemslandsnormalisering enligt 4.5.4.2. Kontrollpunkten är därför MATCH."
     }
   },
   "overall_assessment": {
     "comparison_result": "NOT_IDENTICAL",
     "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
     "auto_approval_eligible": false,
-    "confidence": 0.97,
+    "confidence": 0.96,
     "critical_failures": [
-      "Consignee mismatch: certificate consignee not found in invoice and country differs (4.2.4).",
-      "Goods description mismatch: certificate goods description cannot be explicitly identified in invoice (4.3.8).",
-      "Quantity mismatch: certificate quantity 288,610 M2 not found in invoice, which states 4,850 M2 (4.4.6)."
+      "Consignee in certificate cannot be identified in invoice and the countries differ.",
+      "Goods description in certificate cannot be identified in invoice.",
+      "Quantity in certificate (288,610 M2) does not match invoice quantity (4,850 M2)."
     ],
-    "manual_review_triggers": [],
-    "decision_summary": "Dokumentparet kunde klassificeras säkert som Certificate of Origin och faktura. LC-undantag är inte tillämpligt. Consignor och origin kan verifieras mot fakturan, men consignee, goods description och quantity ger tydliga MISMATCH enligt regelverket. Därför är totalresultatet NOT_IDENTICAL och manuell hantering krävs."
+    "manual_review_triggers": [
+      "Consignor company name is found in invoice, but certificate box 1 does not show a separate explicit country token, so full country comparison for that point is not independently evidenced."
+    ],
+    "decision_summary": "Dokumentparet kan inte godkännas som identiskt. Ursprungslandet kan verifieras via EU→Sverige-normalisering och consignor-namnet återfinns i fakturan, men mottagaren, varubeskrivningen och mängden i certifikatet motsvaras inte av den bifogade fakturan. Eftersom minst en tillämplig kontrollpunkt är MISMATCH ska totalresultatet vara NOT_IDENTICAL."
   }
 }

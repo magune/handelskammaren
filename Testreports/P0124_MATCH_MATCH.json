@@ -1,0 +1,172 @@
+{
+  "schema_version": "3.0",
+  "metadata": {
+    "verification_timestamp": "2026-03-31T00:00:00Z",
+    "document_pair_id": null,
+    "certificate_issue_date": "2023-03-23",
+    "source_documents_received": 2
+  },
+  "task": {
+    "task_type": "customs_document_pair_verification",
+    "comparison_mode": "certificate_vs_invoice",
+    "strictness": "conservative"
+  },
+  "documents": {
+    "document_a": {
+      "label": "Document A",
+      "assumed_role": "certificate",
+      "document_type": "Certificate of Origin"
+    },
+    "document_b": {
+      "label": "Document B",
+      "assumed_role": "invoice",
+      "document_type": "Commercial Invoice"
+    }
+  },
+  "rule_activation": {
+    "lc_exception_active": false,
+    "lc_number_found": null,
+    "general_goods_description_with_invoice_reference_active": false,
+    "mixed_origins_rule_active": false,
+    "to_order_rule_active": false,
+    "quantity_exception_applied": null,
+    "eu_origin_normalization_active": true,
+    "activated_rules": [
+      {
+        "rule_id": "8.6",
+        "rule_name": "Document pairing validation passed via identifiable consignor/consignee in the invoice"
+      },
+      {
+        "rule_id": "4.1.0",
+        "rule_name": "Consignor found explicitly in invoice text"
+      },
+      {
+        "rule_id": "4.1.3.4",
+        "rule_name": "Commercial name vs registered company name"
+      },
+      {
+        "rule_id": "4.5.4.2",
+        "rule_name": "EU and specific EU-member-state origin equivalence"
+      },
+      {
+        "rule_id": "4.4.2.2",
+        "rule_name": "Single weight value without GW/NW requires manual review"
+      }
+    ]
+  },
+  "control_points": {
+    "consignor": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.9,
+      "certificate_value": "Elmo Sweden AB\nKyrkogatan 18\n51250, Svenljunga",
+      "invoice_value": "Elmo Sweden AB\nSE-512 81 SVENLJUNGA\nSWEDEN",
+      "rules_applied": [
+        {
+          "rule_id": "4.1.0",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.5",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "The certificate consignor name 'Elmo Sweden AB' is explicitly present in the invoice footer/postal address block. Rule 4.1.0 allows consignor verification when the company name appears anywhere in the invoice text. No contradictory consignor party is shown."
+    },
+    "consignee": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.86,
+      "certificate_value": "Boretius Objekt Nähservice \nSüdring 4\n76473 Iffezheim\nGermany",
+      "invoice_value": "Boretius Objekt Nähservice ( 11007861 )\nfür Dekorationen GmbH\nSüdring 4\nDE 76473 - Iffezheim , Germany",
+      "rules_applied": [
+        {
+          "rule_id": "4.2.0",
+          "outcome": "CANDIDATE_FOUND"
+        },
+        {
+          "rule_id": "4.1.3.4",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.2.3",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "The certificate consignee appears in the invoice payer/ship-to block as a longer registered name: 'Boretius Objekt Nähservice ... für Dekorationen GmbH'. Street 'Südring 4', postcode '76473' and country Germany align. Under rule 4.1.3.4 as applied through section 4.2, the shorter commercial name in the certificate can be matched to the registered invoice name."
+    },
+    "goods_description": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.97,
+      "certificate_value": "Elmosoft 97038 I\nUpholstery Leather",
+      "invoice_value": "ELMOSOFT 97038 I\nUpholstery Leather",
+      "rules_applied": [
+        {
+          "rule_id": "4.3.3",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.3.4",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "The invoice contains the exact product designation 'ELMOSOFT 97038 I' and the accompanying text 'Upholstery Leather'. Only case normalization is needed; no semantic interpretation is required."
+    },
+    "quantity": {
+      "applicable": true,
+      "status": "MANUAL_REVIEW",
+      "confidence": 0.76,
+      "certificate_value": "4 Kgs",
+      "invoice_value": "Weight 4 kgs",
+      "rules_applied": [
+        {
+          "rule_id": "4.4.1",
+          "outcome": "VALUE_FOUND"
+        },
+        {
+          "rule_id": "4.4.2",
+          "outcome": "UNIT_PRESENT"
+        },
+        {
+          "rule_id": "4.4.2.2",
+          "outcome": "MANUAL_REVIEW"
+        }
+      ],
+      "motivation": "The invoice explicitly contains the same numeric weight value in 'Weight 4 kgs'. However, the certificate states a single weight value '4 Kgs' without GW/NW/Gross/Net category. Rule 4.4.2.2 requires MANUAL_REVIEW, not MATCH, when one uncategorized weight value is identifiable."
+    },
+    "origin": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.88,
+      "certificate_value": "EUROPEAN UNION\nSwedish Origin",
+      "invoice_value": "Swedish Origin",
+      "rules_applied": [
+        {
+          "rule_id": "4.5.1",
+          "outcome": "EXPLICIT_ORIGIN_FOUND"
+        },
+        {
+          "rule_id": "4.5.4.2",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.5.5",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "The invoice explicitly states 'Swedish Origin'. This directly verifies the certificate's 'Swedish Origin' and also verifies 'EUROPEAN UNION' under rule 4.5.4.2 because Sweden is an EU member state."
+    }
+  },
+  "overall_assessment": {
+    "comparison_result": "MANUAL_REVIEW",
+    "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
+    "auto_approval_eligible": false,
+    "confidence": 0.79,
+    "critical_failures": [],
+    "manual_review_triggers": [
+      "Quantity control point triggered rule 4.4.2.2: the certificate states only '4 Kgs' without GW/NW/Gross/Net, even though the invoice shows 'Weight 4 kgs'."
+    ],
+    "decision_summary": "A valid certificate-invoice pair could be identified. Consignor, consignee, goods description and origin are verifiable against the invoice. The overall result is MANUAL_REVIEW because the certificate quantity is expressed only as '4 Kgs' without weight category, which rule 4.4.2.2 does not permit for automatic MATCH."
+  }
+}

@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-03-25T00:00:00Z",
+    "verification_timestamp": null,
     "document_pair_id": null,
     "certificate_issue_date": "2025-08-14",
     "source_documents_received": 2
@@ -20,176 +20,143 @@
     "document_b": {
       "label": "Document B",
       "assumed_role": "invoice",
-      "document_type": "Invoice"
+      "document_type": "Commercial Invoice"
     }
   },
   "rule_activation": {
     "lc_exception_active": false,
     "lc_number_found": null,
     "general_goods_description_with_invoice_reference_active": false,
-    "mixed_origins_rule_active": false,
+    "mixed_origins_rule_active": true,
     "to_order_rule_active": false,
     "quantity_exception_applied": null,
     "eu_origin_normalization_active": false,
     "activated_rules": [
       {
-        "rule_id": "8",
-        "rule_name": "Dokumentklassificering genomförd"
+        "rule_id": "8.5.2",
+        "rule_name": "Certificate references a specific invoice number that is not present in the separate invoice file"
       },
       {
-        "rule_id": "8.5",
-        "rule_name": "Dokumentparning via fakturanummer prövad"
+        "rule_id": "8.6",
+        "rule_name": "Mandatory pairing validation passed only via consignor identification in the invoice file"
       },
       {
         "rule_id": "4.1.0",
-        "rule_name": "Koncernstruktur / consignor-sökning i hela fakturan prövad"
+        "rule_name": "Consignor name found explicitly in the invoice file"
       },
       {
-        "rule_id": "4.3.2",
-        "rule_name": "Artikelnummer har prioritet vid varubeskrivningsverifiering"
-      },
-      {
-        "rule_id": "4.4.2.2",
-        "rule_name": "Särskilt krav på viktkategori i certifikatet aktiverat"
+        "rule_id": "4.5.3",
+        "rule_name": "Mixed origins detected in invoice content"
       }
     ]
   },
   "control_points": {
     "consignor": {
       "applicable": true,
-      "status": "MATCH",
-      "confidence": 0.96,
+      "status": "MANUAL_REVIEW",
+      "confidence": 0.82,
       "certificate_value": "Volvo Merchandise AB\nBror Nilssons gata 5\nSE-40508, GÖTEBORG\nSweden",
       "invoice_value": "Volvo Merchandise AB\nBror Nilssons gata 5\n40508 GÖTEBORG\nSweden",
       "rules_applied": [
         {
+          "rule_id": "8.5.2",
+          "outcome": "blocking_manual_review"
+        },
+        {
+          "rule_id": "8.6",
+          "outcome": "pairing_validation_passed_via_consignor_presence"
+        },
+        {
           "rule_id": "4.1.0",
-          "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.1.4",
-          "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.1.5",
-          "outcome": "MATCH"
+          "outcome": "consignor_name_identified_in_invoice_file"
         }
       ],
-      "motivation": "Certifikatets consignor 'Volvo Merchandise AB' återfinns uttryckligen i fakturans sidfot/adressblock tillsammans med Sverige. Koncernstrukturregeln 4.1.0 ger därför MATCH utan behov av vidare sekventiell prövning enligt 4.1.3."
+      "motivation": "The certificate consignor name and country are identifiable in the invoice file, including the footer/visiting address text 'Volvo Merchandise AB ... Sweden'. This is sufficient to pass the pairing sanity check in rule 8.6. However, the certificate explicitly references 'Invoice 776069' in remarks, while the separate invoice file is 'Invoice 775696'. Under rule 8.5.2 the referenced invoice is not present in the invoice file, so the intended verification pair cannot be confirmed automatically. This control point is therefore routed to MANUAL_REVIEW rather than concluded against a potentially wrong attached invoice."
     },
     "consignee": {
       "applicable": true,
-      "status": "MISMATCH",
-      "confidence": 0.99,
+      "status": "MANUAL_REVIEW",
+      "confidence": 0.74,
       "certificate_value": "Volvo Group Korea Ltd\nVolvo Bldg., 5th fl.,\n726-173 Hannam-dong,\nYongsan-gu 140-210 Seoul\n140-210\nKorea, Republic of",
-      "invoice_value": "Invoicing address\nVolvo Trucks Korea Co., Ltd\n64-106, Dongtangiheung-Ro, GYEONGGI-DO\n18488 HWASEONG-SI\nKorea\n\nDelivery address\nVolvo Trucks Korea Co., Ltd\n64-106, Dongtangiheung-Ro, GYEONGGI-DO\n18488 HWASEONG-SI\nKorea",
+      "invoice_value": "Volvo Trucks Korea Co., Ltd\n64-106, Dongtangiheung-Ro, GYEONGGI-DO\n18488 HWASEONG-SI\nKorea",
       "rules_applied": [
         {
+          "rule_id": "8.5.2",
+          "outcome": "blocking_manual_review"
+        },
+        {
           "rule_id": "4.2.0",
-          "outcome": "RELEVANT_FIELDS_IDENTIFIED"
-        },
-        {
-          "rule_id": "4.2.0.1",
-          "outcome": "NO_EXPLICIT_MATCH"
-        },
-        {
-          "rule_id": "4.1.3.1",
-          "outcome": "MISMATCH"
-        },
-        {
-          "rule_id": "4.2.3",
-          "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.2.4",
-          "outcome": "MISMATCH"
+          "outcome": "not_finalized_due_to_pairing_block"
         }
       ],
-      "motivation": "Certifikatet anger mottagaren som 'Volvo Group Korea Ltd', medan fakturan uttryckligen anger 'Volvo Trucks Korea Co., Ltd' i både invoicing address och delivery address. Företagsnamnen är olika juridiska namn och skillnaden kan inte accepteras enligt 4.1.3.1/4.2.2. Adresskillnader är inte avgörande, men namnmatchning saknas trots att landet Korea överensstämmer."
+      "motivation": "The certificate names 'Volvo Group Korea Ltd' as consignee, while the attached invoice file shows 'Volvo Trucks Korea Co., Ltd' in invoicing and delivery address fields. Ordinarily this would require direct consignee assessment under section 4.2, but rule 8.5.2 prevents the system from treating invoice 775696 as the intended verification invoice because the certificate expressly refers to invoice 776069. The system must not fall back to another invoice based on partial similarity alone. Therefore the consignee comparison is sent to MANUAL_REVIEW."
     },
     "goods_description": {
       "applicable": true,
-      "status": "MISMATCH",
-      "confidence": 0.99,
-      "certificate_value": "7 pcs - 113066 Short Winter Jacket, CLR 99, Size M, CN\n4 pcs - 113066 Short Winter Jacket, CLR 99, Size L, CN\n13 pcs - 113470 Iron Mark Pin (10 pack), CN",
-      "invoice_value": "113871 Passport Holder ... CoO IN ... Qty 180\n113834 Travel Neck Pillow ... CoO CN ... Qty 180",
+      "status": "MANUAL_REVIEW",
+      "confidence": 0.73,
+      "certificate_value": "1 packages\n7 pcs - 113066 Short Winter Jacket, CLR 99, Size M, CN\n4 pcs - 113066 Short Winter Jacket, CLR 99, Size L, CN\n13 pcs - 113470 Iron Mark Pin (10 pack), CN",
+      "invoice_value": "113871 Passport Holder\n113834 Travel Neck Pillow",
       "rules_applied": [
         {
-          "rule_id": "4.3.2",
-          "outcome": "ARTICLE_NUMBER_PRIORITY_APPLIED"
+          "rule_id": "8.5.2",
+          "outcome": "blocking_manual_review"
         },
         {
-          "rule_id": "4.3.8",
-          "outcome": "MISMATCH"
+          "rule_id": "4.3.2",
+          "outcome": "not_finalized_due_to_pairing_block"
         }
       ],
-      "motivation": "Certifikatet innehåller artikelnummer 113066 och 113470. Enligt 4.3.2 ska matchning då primärt ske via artikelnummer. Fakturan innehåller endast artikelnummer 113871 och 113834. Certifikatets artikelnummer kan inte identifieras exakt i fakturan, vilket medför MISMATCH."
+      "motivation": "The certificate goods list references jacket and pin article numbers and remarks cite 'Invoice 776069'. The separate invoice file instead contains invoice 775696 with items 'Passport Holder' and 'Travel Neck Pillow'. Because rule 8.5.2 requires manual handling when the exact referenced invoice number is absent from the invoice file, the system must not treat these differing goods on invoice 775696 as a final mismatch against the certificate. The intended invoice may be missing from the submission, so this control point is MANUAL_REVIEW."
     },
     "quantity": {
       "applicable": true,
-      "status": "MISMATCH",
-      "confidence": 0.98,
+      "status": "MANUAL_REVIEW",
+      "confidence": 0.72,
       "certificate_value": "14,69 KG NET",
-      "invoice_value": "Qty/Kg per rad: 180 / 18.00; 180 / 63.00",
+      "invoice_value": "Passport Holder: Qty 180 / Kg 18.00\nTravel Neck Pillow: Qty 180 / Kg 63.00",
       "rules_applied": [
         {
-          "rule_id": "4.4.2.2",
-          "outcome": "CERTIFICATE_WEIGHT_CATEGORY_VALID"
+          "rule_id": "8.5.2",
+          "outcome": "blocking_manual_review"
         },
         {
-          "rule_id": "4.4.3",
-          "outcome": "VALUE_NOT_IDENTIFIED"
-        },
-        {
-          "rule_id": "4.4.3.2",
-          "outcome": "SHIPMENT_QUANTITY_CHECKED_NOT_APPLICABLE_FOR_MATCH"
-        },
-        {
-          "rule_id": "4.4.5.1",
-          "outcome": "NO_EXCEPTION_APPLIED"
-        },
-        {
-          "rule_id": "4.4.6",
-          "outcome": "MISMATCH"
+          "rule_id": "4.4.1",
+          "outcome": "not_finalized_due_to_pairing_block"
         }
       ],
-      "motivation": "Certifikatet anger uttryckligen 14,69 KG NET. Detta numeriska värde kan inte identifieras i fakturan. Fakturan visar endast radvisa kg-värden 18.00 och 63.00 samt inga totalvikter som motsvarar 14,69. Certifikatet innehåller även '1 packages' i varubeskrivningen, men fakturanumret i certifikatet (776069) matchar inte den bifogade fakturan (775696), varför försändelsekvantitetsregeln inte kan användas för MATCH."
+      "motivation": "The certificate quantity field states '14,69 KG NET' and the certificate remarks point to invoice 776069. The attached invoice file is invoice 775696 and contains different quantity/weight entries for different goods. Under rule 8.5.2 the system cannot use a non-referenced invoice as substitute verification evidence. Because the referenced invoice is absent from the separate invoice file, quantity verification cannot be completed safely and is sent to MANUAL_REVIEW."
     },
     "origin": {
       "applicable": true,
-      "status": "MATCH",
-      "confidence": 0.97,
+      "status": "MANUAL_REVIEW",
+      "confidence": 0.76,
       "certificate_value": "CN",
-      "invoice_value": "CoO CN",
+      "invoice_value": "CoO IN\nCoO CN",
       "rules_applied": [
         {
-          "rule_id": "4.5.1",
-          "outcome": "ORIGIN_FIELD_IDENTIFIED"
+          "rule_id": "8.5.2",
+          "outcome": "blocking_manual_review"
         },
         {
-          "rule_id": "4.5.4",
-          "outcome": "NORMALIZED_MATCH"
-        },
-        {
-          "rule_id": "4.5.5",
-          "outcome": "MATCH"
+          "rule_id": "4.5.3",
+          "outcome": "mixed_origins_detected_in_invoice_file_but_not_used_for_final_decision_due_to_pairing_block"
         }
       ],
-      "motivation": "Certifikatets ursprungsland är 'CN'. Fakturan anger uttryckligen 'CoO CN' för en av raderna. Ursprungslandet kan därför identifieras explicit i fakturan efter tillåten normalisering."
+      "motivation": "The certificate origin field states 'CN'. The attached invoice file shows mixed origins, including 'IN' and 'CN', for invoice 775696. However, the certificate explicitly refers to invoice 776069, and rule 8.5.2 requires MANUAL_REVIEW when that exact referenced invoice is not present in the separate invoice file. The system therefore does not finalize origin comparison against invoice 775696 and routes the issue to manual handling."
     }
   },
   "overall_assessment": {
-    "comparison_result": "NOT_IDENTICAL",
+    "comparison_result": "MANUAL_REVIEW",
     "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
     "auto_approval_eligible": false,
-    "confidence": 0.99,
-    "critical_failures": [
-      "Consignee mismatch: certifikatets mottagare 'Volvo Group Korea Ltd' kan inte verifieras mot fakturans mottagare 'Volvo Trucks Korea Co., Ltd' enligt 4.2.4.",
-      "Goods description mismatch: certifikatets artikelnummer 113066 och 113470 saknas i fakturan enligt 4.3.2 och 4.3.8.",
-      "Quantity mismatch: certifikatets 14,69 KG NET kan inte identifieras i fakturan enligt 4.4.3 och 4.4.6.",
-      "Document pairing inconsistency: certifikatet hänvisar till Invoice 776069 medan bifogad faktura är Invoice 775696, vilket talar för att fakturan inte är den refererade fakturan enligt 8.5 och 4.3.5."
+    "confidence": 0.9,
+    "critical_failures": [],
+    "manual_review_triggers": [
+      "Rule 8.5.2 triggered: the certificate explicitly references 'Invoice 776069', but the separate invoice file contains 'Invoice 775696' only.",
+      "The system must not fall back to another invoice in the invoice file when the certificate names a specific invoice number that is absent.",
+      "Pairing sanity check under rule 8.6 passed only because the consignor name 'Volvo Merchandise AB' is identifiable in the invoice file; this does not override rule 8.5.2."
     ],
-    "manual_review_triggers": [],
-    "decision_summary": "Dokumenten har kunnat klassificeras som certifikat respektive faktura, men certifikatet kan inte verifieras mot den bifogade fakturan. Consignor och ursprungsland kan identifieras, men mottagare, varubeskrivning och kvantitet ger tydliga MISMATCH. Dessutom hänvisar certifikatet till faktura 776069 medan den bifogade fakturan är 775696. Totalbedömningen är därför NOT_IDENTICAL och ärendet kräver manuell hantering."
+    "decision_summary": "Document A is a Certificate of Origin and Document B is an invoice. The certificate explicitly cites 'Invoice 776069' in the remarks field. The separate invoice file provided for verification is invoice 775696, not invoice 776069. Under rule 8.5.2 this requires MANUAL_REVIEW, because the referenced invoice cannot be found in the attached invoice file and the system must not substitute another invoice based on seller-name similarity. Automatic approval is therefore not eligible and manual handling is required."
   }
 }

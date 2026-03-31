@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-03-25T00:00:00Z",
+    "verification_timestamp": "2026-03-31T00:00:00Z",
     "document_pair_id": null,
     "certificate_issue_date": "2026-03-02",
     "source_documents_received": 2
@@ -27,173 +27,140 @@
     "lc_exception_active": false,
     "lc_number_found": null,
     "general_goods_description_with_invoice_reference_active": true,
-    "mixed_origins_rule_active": true,
+    "mixed_origins_rule_active": null,
     "to_order_rule_active": false,
     "quantity_exception_applied": null,
     "eu_origin_normalization_active": true,
     "activated_rules": [
       {
+        "rule_id": "8.5.2",
+        "rule_name": "Certificate invoice reference must exist in the separate invoice file"
+      },
+      {
+        "rule_id": "8.6",
+        "rule_name": "Mandatory pairing validation sanity check"
+      },
+      {
         "rule_id": "4.3.5",
-        "rule_name": "Generell varubeskrivning med fakturareferens"
+        "rule_name": "General goods description with explicit invoice reference"
       },
       {
         "rule_id": "4.5.4.1",
-        "rule_name": "EU-normalisering"
+        "rule_name": "EU normalization"
       },
       {
         "rule_id": "4.5.4.2",
-        "rule_name": "EU-medlemsland / EU utbytbarhet med begränsning för specifikt namngivna länder"
-      },
-      {
-        "rule_id": "4.1.0",
-        "rule_name": "Koncernstruktur / consignor-sökning i hela fakturan"
+        "rule_name": "EU vs specific EU member state handling"
       }
     ]
   },
   "control_points": {
     "consignor": {
       "applicable": true,
-      "status": "MATCH",
-      "confidence": 0.98,
+      "status": "MANUAL_REVIEW",
+      "confidence": 0.92,
       "certificate_value": "SOIC Global Trading AB\nForsta Langgatan 28B\n41327, Gothenburg\nSweden",
       "invoice_value": "SOIC Global Trading AB\nForsta Langgatan 28B\nGothenburg 41327 Sweden",
       "rules_applied": [
         {
+          "rule_id": "8.5.2",
+          "outcome": "blocking_manual_review"
+        },
+        {
           "rule_id": "4.1.0",
-          "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.1.4",
-          "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.1.5",
-          "outcome": "MATCH"
+          "outcome": "issuer_text_observed_in_invoice_file_but_not_decisive_due_missing_referenced_invoice"
         }
       ],
-      "motivation": "Certifikatets consignor 'SOIC Global Trading AB' återfinns uttryckligen i fakturans sidhuvud på sida 1 och sida 2. Landet Sweden överensstämmer. Skillnader i radbrytning och adressformat påverkar inte bedömningen."
+      "motivation": "Certificate consignor text can be observed in the invoice file, and the invoice issuer appears to be the same company. However, the certificate explicitly refers to invoice 11752 dated 27/02/2026, while the separate invoice file contains invoice 11746 dated 23/02/2026. Under rule 8.5.2 the system may not substitute another invoice based on consignor matching when the specifically referenced invoice is absent from the invoice file. Therefore final consignor verification is blocked and set to MANUAL_REVIEW."
     },
     "consignee": {
       "applicable": true,
-      "status": "MISMATCH",
-      "confidence": 0.99,
+      "status": "MANUAL_REVIEW",
+      "confidence": 0.91,
       "certificate_value": "Wimro Packaging Industries\nHirikuluwa\nMuddaragama\nSri Lanka",
       "invoice_value": "Astro Carton America S.A.\nZona Franca Operadora Astro Industrial Park,\nS.A. Km 24 1/2 Carretera Tipitapa - Masaya\nTipitapa 11065\nNicaragua",
       "rules_applied": [
         {
+          "rule_id": "8.5.2",
+          "outcome": "blocking_manual_review"
+        },
+        {
           "rule_id": "4.2.0",
-          "outcome": "NO_MATCH"
-        },
-        {
-          "rule_id": "4.2.0.1",
-          "outcome": "NO_MATCH"
-        },
-        {
-          "rule_id": "4.2.1.1",
-          "outcome": "NO_MATCH"
-        },
-        {
-          "rule_id": "4.2.3",
-          "outcome": "MISMATCH"
-        },
-        {
-          "rule_id": "4.2.4",
-          "outcome": "MISMATCH"
+          "outcome": "observed_invoice_consignee_not_used_for_final_decision_due_pairing_block"
         }
       ],
-      "motivation": "Certifikatets consignee 'Wimro Packaging Industries' i Sri Lanka kan inte identifieras i något mottagar-, leverans- eller adressfält i fakturan. Fakturan anger i stället 'Astro Carton America S.A.' i Nicaragua som både Invoice To och Consignee. Detta är en tydlig avvikelse."
+      "motivation": "The certificate names Wimro Packaging Industries in Sri Lanka, while the invoice file shows Astro Carton America S.A. in Nicaragua as consignee. Because the certificate explicitly references invoice 11752 dated 27/02/2026 and that invoice is not present in the separate invoice file, rule 8.5.2 prevents treating invoice 11746 as the intended verification invoice. The observed difference therefore cannot be used as a final mismatch on the paired documents, and the control point is escalated to MANUAL_REVIEW."
     },
     "goods_description": {
       "applicable": true,
-      "status": "MISMATCH",
-      "confidence": 0.97,
+      "status": "MANUAL_REVIEW",
+      "confidence": 0.92,
       "certificate_value": "SO 25470\nTESTLINER PAPER FSC\nMEDIUM PAPER FSC\nFor description of goods see invoice 11752 dated 27/02/2026",
-      "invoice_value": "Invoice No. 11746 dated 23/02/2026\n53.523 MT 22 ROLLS Promedium FSC ...\n7.932 MT 3 ROLLS Promedium FSC ...\n62.108 MT 21 ROLLS Promedium FSC ...\n2.675 MT 1 ROLLS Fluting FSC ...",
+      "invoice_value": "Invoice NO. 11746 dated 23/02/2026\n53.523 MT 22 ROLLS Promedium FSC Rollos de papel para impresion Kraft BW 110gsm, RW 2100mm\n7.932 MT 3 ROLLS Promedium FSC Rollos de papel para impresion Kraft BW 110gsm, RW 2150mm\n62.108 MT 21 ROLLS Promedium FSC Rollos de papel para impresion Kraft BW 110gsm, RW 2450mm\n2.675 MT 1 ROLLS Fluting FSC Rollos de papel para impresion Kraft BW 110gsm, RW 2500mm",
       "rules_applied": [
         {
-          "rule_id": "4.3.2",
-          "outcome": "ARTICLE_NUMBER_NOT_USED"
+          "rule_id": "8.5.2",
+          "outcome": "blocking_manual_review"
         },
         {
           "rule_id": "4.3.5",
-          "outcome": "MISMATCH"
-        },
-        {
-          "rule_id": "4.3.8",
-          "outcome": "MISMATCH"
+          "outcome": "explicit_invoice_reference_found_in_certificate_but_not_matched_in_invoice_file"
         }
       ],
-      "motivation": "Certifikatet använder generell varubeskrivning med uttrycklig hänvisning till faktura 'invoice 11752 dated 27/02/2026'. Den bifogade fakturan är nummer 11746 daterad 23/02/2026. Eftersom referensnummer och datum inte överensstämmer kan varubeskrivningen inte verifieras enligt 4.3.5."
+      "motivation": "The certificate contains an explicit goods-reference phrase: 'For description of goods see invoice 11752 dated 27/02/2026'. Rule 4.3.5 requires the referenced invoice details to match the invoice used for verification. The separate invoice file contains invoice 11746 dated 23/02/2026 instead. Under rule 8.5.2 the system cannot fall back to the different invoice in the invoice file, so goods verification cannot be completed safely and is set to MANUAL_REVIEW."
     },
     "quantity": {
       "applicable": true,
-      "status": "MISMATCH",
-      "confidence": 0.98,
-      "certificate_value": "22.946 MT\n26.969 MT\nsamt text i ruta 6: NETWEIGHT 49.915 MT",
-      "invoice_value": "126.238 MT total quantity; GROSS WEIGHT: 126.238 KG; NET WEIGHT: 126.238 KG",
+      "status": "MANUAL_REVIEW",
+      "confidence": 0.91,
+      "certificate_value": "22.946 MT\n26.969 MT\nNETWEIGHT 49.915 MT",
+      "invoice_value": "Invoice NO. 11746 dated 23/02/2026\n53.523 MT\n7.932 MT\n62.108 MT\n2.675 MT\n126.238 MT\nGROSS WEIGHT: 126.238 KG\nNET WEIGHT: 126.238 KG",
       "rules_applied": [
         {
-          "rule_id": "4.4.2",
-          "outcome": "CERTIFICATE_HAS_EXPLICIT_UNIT"
+          "rule_id": "8.5.2",
+          "outcome": "blocking_manual_review"
         },
         {
-          "rule_id": "4.4.2.2",
-          "outcome": "WEIGHT_CATEGORY_EXPLICIT_FOR_NETWEIGHT_49.915_MT"
-        },
-        {
-          "rule_id": "4.4.3.1",
-          "outcome": "EXPLICIT_CONTRADICTION_NOT_REQUIRED_FOR_MISMATCH_BUT_NO_MATCH_FOUND"
-        },
-        {
-          "rule_id": "4.4.3",
-          "outcome": "NO_NUMERICAL_MATCH"
-        },
-        {
-          "rule_id": "4.4.5.1",
-          "outcome": "NO_EXCEPTION_APPLIED"
-        },
-        {
-          "rule_id": "4.4.6",
-          "outcome": "MISMATCH"
+          "rule_id": "4.4.2.1",
+          "outcome": "multiple_certificate_quantity_values_observed"
         }
       ],
-      "motivation": "Ingen av certifikatets numeriska kvantiteter 22.946 MT, 26.969 MT eller NETWEIGHT 49.915 MT kan identifieras i fakturan. Fakturan anger i stället 53.523 MT, 7.932 MT, 62.108 MT, 2.675 MT samt total 126.238 MT/KG. Ingen tillåten undantagsregel ger verifierbar matchning."
+      "motivation": "The certificate shows multiple quantity values, including 22.946 MT and 26.969 MT in the quantity field and NETWEIGHT 49.915 MT in the goods text. The certificate also explicitly ties the goods to invoice 11752 dated 27/02/2026. Because that referenced invoice is not present in the separate invoice file, rule 8.5.2 blocks reliable quantity verification against invoice 11746. The control point is therefore MANUAL_REVIEW rather than a final match or mismatch."
     },
     "origin": {
       "applicable": true,
-      "status": "MISMATCH",
-      "confidence": 0.99,
+      "status": "MANUAL_REVIEW",
+      "confidence": 0.9,
       "certificate_value": "EU GERMANY",
       "invoice_value": "COUNTRY OF ORIGIN: EU",
       "rules_applied": [
         {
+          "rule_id": "8.5.2",
+          "outcome": "blocking_manual_review"
+        },
+        {
           "rule_id": "4.5.4.1",
-          "outcome": "PARTIAL_MATCH_EU"
+          "outcome": "eu_term_observed"
         },
         {
           "rule_id": "4.5.4.2",
-          "outcome": "MISMATCH_FOR_SPECIFIC_NAMED_COUNTRY"
-        },
-        {
-          "rule_id": "4.5.5",
-          "outcome": "MISMATCH"
+          "outcome": "specific_member_state_present_in_certificate"
         }
       ],
-      "motivation": "Certifikatet anger två ursprungsangivelser: 'EU' och det specifikt namngivna landet 'GERMANY'. Fakturan anger endast 'COUNTRY OF ORIGIN: EU'. EU-delen kan normaliseras, men det specifikt namngivna landet Germany kan inte uttryckligen identifieras i fakturan. Därför är ursprungslandet inte fullt verifierat."
+      "motivation": "The certificate origin field reads 'EU GERMANY' and the invoice file states 'COUNTRY OF ORIGIN: EU'. Under the origin rules this would require careful handling because the certificate includes both an EU reference and a specific EU member state. However, the certificate explicitly refers to invoice 11752 dated 27/02/2026 and that invoice is not present in the separate invoice file. Rule 8.5.2 therefore blocks final origin verification against invoice 11746, so the correct outcome is MANUAL_REVIEW."
     }
   },
   "overall_assessment": {
-    "comparison_result": "NOT_IDENTICAL",
+    "comparison_result": "MANUAL_REVIEW",
     "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
     "auto_approval_eligible": false,
-    "confidence": 0.99,
-    "critical_failures": [
-      "Consignee mismatch: certificate consignee not found in invoice and invoice shows different company/country.",
-      "Goods description mismatch: certificate references invoice 11752 dated 27/02/2026, but attached invoice is 11746 dated 23/02/2026.",
-      "Quantity mismatch: certificate quantities 22.946 MT / 26.969 MT / 49.915 MT not found in invoice.",
-      "Origin mismatch: certificate explicitly names Germany in addition to EU, but invoice states only EU."
+    "confidence": 0.94,
+    "critical_failures": [],
+    "manual_review_triggers": [
+      "Rule 8.5.2: The certificate explicitly refers to invoice 11752 dated 27/02/2026, but the separate invoice file contains invoice 11746 dated 23/02/2026.",
+      "Rule 8.5.2: When a specific invoice is referenced in the certificate and that invoice is not found in the invoice file, the system must not fall back to consignor matching or another invoice.",
+      "Rule 8.6 sanity check is not sufficient to cure the explicit invoice-reference mismatch: the consignor appears in the invoice file, but the independently referenced invoice is still missing."
     ],
-    "manual_review_triggers": [],
-    "decision_summary": "Dokumentrollen kan klassificeras säkert och flera tillämpliga kontrollpunkter ger tydlig MISMATCH enligt regelverket. Därför är jämförelseresultatet NOT_IDENTICAL och ärendet kräver manuell hantering."
+    "decision_summary": "Document A was classified as the Certificate of Origin and Document B as the invoice. The certificate contains the explicit text 'For description of goods see invoice 11752 dated 27/02/2026'. The separate invoice file contains invoice NO. 11746 dated 23/02/2026 and does not contain invoice 11752. Under rule 8.5.2 this is a document-pairing blocker that requires MANUAL_REVIEW. Although the invoice issuer matches the certificate consignor, that fallback is explicitly disallowed once a specific referenced invoice is missing from the separate invoice file. Result: MANUAL_REVIEW with manual handling required."
   }
 }

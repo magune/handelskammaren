@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-03-25T00:00:00Z",
+    "verification_timestamp": "2026-03-31T00:00:00Z",
     "document_pair_id": null,
     "certificate_issue_date": "2025-11-07",
     "source_documents_received": 2
@@ -34,15 +34,11 @@
     "activated_rules": [
       {
         "rule_id": "4.1.0",
-        "rule_name": "Consignor found explicitly in invoice documents outside issuer field"
-      },
-      {
-        "rule_id": "4.5.4.1",
-        "rule_name": "EU origin normalization"
+        "rule_name": "Consignor identified anywhere in invoice documents"
       },
       {
         "rule_id": "4.5.4.2",
-        "rule_name": "EU and EU member state interchangeability"
+        "rule_name": "EU/member-state normalization for origin"
       }
     ]
   },
@@ -50,7 +46,7 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.9,
+      "confidence": 0.89,
       "certificate_value": "Elmo Sweden AB\nKyrkogatan 18\n51250, Svenljunga\nSweden",
       "invoice_value": "POSTADRESS/POSTAL ADRESS:\nElmo Sweden AB\nSE-512 81 SVENLJUNGA\nSWEDEN",
       "rules_applied": [
@@ -67,17 +63,21 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor 'Elmo Sweden AB' återfinns uttryckligen i fakturans footer/postadressblock på sida 1 och 2. Landet Sweden/SWEDEN överensstämmer efter tillåten normalisering. Enligt 4.1.0 räcker uttrycklig förekomst någonstans i fakturadokumentet även om köparfältet avser annan part."
+      "motivation": "Certifikatets consignor är 'Elmo Sweden AB ... Sweden'. Samma företagsnamn återfinns uttryckligen i fakturan i footer/postadressblocket på sida 1 och 2: 'Elmo Sweden AB ... SWEDEN'. Detta uppfyller regel 4.1.0. Landet överensstämmer efter normalisering Sweden/SWEDEN enligt 4.1.4."
     },
     "consignee": {
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.98,
       "certificate_value": "Kallfeldts Läder AB\nEsbjörnarp 10\n561 92 Huskvarna\nSweden",
-      "invoice_value": "Godsmottagare\nKallfeldts Läder AB ( 11004745 )\nEsbjörnarp 10\nSE 561 92 - Huskvarna , Sverige",
+      "invoice_value": "Kallfeldts Läder AB ( 11004745 )\nEsbjörnarp 10\nSE 561 92 - Huskvarna , Sverige",
       "rules_applied": [
         {
           "rule_id": "4.2.0",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.2.0.1",
           "outcome": "MATCH"
         },
         {
@@ -89,18 +89,18 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignee kan identifieras direkt i fakturans fält 'Godsmottagare' och även 'Betalare'. Företagsnamnet matchar direkt och landet Sweden/Sverige överensstämmer efter normalisering av landsnamn."
+      "motivation": "Certifikatets consignee 'Kallfeldts Läder AB' återfinns exakt i fakturans fält både för 'Betalare' och 'Godsmottagare' på sida 1 och 2. Landet i certifikatet är Sweden och i fakturan Sverige, vilket är tillåten normalisering av landsnamn enligt 4.2.3. Företagsnamnet är samma juridiska part."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.96,
+      "confidence": 0.98,
       "certificate_value": "1 Hrs\nHS Code 4107 1291\nElmosoft 99999 III\nGross Weight\nNet Weight",
-      "invoice_value": "ELMOSOFT 99999 III\n...\nUpholstery Leather\nSwedish Origin\n1 Hrs\nTarif no 4107 1291 (HS)",
+      "invoice_value": "ELMOSOFT 99999 III",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "Priority 2 used"
+          "outcome": "Prioritet 2 tillämpad; artikelnummer saknas i certifikatet"
         },
         {
           "rule_id": "4.3.3",
@@ -115,7 +115,7 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Ingen artikelnummeruppgift för varan i certifikatet användes som primär identifierare. Den identitetsbärande huvudbeteckningen 'Elmosoft 99999 III' återfinns exakt i fakturans varurader. Tillägg som HS-kod, '1 Hrs' och vikttexter ändrar inte produktidentiteten."
+      "motivation": "Den identitetsbärande huvudbeteckningen i certifikatet är 'Elmosoft 99999 III'. Denna ordsekvens återfinns exakt i fakturans varurader på sida 1 som 'ELMOSOFT 99999 III'. Ytterligare uppgifter i certifikatet såsom HS-kod och viktetiketter ändrar inte produktidentiteten enligt 4.3.4."
     },
     "quantity": {
       "applicable": true,
@@ -126,6 +126,10 @@
       "rules_applied": [
         {
           "rule_id": "4.4.2",
+          "outcome": "Kvantiteter och enheter uttryckligen angivna"
+        },
+        {
+          "rule_id": "4.4.3",
           "outcome": "MATCH"
         },
         {
@@ -133,15 +137,11 @@
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.4.4",
-          "outcome": "MATCH"
-        },
-        {
           "rule_id": "4.4.6",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger uttryckliga kvantitetsuppgifter med numeriskt värde och enhet. Fakturan innehåller exakt samma numeriska värden: total area 709,56 M2 på sida 2, Gross Weight 571 kgs och Net weight 501 kgs på sida 1. Minst en och i detta fall samtliga centrala kvantitetsuppgifter kan identifieras utan otillåten beräkning."
+      "motivation": "Certifikatets ruta 7 anger tre uttryckliga kvantitetsuppgifter: '709,56 M2', '571 Kgs' och '501 Kgs'. Fakturan anger på sida 2 'Total M2: 709,56 M2' och på sida 1 'Gross Weight 571 kgs' samt 'Net weight 501 kgs'. Därmed kan minst en kvantitetsuppgift verifieras enligt 4.4.3.1; här verifieras samtliga tre och ingen motsägelse förekommer."
     },
     "origin": {
       "applicable": true,
@@ -151,8 +151,8 @@
       "invoice_value": "Swedish Origin",
       "rules_applied": [
         {
-          "rule_id": "4.5.4.1",
-          "outcome": "MATCH"
+          "rule_id": "4.5.1",
+          "outcome": "Ursprung uttryckligen identifierat i fakturan"
         },
         {
           "rule_id": "4.5.4.2",
@@ -163,7 +163,7 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger både 'EUROPEAN UNION' och 'Sweden'. Fakturan anger uttryckligen 'Swedish Origin'. Sweden är ett EU-medlemsland, vilket verifierar EU enligt 4.5.4.1, och Sweden verifieras också direkt genom 'Swedish Origin' enligt 4.5.4.2/4.5.5. Ingen icke-EU-ursprungsuppgift har identifierats i fakturan."
+      "motivation": "Certifikatet anger ursprung 'EUROPEAN UNION' och 'Sweden'. Fakturan anger uttryckligen 'Swedish Origin' på sida 1. Det specifika namngivna landet Sweden är därmed uttryckligen verifierat. EU-delen verifieras genom regel 4.5.4.2 eftersom ett specifikt EU-medlemsland i fakturan kan verifiera certifikatets EU-angivelse. Inga icke-EU-ursprung som motsäger certifikatet har identifierats i fakturan."
     }
   },
   "overall_assessment": {
@@ -173,6 +173,6 @@
     "confidence": 0.94,
     "critical_failures": [],
     "manual_review_triggers": [],
-    "decision_summary": "Det identifierade dokumentparet består av ett Certificate of Origin och en kommersiell faktura. Ingen LC-referens aktiverar undantag. Samtliga tillämpliga kontrollpunkter kan verifieras mot fakturan enligt regelverket: consignor återfinns uttryckligen i fakturans adress/footerblock, consignee matchar direkt, varubeskrivningen 'ELMOSOFT 99999 III' återfinns i fakturaraderna, kvantiteterna 709,56 M2 / 571 kgs / 501 kgs återfinns uttryckligen i fakturan, och ursprungslandet verifieras genom 'Swedish Origin' tillsammans med EU-normalisering. Därför är jämförelseresultatet IDENTICAL och ärendet är lämpligt för automatisk godkännandeprocess."
+    "decision_summary": "Dokumentparet kunde klassificeras säkert som Certificate of Origin respektive faktura. LC-undantaget är inte tillämpligt. Parningsvalideringen passerades via både consignor och consignee. Samtliga fem tillämpliga kontrollpunkter gav MATCH: consignor, consignee, varubeskrivning, kvantitet och ursprungsland. Därför är comparison_result IDENTICAL och ärendet är AUTO_APPROVAL_ELIGIBLE."
   }
 }

@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-03-25T00:00:00Z",
+    "verification_timestamp": null,
     "document_pair_id": null,
     "certificate_issue_date": "2026-03-11",
     "source_documents_received": 2
@@ -20,7 +20,7 @@
     "document_b": {
       "label": "Document B",
       "assumed_role": "invoice",
-      "document_type": "Commercial Invoice"
+      "document_type": "Invoice"
     }
   },
   "rule_activation": {
@@ -33,16 +33,28 @@
     "eu_origin_normalization_active": true,
     "activated_rules": [
       {
-        "rule_id": "8.5",
-        "rule_name": "Multiple documents in one PDF handled by selecting original certificate and corresponding invoice"
+        "rule_id": "8.5.0",
+        "rule_name": "Original certificate selected from certificate file; invoice taken from separate invoice file"
+      },
+      {
+        "rule_id": "8.6",
+        "rule_name": "Pairing validation passed via consignor and consignee identification in the invoice"
       },
       {
         "rule_id": "4.1.0",
-        "rule_name": "Consignor found explicitly in invoice documents"
+        "rule_name": "Consignor identified explicitly in invoice text"
+      },
+      {
+        "rule_id": "4.4.4",
+        "rule_name": "Shipment weight in certificate verified against total weight in invoice"
       },
       {
         "rule_id": "4.5.4.1",
-        "rule_name": "EU/European Community normalization active"
+        "rule_name": "EU / European Community normalization applied"
+      },
+      {
+        "rule_id": "4.5.4.2",
+        "rule_name": "Specific EU member state and EU collective designation treated as verified"
       }
     ]
   },
@@ -50,10 +62,14 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.93,
+      "confidence": 0.95,
       "certificate_value": "VOLVO TRUCK CORPORATION\n405 08, GÖTEBORG\nSweden",
-      "invoice_value": "Postal address\nVolvo Truck Corporation\nS-405 08 Göteborg\nSweden\n...\nVolvo Truck Corporation in Belgium.",
+      "invoice_value": "Postal address\nVolvo Truck Corporation\nS-405 08 Göteborg\nSweden",
       "rules_applied": [
+        {
+          "rule_id": "8.6",
+          "outcome": "PASS"
+        },
         {
           "rule_id": "4.1.0",
           "outcome": "MATCH"
@@ -67,21 +83,21 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certificate consignor name 'VOLVO TRUCK CORPORATION' is explicitly present in the invoice text on page 1 and page 2, including postal address block and exporter declaration. Country Sweden is explicitly present in the invoice postal address block. Under rule 4.1.0 this is sufficient even though the invoice also contains additional Volvo-related entities."
+      "motivation": "Document A contains an Original and a Copy; the Original certificate was used. The certificate consignor is 'VOLVO TRUCK CORPORATION ... Sweden'. The invoice explicitly contains 'Volvo Truck Corporation ... Sweden' in the postal-address block on page 1, and the name also appears elsewhere in the invoice material. Under rule 4.1.0 the consignor may be verified anywhere in the invoice documents. Country Sweden matches. Address-format differences do not prevent match under 4.1.5."
     },
     "consignee": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.97,
+      "confidence": 0.93,
       "certificate_value": "MARUBENI DAGITIM VE SERVIS A.S\nKUCUKBAKKALKOY MAH\nKAYISDAGI CAD ALLIANZ PLAZA BLOK N1\n34750 ISTANBUL\nTürkiye",
       "invoice_value": "Customer:\nMarubeni Dagitim Ve Servis A.S\nKucukbakkalkoy Mah.\nKayisdagi Cad. Allianz Plaza Blok N\n34750 ISTANBUL\nTurkey",
       "rules_applied": [
         {
-          "rule_id": "4.2.0",
-          "outcome": "MATCH"
+          "rule_id": "8.6",
+          "outcome": "PASS"
         },
         {
-          "rule_id": "4.2.2",
+          "rule_id": "4.2.0",
           "outcome": "MATCH"
         },
         {
@@ -93,18 +109,18 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "The consignee named in the certificate is explicitly identifiable in the invoice customer block on page 1. Minor formatting differences such as 'N1' versus 'N' are in the address portion and do not affect company-name verification under the consignee rules. Country Türkiye/Turkey matches after country normalization."
+      "motivation": "The certificate consignee company name is identified directly in the invoice customer block as 'Marubeni Dagitim Ve Servis A.S'. Country is shown as 'Türkiye' in the certificate and 'Turkey' in the invoice; this is acceptable country-name normalization under 4.2.3. Minor address differences, including 'N1' versus 'N', do not control the outcome under 4.2.4 because the company name and country are verified."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.9,
+      "confidence": 0.94,
       "certificate_value": "1 VOLVO FM42R RIGID TRUCK\nVOLVO TRUCK CHASSIS NO:\n551193",
       "invoice_value": "EURO 6 STANDARDS\nVOLVO FM42R RIGID TRUCK\nVOLVO TYPE : VTC3R MODEL YEAR :2026\nFM-TRUCK 551193 / YV2XTW0A6TB551193",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "Priority 2 applied"
+          "outcome": "ARTICLE_NUMBER_NOT_USED_AS_PRIMARY_RULE"
         },
         {
           "rule_id": "4.3.3",
@@ -119,22 +135,18 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "No article number was identified in the certificate, so controlled text matching was applied. The identity-bearing main designation 'VOLVO FM42R RIGID TRUCK' appears explicitly in the invoice on page 1. The chassis number 551193 also appears explicitly in the invoice. Additional invoice text such as EURO 6 standards and model year does not alter product identity."
+      "motivation": "The identity-bearing main designation in the certificate is 'VOLVO FM42R RIGID TRUCK'. That exact product designation appears in the invoice goods description. The certificate chassis number '551193' is also identifiable in the invoice line 'FM-TRUCK 551193 / YV2XTW0A6TB551193'. Additional invoice text such as 'EURO 6 STANDARDS', VIN and model-year data is supplementary and non-contradictory under 4.3.4."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.98,
+      "confidence": 0.95,
       "certificate_value": "GW/7147 KG",
       "invoice_value": "WEIGHT: 7147 KG",
       "rules_applied": [
         {
           "rule_id": "4.4.2.2",
-          "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.4.3",
-          "outcome": "MATCH"
+          "outcome": "CERTIFICATE_WEIGHT_FORMAT_VALID"
         },
         {
           "rule_id": "4.4.4",
@@ -145,38 +157,38 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "The certificate quantity field explicitly states gross weight with numeric value and unit: 'GW/7147 KG'. The invoice explicitly states 'WEIGHT: 7147 KG' on page 1. Under rule 4.4.4, difference in weight-category wording does not itself cause mismatch when numeric value and unit match and the weight clearly refers to the shipment."
+      "motivation": "The certificate quantity field explicitly states gross weight as 'GW/7147 KG', which satisfies the certificate-side requirement for weight category and unit. The invoice explicitly states 'WEIGHT: 7147 KG'. Under 4.4.4 a certificate shipment weight may be verified against a total weight shown in the invoice, and a difference in label wording does not itself create mismatch when the numeric value and unit are the same. The value 7147 KG matches exactly."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.96,
+      "confidence": 0.91,
       "certificate_value": "The European Community, Belgium",
-      "invoice_value": "COUNTRY OF ORIGIN: BELGIUM\n...\nTHE GOODS ARE OF BELGIAN ORIGIN.\n...\nORIGINATE IN BELGIUM",
+      "invoice_value": "COUNTRY OF ORIGIN: BELGIUM",
       "rules_applied": [
         {
           "rule_id": "4.5.4.1",
-          "outcome": "MATCH"
+          "outcome": "EU_COLLECTIVE_DESIGNATION_VERIFIED_VIA_EU_MEMBER_STATE"
         },
         {
           "rule_id": "4.5.4.2",
-          "outcome": "MATCH"
+          "outcome": "SPECIFIC_EU_MEMBER_STATE_VERIFIED"
         },
         {
           "rule_id": "4.5.5",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "The certificate origin field contains 'The European Community, Belgium'. The invoice explicitly states Belgium as origin multiple times on page 1. Belgium is an EU member state, satisfying the European Community component, and the specifically named country Belgium is also explicitly identified. No non-EU origin contradicts the certificate."
+      "motivation": "The certificate origin field states 'The European Community, Belgium'. The invoice explicitly states 'COUNTRY OF ORIGIN: BELGIUM' and further contains text declaring the goods are of Belgian origin. Under 4.5.4.1 Belgium, as an EU member state, verifies the collective designation 'European Community'. Under 4.5.4.2 the specifically named country Belgium is also explicitly verified. No conflicting non-EU origin is introduced."
     }
   },
   "overall_assessment": {
     "comparison_result": "IDENTICAL",
     "workflow_recommendation": "AUTO_APPROVAL_ELIGIBLE",
     "auto_approval_eligible": true,
-    "confidence": 0.95,
+    "confidence": 0.94,
     "critical_failures": [],
     "manual_review_triggers": [],
-    "decision_summary": "All applicable control points are verified as MATCH against the identified document pair consisting of the original certificate of origin and the invoice. No LC exception applies. No contradiction was found between certificate and invoice for consignor, consignee, goods description, quantity, or origin."
+    "decision_summary": "Document A was classified as the certificate file and Document B as the invoice file. The certificate file contains both Original and Copy; the Original certificate was used in accordance with the document-pairing rules. No LC reference was found, so normal control-point verification was applied. The consignor 'VOLVO TRUCK CORPORATION' is explicitly identifiable in the invoice, the consignee 'MARUBENI DAGITIM VE SERVIS A.S' is explicitly identifiable in the invoice customer block, the goods description 'VOLVO FM42R RIGID TRUCK' is explicitly present in the invoice, the certificate weight 'GW/7147 KG' matches the invoice weight '7147 KG', and the certificate origin 'The European Community, Belgium' is verified by the invoice's explicit Belgian origin statement with EU normalization. All applicable control points are MATCH; therefore the document pair is IDENTICAL and eligible for auto approval."
   }
 }

@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-03-25T00:00:00Z",
+    "verification_timestamp": "2026-03-31T00:00:00Z",
     "document_pair_id": null,
     "certificate_issue_date": "2026-02-25",
     "source_documents_received": 2
@@ -15,12 +15,12 @@
     "document_a": {
       "label": "Document A",
       "assumed_role": "certificate",
-      "document_type": "Certificate of Origin"
+      "document_type": "certificate_of_origin_pdf_with_original_copy_pages_and_embedded_invoice_copy"
     },
     "document_b": {
       "label": "Document B",
       "assumed_role": "invoice",
-      "document_type": "Commercial Invoice"
+      "document_type": "commercial_invoice"
     }
   },
   "rule_activation": {
@@ -30,23 +30,31 @@
     "mixed_origins_rule_active": true,
     "to_order_rule_active": false,
     "quantity_exception_applied": null,
-    "eu_origin_normalization_active": false,
+    "eu_origin_normalization_active": true,
     "activated_rules": [
       {
-        "rule_id": "8.5",
-        "rule_name": "PDF med flera dokument – välj originalcertifikat och tillhörande faktura via fakturanummer"
+        "rule_id": "8.5.0",
+        "rule_name": "Filbaserad dokumentparning; certifikat hämtas från certifikatfilen och faktura från separat fakturafil"
+      },
+      {
+        "rule_id": "8.6",
+        "rule_name": "Obligatorisk parningsvalidering"
+      },
+      {
+        "rule_id": "4.1.0",
+        "rule_name": "Koncernstruktur/sökning av consignor i all fakturatext"
       },
       {
         "rule_id": "4.3.5",
-        "rule_name": "Generell varubeskrivning med uttrycklig fakturahänvisning och datum"
-      },
-      {
-        "rule_id": "4.3.7",
-        "rule_name": "Koppling vara–ursprungsland vid flera ursprung"
+        "rule_name": "Generell varubeskrivning med fakturareferens"
       },
       {
         "rule_id": "4.5.3",
-        "rule_name": "Blandade ursprung kräver entydig koppling per vara"
+        "rule_name": "Blandade ursprung"
+      },
+      {
+        "rule_id": "4.5.4.1.2",
+        "rule_name": "Blandade EU/icke-EU-listor med extra EU-land i fakturan ger MANUAL_REVIEW"
       }
     ]
   },
@@ -54,7 +62,7 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.96,
+      "confidence": 0.98,
       "certificate_value": "AB Volvo Penta\nTerminalvägen, ARK-S\nGropegårdsgatan 11\nSE-405 08, Gothenburg\nSweden",
       "invoice_value": "AB Volvo Penta\nGropegårdsgatan 11\n40508 Göteborg\nSweden",
       "rules_applied": [
@@ -71,19 +79,15 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor 'AB Volvo Penta' återfinns uttryckligen i fakturan på flera sidor i sidhuvud/footer och legal company address. Landet Sweden återfinns också uttryckligen. Enligt 4.1.0 räcker uttrycklig förekomst i fakturadokumentet; skillnader i gatuadress påverkar inte utfallet enligt 4.1.5."
+      "motivation": "Certifikatets consignor 'AB Volvo Penta ... Sweden' återfinns uttryckligen i fakturan som fakturautställare och i footer på flera sidor. Landet Sweden överensstämmer. Ingen motsägelse finns."
     },
     "consignee": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.97,
+      "confidence": 0.98,
       "certificate_value": "ORASCOM\nFREE ZONE\nEL AMIRIA\nALEXANDRIA\nACID: 2024830102025120035\nTax ID: 202483010\nEgypt",
-      "invoice_value": "Consignee\nORASCOM\nFREE ZONE\nEL AMIRIA\nALEXANDRIA\nEgypt",
+      "invoice_value": "ORASCOM\nFREE ZONE\nEL AMIRIA\nALEXANDRIA\nEgypt",
       "rules_applied": [
-        {
-          "rule_id": "4.2.0",
-          "outcome": "MATCH"
-        },
         {
           "rule_id": "4.2.0.1",
           "outcome": "MATCH"
@@ -97,19 +101,15 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignee återfinns uttryckligen i fakturans fält 'Consignee' på sida 1. Företagsnamn och land överensstämmer. Ytterligare uppgifter i certifikatet såsom ACID och Tax ID motsägs inte av fakturan."
+      "motivation": "Certifikatets consignee återfinns uttryckligen i fakturans fält 'Consignee' på sida 1. Företagsnamn/platsuppgifter ORASCOM / FREE ZONE / EL AMIRIA / ALEXANDRIA samt landet Egypt överensstämmer."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.9,
       "certificate_value": "13 THU\nIndustrial Diesel Engine & Accessories\nSee attached invoice:61622218/1S, dated: 25/02/2026",
-      "invoice_value": "Invoice No/Type 61622218/1S; Invoice Date 2026-02-25; Description of Goods: Marine Leisure Diesel Engine & Accessories",
+      "invoice_value": "Description of Goods\nMarine Leisure Diesel Engine & Accessories\nInvoice No/Type 61622218/1S\nInvoice Date 2026-02-25",
       "rules_applied": [
-        {
-          "rule_id": "4.3.2",
-          "outcome": "Prioritet 1 ej tillämplig - inga artikelnummer i certifikatet"
-        },
         {
           "rule_id": "4.3.5",
           "outcome": "MATCH"
@@ -119,21 +119,17 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet använder generell varubeskrivning och innehåller uttrycklig hänvisning 'See attached invoice:61622218/1S, dated: 25/02/2026'. Fakturan bär exakt samma fakturanummer och samma datum efter tillåten datumformatnormalisering. Därmed anses varubeskrivningen verifierad enligt 4.3.5."
+      "motivation": "Certifikatet innehåller en uttrycklig fakturahänvisning 'See attached invoice:61622218/1S, dated: 25/02/2026'. Fakturans nummer 61622218/1S och datum 2026-02-25 överensstämmer efter tillåten datumformatnormalisering. Därför anses varubeskrivningen verifierad enligt regeln för generell varubeskrivning med fakturareferens."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.98,
+      "confidence": 0.97,
       "certificate_value": "GW 4469 KG",
       "invoice_value": "Total Gross Weight 4469.00 KG",
       "rules_applied": [
         {
           "rule_id": "4.4.2.2",
-          "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.4.3",
           "outcome": "MATCH"
         },
         {
@@ -145,14 +141,14 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger uttryckligen viktkategori, numeriskt värde och enhet: 'GW 4469 KG'. Fakturan anger total gross weight '4469.00 KG' för samma försändning. Numeriskt värde och enhet överensstämmer inom tolerans."
+      "motivation": "Certifikatet anger uttryckligen viktkategori och enhet: 'GW 4469 KG'. Fakturan anger uttryckligen 'Total Gross Weight 4469.00 KG'. Det numeriska värdet och viktenheten överensstämmer."
     },
     "origin": {
       "applicable": true,
-      "status": "MISMATCH",
-      "confidence": 0.99,
+      "status": "MANUAL_REVIEW",
+      "confidence": 0.84,
       "certificate_value": "FR, DK, SE, LT, SK, IT, PL, TW",
-      "invoice_value": "Origin per artikelrad: FR, DK, SE, LT, SK, IT, PL, TW, DE",
+      "invoice_value": "Origin column in invoice pages 2-3 includes FR, DK, SE, FR, DK, DE, SE, LT, SK, SE, IT, SK, LT, LT, PL, TW, TW, SE",
       "rules_applied": [
         {
           "rule_id": "4.5.1",
@@ -160,25 +156,29 @@
         },
         {
           "rule_id": "4.5.3",
-          "outcome": "MISMATCH"
+          "outcome": "MATCH"
         },
         {
-          "rule_id": "4.5.5",
-          "outcome": "MISMATCH"
+          "rule_id": "4.5.4",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.5.4.1.2",
+          "outcome": "MANUAL_REVIEW"
         }
       ],
-      "motivation": "Alla ursprungsländer i certifikatet kan identifieras i fakturan per artikelrad, men fakturan innehåller dessutom ett uttryckligt icke-angivet ursprungsland 'DE' på artikel 23408454. Certifikatet anger flera specifika ursprungsländer och fakturan visar blandade ursprung. Detta utgör en motsägelse mot certifikatets ursprungsangivelse för den försändning som certifikatet hänvisar till, eftersom fakturan innehåller ett ytterligare explicit ursprungsland som inte finns i certifikatet."
+      "motivation": "Samtliga ursprungsländer i certifikatet (FR, DK, SE, LT, SK, IT, PL, TW) kan identifieras uttryckligen i fakturans origin-kolumn. Fakturan innehåller dock dessutom DE, som inte finns i certifikatet. Eftersom certifikatet innehåller en blandning av EU- och icke-EU-länder och det extra landet i fakturan är ett EU-medlemsland, ska resultatet enligt 4.5.4.1.2 vara MANUAL_REVIEW, inte MISMATCH."
     }
   },
   "overall_assessment": {
-    "comparison_result": "NOT_IDENTICAL",
+    "comparison_result": "MANUAL_REVIEW",
     "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
     "auto_approval_eligible": false,
-    "confidence": 0.95,
-    "critical_failures": [
-      "Origin mismatch: invoice contains explicit origin DE not listed in certificate origin field."
+    "confidence": 0.88,
+    "critical_failures": [],
+    "manual_review_triggers": [
+      "Ursprungsland: fakturan innehåller extra EU-ursprung 'DE' som inte listas i certifikatet; enligt regel 4.5.4.1.2 ska detta hanteras manuellt."
     ],
-    "manual_review_triggers": [],
-    "decision_summary": "Dokumentparet kunde identifieras: originalcertifikat på s.1 och faktura 61622218/1S på s.4-6. Consignor, consignee, varubeskrivning och kvantitet verifieras mot fakturan. Ursprungsland verifieras inte fullt ut eftersom fakturan uttryckligen innehåller ursprung DE utöver FR, DK, SE, LT, SK, IT, PL och TW som anges i certifikatet. Minst en kritisk kontrollpunkt ger därför MISMATCH, vilket medför comparison_result NOT_IDENTICAL och manuell hantering."
+    "decision_summary": "Korrekt dokumentpar kunde identifieras genom att använda originalcertifikatet i certifikatfilen och den separata fakturafilen med fakturanummer 61622218/1S. Consignor, consignee, fakturareferens/varubeskrivning och kvantitet verifieras mot fakturan. Ursprungsland kräver manuell granskning eftersom certifikatet listar FR, DK, SE, LT, SK, IT, PL, TW medan fakturan dessutom innehåller DE som ytterligare EU-ursprung."
   }
 }

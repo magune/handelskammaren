@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-03-25T00:00:00Z",
+    "verification_timestamp": null,
     "document_pair_id": null,
     "certificate_issue_date": "2026-02-26",
     "source_documents_received": 2
@@ -20,7 +20,7 @@
     "document_b": {
       "label": "Document B",
       "assumed_role": "invoice",
-      "document_type": "Invoice"
+      "document_type": "Commercial Invoice (image-based / OCR-unparsed)"
     }
   },
   "rule_activation": {
@@ -33,16 +33,16 @@
     "eu_origin_normalization_active": false,
     "activated_rules": [
       {
-        "rule_id": "4.1.0",
-        "rule_name": "Consignor found explicitly in invoice text/image content"
+        "rule_id": "8.6",
+        "rule_name": "Obligatorisk parningsvalidering"
       },
       {
-        "rule_id": "4.4.3.1",
-        "rule_name": "At least one quantity statement may be verified"
+        "rule_id": "4.3.3.3",
+        "rule_name": "Kortbeteckning för varutyp"
       },
       {
-        "rule_id": "4.4.4",
-        "rule_name": "Total weight in invoice may verify certificate shipment weight"
+        "rule_id": "2.1",
+        "rule_name": "Osäkerhetsprincipen"
       }
     ]
   },
@@ -50,12 +50,16 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.9,
+      "confidence": 0.95,
       "certificate_value": "FORPAC INTERNATIONAL AB\nKUNGSPORTEN 4E\nSE-427 50, BILLDAL\nSWEDEN",
       "invoice_value": "Seller\nForpac International AB\nKungsporten 4E\n427 50 Billdal\nSweden",
       "rules_applied": [
         {
-          "rule_id": "4.1.0",
+          "rule_id": "4.1.1",
+          "outcome": "IDENTIFIED_IN_INVOICE"
+        },
+        {
+          "rule_id": "4.1.3.1",
           "outcome": "MATCH"
         },
         {
@@ -63,120 +67,107 @@
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.1.5",
-          "outcome": "MATCH"
+          "rule_id": "8.6",
+          "outcome": "PAIRING_VALIDATED_VIA_CONSIGNOR"
         }
       ],
-      "motivation": "Certifikatets consignor 'FORPAC INTERNATIONAL AB' återfinns uttryckligen i fakturan som seller på sidan 1. Landet Sweden/SWEDEN överensstämmer efter tillåten normalisering. Skillnader i versaler och postnummerformat påverkar inte bedömningen."
+      "motivation": "Certifikatet anger consignor 'FORPAC INTERNATIONAL AB ... SWEDEN'. Fakturans sida 1 visar i seller-fältet 'Forpac International AB ... Sweden'. Företagsnamn och land överensstämmer direkt efter tillåten normalisering av versaler/gemener och formatering. Ingen motstridig avsändare identifierades i den tillgängliga fakturatexten/bilden."
     },
     "consignee": {
       "applicable": true,
       "status": "MANUAL_REVIEW",
-      "confidence": 0.35,
+      "confidence": 0.43,
       "certificate_value": "NAPACK\n4 RUE NABEUL ZONE INDUSTRIELLE\nMGHIRA II\n2082 FOUCHANA\nBEN AROUS\nTunisia",
       "invoice_value": null,
       "rules_applied": [
         {
-          "rule_id": "4.2.0",
-          "outcome": "NOT_FOUND"
-        },
-        {
           "rule_id": "4.2.1",
-          "outcome": "NOT_FOUND"
+          "outcome": "NO_READABLE_CONSIGNEE_OR_BUYER_FOUND_IN_ACCESSIBLE_INVOICE_CONTENT"
         },
         {
           "rule_id": "4.2.1.1",
-          "outcome": "NOT_FOUND"
+          "outcome": "NO_ALTERNATIVE_ADDRESS_FIELD_COULD_BE_CONFIDENTLY_VERIFIED"
         },
         {
-          "rule_id": "4.2.4",
-          "outcome": "MANUAL_REVIEW"
+          "rule_id": "2.1",
+          "outcome": "MANUAL_REVIEW_DUE_TO_UNCERTAINTY_AND_READABILITY_LIMITATION"
         }
       ],
-      "motivation": "Ingen maskinläsbar fakturatext kunde parsas och den tillgängliga fakturabilden visar inte någon tydligt läsbar buyer/ship to/consignee/delivery address med 'NAPACK'. På grund av bildbaserad faktura och otillräcklig läsbarhet kan mottagaren inte verifieras säkert eller säkert avfärdas."
+      "motivation": "Certifikatet anger mottagaren 'NAPACK ... Tunisia'. Den bifogade fakturan är bildbaserad och ingen OCR-text kunde parsas. I den tillgängliga fakturabilden på sida 1 kan ingen köpare, consignee, ship-to eller annan mottagarroll läsas med tillräcklig säkerhet. Enligt läsbarhets- och osäkerhetsprincipen är detta inte bevis på fel, utan kräver manuell granskning."
     },
     "goods_description": {
       "applicable": true,
       "status": "MANUAL_REVIEW",
-      "confidence": 0.45,
-      "certificate_value": "FLUTING & TESTLINER",
-      "invoice_value": "Fluting de 80 a 115gsm. rw:200 a 250cm\nTL3 80 a 115gsm. rw: 200 a 250cm",
+      "confidence": 0.58,
+      "certificate_value": "TOTAL 73 REELS\nFLUTING & TESTLINER",
+      "invoice_value": "53 Reel 133,827 MT Fluting de 80 a 115gsm. rw:200 a 250cm\n20 Reel 54,078 MT TL3 80 a 115gsm. rw: 200 a 250cm",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "Priority 2 used; no article number in certificate"
+          "outcome": "NO_ARTICLE_NUMBERS_AVAILABLE_FOR_PRIMARY_MATCHING"
         },
         {
           "rule_id": "4.3.3",
-          "outcome": "UNCERTAIN"
+          "outcome": "PARTIAL_EXPLICIT_TEXT_MATCH_ONLY"
         },
         {
-          "rule_id": "4.3.8",
+          "rule_id": "4.3.3.3",
           "outcome": "MANUAL_REVIEW"
         }
       ],
-      "motivation": "Certifikatet anger den generella varubeskrivningen 'FLUTING & TESTLINER'. Fakturan visar två rader: 'Fluting ...' och 'TL3 ...'. 'Fluting' kan identifieras direkt, men 'Testliner' kan inte uttryckligen identifieras utan semantisk tolkning av 'TL3'. Eftersom fri semantisk tolkning inte är tillåten kan full verifiering inte ske säkert."
+      "motivation": "Certifikatet beskriver varorna som 'FLUTING & TESTLINER'. På fakturans sida 1 kan 'Fluting ...' identifieras explicit för en rad. Den andra raden är dock synlig som 'TL3 ...', inte som det uttryckliga ordet 'Testliner'. Att likställa 'TL3' med 'Testliner' kräver branschmässig tolkning, vilket inte får ge automatisk MATCH. Enligt regel 4.3.3.3 blir utfallet därför MANUAL_REVIEW."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.88,
+      "confidence": 0.93,
       "certificate_value": "187,905 MT/GW",
-      "invoice_value": "Total qty. 73 Reel 187,905 MT",
+      "invoice_value": "Total qty.\n73 Reel\n187,905 MT",
       "rules_applied": [
         {
-          "rule_id": "4.4.2.2",
-          "outcome": "Certificate weight category and unit explicitly stated"
+          "rule_id": "4.4.3",
+          "outcome": "NUMERIC_VALUE_IDENTIFIED_IN_INVOICE"
         },
         {
           "rule_id": "4.4.3.1",
-          "outcome": "At least one quantity statement verified"
+          "outcome": "AT_LEAST_ONE_CERTIFICATE_QUANTITY_VERIFIED"
         },
         {
           "rule_id": "4.4.4",
           "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.4.6",
-          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger uttryckligen vikt med numeriskt värde, enhet och viktkategori: '187,905 MT/GW'. Fakturan visar på sidan 1 total kvantitet '187,905 MT'. Enligt 4.4.4 får total vikt i faktura användas för verifiering när numeriskt värde och enhet överensstämmer och uppgiften entydigt avser försändningen. Ingen uttrycklig motsägelse har identifierats."
+      "motivation": "Certifikatets kvantitetsfält anger '187,905 MT/GW'. Fakturans sida 1 visar totalraden '73 Reel 187,905 MT'. Samma numeriska värde 187,905 kan därmed identifieras explicit i fakturan med enheten MT. Skillnad i viktbenämning mellan certifikatets GW-markering och fakturans formulering medför inte i sig MISMATCH när det numeriska värdet och viktenheten överensstämmer."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.93,
+      "confidence": 0.9,
       "certificate_value": "FRANCE",
-      "invoice_value": "Nous certifions que les marchandises faisant l’objet de cette livraison sont d´origine français",
+      "invoice_value": "Nous certifions que les marchandises faisant l'objet de cette livraison sont d´origine français ...\nThe exporter of the products covered by this document ... these products are of EU preferential origin.",
       "rules_applied": [
         {
           "rule_id": "4.5.1",
-          "outcome": "Explicit origin statement found"
-        },
-        {
-          "rule_id": "4.5.4",
-          "outcome": "Allowed normalization applied"
+          "outcome": "EXPLICIT_ORIGIN_STATEMENT_FOUND"
         },
         {
           "rule_id": "4.5.5",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger ursprungsland 'FRANCE'. Fakturan innehåller en uttrycklig ursprungsangivelse på sidan 1: varorna är 'd’origine français', vilket explicit anger franskt ursprung. Ursprungslandet kan därför identifieras uttryckligen i fakturan."
+      "motivation": "Certifikatet anger ursprungsland 'FRANCE'. Fakturans sida 1 innehåller en uttrycklig ursprungsangivelse på franska om att varorna är av franskt ursprung, samt en ytterligare uppgift om EU preferential origin. Eftersom France uttryckligen kan identifieras i ett origin-liknande textavsnitt är ursprungslandet verifierat."
     }
   },
   "overall_assessment": {
     "comparison_result": "MANUAL_REVIEW",
     "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
     "auto_approval_eligible": false,
-    "confidence": 0.5,
+    "confidence": 0.67,
     "critical_failures": [],
     "manual_review_triggers": [
-      "Consignee could not be safely verified due to image-based invoice and missing clearly readable recipient field.",
-      "Goods description could not be fully verified without prohibited semantic interpretation ('TL3' versus 'TESTLINER').",
-      "Invoice is image-based/OCR-deficient, reducing verification reliability."
+      "Consignee could not be safely identified in the accessible invoice content because the invoice is image-based and OCR yielded no parsed text for the buyer/consignee block.",
+      "Goods description is not fully auto-verifiable: certificate says 'TESTLINER' while the visible invoice line uses the code 'TL3', which requires interpretation under rule 4.3.3.3."
     ],
-    "decision_summary": "Consignor, quantity and origin can be verified against the invoice, but consignee cannot be safely identified and goods description cannot be fully matched without prohibited interpretation. Therefore the document pair requires manual review and is not eligible for auto approval."
+    "decision_summary": "Dokumentparet kan delvis verifieras: consignor, quantity och origin matchar den tillgängliga fakturabilden. Ärendet kan dock inte auto-godkännas eftersom mottagaren inte kan läsas säkert i fakturan och varubeskrivningen kräver tolkning för att koppla 'TESTLINER' till den synliga koden 'TL3'. Därför blir totalutfallet MANUAL_REVIEW."
   }
 }

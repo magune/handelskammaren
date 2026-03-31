@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-03-25T00:00:00Z",
+    "verification_timestamp": null,
     "document_pair_id": null,
     "certificate_issue_date": "2023-03-06",
     "source_documents_received": 2
@@ -34,15 +34,23 @@
     "activated_rules": [
       {
         "rule_id": "4.1.0",
-        "rule_name": "Consignor found explicitly in invoice text across pages/files"
+        "rule_name": "Koncernstruktur / consignor explicitly found anywhere in invoice text"
       },
       {
-        "rule_id": "4.4.3.1",
-        "rule_name": "At least one quantity in certificate may be verified"
+        "rule_id": "8.6",
+        "rule_name": "Mandatory document-pair validation passed via consignor identification in invoice"
       },
       {
-        "rule_id": "4.4.4",
-        "rule_name": "Total weight in invoice may verify shipment weight"
+        "rule_id": "4.3.3",
+        "rule_name": "Controlled text matching for goods description"
+      },
+      {
+        "rule_id": "4.4.2.2",
+        "rule_name": "Weight quantity in certificate requires explicit GW/NW/Gross/Net"
+      },
+      {
+        "rule_id": "4.5.1",
+        "rule_name": "Origin must be explicitly stated in invoice text"
       }
     ]
   },
@@ -50,9 +58,9 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.96,
-      "certificate_value": "Esswell International AB, PO Box 11486, Södra Hamngatan 19-21, SE-40430, GÖTEBORG, Sweden",
-      "invoice_value": "ESSWELL INTERNATIONAL AB, PO Box 11486, Södra Hamngatan 19-21, SE-404 30 Gothenburg, Sweden. Org.no. 556522-6403 VAT no. SE556522640301",
+      "confidence": 0.98,
+      "certificate_value": "Esswell International AB\nPO Box 11486\nSödra Hamngatan 19-21\nSE-40430, GÖTEBORG\nSweden",
+      "invoice_value": "ESSWELL INTERNATIONAL AB\nPO Box 11486, Södra Hamngatan 19-21, SE-404 30 Gothenburg, Sweden.\nOrg.no. 556522-6403 VAT no. SE556522640301",
       "rules_applied": [
         {
           "rule_id": "4.1.0",
@@ -67,103 +75,95 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor 'Esswell International AB' återfinns uttryckligen i fakturan, inklusive i sidhuvud/sidfot på sida 1 och sida 2. Landet Sweden överensstämmer. Matchning kan därför fastställas enligt koncernstruktur-/förekomstregeln utan behov av vidare sekventiell namnprövning."
+      "motivation": "Certifikatets consignor 'Esswell International AB ... Sweden' återfinns uttryckligen i fakturan i sidhuvud/sidfot som 'ESSWELL INTERNATIONAL AB ... Gothenburg, Sweden'. Detta uppfyller koncernstruktur-/förekomstregeln i 4.1.0 även om ett annat företag visas i köparblocket. Landet Sweden överensstämmer. Därför MATCH."
     },
     "consignee": {
       "applicable": true,
       "status": "MISMATCH",
-      "confidence": 0.98,
-      "certificate_value": "PICFARE INDUSTRIES LIMITED, P.O.BOX 9396, KAMPALA, UGANDA",
-      "invoice_value": "Parkinson Clarke (Middle East) FZE, P.O. Box 18225, Jebel Ali, DUBAI, UNITED ARAB EMIRATES",
+      "confidence": 0.97,
+      "certificate_value": "PICFARE INDUSTRIES LIMITED\nP.O.BOX 9396\nTIN NO: 1000027503\nEMAIL ID: LOGISTICS@PICFARE.COM\nTEL NO: +256-757712347\nKAMPALA\nUGANDA",
+      "invoice_value": "Parkinson Clarke (Middle East) FZE\nP.O. Box 18225\nJebel Ali\nDUBAI\nUNITED ARAB EMIRATES",
       "rules_applied": [
         {
           "rule_id": "4.2.0",
-          "outcome": "NO_MATCH"
+          "outcome": "FAILED"
         },
         {
           "rule_id": "4.2.0.1",
-          "outcome": "NO_MATCH"
+          "outcome": "FAILED"
         },
         {
           "rule_id": "4.2.1.1",
-          "outcome": "NO_MATCH"
-        },
-        {
-          "rule_id": "4.2.3",
-          "outcome": "MISMATCH"
+          "outcome": "FAILED"
         },
         {
           "rule_id": "4.2.4",
           "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Certifikatets consignee 'PICFARE INDUSTRIES LIMITED' kunde inte identifieras uttryckligen i fakturan i Buyer, Sold To, Ship To, Delivery Address, Notify Party, Importer eller annat mottagarfält. Fakturan anger i stället 'Parkinson Clarke (Middle East) FZE' i Förenade Arabemiraten. Landet Uganda kan inte verifieras i fakturan för någon motsvarande mottagarpart. Detta är MISMATCH."
+      "motivation": "Certifikatets mottagare 'PICFARE INDUSTRIES LIMITED ... UGANDA' kan inte identifieras i fakturans buyer/consignee/ship-to/delivery-adress eller annan mottagarroll. Den identifierbara adressparten i fakturan är 'Parkinson Clarke (Middle East) FZE ... UNITED ARAB EMIRATES'. Ingen PICFARE-text förekommer i fakturan. Företagsnamn och land kan därför inte verifieras enligt 4.2, vilket ger MISMATCH."
     },
     "goods_description": {
       "applicable": true,
       "status": "MISMATCH",
-      "confidence": 0.97,
-      "certificate_value": "NEWSPRINT PAPER 52 GSM 66 CM; NEWSPRINT PAPER 52 GSM 99 CM",
-      "invoice_value": "Bulky Newsprint 52 gsm 66 cm - 38.402 mt / 156 reels; Bulky Newsprint 52 gsm 99 cm - 97.460 mt / 264 reels",
+      "confidence": 0.89,
+      "certificate_value": "NEWSPRINT PAPER 52 GSM 66 CM\nNEWSPRINT PAPER 52 GSM 99 CM",
+      "invoice_value": "Bulky Newsprint 52 gsm 66 cm - 38.402 mt / 156 reels\nBulky Newsprint 52 gsm 99 cm - 97.460 mt / 264 reels",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "Priority 2 applied"
+          "outcome": "ARTICLE_NUMBERS_NOT_USED"
         },
         {
           "rule_id": "4.3.3",
-          "outcome": "MISMATCH"
+          "outcome": "FAILED"
+        },
+        {
+          "rule_id": "4.3.4",
+          "outcome": "NOT_SATISFIED"
+        },
+        {
+          "rule_id": "4.3.5",
+          "outcome": "NOT_APPLICABLE"
         },
         {
           "rule_id": "4.3.8",
           "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Inga artikelnummer anges i certifikatet, så verifiering ska ske via kontrollerad textmatchning. Den identitetsbärande huvudbeteckningen i certifikatet är 'NEWSPRINT PAPER 52 GSM 66 CM' respektive 'NEWSPRINT PAPER 52 GSM 99 CM'. Fakturan anger i stället 'Bulky Newsprint 52 gsm 66 cm' och 'Bulky Newsprint 52 gsm 99 cm'. Skillnaden 'Bulky' samt frånvaro av exakt ordsekvensen 'NEWSPRINT PAPER' innebär att huvudbeteckningen inte kan identifieras exakt utan semantisk tolkning. Därför MISMATCH."
+      "motivation": "Inga artikelnummer finns i certifikatet, så verifiering måste ske via kontrollerad textmatchning enligt 4.3.3. Certifikatet anger 'NEWSPRINT PAPER 52 GSM 66 CM' och 'NEWSPRINT PAPER 52 GSM 99 CM', medan fakturan anger 'Bulky Newsprint 52 gsm 66 cm' och 'Bulky Newsprint 52 gsm 99 cm'. Certifikatets identitetsbärande ordsekvens kan inte identifieras exakt i fakturan utan semantisk tolkning, eftersom ordet 'PAPER' saknas och ett annat ord 'Bulky' har tillkommit. Regel 4.3.5 kan inte användas eftersom certifikatet inte innehåller fakturanummer och fakturadatum tillsammans med en uttrycklig 'as per invoice'-hänvisning. Därför MISMATCH."
     },
     "quantity": {
       "applicable": true,
-      "status": "MATCH",
-      "confidence": 0.93,
-      "certificate_value": "38.402 MT; 97.460 MT; 420 ROLLS",
-      "invoice_value": "135.862 MT net/gross weight; 420 reels; Bulky Newsprint 52 gsm 66 cm - 38.402 mt / 156 reels; Bulky Newsprint 52 gsm 99 cm - 97.460 mt / 264 reels",
+      "status": "MISMATCH",
+      "confidence": 0.94,
+      "certificate_value": "38.402 MT\n97.460 MT\n420 ROLLS",
+      "invoice_value": "135.862 MT net/gross weight\n420 reels\nBulky Newsprint 52 gsm 66 cm - 38.402 mt / 156 reels\nBulky Newsprint 52 gsm 99 cm - 97.460 mt / 264 reels",
       "rules_applied": [
         {
-          "rule_id": "4.4.2",
-          "outcome": "MATCH"
+          "rule_id": "4.4.2.1",
+          "outcome": "MULTIPLE_QUANTITIES_PRESENT"
         },
         {
-          "rule_id": "4.4.3",
-          "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.4.3.1",
-          "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.4.4",
-          "outcome": "MATCH"
+          "rule_id": "4.4.2.2",
+          "outcome": "MISMATCH"
         },
         {
           "rule_id": "4.4.6",
-          "outcome": "MATCH"
+          "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Certifikatet innehåller uttryckliga numeriska värden med enhet: 38.402 MT, 97.460 MT och 420 ROLLS. Fakturan innehåller exakt samma numeriska värden 38.402 mt och 97.460 mt i varubeskrivningen samt 420 reels i kvantitetsfältet. Enligt 4.4.3.1 räcker det att minst en kvantitetsuppgift verifieras; här verifieras flera. Ingen uttrycklig motsägelse har identifierats."
+      "motivation": "Certifikatets kvantitetsfält innehåller tre uppgifter: '38.402 MT', '97.460 MT' och '420 ROLLS'. Även om '420 reels' och de två MT-värdena återfinns i fakturan, anges MT-värdena i certifikatet som vikt utan uttrycklig viktkategori (GW/NW/Gross/Net). Enligt 4.4.2.2 måste viktkategori anges uttryckligen när viktenhet används, och detta får inte fastställas genom tolkning mot fakturan. Därför är kvantitetskontrollpunkten MISMATCH."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.99,
       "certificate_value": "CANADA",
-      "invoice_value": "Country of Origin: Canada",
+      "invoice_value": "Country of Origin\nCanada",
       "rules_applied": [
         {
           "rule_id": "4.5.1",
-          "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.5.4",
           "outcome": "MATCH"
         },
         {
@@ -171,19 +171,20 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets ursprungsland 'CANADA' återfinns uttryckligen i fakturan som 'Country of Origin Canada'. Exakt positiv verifiering föreligger."
+      "motivation": "Certifikatet anger ursprungsland 'CANADA'. Fakturan anger uttryckligen 'Country of Origin Canada'. Ursprungslandet kan därför identifieras explicit i fakturan enligt 4.5.1 och 4.5.5. MATCH."
     }
   },
   "overall_assessment": {
     "comparison_result": "NOT_IDENTICAL",
     "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
     "auto_approval_eligible": false,
-    "confidence": 0.97,
+    "confidence": 0.95,
     "critical_failures": [
-      "Consignee mismatch: certificate consignee not found in invoice and country Uganda not verified (4.2.4)",
-      "Goods description mismatch: certificate goods descriptions cannot be exactly identified in invoice without semantic interpretation (4.3.3, 4.3.8)"
+      "Consignee in the certificate cannot be identified in the invoice and the invoice shows a different named party in a different country (rule 4.2.4).",
+      "Goods description cannot be verified by allowed text matching and the invoice-reference shortcut is not available (rule 4.3.8).",
+      "Certificate quantity uses MT weight values without explicit GW/NW/Gross/Net, which is a direct rule violation (rule 4.4.2.2)."
     ],
     "manual_review_triggers": [],
-    "decision_summary": "Dokumentrollen kan klassificeras säkert som Certificate of Origin respektive Commercial Invoice. LC-undantag är inte tillämpligt. Consignor, quantity och origin kan verifieras mot fakturan. Consignee kan inte verifieras eftersom certifikatet anger PICFARE INDUSTRIES LIMITED i Uganda medan fakturan anger Parkinson Clarke (Middle East) FZE i Förenade Arabemiraten och ingen uttrycklig förekomst av PICFARE har identifierats i fakturan. Varubeskrivningen kan inte verifieras enligt strikt textmatchning eftersom certifikatet anger 'NEWSPRINT PAPER ...' medan fakturan anger 'Bulky Newsprint ...'. Minst en tillämplig kontrollpunkt ger tydlig MISMATCH, därför är totalresultatet NOT_IDENTICAL och manuell hantering krävs."
+    "decision_summary": "Dokumentparet kunde paras via consignor eftersom 'ESSWELL INTERNATIONAL AB' förekommer uttryckligen i fakturan. Consignor och ursprungsland matchar. Däremot kan certifikatets consignee 'PICFARE INDUSTRIES LIMITED, UGANDA' inte återfinnas i fakturan, varubeskrivningen kan inte verifieras utan otillåten tolkning, och certifikatets MT-kvantiteter saknar uttrycklig GW/NW/Gross/Net. Minst en tillämplig kontrollpunkt är MISMATCH, därför är totalresultatet NOT_IDENTICAL och manuell hantering krävs."
   }
 }

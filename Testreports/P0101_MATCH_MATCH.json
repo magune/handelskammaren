@@ -1,8 +1,8 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-03-25T00:00:00Z",
-    "document_pair_id": "P0101",
+    "verification_timestamp": "2026-03-31",
+    "document_pair_id": null,
     "certificate_issue_date": "2026-02-11",
     "source_documents_received": 2
   },
@@ -33,20 +33,20 @@
     "eu_origin_normalization_active": false,
     "activated_rules": [
       {
+        "rule_id": "8.5.0",
+        "rule_name": "File-based document pairing applied: certificate taken from file 1 and invoice from file 2"
+      },
+      {
+        "rule_id": "8.5.2",
+        "rule_name": "Certificate refers to invoice number, but exact invoice number could not be identified in the separate invoice file"
+      },
+      {
+        "rule_id": "8.6",
+        "rule_name": "Pairing sanity check passed via consignor identification in invoice"
+      },
+      {
         "rule_id": "4.1.0",
-        "rule_name": "Consignor found explicitly in invoice text / identifier block"
-      },
-      {
-        "rule_id": "4.2.1.1",
-        "rule_name": "Alternative recipient address field accepted"
-      },
-      {
-        "rule_id": "4.4.1",
-        "rule_name": "Direct quantity presence check"
-      },
-      {
-        "rule_id": "4.5.1",
-        "rule_name": "Explicit origin statement in invoice"
+        "rule_name": "Consignor searched in all visible invoice content and identified explicitly"
       }
     ]
   },
@@ -54,7 +54,7 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.95,
+      "confidence": 0.9,
       "certificate_value": "FORPAC INTERNATIONAL AB\nKUNGSPORTEN 4E\nSE-427 50, BILLDAL\nSWEDEN",
       "invoice_value": "Seller\nForpac International AB\nKungsporten 4E\n427 50 Billdal\nSweden",
       "rules_applied": [
@@ -71,41 +71,41 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor 'FORPAC INTERNATIONAL AB' återfinns uttryckligen i fakturan i seller-blocket på sidan 1. Landet Sweden/SWEDEN överensstämmer efter tillåten normalisering. Skillnader i versaler och postnummerformat påverkar inte bedömningen."
+      "motivation": "The certificate consignor 'FORPAC INTERNATIONAL AB' is explicitly identifiable in the invoice image as the seller 'Forpac International AB'. Country is Sweden in both documents. Match established without needing broader name-variation exceptions."
     },
     "consignee": {
       "applicable": true,
-      "status": "MATCH",
-      "confidence": 0.88,
+      "status": "MANUAL_REVIEW",
+      "confidence": 0.58,
       "certificate_value": "SARL IBARAR EMBALLAGE\nNIF: 001716104441751\nAIN EL MALHNA CIT 440\nLOGEMENT BT 16\n207-208 COMMUNE GU DE CONSTANTINE\n16048 ALGER\nAlgeria",
-      "invoice_value": "Delivery/ship-to information not fully OCR-readable, but page 1 invoice image shows consignee destination to Algeria and no contradiction; certificate consignee country Algeria is supported by destination context.",
+      "invoice_value": null,
       "rules_applied": [
         {
-          "rule_id": "4.2.1.1",
-          "outcome": "MATCH"
+          "rule_id": "4.2.0.1",
+          "outcome": "NOT CONFIRMED"
         },
         {
-          "rule_id": "4.2.3",
-          "outcome": "MATCH"
+          "rule_id": "4.2.1",
+          "outcome": "NOT CONFIRMED"
         },
         {
-          "rule_id": "4.2.4",
-          "outcome": "MATCH"
+          "rule_id": "2.1",
+          "outcome": "MANUAL_REVIEW"
+        },
+        {
+          "rule_id": "8.5.2",
+          "outcome": "MANUAL_REVIEW"
         }
       ],
-      "motivation": "Fakturan är bildbaserad med begränsad OCR, men den visuella fakturasidan visar att försändningen avser Algeriet och ingen motstridande mottagare framgår. Med konservativ bedömning identifieras mottagarlandet Algeria i fakturans destinationskontext. Ingen motsägelse mot certifikatets consignee har identifierats."
+      "motivation": "The certificate consignee is clearly stated, but no buyer/consignee/ship-to/delivery-address block for 'SARL IBARAR EMBALLAGE' is visible on the provided invoice page. Because the invoice file is image-based with no parsed OCR text and the certificate's referenced invoice number '1002990' could not be located in the separate invoice file, it is not sufficiently safe to conclude a definitive consignee mismatch. Manual review is required."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.91,
+      "confidence": 0.83,
       "certificate_value": "80 REELS\nTESTLINER & FLUTING",
-      "invoice_value": "Line items on invoice page 1: Testliner, 90gsm - non collé; Fluting 90gsm. Total qty 80 Reel.",
+      "invoice_value": "Testliner , 90gsm - non collé\nFluting 90gsm",
       "rules_applied": [
-        {
-          "rule_id": "4.3.2",
-          "outcome": "Priority 2 applied"
-        },
         {
           "rule_id": "4.3.3",
           "outcome": "MATCH"
@@ -119,19 +119,15 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger varubeskrivningen 'TESTLINER & FLUTING'. Fakturan innehåller flera rader med 'Testliner' och 'Fluting 90gsm'. Den identitetsbärande huvudbeteckningen för båda varuslagen kan identifieras exakt efter tillåten normalisering av versaler/gemener och '&'/'and'-likvärdig symbolhantering. Tillägget '90gsm - non collé' ändrar inte att huvudbeteckningarna Testliner och Fluting uttryckligen finns i fakturan."
+      "motivation": "The certificate goods description identifies Testliner and Fluting. The invoice line descriptions explicitly contain 'Testliner' and 'Fluting'. Additional invoice specifications such as grammage and dimensions do not change the product identity."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.97,
+      "confidence": 0.92,
       "certificate_value": "208,874 MT",
-      "invoice_value": "Total qty. 80 Reel 208,874 MT",
+      "invoice_value": "Total qty.\n80 Reel\n208,874 MT",
       "rules_applied": [
-        {
-          "rule_id": "4.4.2",
-          "outcome": "MATCH"
-        },
         {
           "rule_id": "4.4.3",
           "outcome": "MATCH"
@@ -141,14 +137,14 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger uttrycklig numerisk kvantitet och enhet: '208,874 MT'. Fakturan visar på sidan 1 i totalraden 'Total qty. 80 Reel 208,874 MT'. Det numeriska värdet kan identifieras direkt i fakturan utan beräkning eller undantag."
+      "motivation": "The numeric quantity in the certificate field 'Quantity' is 208,874 MT, and the invoice total line explicitly shows 208,874 MT. The match is direct and does not require any exception or calculation."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.96,
+      "confidence": 0.84,
       "certificate_value": "FRANCE",
-      "invoice_value": "French origin statement on invoice page 1: 'Nous certifions que les marchandises faisant l'objet de cette livraison sont d´origine français'",
+      "invoice_value": "Nous certifions que les marchandises faisant l'objet de cette livraison sont d´origine français",
       "rules_applied": [
         {
           "rule_id": "4.5.1",
@@ -163,16 +159,20 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger ursprungsland 'FRANCE'. Fakturan innehåller en uttrycklig ursprungsangivelse på franska att varorna är av franskt ursprung. Ursprungslandet kan därför verifieras explicit i fakturan."
+      "motivation": "The certificate origin is France. The invoice contains an explicit origin statement in French stating that the goods are of French origin. This is an explicit origin indication and supports the certificate origin."
     }
   },
   "overall_assessment": {
-    "comparison_result": "IDENTICAL",
-    "workflow_recommendation": "AUTO_APPROVAL_ELIGIBLE",
-    "auto_approval_eligible": true,
-    "confidence": 0.93,
+    "comparison_result": "MANUAL_REVIEW",
+    "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
+    "auto_approval_eligible": false,
+    "confidence": 0.76,
     "critical_failures": [],
-    "manual_review_triggers": [],
-    "decision_summary": "Samtliga tillämpliga kontrollpunkter kan verifieras mot fakturan. Ingen LC-referens aktiverar undantag. Consignor, varubeskrivning, kvantitet och ursprungsland stöds explicit av fakturan. Consignee bedöms verifierad genom fakturans destinationskontext utan motsägelse. Totalbedömning: IDENTICAL."
+    "manual_review_triggers": [
+      "Certificate remarks reference invoice number 1002990, but this exact invoice number could not be identified in the separate invoice file (rule 8.5.2).",
+      "The invoice file is scanned/image-based and no parsed OCR text was available; visual reading from the rendered image was necessary.",
+      "The certificate consignee could not be confidently located in any visible invoice recipient field."
+    ],
+    "decision_summary": "The provided document pair shows strong alignment on consignor, goods description, quantity and origin. However, the certificate explicitly references invoice number 1002990, and that exact invoice number could not be identified in the separate invoice file. In addition, the consignee from the certificate could not be confidently verified from the visible invoice content. Under the conservative rules, the result must therefore be MANUAL_REVIEW and not auto-approved."
   }
 }

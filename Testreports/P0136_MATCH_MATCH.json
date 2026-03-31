@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-03-25T00:00:00Z",
+    "verification_timestamp": "2026-03-31T00:00:00Z",
     "document_pair_id": null,
     "certificate_issue_date": "2026-02-27",
     "source_documents_received": 2
@@ -33,16 +33,20 @@
     "eu_origin_normalization_active": false,
     "activated_rules": [
       {
+        "rule_id": "8.5.0",
+        "rule_name": "Filbaserad dokumentparning"
+      },
+      {
+        "rule_id": "8.6",
+        "rule_name": "Obligatorisk parningsvalidering"
+      },
+      {
         "rule_id": "4.1.0",
-        "rule_name": "Koncernstruktur / consignor found anywhere in invoice documents"
+        "rule_name": "Consignor identifierad någonstans i fakturan"
       },
       {
-        "rule_id": "4.2.1.1",
-        "rule_name": "Alternativ mottagaradress"
-      },
-      {
-        "rule_id": "4.4.4",
-        "rule_name": "Total vikt i faktura"
+        "rule_id": "4.4.3.3",
+        "rule_name": "Tusentalsavskiljare-normalisering"
       }
     ]
   },
@@ -50,9 +54,9 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.96,
-      "certificate_value": "Källbergs Industri AB, Box 73, SE-545 22, TÖREBODA, Sweden",
-      "invoice_value": "Källbergs Industri AB, Skövdevägen 25, Box 73, 54522 Töreboda, Sverige",
+      "confidence": 0.93,
+      "certificate_value": "Källbergs Industri AB\nBox 73\n\nSE-545 22, TÖREBODA\nSweden",
+      "invoice_value": "Källbergs Industri AB\nSkövdevägen 25\nBox 73\n54522 Töreboda\nSverige",
       "rules_applied": [
         {
           "rule_id": "4.1.0",
@@ -67,14 +71,14 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor 'Källbergs Industri AB ... Sweden' återfinns uttryckligen i fakturans footer på sida 1 som 'Källbergs Industri AB ... Sverige'. Företagsnamnet är identiskt och landet överensstämmer efter normalisering Sweden/Sverige enligt 4.1.4. Skillnader i gatuadress påverkar inte bedömningen enligt 4.1.5."
+      "motivation": "Certifikatets consignor 'Källbergs Industri AB' återfinns uttryckligen i fakturans footer/identifieringsblock på sida 1. Landet anges som 'Sweden' i certifikatet och 'Sverige' i fakturan; detta behandlas som samma land inom språkoberoende landsnormalisering. Därmed är avsändaren verifierad enligt 4.1.0 och 4.1.4."
     },
     "consignee": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.97,
-      "certificate_value": "Kewpie Egg Corporation, 2-5-7 Sengawacho, Chofu-shi, Tokyo 182-0002, Japan",
-      "invoice_value": "Kewpie Egg Corporation, 2-5-7 Sengawa-cho, Chofu-Shi, Tokyo 182 0002, Japan",
+      "confidence": 0.98,
+      "certificate_value": "Kewpie Egg Corporation\n2-5-7 Sengawacho, Chofu-shi\n\nTokyo 182-0002\nJapan",
+      "invoice_value": "Kewpie Egg Corporation\n2-5-7 Sengawa-cho, Chofu-Shi,\nTokyo 182 0002\nJapan",
       "rules_applied": [
         {
           "rule_id": "4.2.0",
@@ -93,18 +97,18 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignee 'Kewpie Egg Corporation ... Japan' kan identifieras i fakturan både i köpar-/adressblocket och i 'Ship-to Address'. Företagsnamnet är identiskt efter tillåten normalisering av bindestreck och versaler/gemener. Landet Japan överensstämmer."
+      "motivation": "Certifikatets consignee 'Kewpie Egg Corporation' återfinns uttryckligen i fakturan både som köpar-/adresspart och i Ship-to Address. Landet Japan överensstämmer. Mindre adressskillnader som bindestreck och postnummerformat påverkar inte bedömningen enligt 4.2.4."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.98,
+      "confidence": 0.99,
       "certificate_value": "Dried Egg Yolk LPL-2L",
-      "invoice_value": "Dried Egg Yolk LPL-2L",
+      "invoice_value": "1541103 Dried Egg Yolk LPL-2L 3.267 Kg",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "Priority 2 applied"
+          "outcome": "Prioritet 1 ej tillämplig; inget artikelnummer i certifikatet"
         },
         {
           "rule_id": "4.3.3",
@@ -115,17 +119,21 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Ingen artikelnummeruppgift anges i certifikatet, därför användes Prioritet 2 kontrollerad textmatchning. Den identitetsbärande huvudbeteckningen 'Dried Egg Yolk LPL-2L' återfinns exakt i fakturans varurad på sida 1 utan behov av semantisk tolkning."
+      "motivation": "Certifikatets varubeskrivning 'Dried Egg Yolk LPL-2L' återfinns exakt i fakturans varurad. Ingen semantisk tolkning eller specialregel krävs."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.95,
+      "confidence": 0.87,
       "certificate_value": "3267 kg net",
-      "invoice_value": "Total Net Weight 3.267",
+      "invoice_value": "3.267 Kg\nTotal Net Weight 3.267",
       "rules_applied": [
         {
           "rule_id": "4.4.2.2",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.4.3",
           "outcome": "MATCH"
         },
         {
@@ -133,20 +141,16 @@
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.4.4",
-          "outcome": "MATCH"
-        },
-        {
           "rule_id": "4.4.6",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger uttryckligen numeriskt värde, enhet och viktkategori: '3267 kg net'. Fakturan anger total net weight som '3.267' och bilden visar att detta avser kilogram. Efter tillåten normalisering av tusentalsavskiljare enligt 4.4.3.3 identifieras 3.267 som 3267. Uppgiften avser total nettovikt för fakturan och är därför verifierad enligt 4.4.4."
+      "motivation": "Certifikatet anger uttryckligen viktkategori och enhet: '3267 kg net'. Fakturan innehåller motsvarande numeriska värde som '3.267' i både varuraden ('3.267 Kg') och totalraden ('Total Net Weight 3.267'). Punkten behandlas här som tusentalsavskiljare enligt 4.4.3.3, vilket ger 3267. Därmed kan certifikatets numeriska värde identifieras i fakturan utan att använda undantagen 3A-3E."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.98,
+      "confidence": 0.99,
       "certificate_value": "Sweden",
       "invoice_value": "Country of origin: Sweden",
       "rules_applied": [
@@ -159,16 +163,16 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets ursprungsland 'Sweden' framgår uttryckligen i fakturan på sida 1 som 'Country of origin: Sweden'. Positiv verifiering föreligger utan tolkning."
+      "motivation": "Certifikatets ursprungsland 'Sweden' återfinns uttryckligen i fakturan som 'Country of origin: Sweden'."
     }
   },
   "overall_assessment": {
     "comparison_result": "IDENTICAL",
     "workflow_recommendation": "AUTO_APPROVAL_ELIGIBLE",
     "auto_approval_eligible": true,
-    "confidence": 0.97,
+    "confidence": 0.93,
     "critical_failures": [],
     "manual_review_triggers": [],
-    "decision_summary": "Samtliga tillämpliga kontrollpunkter kan verifieras mot fakturan enligt regelverket. Ingen LC-referens aktiverar undantag. Consignor, consignee, varubeskrivning, kvantitet och ursprungsland är verifierade med explicit stöd i dokumentparet."
+    "decision_summary": "Dokument A klassificeras som Certificate of Origin och Dokument B som faktura. LC-undantaget aktiveras inte. Dokumentparningen passerar 8.6 eftersom både consignor och consignee kan identifieras i fakturan. Samtliga tillämpliga kontrollpunkter är MATCH. Totalresultat: IDENTICAL."
   }
 }

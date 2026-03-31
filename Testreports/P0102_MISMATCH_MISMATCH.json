@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-03-25T00:00:00Z",
+    "verification_timestamp": "2026-03-31T00:00:00Z",
     "document_pair_id": null,
     "certificate_issue_date": "2026-02-26",
     "source_documents_received": 2
@@ -34,15 +34,11 @@
     "activated_rules": [
       {
         "rule_id": "4.1.0",
-        "rule_name": "Consignor found explicitly in invoice text/image"
+        "rule_name": "Consignor found explicitly in invoice text/logo/seller block"
       },
       {
-        "rule_id": "4.4.3.1",
-        "rule_name": "At least one quantity must be verifiable; explicit contradiction causes mismatch"
-      },
-      {
-        "rule_id": "4.5.5",
-        "rule_name": "Positive verification of origin required"
+        "rule_id": "4.4.3.2",
+        "rule_name": "Shipment quantity present in certificate box 6 and considered alongside quantity field"
       }
     ]
   },
@@ -50,9 +46,9 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.88,
-      "certificate_value": "FORPAC INTERNATIONAL AB, KUNGSPORTEN 4E, SE-427 50 BILLDAL, SWEDEN",
-      "invoice_value": "Seller: Forpac International AB, Kungsporten 4E, 427 50 Billdal, Sweden",
+      "confidence": 0.9,
+      "certificate_value": "FORPAC INTERNATIONAL AB\nKUNGSPORTEN 4E\nSE-427 50, BILLDAL\nSWEDEN",
+      "invoice_value": "Seller\nForpac International AB\nKungsporten 4E\n427 50 Billdal\nSweden\nand logo text: FORPAC international ab.",
       "rules_applied": [
         {
           "rule_id": "4.1.0",
@@ -61,116 +57,111 @@
         {
           "rule_id": "4.1.4",
           "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.1.5",
-          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor 'FORPAC INTERNATIONAL AB' med land 'SWEDEN' kan identifieras uttryckligen i fakturan på sidan 1 i seller-blocket och även i logotyptexten 'FORPAC international ab.'. Tillåten normalisering av versaler/gemener och företagsbeteckning användes. Land överensstämmer."
+      "motivation": "Certificate consignor 'FORPAC INTERNATIONAL AB' is explicitly identifiable in the invoice image in the seller block and in the page branding/logo. Country 'SWEDEN/Sweden' also matches after allowed normalization. This satisfies consignor verification without needing further assumptions."
     },
     "consignee": {
       "applicable": true,
-      "status": "MANUAL_REVIEW",
-      "confidence": 0.42,
-      "certificate_value": "NAPACK, 4 RUE NABEUL ZONE INDUSTRIELLE, MGHIRA II, 2082 FOUCHANA, BEN AROUS, Tunisia",
+      "status": "MISMATCH",
+      "confidence": 0.84,
+      "certificate_value": "NAPACK\n4 RUE NABEUL ZONE INDUSTRIELLE\nMGHIRA II\n2082 FOUCHANA\nBEN AROUS\nTunisia",
       "invoice_value": null,
       "rules_applied": [
         {
-          "rule_id": "4.2.0",
-          "outcome": "NOT_FOUND"
-        },
-        {
           "rule_id": "4.2.0.1",
-          "outcome": "NOT_FOUND"
+          "outcome": "MISMATCH"
         },
         {
-          "rule_id": "4.2.1.1",
-          "outcome": "NOT_FOUND"
+          "rule_id": "4.2.4",
+          "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Ingen maskinläsbar text kunde parsas från fakturan och den tillgängliga fakturabilden visar endast seller-, artikel- och betalningsuppgifter på sidan 1. Något buyer/ship to/consignee/delivery address-fält för 'NAPACK' kan inte säkert identifieras i det tillgängliga underlaget. På grund av bildbaserad/OCR-brist kan säker verifiering inte genomföras konservativt."
+      "motivation": "The certificate names consignee 'NAPACK' in Tunisia. On the available invoice page, no buyer, sold-to, ship-to, delivery address, notify party, importer, consignee, or other recipient field containing 'NAPACK' or 'Tunisia' is visible. Under rule 4.2, when the certificate consignee cannot be identified anywhere in the invoice, the result is MISMATCH."
     },
     "goods_description": {
       "applicable": true,
       "status": "MISMATCH",
-      "confidence": 0.97,
-      "certificate_value": "FLUTING & TESTLINER",
-      "invoice_value": "Natural Kraft Extensible 80 gsm; Natural Kraft Bag 49 gsm",
+      "confidence": 0.93,
+      "certificate_value": "TOTAL 73 REELS\nFLUTING & TESTLINER",
+      "invoice_value": "Natural Kraft Extensible 80 gsm\nNatural Kraft Bag 49 gsm",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "Priority 2 applied"
+          "outcome": "Priority 2 used because no article number was stated in the certificate"
         },
         {
           "rule_id": "4.3.3",
           "outcome": "MISMATCH"
         },
         {
+          "rule_id": "4.3.5",
+          "outcome": "NOT_APPLICABLE"
+        },
+        {
           "rule_id": "4.3.8",
           "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Certifikatet anger varubeskrivningen 'FLUTING & TESTLINER'. Fakturan visar på sidan 1 endast artikelbeskrivningarna 'Natural Kraft Extensible 80 gsm' och 'Natural Kraft Bag 49 gsm'. Ingen identitetsbärande huvudbeteckning från certifikatet kan identifieras exakt i fakturan efter tillåten normalisering. Ingen uttrycklig fakturahänvisning i varubeskrivningen enligt 4.3.5 finns i certifikatet."
+      "motivation": "The certificate goods description is 'FLUTING & TESTLINER'. The invoice goods descriptions visible on the scanned page are 'Natural Kraft Extensible 80 gsm' and 'Natural Kraft Bag 49 gsm'. The certificate's identity-bearing wording cannot be identified in the invoice without forbidden semantic reinterpretation. The general-reference rule in 4.3.5 is not available because the certificate does not provide the required explicit 'according to/as per/see attached invoice' wording together with invoice date. Therefore the goods description is a clear MISMATCH."
     },
     "quantity": {
       "applicable": true,
       "status": "MISMATCH",
-      "confidence": 0.96,
-      "certificate_value": "187,905 MT/GW",
+      "confidence": 0.95,
+      "certificate_value": "Box 7: 187,905 MT/GW\nBox 6: TOTAL 73 REELS",
       "invoice_value": "Total qty. 28 Reel 23,861 MT",
       "rules_applied": [
         {
           "rule_id": "4.4.2.2",
-          "outcome": "Certificate weight category present"
-        },
-        {
-          "rule_id": "4.4.3",
-          "outcome": "Invoice numeric value not identified"
+          "outcome": "Certificate weight expression is formally present with value, unit and GW"
         },
         {
           "rule_id": "4.4.3.1",
-          "outcome": "Explicit contradiction"
+          "outcome": "Multiple quantities considered"
+        },
+        {
+          "rule_id": "4.4.3.2",
+          "outcome": "Shipment quantity checked and contradicted"
         },
         {
           "rule_id": "4.4.6",
           "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Certifikatet anger uttryckligen gross weight '187,905 MT/GW'. Fakturan visar på sidan 1 total kvantitet '23,861 MT'. Det numeriska värdet 187,905 kan inte identifieras i fakturan. Dessutom föreligger en uttrycklig motsägelse eftersom fakturan anger ett annat explicit MT-värde för försändningen än certifikatet. Ingen tillämplig undantagsregel 3A-3E kan användas utifrån tillgängligt underlag."
+      "motivation": "The certificate states gross weight '187,905 MT/GW' and also shipment quantity 'TOTAL 73 REELS'. The invoice visibly states total quantity '28 Reel' and total weight/MT '23,861 MT'. Both visible invoice quantities contradict the certificate quantities; neither the weight nor the reel count matches within any permitted tolerance. No exception 3A-3E was needed or applicable because the invoice already contains explicit total figures that conflict with the certificate."
     },
     "origin": {
       "applicable": true,
       "status": "MISMATCH",
-      "confidence": 0.98,
+      "confidence": 0.82,
       "certificate_value": "FRANCE",
       "invoice_value": null,
       "rules_applied": [
         {
           "rule_id": "4.5.1",
-          "outcome": "NOT_FOUND"
+          "outcome": "Origin not identified in invoice"
         },
         {
           "rule_id": "4.5.5",
           "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Certifikatet anger ursprungsland 'FRANCE'. I den tillgängliga fakturabilden på sidan 1 kan ingen uttrycklig ursprungsangivelse såsom 'Country of Origin', 'Origin' eller 'Made in France' identifieras. Positiv verifiering krävs; avsaknad av explicit ursprungsangivelse i fakturan medför MISMATCH."
+      "motivation": "The certificate explicitly states country of origin 'FRANCE'. No explicit origin statement such as 'Country of Origin', 'Origin', 'Made in', or equivalent naming France is visible on the invoice page. Origin may not be inferred from seller address or other indirect information, so the certificate origin cannot be positively verified and the result is MISMATCH."
     }
   },
   "overall_assessment": {
     "comparison_result": "NOT_IDENTICAL",
     "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
     "auto_approval_eligible": false,
-    "confidence": 0.93,
+    "confidence": 0.92,
     "critical_failures": [
-      "Goods description mismatch: certificate 'FLUTING & TESTLINER' not identifiable in invoice descriptions.",
-      "Quantity mismatch: certificate 187,905 MT/GW contradicts invoice total 23,861 MT.",
-      "Origin mismatch: certificate origin FRANCE not explicitly stated in invoice."
+      "Consignee from the certificate could not be identified in the invoice.",
+      "Goods description in the certificate ('FLUTING & TESTLINER') does not match the invoice descriptions ('Natural Kraft Extensible 80 gsm' / 'Natural Kraft Bag 49 gsm').",
+      "Certificate quantity ('187,905 MT/GW' and 'TOTAL 73 REELS') contradicts invoice total quantity ('28 Reel 23,861 MT').",
+      "Certificate origin 'FRANCE' is not explicitly stated in the invoice."
     ],
-    "manual_review_triggers": [
-      "Consignee could not be safely verified due to image-based invoice/OCR limitation."
-    ],
-    "decision_summary": "Dokumentrollen kan identifieras som Certificate of Origin respektive faktura. LC-undantag är inte aktivt. Consignor kan verifieras som MATCH. Consignee kan inte säkert verifieras på grund av OCR-/bildbegränsning. Varubeskrivning, kvantitet och ursprungsland kan inte verifieras mot fakturan enligt regelverket; flera tydliga MISMATCH föreligger. Därför är totalresultatet NOT_IDENTICAL och manuell hantering krävs."
+    "manual_review_triggers": [],
+    "decision_summary": "Document A is a Certificate of Origin and Document B is a scanned invoice. Pairing is at least minimally valid because the certificate consignor FORPAC INTERNATIONAL AB is explicitly present in the invoice. However, several applicable control points are clear mismatches: consignee cannot be identified, goods description differs, quantity differs materially, and origin France is not explicitly stated in the invoice. Because at least one applicable control point is MISMATCH, the overall result must be NOT_IDENTICAL."
   }
 }

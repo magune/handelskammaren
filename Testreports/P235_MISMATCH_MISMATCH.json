@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-03-25T00:00:00Z",
+    "verification_timestamp": "2026-03-31T00:00:00Z",
     "document_pair_id": null,
     "certificate_issue_date": "2026-03-13",
     "source_documents_received": 2
@@ -20,7 +20,7 @@
     "document_b": {
       "label": "Document B",
       "assumed_role": "invoice",
-      "document_type": "Commercial Invoice"
+      "document_type": "Commercial Invoice (scanned image-based PDF, 5 pages)"
     }
   },
   "rule_activation": {
@@ -33,16 +33,20 @@
     "eu_origin_normalization_active": true,
     "activated_rules": [
       {
-        "rule_id": "4.3.5",
-        "rule_name": "Generell varubeskrivning med fakturareferens"
-      },
-      {
-        "rule_id": "4.5.4.1",
-        "rule_name": "EU-normalisering"
-      },
-      {
         "rule_id": "4.1.0",
-        "rule_name": "Koncernstruktur / consignor-sökning i alla fakturasidor"
+        "rule_name": "Consignor identified anywhere in invoice / group-structure search rule"
+      },
+      {
+        "rule_id": "4.2.1.1",
+        "rule_name": "Alternative consignee address field accepted"
+      },
+      {
+        "rule_id": "4.3.5",
+        "rule_name": "General goods description with invoice reference"
+      },
+      {
+        "rule_id": "4.5.4.2",
+        "rule_name": "EU versus specific EU member state normalization"
       }
     ]
   },
@@ -50,7 +54,7 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.9,
+      "confidence": 0.88,
       "certificate_value": "Vitrolife Sweden AB\nBox 9080\n40092, Göteborg\nSweden",
       "invoice_value": "Vitrolife Sweden AB, Box 9080, 400 92 Göteborg, SWEDEN",
       "rules_applied": [
@@ -67,19 +71,15 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor 'Vitrolife Sweden AB' återfinns uttryckligen i fakturan, bl.a. i footer/adressblock på fakturasidorna. Landet Sweden/SWEDEN överensstämmer efter tillåten normalisering. Matchning kan därför fastställas enligt koncernstruktur-/all-text-regeln utan behov av vidare sekventiell prövning."
+      "motivation": "Certifikatets consignor är 'Vitrolife Sweden AB ... Sweden'. Samma företagsnamn återfinns uttryckligen i fakturan i footer/adressblock på de skannade fakturasidorna som 'Vitrolife Sweden AB, Box 9080, 400 92 Göteborg, SWEDEN'. Detta uppfyller regel 4.1.0. Landet Sweden/SWEDEN överensstämmer enligt 4.1.4. Därför MATCH."
     },
     "consignee": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.88,
+      "confidence": 0.9,
       "certificate_value": "Medical Experts Services LLC\nMuscat-Ghala Hights-Muscat Pavilion\nOffice 134 - N. Mohamad +968 959093\n0 Muscat\nOman",
-      "invoice_value": "Delivery address:\nMedical Experts Services LLC\nMuscat-Ghala Hights-Muscat Pavilion\nOffice 134 - N. Mohamad +968 95909393\nOM-0 Muscat\nOman",
+      "invoice_value": "Delivery address\nMedical Experts Services LLC\nMuscat-Ghala Hights-Muscat Pavilion\nOffice 134 - N. Mohamad +968 95909393\nOM-0 Muscat\nOman",
       "rules_applied": [
-        {
-          "rule_id": "4.2.0.1",
-          "outcome": "MATCH"
-        },
         {
           "rule_id": "4.2.1.1",
           "outcome": "MATCH"
@@ -93,43 +93,43 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignee kan identifieras uttryckligen i fakturans Delivery address-fält. Företagsnamn och land Oman överensstämmer. Mindre skillnader i telefonnummer/postal formatering påverkar inte bedömningen."
+      "motivation": "Certifikatets consignee 'Medical Experts Services LLC ... Oman' kan identifieras i fakturan under fältet 'Delivery address'. Mottagaren behöver inte vara fakturans buyer/invoice address när den återfinns i annat adressfält enligt 4.2.1.1. Företagsnamnet matchar och landet Oman överensstämmer. Smärre skillnad i telefonnummer påverkar inte bedömningen. Därför MATCH."
     },
     "goods_description": {
       "applicable": true,
-      "status": "MATCH",
-      "confidence": 0.9,
-      "certificate_value": "2 kolli\nComponents for Culturing Media for In Vitro Fertilisation(IVF)\nSee attaced invoice 5007905 dated 20260313",
-      "invoice_value": "Invoice no -5007905; Shipping date 20260311; footer text page 5: 'Components for culturing media & medical instruments for In Vitro Fertilisation IVF'",
+      "status": "MISMATCH",
+      "confidence": 0.86,
+      "certificate_value": "Components for Culturing Media for In Vitro Fertilisation(IVF)\nSee attaced invoice 5007905 dated 20260313",
+      "invoice_value": "Invoice no -5007905\nShipping date 20260311\nComponents for culturing media & medical instruments for In Vitro Fertilisation IVF - Sterile saline solutions - Store at +2 to +8 degrees C",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "Prioritet 3 aktiverad"
+          "outcome": "Priority path applied"
+        },
+        {
+          "rule_id": "4.3.3.2",
+          "outcome": "Alternative partial word-sequence support observed but not sufficient for automatic verification"
         },
         {
           "rule_id": "4.3.5",
-          "outcome": "MATCH"
+          "outcome": "MISMATCH"
         },
         {
           "rule_id": "4.3.8",
-          "outcome": "MATCH"
+          "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Certifikatet innehåller generell varubeskrivning samt uttrycklig hänvisning till bifogad faktura: 'See attached invoice 5007905 dated 20260313'. Fakturan bär samma fakturanummer 5007905. Datumet i certifikatet avser den angivna fakturareferensen i certifikatet och den uttryckliga fakturahänvisningen uppfyller regeln för generell varubeskrivning med fakturareferens. Ingen artikelnummerstyrd kontroll krävdes eftersom certifikatet inte anger artikelnummer för varorna."
+      "motivation": "Certifikatet använder en generell varubeskrivning och en uttrycklig fakturahänvisning: 'See attaced invoice 5007905 dated 20260313'. Därmed aktiveras regel 4.3.5. Fakturan visar invoice number 5007905, men den synliga dateringsuppgiften i fakturafilen är 'Shipping date 20260311'; någon explicit fakturadatering 20260313 kan inte identifieras i fakturafilen. Enligt 4.3.5 ska referens och datum överensstämma; om datum saknas eller inte överensstämmer blir utfallet MISMATCH. Den mer allmänna texten i fakturans footer ger inte rätt att åsidosätta den misslyckade fakturahänvisningen."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.96,
+      "confidence": 0.93,
       "certificate_value": "43,8 kg GW",
       "invoice_value": "Gross weight (kg): 43,8",
       "rules_applied": [
         {
           "rule_id": "4.4.2.2",
-          "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.4.3",
           "outcome": "MATCH"
         },
         {
@@ -141,17 +141,25 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger uttryckligen numeriskt värde, enhet och viktkategori: '43,8 kg GW'. Fakturan anger uttryckligen 'Gross weight (kg): 43,8'. Numeriskt värde och enhet överensstämmer, och uppgiften avser hela försändelsen."
+      "motivation": "Certifikatet anger uttryckligen viktkategori och enhet: '43,8 kg GW'. Fakturan innehåller totalvikten 'Gross weight (kg): 43,8'. Det numeriska värdet 43,8 kan identifieras direkt och viktkategorin Gross/GW är förenlig enligt 4.4.4. Ingen otillåten summering eller omräkning behövs. Därför MATCH."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.86,
+      "confidence": 0.89,
       "certificate_value": "European Community",
       "invoice_value": "Country of Origin: Sweden",
       "rules_applied": [
         {
+          "rule_id": "4.5.2",
+          "outcome": "MATCH"
+        },
+        {
           "rule_id": "4.5.4.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.5.4.2",
           "outcome": "MATCH"
         },
         {
@@ -159,16 +167,18 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger 'European Community'. Fakturan anger uttryckligen 'Country of Origin: Sweden'. Sweden är en EU-medlemsstat vid relevant tidpunkt och verifierar därför certifikatets EU-/European Community-angivelse enligt EU-normaliseringsregeln. Inget icke-EU-ursprung har identifierats i fakturan."
+      "motivation": "Certifikatet anger ursprung 'European Community'. Fakturan anger uttryckligen 'Country of Origin: Sweden'. Sweden är en EU-medlemsstat och får därför verifiera certifikatets EU/European Community-angivelse enligt 4.5.4.1 och 4.5.4.2. Ingen icke-EU-ursprungsangivelse som motsäger certifikatet har identifierats. Därför MATCH."
     }
   },
   "overall_assessment": {
-    "comparison_result": "IDENTICAL",
-    "workflow_recommendation": "AUTO_APPROVAL_ELIGIBLE",
-    "auto_approval_eligible": true,
-    "confidence": 0.89,
-    "critical_failures": [],
+    "comparison_result": "NOT_IDENTICAL",
+    "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
+    "auto_approval_eligible": false,
+    "confidence": 0.88,
+    "critical_failures": [
+      "4.3.5: Certifikatet hänvisar till 'invoice 5007905 dated 20260313', men fakturafilen visar inte någon matchande fakturadatering 20260313; synlig dateringsuppgift är 20260311."
+    ],
     "manual_review_triggers": [],
-    "decision_summary": "Det identifierade dokumentparet består av ett Certificate of Origin och en Commercial Invoice med fakturanummer 5007905. Samtliga tillämpliga kontrollpunkter kan verifieras mot fakturan enligt regelverket. Fakturan är skannad/bildbaserad men texten i sidbilderna är tillräckligt läsbar för säker verifiering. Resultatet är IDENTICAL och ärendet är lämpligt för automatisk godkännandeprocess."
+    "decision_summary": "Dokumentparet kunde identifieras och parningssignalerna är starka: consignor finns i fakturan, consignee finns i delivery address, fakturanummer 5007905 finns i båda dokumenten, kvantitet 43,8 kg GW matchar och ursprung European Community verifieras av explicit ursprung Sweden i fakturan. Minst en tillämplig kontrollpunkt ger dock tydlig MISMATCH: varubeskrivningen är angiven genom uttrycklig fakturahänvisning med datum 20260313, och detta datum kan inte verifieras i den bifogade fakturafilen. Enligt 4.3.5 och konsistenskravet i steg 6 måste totalresultatet därför vara NOT_IDENTICAL."
   }
 }

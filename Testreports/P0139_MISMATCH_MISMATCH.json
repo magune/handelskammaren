@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-03-25T00:00:00Z",
+    "verification_timestamp": null,
     "document_pair_id": null,
     "certificate_issue_date": "2023-03-15",
     "source_documents_received": 2
@@ -15,12 +15,12 @@
     "document_a": {
       "label": "Document A",
       "assumed_role": "certificate",
-      "document_type": "Certificate of Origin"
+      "document_type": "Certificate of Origin / Ursprungscertifikat / ORIGINAL (1/1) / EUROPEAN UNION CERTIFICATE OF ORIGIN"
     },
     "document_b": {
       "label": "Document B",
       "assumed_role": "invoice",
-      "document_type": "Commercial Invoice"
+      "document_type": "Commercial Invoice / Invoice-Original"
     }
   },
   "rule_activation": {
@@ -34,11 +34,15 @@
     "activated_rules": [
       {
         "rule_id": "4.1.0",
-        "rule_name": "Consignor found explicitly in invoice text"
+        "rule_name": "Koncernstruktur / sökning av consignor i hela fakturan"
       },
       {
         "rule_id": "4.5.4.2",
-        "rule_name": "EU/member-state normalization relevant because invoice states European Community preferential origin and Sweden"
+        "rule_name": "EU-medlemsland normalisering"
+      },
+      {
+        "rule_id": "8.6",
+        "rule_name": "Obligatorisk parningsvalidering"
       }
     ]
   },
@@ -46,7 +50,7 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.98,
+      "confidence": 0.99,
       "certificate_value": "Gösta Jacobsson & Co AB\nStora Åvägen 21\nSE436 34, ASKIM\nSweden",
       "invoice_value": "Seller\nGösta Jacobsson & Co AB\nStora Åvägen 21\nSE 436 34 Askim\nSweden",
       "rules_applied": [
@@ -63,7 +67,7 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor-namn 'Gösta Jacobsson & Co AB' återfinns uttryckligen i fakturan, både i sidhuvud och i Seller-fältet. Landet Sweden överensstämmer. Skillnader i adressformatering påverkar inte bedömningen."
+      "motivation": "Certifikatets consignor 'Gösta Jacobsson & Co AB' återfinns uttryckligen i fakturan, både i Seller-fältet och i övrig företagsidentifiering. Landet 'Sweden' överensstämmer. Ingen motsägelse förekommer."
     },
     "consignee": {
       "applicable": true,
@@ -77,10 +81,6 @@
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.2.1",
-          "outcome": "MATCH"
-        },
-        {
           "rule_id": "4.2.3",
           "outcome": "MATCH"
         },
@@ -89,81 +89,69 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignee kan identifieras i fakturans Buyer-fält. Företagsnamn och land överensstämmer. Mindre skillnader i accenter och postnummerformat är tillåtna normaliseringar."
+      "motivation": "Certifikatets consignee 'Captravo Maroc' återfinns uttryckligen i fakturans Buyer-fält. Landet 'Maroc' överensstämmer. Mindre skillnader i adressformatering/diakritik påverkar inte eftersom företagsnamn och land matchar."
     },
     "goods_description": {
       "applicable": true,
-      "status": "MISMATCH",
-      "confidence": 0.95,
-      "certificate_value": "Swedish Redwood, 22 pkgs\nSwedish Whitewood, 7 pkgs",
-      "invoice_value": "Description of goods: Bois rouge et bois blanc VII eme\nLine items:\n47 x 150 mm blanc 3,6 m VII\n47 x 150 mm blanc 4,8 m VII\n47 x 150 mm rouge 3,6 m VII\n47 x 150 mm rouge 4,8 m VII\n40 x 145 mm rouge TP VII",
+      "status": "MANUAL_REVIEW",
+      "confidence": 0.61,
+      "certificate_value": "Total 29 pkgs, 122,116 m3\nSwedish Redwood, 22 pkgs\nSwedish Whitewood, 7 pkgs",
+      "invoice_value": "Description of goods\nBois rouge et bois blanc VII eme\nSpecification and prices:\n47 x 150 mm blanc 3,6 m VII\n47 x 150 mm blanc 4,8 m VII\n47 x 150 mm rouge 3,6 m VII\n47 x 150 mm rouge 4,8 m VII\n40 x 145 mm rouge TP VII",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "Priority 1 not applicable - no article numbers in certificate"
+          "outcome": "PRIORITY_1_NOT_APPLICABLE_NO_ARTICLE_NUMBERS"
         },
         {
           "rule_id": "4.3.3",
-          "outcome": "MISMATCH"
+          "outcome": "MANUAL_REVIEW"
         },
         {
-          "rule_id": "4.3.8",
-          "outcome": "MISMATCH"
+          "rule_id": "3",
+          "outcome": "MANUAL_REVIEW"
         }
       ],
-      "motivation": "Certifikatet anger varubeskrivningarna 'Swedish Redwood' och 'Swedish Whitewood'. Fakturan innehåller franska benämningar och dimensionsrader, men ingen exakt identifierbar identitetsbärande huvudbeteckning som motsvarar certifikatets ordsekvenser utan semantisk tolkning. Ingen uttrycklig fakturahänvisning enligt 4.3.5 finns i certifikatet."
+      "motivation": "Inga artikelnummer anges i certifikatet. Certifikatets identitetsbärande varubeteckningar är 'Swedish Redwood' och 'Swedish Whitewood'. Fakturan innehåller fransk text ('Bois rouge', 'bois blanc') och radbeskrivningar på franska. En säker automatisk verifiering skulle här kräva översättning/semantisk tolkning mellan språken, vilket inte uttryckligen stöds för automatisk MATCH. Eftersom språkskillnaden påverkar verifierbarheten ska kontrollpunkten sättas till MANUAL_REVIEW."
     },
     "quantity": {
       "applicable": true,
-      "status": "MATCH",
-      "confidence": 0.96,
+      "status": "MANUAL_REVIEW",
+      "confidence": 0.58,
       "certificate_value": "90,552 m3\n31,564 m3",
-      "invoice_value": "Total M3: 122,116\nLine items M3:\n6,219\n25,345\n26,398\n5,211\n58,943",
+      "invoice_value": "M3 per invoice line:\n6,219\n25,345\n26,398\n5,211\n58,943\nTotal M3: 122,116\nPackages (nos): 29",
       "rules_applied": [
         {
           "rule_id": "4.4.2",
-          "outcome": "MATCH - numeric values and unit m3 explicitly stated in certificate"
-        },
-        {
-          "rule_id": "4.4.5.1",
-          "outcome": "Exceptions evaluated sequentially"
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.4.5.2",
-          "outcome": "Not applicable - only one invoice"
+          "outcome": "NOT_APPLICABLE"
         },
         {
           "rule_id": "4.4.5.3",
-          "outcome": "Not applicable - no MT/KG conversion"
+          "outcome": "NOT_APPLICABLE"
         },
         {
           "rule_id": "4.4.5.4",
-          "outcome": "Not applicable - not piece weight"
+          "outcome": "NOT_APPLICABLE"
         },
         {
           "rule_id": "4.4.5.5",
-          "outcome": "MATCH - summation of multiple rows within same invoice"
-        },
-        {
-          "rule_id": "4.4.6",
-          "outcome": "MATCH"
+          "outcome": "MANUAL_REVIEW"
         }
       ],
-      "motivation": "Certifikatet anger två kvantiteter i m3: 90,552 och 31,564. Fakturan innehåller flera rader i samma enhet M3. Summering av rouge-raderna 26,398 + 5,211 + 58,943 = 90,552 och summering av blanc-raderna 6,219 + 25,345 = 31,564. Detta uppfyller undantag 3D för summering av flera rader inom samma faktura."
+      "motivation": "Certifikatet anger två volymkvantiteter i m3: 90,552 och 31,564. Fakturan innehåller endast radnivåkvantiteter och en totalvolym 122,116. En möjlig verifieringsväg vore att summera raderna i två grupper så att 6,219 + 25,345 = 31,564 och 26,398 + 5,211 + 58,943 = 90,552. Men för att göra detta måste fakturaraderna först kopplas till certifikatets två varugrupper ('Swedish Whitewood' respektive 'Swedish Redwood'), medan fakturan använder franska benämningar ('blanc'/'rouge'). Den kopplingen är inte uttrycklig nog för säker automatisk verifiering. Därför blir utfallet MANUAL_REVIEW, inte MATCH."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.93,
+      "confidence": 0.98,
       "certificate_value": "Sweden",
-      "invoice_value": "Country of origin\nSweden\nand declaration text: these products are of European Community preferential origin",
+      "invoice_value": "Country of origin\nSweden\nand\nthese products are of European Community preferential origin",
       "rules_applied": [
         {
           "rule_id": "4.5.1",
-          "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.5.4",
           "outcome": "MATCH"
         },
         {
@@ -175,18 +163,19 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger ursprungsland Sweden. Fakturan anger uttryckligen 'Country of origin Sweden'. Detta är en direkt verifierbar ursprungsangivelse."
+      "motivation": "Certifikatet anger ursprungsland 'Sweden'. Fakturan anger uttryckligen 'Country of origin Sweden'. Därutöver finns en ursprungsförklaring om 'European Community preferential origin', vilket inte motsäger Sweden utan är förenligt med att Sweden är EU-medlemsstat. Ursprungslandet kan därför verifieras uttryckligen i fakturan."
     }
   },
   "overall_assessment": {
-    "comparison_result": "NOT_IDENTICAL",
+    "comparison_result": "MANUAL_REVIEW",
     "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
     "auto_approval_eligible": false,
-    "confidence": 0.94,
-    "critical_failures": [
-      "Goods description mismatch under rule 4.3.3/4.3.8"
+    "confidence": 0.73,
+    "critical_failures": [],
+    "manual_review_triggers": [
+      "Varubeskrivningen kan inte verifieras säkert utan språk-/semantisk tolkning mellan engelska i certifikatet och franska i fakturan.",
+      "Kvantiteterna kan potentiellt matchas genom gruppering och summering av fakturarader, men den nödvändiga kopplingen mellan fakturaraderna och certifikatets varugrupper är inte uttrycklig nog för automatisk verifiering."
     ],
-    "manual_review_triggers": [],
-    "decision_summary": "Consignor, consignee, quantity and origin can be verified against the invoice, but goods description cannot be verified without prohibited semantic interpretation. Therefore the document pair is NOT_IDENTICAL and requires manual handling."
+    "decision_summary": "Dokumentparet är giltigt och consignor, consignee samt ursprungsland kan verifieras mot fakturan. Däremot kan varubeskrivning och de två m3-kvantiteterna inte verifieras säkert utan översättning/tolkning och gruppering av franska fakturarader mot engelska certifikatbeskrivningar. Därför är totalutfallet MANUAL_REVIEW."
   }
 }

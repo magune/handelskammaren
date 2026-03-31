@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-03-25T00:00:00Z",
+    "verification_timestamp": "2026-03-31T00:00:00Z",
     "document_pair_id": null,
     "certificate_issue_date": "2026-02-27",
     "source_documents_received": 2
@@ -33,147 +33,113 @@
     "eu_origin_normalization_active": false,
     "activated_rules": [
       {
-        "rule_id": "4.1.0",
-        "rule_name": "Consignor found explicitly in invoice text/header"
-      },
-      {
-        "rule_id": "4.2.1.1",
-        "rule_name": "Alternative recipient address field accepted"
-      },
-      {
-        "rule_id": "4.3.2",
-        "rule_name": "Controlled text matching for goods description"
-      },
-      {
-        "rule_id": "4.4.1",
-        "rule_name": "Quantity presence control main rule"
-      },
-      {
-        "rule_id": "4.5.1",
-        "rule_name": "Explicit origin identification required"
+        "rule_id": "8.5.2",
+        "rule_name": "Specific invoice reference in certificate not found in invoice file"
       }
     ]
   },
   "control_points": {
     "consignor": {
       "applicable": true,
-      "status": "MATCH",
-      "confidence": 0.98,
+      "status": "MANUAL_REVIEW",
+      "confidence": 0.9,
       "certificate_value": "Forest Papper AB\nÅsgatan 4\n41463, GÖTEBORG\nSWEDEN",
       "invoice_value": "FOREST PAPPER AB\nÅsgatan 4, 414 63 GÖTEBORG\nVAT no: SE556878121401",
       "rules_applied": [
         {
+          "rule_id": "8.5.2",
+          "outcome": "MANUAL_REVIEW_TRIGGERED"
+        },
+        {
           "rule_id": "4.1.0",
-          "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.1.4",
-          "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.1.5",
-          "outcome": "MATCH"
+          "outcome": "ATTACHED_INVOICE_SHOWS_CONSIGNOR_NAME"
         }
       ],
-      "motivation": "Certifikatets consignor 'Forest Papper AB' återfinns uttryckligen i fakturans sidhuvud som 'FOREST PAPPER AB' med adressrad 'Åsgatan 4, 414 63 GÖTEBORG' och land Sweden. Företagsnamn och land kan därför verifieras direkt utan otillåten tolkning."
+      "motivation": "The attached invoice explicitly contains the consignor name 'FOREST PAPPER AB' and Swedish address details, which would support identification against the certificate. However, the certificate explicitly refers to invoice '10.02.2026 / 111512', while the separate invoice file contains invoice number '111465' dated '2026-01-20'. Under rule 8.5.2, the referenced invoice is not present in the invoice file, so the intended comparison pair cannot be confirmed. This control point is therefore routed to MANUAL_REVIEW instead of being finalized against the non-referenced invoice."
     },
     "consignee": {
       "applicable": true,
-      "status": "MISMATCH",
-      "confidence": 0.99,
+      "status": "MANUAL_REVIEW",
+      "confidence": 0.92,
       "certificate_value": "KÜTAHYA ENTEGRE KAGIT SAN ve TIC.AS\nMERDIVENKÖY MAH. DIKYOL SK\nB BLOK NO 2 IC KAPI NO 9\nKADIKOY\nISTANBUL\nTürkiye",
       "invoice_value": "Buyer / Delivery address:\nOral Ofset Amb. San. Ve Tic. A.S\nÇapak Mah. 2561. Sok. No:23\nTorbali\nIZMIR\nTURKEY",
       "rules_applied": [
         {
-          "rule_id": "4.2.0",
-          "outcome": "NO_MATCH"
-        },
-        {
-          "rule_id": "4.2.0.1",
-          "outcome": "NO_MATCH"
-        },
-        {
-          "rule_id": "4.2.1.1",
-          "outcome": "NO_MATCH"
+          "rule_id": "8.5.2",
+          "outcome": "MANUAL_REVIEW_TRIGGERED"
         },
         {
           "rule_id": "4.2.4",
-          "outcome": "MISMATCH"
+          "outcome": "ATTACHED_INVOICE_SHOWS_DIFFERENT_RECIPIENT"
         }
       ],
-      "motivation": "Certifikatets consignee är 'KÜTAHYA ENTEGRE KAGIT SAN ve TIC.AS' i Istanbul, Türkiye. Fakturan anger endast 'Oral Ofset Amb. San. Ve Tic. A.S' som Buyer och Delivery address i Izmir, Turkey. Certifikatets företagsnamn kan inte identifieras uttryckligen i något mottagar- eller adressfält i fakturan. Detta är en annan juridisk part, vilket enligt reglerna medför MISMATCH."
+      "motivation": "On the attached invoice, the identifiable buyer and delivery address are for 'Oral Ofset Amb. San. Ve Tic. A.S', not for 'KÜTAHYA ENTEGRE KAGIT SAN ve TIC.AS'. Normally this would indicate a non-match on the attached invoice. However, the certificate refers to a different specific invoice number ('111512') than the invoice found in the invoice file ('111465'). Under rule 8.5.2, the referenced invoice cannot be found in the invoice file, so the consignee comparison cannot be concluded safely against the attached invoice and is sent to MANUAL_REVIEW."
     },
     "goods_description": {
       "applicable": true,
-      "status": "MISMATCH",
-      "confidence": 0.97,
-      "certificate_value": "126 Packages Kraftliner",
-      "invoice_value": "Description of Goods: TESTLINER & FLUTING",
+      "status": "MANUAL_REVIEW",
+      "confidence": 0.92,
+      "certificate_value": "126 Packages Kraftliner\nInvoice Date and Number : 10.02.2026 / 111512",
+      "invoice_value": "Description of Goods  TESTLINER & FLUTING",
       "rules_applied": [
         {
-          "rule_id": "4.3.2",
-          "outcome": "TEXT_MATCH_REQUIRED"
-        },
-        {
-          "rule_id": "4.3.3",
-          "outcome": "NO_MATCH"
+          "rule_id": "8.5.2",
+          "outcome": "MANUAL_REVIEW_TRIGGERED"
         },
         {
           "rule_id": "4.3.8",
-          "outcome": "MISMATCH"
+          "outcome": "ATTACHED_INVOICE_SHOWS_DIFFERENT_GOODS_TEXT"
         }
       ],
-      "motivation": "Certifikatet anger varubeskrivningen 'Kraftliner'. Fakturan anger 'TESTLINER & FLUTING'. Ingen artikelnummermatchning finns i certifikatet, så kontrollerad textmatchning ska användas. Den identitetsbärande huvudbeteckningen 'Kraftliner' kan inte identifieras exakt i fakturan utan semantisk tolkning. Därför MISMATCH."
+      "motivation": "The certificate goods text identifies '126 Packages Kraftliner' and references invoice '111512'. The attached invoice describes the goods as 'TESTLINER & FLUTING' and carries invoice number '111465'. Because the certificate points to a specific invoice that is not present in the invoice file, rule 8.5.2 prevents final goods verification against the attached invoice. The observed text difference is therefore not used as a final mismatch here; this control point is MANUAL_REVIEW due to invalid document pairing."
     },
     "quantity": {
       "applicable": true,
-      "status": "MISMATCH",
-      "confidence": 0.99,
+      "status": "MANUAL_REVIEW",
+      "confidence": 0.89,
       "certificate_value": "325987 KG",
-      "invoice_value": "Total Quantity 24,938",
+      "invoice_value": "Total Quantity 24,938\nLine quantities in MT",
       "rules_applied": [
         {
-          "rule_id": "4.4.2.2",
-          "outcome": "MISMATCH"
+          "rule_id": "8.5.2",
+          "outcome": "MANUAL_REVIEW_TRIGGERED"
         },
         {
-          "rule_id": "4.4.6",
-          "outcome": "MISMATCH"
+          "rule_id": "4.4.1",
+          "outcome": "ATTACHED_INVOICE_DOES_NOT_CONFIRM_CERTIFICATE_VALUE"
         }
       ],
-      "motivation": "Certifikatets kvantitetsfält anger '325987 KG' utan uttrycklig viktkategori (GW/NW/Gross/Net) i samma fält. Enligt 4.4.2.2 krävs att viktkategori framgår uttryckligen när kvantitet anges i viktenhet. Detta krav är inte uppfyllt. Dessutom kan det numeriska värdet 325987 inte identifieras i fakturan, som istället anger 'Total Quantity 24,938'."
+      "motivation": "The certificate quantity field shows '325987 KG'. The attached invoice shows 'Total Quantity 24,938' with line quantities stated in MT, and it is invoice '111465', not the certificate-referenced invoice '111512'. Because rule 8.5.2 requires MANUAL_REVIEW when the certificate's specific invoice reference is absent from the invoice file, the quantity comparison cannot be safely concluded against this attached invoice. Final quantity verification is therefore deferred to manual handling."
     },
     "origin": {
       "applicable": true,
-      "status": "MISMATCH",
-      "confidence": 0.99,
+      "status": "MANUAL_REVIEW",
+      "confidence": 0.93,
       "certificate_value": "Austria",
       "invoice_value": "Goods origin Germany",
       "rules_applied": [
         {
-          "rule_id": "4.5.1",
-          "outcome": "EXPLICIT_ORIGIN_FOUND"
+          "rule_id": "8.5.2",
+          "outcome": "MANUAL_REVIEW_TRIGGERED"
         },
         {
           "rule_id": "4.5.5",
-          "outcome": "MISMATCH"
+          "outcome": "ATTACHED_INVOICE_SHOWS_DIFFERENT_ORIGIN"
         }
       ],
-      "motivation": "Certifikatet anger ursprungsland 'Austria'. Fakturan anger uttryckligen 'Goods origin Germany'. Certifikatets ursprungsland kan därmed inte verifieras i fakturan och fakturan innehåller en motstridig ursprungsuppgift. Detta medför MISMATCH."
+      "motivation": "The certificate states origin 'Austria'. The attached invoice explicitly states 'Goods origin Germany'. Normally this would be a direct contradiction on the attached invoice. However, the certificate explicitly references invoice '111512' dated '10.02.2026', and that invoice is not present in the invoice file, which instead contains invoice '111465'. Under rule 8.5.2, the referenced invoice cannot be found, so origin verification cannot be finalized against the wrong invoice and must be sent to MANUAL_REVIEW."
     }
   },
   "overall_assessment": {
-    "comparison_result": "NOT_IDENTICAL",
+    "comparison_result": "MANUAL_REVIEW",
     "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
     "auto_approval_eligible": false,
-    "confidence": 0.99,
-    "critical_failures": [
-      "Consignee mismatch: certificate consignee not found in invoice",
-      "Goods description mismatch: 'Kraftliner' not explicitly identifiable in invoice text",
-      "Quantity mismatch: certificate weight lacks explicit GW/NW category and value not found in invoice",
-      "Origin mismatch: certificate states Austria while invoice states Germany"
+    "confidence": 0.95,
+    "critical_failures": [],
+    "manual_review_triggers": [
+      "Certificate references specific invoice number 111512 dated 10.02.2026, but the separate invoice file contains invoice number 111465 dated 2026-01-20.",
+      "Under rule 8.5.2, the referenced invoice cannot be found in the invoice file, so the intended document pair cannot be confirmed and verification may not fall back to another invoice."
     ],
-    "manual_review_triggers": [],
-    "decision_summary": "Dokumentrollen kan identifieras säkert som Certificate of Origin respektive invoice. Consignor kan verifieras mot fakturans sidhuvud. Däremot föreligger tydliga MISMATCH för consignee, varubeskrivning, kvantitet och ursprungsland enligt tillämpliga regler. Totalbedömningen är därför NOT_IDENTICAL och ärendet kräver manuell hantering."
+    "decision_summary": "MANUAL_REVIEW is required because the certificate explicitly refers to invoice 111512 dated 10.02.2026, while the separate invoice file contains invoice 111465 dated 2026-01-20. Rule 8.5.2 requires manual handling in this situation because the referenced invoice is not present in the invoice file. The attached invoice also shows different consignee, goods description, quantity and origin, but those observations were not used as final mismatches because the intended independent comparison invoice could not be established."
   }
 }

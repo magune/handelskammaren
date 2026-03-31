@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-03-25T00:00:00Z",
+    "verification_timestamp": "2026-03-31T00:00:00Z",
     "document_pair_id": null,
     "certificate_issue_date": "2026-02-27",
     "source_documents_received": 2
@@ -15,7 +15,7 @@
     "document_a": {
       "label": "Document A",
       "assumed_role": "certificate",
-      "document_type": "Certificate of Origin"
+      "document_type": "Certificate of Origin PDF with embedded invoice copy"
     },
     "document_b": {
       "label": "Document B",
@@ -33,16 +33,32 @@
     "eu_origin_normalization_active": true,
     "activated_rules": [
       {
+        "rule_id": "8.5.0",
+        "rule_name": "Filbaserad dokumentparning"
+      },
+      {
+        "rule_id": "8.6",
+        "rule_name": "Obligatorisk parningsvalidering"
+      },
+      {
         "rule_id": "4.1.0",
-        "rule_name": "Consignor found explicitly in invoice text across invoice document"
+        "rule_name": "Consignor uttryckligen identifierbar i fakturan"
+      },
+      {
+        "rule_id": "4.2.0",
+        "rule_name": "Consignee får motsvara Buyer/Bill to/Ship to"
+      },
+      {
+        "rule_id": "4.3.4",
+        "rule_name": "Geografiskt prefix påverkar inte produktidentiteten när huvudbeteckningen matchar"
       },
       {
         "rule_id": "4.5.4.1",
-        "rule_name": "EU/European Union origin normalization"
+        "rule_name": "EU-normalisering"
       },
       {
         "rule_id": "4.5.4.2",
-        "rule_name": "EU and EU member state interchangeability for origin"
+        "rule_name": "EU och specifikt medlemsland verifieras tillsammans när båda framgår uttryckligen"
       }
     ]
   },
@@ -51,8 +67,8 @@
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.98,
-      "certificate_value": "Gösta Jacobsson & Co AB, Sweden",
-      "invoice_value": "Seller: Gösta Jacobsson & Co AB, Sweden",
+      "certificate_value": "Gösta Jacobsson & Co AB\nStora Åvägen 21\nSE436 34, ASKIM\nSweden",
+      "invoice_value": "Seller\nGösta Jacobsson & Co AB\nStora Åvägen 21\nSE 436 34 Askim\nSweden",
       "rules_applied": [
         {
           "rule_id": "4.1.0",
@@ -67,17 +83,21 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor 'Gösta Jacobsson & Co AB' återfinns uttryckligen i fakturan som Seller och även i sidhuvud/footer. Landet Sweden överensstämmer. Matchning kunde fastställas utan otillåten tolkning."
+      "motivation": "Certifikatets consignor 'Gösta Jacobsson & Co AB' återfinns uttryckligen i fakturan som Seller och även i sidhuvud/footer. Landet 'Sweden' återfinns uttryckligen i fakturan. Endast mindre adressformateringsskillnader förekommer, vilket inte påverkar bedömningen enligt reglerna."
     },
     "consignee": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.97,
-      "certificate_value": "Ashdod Timber Trade Ltd, Israel",
-      "invoice_value": "Buyer: Ashdod Timber Trade Ltd, Israel",
+      "confidence": 0.98,
+      "certificate_value": "Ashdod Timber Trade Ltd\n45 Hamada St.\nNorthern Industry Zone\nP.O.B 4056\n77140 Ashdod\nIsrael",
+      "invoice_value": "Buyer\nAshdod Timber Trade Ltd\nCompany number: 511061566\n45 Hamada Street, Northern Industrial Zone\nAshdod 7752853\nIsrael",
       "rules_applied": [
         {
           "rule_id": "4.2.0",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.2.2",
           "outcome": "MATCH"
         },
         {
@@ -89,40 +109,48 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignee 'Ashdod Timber Trade Ltd' återfinns uttryckligen i fakturan som Buyer. Landet Israel överensstämmer. Skillnader i adressdetaljer påverkar inte bedömningen."
+      "motivation": "Certifikatets consignee återfinns uttryckligen i fakturan som Buyer med samma företagsnamn. Landet 'Israel' överensstämmer. Skillnaderna 'St.' kontra 'Street' och postnummerformat påverkar inte företags- och landmatchningen."
     },
     "goods_description": {
       "applicable": true,
-      "status": "MISMATCH",
-      "confidence": 0.96,
+      "status": "MATCH",
+      "confidence": 0.89,
       "certificate_value": "Swedish Whitewood, KD 18%, LP",
       "invoice_value": "Whitewood, KD18%, LP",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "TEXT_MATCH_REQUIRED"
+          "outcome": "Prioritet 2 användes; inga artikelnummer angavs i certifikatet"
         },
         {
           "rule_id": "4.3.3",
-          "outcome": "MISMATCH"
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.3.4",
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.3.8",
-          "outcome": "MISMATCH"
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Inga artikelnummer anges i certifikatet, därför ska kontrollerad textmatchning användas. Den identitetsbärande huvudbeteckningen i certifikatet innehåller ordet 'Swedish Whitewood'. Fakturan anger endast 'Whitewood, KD18%, LP'. Eftersom den exakta identitetsbärande huvudbeteckningen inte kan identifieras i fakturan utan att bortse från ordet 'Swedish', kan varubeskrivningen inte verifieras enligt strikt regel."
+      "motivation": "Ingen artikelnummerstyrd matchning var möjlig eftersom certifikatet inte anger artikelnummer. Den identitetsbärande huvudbeteckningen 'Whitewood, KD 18%, LP' kan identifieras i fakturan som 'Whitewood, KD18%, LP' efter tillåten normalisering av mellanslag. Prefixet 'Swedish' i certifikatet är ett geografiskt tillägg som inte ändrar produktidentiteten och stöds av separat verifierat ursprung Sweden."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.99,
+      "confidence": 0.96,
       "certificate_value": "273,233 m3",
       "invoice_value": "Total M3: 273,233",
       "rules_applied": [
         {
           "rule_id": "4.4.2",
           "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.4.2.1",
+          "outcome": "Kvantitetsfältet valdes som verifieringsgrund"
         },
         {
           "rule_id": "4.4.3",
@@ -133,15 +161,19 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger numeriskt värde och enhet i samma uppgift: '273,233 m3'. Samma numeriska värde kan identifieras uttryckligen i fakturan som 'Total M3: 273,233'. Enhetsskillnad behövde inte prövas eftersom fakturan också anger M3."
+      "motivation": "Certifikatets kvantitetsfält innehåller både numeriskt värde och enhet: '273,233 m3'. Fakturan innehåller uttryckligen samma numeriska värde i totalraden 'Total M3: 273,233'. Förekomsten av '74 packages' i certifikatets varubeskrivning ändrar inte verifieringsgrunden eftersom kontrollen enligt 4.4.2.1 ska utgå från fältet Quantity/Mängd."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.9,
-      "certificate_value": "European Union; Sweden",
-      "invoice_value": "Country of origin: Sweden; these products are of European Community preferential origin.",
+      "confidence": 0.93,
+      "certificate_value": "European Union\nSweden",
+      "invoice_value": "Country of origin\nSweden | these products are of European Community preferential origin.",
       "rules_applied": [
+        {
+          "rule_id": "4.5.1",
+          "outcome": "MATCH"
+        },
         {
           "rule_id": "4.5.4.1",
           "outcome": "MATCH"
@@ -155,18 +187,16 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger både 'European Union' och 'Sweden'. Fakturan anger uttryckligen 'Country of origin Sweden' samt texten 'these products are of European Community preferential origin'. Därmed kan både Sweden och EU/European Community identifieras uttryckligen i fakturan efter tillåten normalisering."
+      "motivation": "Certifikatet anger både 'European Union' och 'Sweden'. Fakturan anger uttryckligen 'Country of origin Sweden' och innehåller dessutom den uttryckliga ursprungstexten 'these products are of European Community preferential origin.' Därmed kan både det specifika EU-medlemslandet Sweden och EU-samlingsbegreppet identifieras i fakturan. Inga ytterligare icke-EU-ursprung förekommer."
     }
   },
   "overall_assessment": {
-    "comparison_result": "NOT_IDENTICAL",
-    "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
-    "auto_approval_eligible": false,
+    "comparison_result": "IDENTICAL",
+    "workflow_recommendation": "AUTO_APPROVAL_ELIGIBLE",
+    "auto_approval_eligible": true,
     "confidence": 0.95,
-    "critical_failures": [
-      "Goods description mismatch under rule 4.3.3: certificate text 'Swedish Whitewood, KD 18%, LP' cannot be explicitly identified in invoice text 'Whitewood, KD18%, LP' without disallowed interpretation."
-    ],
+    "critical_failures": [],
     "manual_review_triggers": [],
-    "decision_summary": "Consignor, consignee, quantity and origin could be verified against the invoice. Goods description could not be verified under the strict text-matching rules because the certificate states 'Swedish Whitewood, KD 18%, LP' while the invoice states 'Whitewood, KD18%, LP'. Therefore at least one applicable control point is MISMATCH and the overall result is NOT_IDENTICAL."
+    "decision_summary": "Det identifierade dokumentparet består av certifikatet i Document A sida 1 och den separata fakturan i Document B. Den inbäddade fakturakopian i certifikatfilen användes inte som verifieringsunderlag enligt 8.5.0. Samtliga tillämpliga kontrollpunkter (consignor, consignee, varubeskrivning, kvantitet och ursprungsland) verifieras som MATCH enligt tillåtna regler och normaliseringar. Resultatet är därför IDENTICAL och ärendet är lämpligt för automatisk godkännandeprocess."
   }
 }
