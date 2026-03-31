@@ -606,9 +606,22 @@ Villkor:
 4. Land överensstämmer enligt 4.1.4.
 5. Ingen annan juridisk part med liknande namnstruktur förekommer i fakturan.
 
-Denna regel ger ALDRIG MATCH — enbart MANUAL_REVIEW. Om villkoren inte uppfylls → MISMATCH.
+Denna regel ger ALDRIG MATCH — enbart MANUAL_REVIEW. Om villkoren inte uppfylls → pröva 4.1.3.7.1 innan MISMATCH fastställs.
 
 **VIKTIGT:** Denna regel gäller även för mottagare (consignee) enligt 4.2, med samma villkor och begränsningar.
+
+#### 4.1.3.7.1 Certifikatet innehåller divisionsord som saknas i fakturans företagsnamn – MANUAL_REVIEW
+
+Denna regel täcker den omvända situationen jämfört med 4.1.3.7: certifikatets företagsnamn innehåller ett extra ord som avser en division, segment eller verksamhetsgren, medan fakturan anger moderbolagets/registrerade bolagsnamn utan divisionsord.
+
+Villkor för MANUAL_REVIEW (alla måste vara uppfyllda):
+1. Fakturans företagsnamn utgör en EXAKT DELMÄNGD av certifikatets företagsnamn — dvs. alla ord i fakturans namn förekommer i certifikatets namn.
+2. Det extra ordet i certifikatets namn avser en division, segment, verksamhetsgren eller affärsområde (t.ex. "Construction", "Marine", "Forestry", "Healthcare", "Power", "Automotive") — INTE ett identitetsbärande distinktivt ord.
+3. Certifikatets namn delar ett DISTINKTIVT KÄRNORD med fakturans namn som är ovanligt nog att slumpmässig sammanfallning är utesluten.
+4. Land överensstämmer enligt 4.1.4.
+5. Ingen annan juridisk part med liknande namnstruktur förekommer i fakturan.
+
+Denna regel ger ALDRIG MATCH — enbart MANUAL_REVIEW. Om villkoren inte uppfylls → MISMATCH.
 
 #### 4.1.3.8 Enstaka teckenavvikelse i företagsnamn med bekräftande identifierare – MATCH
 Om företagsnamnet i certifikatet skiljer sig från fakturans företagsnamn med ENBART ett enstaka tecken (utelämnat, tillagt eller utbytt) och skillnaden sannolikt utgör ett skriv-, OCR- eller transkriptionsfel, får resultatet vara MATCH — förutsatt att SAMTLIGA villkor är uppfyllda:
@@ -964,8 +977,9 @@ När kvantitet i certifikatet anges i viktenhet ska viktkategori (GW/NW/Gross/Ne
 
 **Tillämpningsregler:**
 1. Om certifikatet anger FLERA viktvärden (t.ex. både GW och NW) och viktkategori saknas på det verifierade värdet → MISMATCH (tvetydigt vilket värde som avses).
-2. Om certifikatet anger ETT enda viktvärde utan viktkategori, och detta värde kan identifieras i fakturan → MANUAL_REVIEW (inte MISMATCH).
-3. Om viktvärde saknas helt i fakturan → MISMATCH.
+2. Om certifikatet anger ETT enda viktvärde utan viktkategori, och detta värde kan identifieras i fakturan, och fakturan INTE innehåller ett motstridigt alternativt viktvärde av annan kategori (t.ex. fakturan anger bara ett enda totalvärde) → MATCH.
+3. Om certifikatet anger ETT enda viktvärde utan viktkategori, och detta värde kan identifieras i fakturan, men fakturan OCKSÅ anger ett annat viktvärde under en annan kategori (t.ex. fakturan anger GW 217 MT och NW 205 MT men certifikatet anger bara 217 MT utan kategori) → MANUAL_REVIEW.
+4. Om viktvärde saknas helt i fakturan → MISMATCH.
 
 **Viktkategori får INTE fastställas genom tolkning mot fakturan.**
 
@@ -1133,7 +1147,15 @@ Omräkning får ENDAST ske när:
 - viktkategori är verifierbar ELLER certifikatet har ett enda viktvärde utan GW/NW-kategori (i vilket fall 4.4.2.2 punkt 2 tillämpas och resultatet blir MANUAL_REVIEW efter omräkning, inte MISMATCH).
 
 **Tillämpning vid saknad viktkategori i certifikatet:**
-Om certifikatet anger ett enda viktvärde i KG utan GW/NW-kategori och fakturan anger motsvarande värde i MT (eller vice versa), och omräkning 1 MT = 1000 KG ger matchande värde → MANUAL_REVIEW (inte MISMATCH). Logiken: värdet matchar men kategoritvetydigheten kvarstår.
+Om certifikatet anger ett enda viktvärde i KG utan GW/NW-kategori och fakturan anger motsvarande värde i MT (eller vice versa), och omräkning 1 MT = 1000 KG ger matchande värde: tillämpa 4.4.2.2 punkt 2 — om fakturan inte innehåller ett motstridigt alternativt viktvärde → MATCH. Om fakturan anger ytterligare ett viktvärde av annan kategori → MANUAL_REVIEW.
+
+**Normalisering av decimalnotation vid MT-omräkning (avsnitt 4.4.5.3.1):**
+Vid omräkning mellan MT och KG får systemet normalisera notationen för det numeriska värdet i fakturan om SAMTLIGA villkor är uppfyllda:
+1. Fakturans värde är skrivet med komma som decimalseparator (t.ex. "46,74 MT" avser 46.74 MT, inte 46 740 MT).
+2. Den alternativa tolkningen (komma som tusentalsavskiljare) ger ett numeriskt värde som är orimligt i kontexten (t.ex. ett värde om tiotusentals metriska ton för ett normalt godstransportdokument).
+3. Tolkningsresultatet med komma-som-decimal ger ett exakt matchande värde efter 3B-omräkning.
+
+Om båda tolkningarna ger rimliga värden i kontexten → MANUAL_REVIEW (inte MATCH).
 
 Tolerans: ±0,1 % eller ±0,001 av angiven enhet, tillämpas EFTER genomförd omräkning.
 Om avrundning eller decimalformat medför osäkerhet → MISMATCH.
@@ -1295,9 +1317,14 @@ Om certifikatets utfärdandedatum avser period då UK var medlem, inkludera UK.
 
 EU ska betraktas som en samlingsbeteckning. Varje EU-medlemsstat som förekommer som ursprung i fakturan anses omfattas.
 
+**Asterisk eller okänt suffix på ursprungskod – MANUAL_REVIEW:**
+Om fakturan anger ett ursprungsland som ett landskod med ett okänt suffix eller kvalificeringstecken (t.ex. "DE*", "CH*", "CN**") och dokumentet INTE innehåller en förklaring eller legend som definierar vad suffixet innebär, ska ursprunget INTE automatiskt tolkas som ett motstridigt ursprung. I stället ska resultatet vara MANUAL_REVIEW för ursprungskontrollpunkten, eftersom suffixet kan avse preferensursprung, REX-registrering, GSP-förmånskod eller annan kvalificering som kräver mänsklig bedömning.
+- Om suffixet FÖRKLARAS i dokumentet (t.ex. en fotnot eller legend definierar "*" = "preferential origin") ska den givna förklaringen användas vid tolkning.
+- Om suffixet är OFÖRKLARAT och oskiljaktigt förbundet med en landskod som annars vore ett icke-EU-ursprung → MANUAL_REVIEW (inte MISMATCH).
+
 **KRITISK REGEL – Icke-EU-ursprung i fakturan:**
 Om fakturan även innehåller ursprungsländer UTANFÖR EU får dessa förekomma ENBART om dessa ursprungsländer OCKSÅ anges uttryckligen i certifikatets URSPRUNGSFÄLT (Country of Origin / box 3).
-- Om fakturan anger ett ursprungsland utanför EU (t.ex. via "Made in [land]", "Origin: [land]" eller motsvarande) och detta land INTE uttryckligen anges i certifikatets ursprungsfält → MISMATCH.
+- Om fakturan anger ett ursprungsland utanför EU (t.ex. via "Made in [land]", "Origin: [land]" eller motsvarande) OCH ursprungskoden saknar okänt/oförklarat suffix, och detta land INTE uttryckligen anges i certifikatets ursprungsfält → MISMATCH.
 - Det räcker INTE att certifikatet anger "EU" i ursprungsfältet — varje icke-EU-ursprungsland i fakturan som inte också anges uttryckligen i certifikatets ursprungsfält utgör en MOTSÄGELSE mot certifikatets ursprungsangivelse.
 - Denna regel gäller oavsett om fakturan ÄVEN innehåller EU-ursprung för andra artiklar.
 - Respektive ursprungsland ska entydigt framgå i fakturan per artikel.
@@ -1313,23 +1340,23 @@ Regeln om att "ytterligare information i fakturan inte i sig medför MISMATCH" (
 - Ytterligare EU-medlemsländer i fakturan som inte specifikt nämns i certifikatet ska INTE i sig medföra MISMATCH när certifikatet anger "EU" som samlingsbegrepp.
 
 **Särskild regel – Ytterligare EU-medlemsländer i fakturan vid namngivna länder i certifikatet (avsnitt 4.5.4.1.1):**
-När certifikatet uttryckligen namnger specifika EU-medlemsländer (t.ex. "European Community; Sweden") och fakturan innehåller ytterligare ursprungsländer som ALLA är EU-medlemsstater (t.ex. fakturan anger "Sweden" för vissa artiklar och "Finland" för andra), ska resultatet vara MANUAL_REVIEW — inte MISMATCH — förutsatt att:
-1. Samtliga ursprungsländer i fakturan är EU-medlemsstater.
+När certifikatet uttryckligen namnger specifika EU-medlemsländer (t.ex. "European Community; Sweden") och fakturan innehåller ytterligare ursprungsländer som ALLA är EU-medlemsstater (t.ex. fakturan anger "Sweden" för vissa artiklar och "Finland" för andra), ska resultatet vara MATCH — förutsatt att SAMTLIGA villkor är uppfyllda:
+1. Samtliga ursprungsländer som certifikatet anger kan identifieras i fakturan.
 2. Certifikatet anger "European Community", "European Union" eller "EU" som (del av) ursprung.
-3. Inga icke-EU-ursprungsländer förekommer i fakturan som saknas i certifikatet.
-
-Motivering: Certifikatet kan ha valt att namnge det primära ursprungslandet vid sidan av EU-samlingsbegreppet, medan fakturan har mer detaljerad per-artikel-information med fler EU-länder. Eftersom samtliga länder är EU-medlemmar utgör detta inte nödvändigtvis en motsägelse, men kräver manuell bedömning.
+3. De extra länderna i fakturan är ALLA EU-medlemsstater.
+4. Inga icke-EU-ursprungsländer förekommer i fakturan som saknas i certifikatet.
 
 Om fakturan innehåller icke-EU-ursprungsländer som inte anges i certifikatet → MISMATCH enligt 4.5.4.1 (oförändrat).
+Om det råder osäkerhet om ett lands EU-status vid certifikatets utfärdandedatum → MANUAL_REVIEW.
 
 **Utvidgad tillämpning – Blandade EU/icke-EU-listor (avsnitt 4.5.4.1.2):**
 Regel 4.5.4.1.1 ska även tillämpas när certifikatets ursprungslista innehåller en BLANDNING av EU- och icke-EU-länder, förutsatt att:
 1. Samtliga ursprungsländer som certifikatet anger kan identifieras i fakturan (inklusive eventuella icke-EU-länder).
 2. De EXTRA länderna i fakturan (dvs länder som finns i fakturan men INTE i certifikatet) är ALLA EU-medlemsstater.
 
-Exempel: Certifikatet anger "FR, DK, SE, LT, SK, IT, PL, TW". Fakturan anger "FR, DK, SE, DE, LT, SK, IT, PL, TW". Här är DE det enda extra landet, och DE är EU-medlem. Samtliga certifikatländer finns i fakturan. Resultatet ska vara MANUAL_REVIEW — inte MISMATCH.
+Exempel: Certifikatet anger "FR, DK, SE, LT, SK, IT, PL, TW". Fakturan anger "FR, DK, SE, DE, LT, SK, IT, PL, TW". Här är DE det enda extra landet, och DE är EU-medlem. Samtliga certifikatländer finns i fakturan. Resultatet ska vara MATCH.
 
-Motivering: Att fakturan har mer detaljerad per-artikel-information med ytterligare EU-länder utgör inte nödvändigtvis en motsägelse, men kräver manuell bedömning. Icke-EU-länderna (t.ex. TW) överensstämmer mellan dokumenten och utgör inget hinder.
+Om fakturan introducerar ett icke-EU-ursprungsland som inte finns i certifikatet → MISMATCH (oförändrat).
 
 **KRITISK AVGRÄNSNING – 4.5.4.1.1 gäller INTE vid fullständig bekräftelse:**
 Om certifikatet anger t.ex. "EU Sweden" och fakturan bekräftar BÅDE "European Union" (eller "EU preferential origin") OCH "Sweden" utan att introducera ytterligare EU-länder, är detta en FULLSTÄNDIG BEKRÄFTELSE — inte en situation som kräver 4.5.4.1.1. Resultatet ska vara MATCH via 4.5.4.1 och 4.5.4.2.

@@ -1,0 +1,181 @@
+{
+  "schema_version": "3.0",
+  "metadata": {
+    "verification_timestamp": "2026-03-31",
+    "document_pair_id": null,
+    "certificate_issue_date": "2026-02-26",
+    "source_documents_received": 2
+  },
+  "task": {
+    "task_type": "customs_document_pair_verification",
+    "comparison_mode": "certificate_vs_invoice",
+    "strictness": "conservative"
+  },
+  "documents": {
+    "document_a": {
+      "label": "Document A",
+      "assumed_role": "certificate",
+      "document_type": "Certificate of Origin"
+    },
+    "document_b": {
+      "label": "Document B",
+      "assumed_role": "invoice",
+      "document_type": "Commercial Invoice"
+    }
+  },
+  "rule_activation": {
+    "lc_exception_active": false,
+    "lc_number_found": null,
+    "general_goods_description_with_invoice_reference_active": true,
+    "mixed_origins_rule_active": false,
+    "to_order_rule_active": false,
+    "quantity_exception_applied": "3B",
+    "eu_origin_normalization_active": false,
+    "activated_rules": [
+      {
+        "rule_id": "8.5.0",
+        "rule_name": "Filbaserad dokumentparning"
+      },
+      {
+        "rule_id": "8.6",
+        "rule_name": "Obligatorisk parningsvalidering"
+      },
+      {
+        "rule_id": "4.1.3.9",
+        "rule_name": "Consignor som fakturautställare utan explicit säljaradress – MANUAL_REVIEW"
+      },
+      {
+        "rule_id": "4.3.5",
+        "rule_name": "Varubeskrivning med uttrycklig fakturareferens"
+      },
+      {
+        "rule_id": "4.4.5.3",
+        "rule_name": "Enhetsomräkning MT ↔ KG"
+      }
+    ]
+  },
+  "control_points": {
+    "consignor": {
+      "applicable": true,
+      "status": "MANUAL_REVIEW",
+      "confidence": 0.68,
+      "certificate_value": "WisePartners AB\nViktor Rydbergsgatan 20\nSE-412 56, Gothenburg\nSweden",
+      "invoice_value": "WisePartners AB\nViktor Rydbergsgatan 20\nSE-412 56 Gothenburg\nVat No. SE556753522301",
+      "rules_applied": [
+        {
+          "rule_id": "4.1.0",
+          "outcome": "company_name_explicitly_found_in_invoice"
+        },
+        {
+          "rule_id": "4.1.3.9",
+          "outcome": "manual_review_triggered"
+        },
+        {
+          "rule_id": "4.1.4",
+          "outcome": "seller_country_not_explicitly_stated"
+        }
+      ],
+      "motivation": "Certifikatets consignor \"WisePartners AB\" kan identifieras uttryckligen i fakturan, både i branding och i footer med adressen \"WisePartners AB / Viktor Rydbergsgatan 20 / SE-412 56 Gothenburg\". Fakturan saknar dock ett explicit säljar-/issuer-land för denna part; landet framgår endast indirekt genom svensk adressnotation och VAT-prefix \"SE\". Enligt regeln för consignor som fakturautställare utan explicit säljaradress leder detta till MANUAL_REVIEW, inte MATCH."
+    },
+    "consignee": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.97,
+      "certificate_value": "AL BAYAN PACKAGING INDUSTRY LLC\nPO BOX 1985, WAREHOUSE C-7\nNEW INDUSTRIAL AREA\nUMM AL THOUB, UMM AL QUWAIN\nUNITED ARAB EMIRATES",
+      "invoice_value": "Al Bayan Packaging Industry LLC\nPO Box 1985\nWarehouse C-7, New Industrial Area\nUmm Al Thoub, Umm Al Quwain\nUnited Arab Emirates",
+      "rules_applied": [
+        {
+          "rule_id": "4.2.0",
+          "outcome": "matched_to_invoice_addressee"
+        },
+        {
+          "rule_id": "4.2.2.1",
+          "outcome": "normalization_applied"
+        },
+        {
+          "rule_id": "4.2.3",
+          "outcome": "country_match"
+        }
+      ],
+      "motivation": "Mottagaren i certifikatet kan identifieras direkt i fakturans adressblock överst på sidan. Företagsnamn och land överensstämmer efter tillåten normalisering av versaler/gemener och formatering. Ingen motstridig mottagaruppgift har identifierats."
+    },
+    "goods_description": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.96,
+      "certificate_value": "Kraftliner\nas per commercial invoice 20104403 dd 10.02.2026",
+      "invoice_value": "Kraftliner\nCOMMERCIAL INVOICE. NO. 20104403 10.02.2026",
+      "rules_applied": [
+        {
+          "rule_id": "4.3.3",
+          "outcome": "exact_text_match"
+        },
+        {
+          "rule_id": "4.3.5",
+          "outcome": "invoice_reference_and_date_match"
+        }
+      ],
+      "motivation": "Den identitetsbärande huvudbeteckningen \"Kraftliner\" förekommer uttryckligen i både certifikatet och fakturan. Certifikatet innehåller dessutom en uttrycklig fakturahänvisning \"as per commercial invoice 20104403 dd 10.02.2026\", och fakturans nummer och datum överensstämmer med fakturan \"20104403 10.02.2026\". Varubeskrivningen är därmed verifierad."
+    },
+    "quantity": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.88,
+      "certificate_value": "175940 kg net",
+      "invoice_value": "Net Weight mt\n175,940",
+      "rules_applied": [
+        {
+          "rule_id": "4.4.2.1",
+          "outcome": "box_7_quantity_selected"
+        },
+        {
+          "rule_id": "4.4.5.1",
+          "outcome": "exceptions_checked_in_order"
+        },
+        {
+          "rule_id": "4.4.5.3",
+          "outcome": "mt_to_kg_conversion_applied"
+        }
+      ],
+      "motivation": "Den verifieringsgrundande kvantiteten i certifikatets box 7 är \"175940 kg net\". Fakturan anger uttryckligen \"Net Weight mt 175,940\" för samma vara. Efter tillåten enhetsomräkning enligt 1 MT = 1000 KG motsvarar 175,940 MT 175940 KG, och viktkategorin net överensstämmer. Kvantiteten är därför verifierad."
+    },
+    "origin": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.98,
+      "certificate_value": "Australia",
+      "invoice_value": "and that the goods are of Australia origin.",
+      "rules_applied": [
+        {
+          "rule_id": "4.5.1",
+          "outcome": "explicit_origin_statement_found"
+        },
+        {
+          "rule_id": "4.5.5",
+          "outcome": "country_match"
+        }
+      ],
+      "motivation": "Certifikatet anger ursprungslandet som \"Australia\". Fakturan innehåller en explicit ursprungsangivelse: \"the goods are of Australia origin\". Ursprungslandet kan därför uttryckligen identifieras i fakturan."
+    }
+  },
+  "overall_assessment": {
+    "comparison_result": "MANUAL_REVIEW",
+    "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
+    "auto_approval_eligible": false,
+    "confidence": 0.79,
+    "critical_failures": [],
+    "manual_review_triggers": [
+      "Consignor-namnet kan identifieras i fakturan, men fakturan saknar explicit säljarland för WisePartners AB och ger endast indirekta svenska landindikatorer."
+    ],
+    "decision_summary": "Dokumentparet är korrekt parat via fakturanummer 20104403 och flera huvuduppgifter matchar. Consignee, varubeskrivning, kvantitet och ursprungsland kan verifieras mot fakturan. Avsändaren WisePartners AB kan identifieras i fakturan, men säljarens land framgår inte uttryckligen i ett dedikerat issuer-block, vilket kräver manuell granskning.",
+    "human_explanation": "Avsändaren WisePartners AB kan identifieras i fakturan, men fakturan anger inte uttryckligen säljarens land utan bara svenska adress- och VAT-indikationer. Mottagare, varubeskrivning, kvantitet och ursprungsland stämmer mot fakturan. Därför krävs manuell granskning."
+  },
+  "_meta": {
+    "tested_at": "2026-03-31T16:56:22.739285+00:00",
+    "prompt_hash": "a489bae7fc43",
+    "pair": "P0165_MATCH",
+    "expected": "IDENTICAL",
+    "actual": "MANUAL_REVIEW",
+    "status": "REVIEW"
+  }
+}

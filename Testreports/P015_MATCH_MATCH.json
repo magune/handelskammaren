@@ -1,0 +1,151 @@
+{
+  "schema_version": "3.0",
+  "metadata": {
+    "verification_timestamp": "2026-03-31T00:00:00Z",
+    "document_pair_id": null,
+    "certificate_issue_date": "2026-01-26",
+    "source_documents_received": 2
+  },
+  "task": {
+    "task_type": "customs_document_pair_verification",
+    "comparison_mode": "certificate_vs_invoice",
+    "strictness": "conservative"
+  },
+  "documents": {
+    "document_a": {
+      "label": "Document A",
+      "assumed_role": "certificate",
+      "document_type": "Certificate of Origin"
+    },
+    "document_b": {
+      "label": "Document B",
+      "assumed_role": "invoice",
+      "document_type": "Invoice"
+    }
+  },
+  "rule_activation": {
+    "lc_exception_active": true,
+    "lc_number_found": "09990LCA2501298",
+    "general_goods_description_with_invoice_reference_active": false,
+    "mixed_origins_rule_active": true,
+    "to_order_rule_active": true,
+    "quantity_exception_applied": null,
+    "eu_origin_normalization_active": false,
+    "activated_rules": [
+      {
+        "rule_id": "2.2",
+        "rule_name": "LC-undantag aktiverat via separat certifikattext \"LC NUMBER 09990LCA2501298\"."
+      },
+      {
+        "rule_id": "4.5.3",
+        "rule_name": "Flera ursprungsländer anges i certifikatet: HU, IT, CN."
+      },
+      {
+        "rule_id": "4.2.2.2",
+        "rule_name": "Mottagarfältet innehåller \"TO ORDER OF\"."
+      }
+    ]
+  },
+  "control_points": {
+    "consignor": {
+      "applicable": false,
+      "status": "NOT_APPLICABLE",
+      "confidence": 0.99,
+      "certificate_value": null,
+      "invoice_value": null,
+      "rules_applied": [
+        {
+          "rule_id": "2.2",
+          "outcome": "LC-undantag aktivt; avsändare verifieras inte."
+        }
+      ],
+      "motivation": "Certifikatet innehåller den separata LC-hänvisningen \"LC NUMBER 09990LCA2501298\" i remarks-fältet. Enligt LC-undantaget ska endast ursprungsland verifieras, därför är denna kontrollpunkt inte tillämplig."
+    },
+    "consignee": {
+      "applicable": false,
+      "status": "NOT_APPLICABLE",
+      "confidence": 0.99,
+      "certificate_value": null,
+      "invoice_value": null,
+      "rules_applied": [
+        {
+          "rule_id": "2.2",
+          "outcome": "LC-undantag aktivt; mottagare verifieras inte."
+        }
+      ],
+      "motivation": "Certifikatet innehåller den separata LC-hänvisningen \"LC NUMBER 09990LCA2501298\" i remarks-fältet. Enligt LC-undantaget ska endast ursprungsland verifieras, därför är denna kontrollpunkt inte tillämplig."
+    },
+    "goods_description": {
+      "applicable": false,
+      "status": "NOT_APPLICABLE",
+      "confidence": 0.99,
+      "certificate_value": null,
+      "invoice_value": null,
+      "rules_applied": [
+        {
+          "rule_id": "2.2",
+          "outcome": "LC-undantag aktivt; varubeskrivning verifieras inte."
+        }
+      ],
+      "motivation": "LC-undantaget har absolut företräde eftersom certifikatet uttryckligen anger \"LC NUMBER 09990LCA2501298\" som separat LC-fält. Därför ska varubeskrivning inte verifieras i detta ärende."
+    },
+    "quantity": {
+      "applicable": false,
+      "status": "NOT_APPLICABLE",
+      "confidence": 0.99,
+      "certificate_value": null,
+      "invoice_value": null,
+      "rules_applied": [
+        {
+          "rule_id": "2.2",
+          "outcome": "LC-undantag aktivt; kvantitet verifieras inte."
+        }
+      ],
+      "motivation": "LC-undantaget har aktiverats genom den separata certifikattexten \"LC NUMBER 09990LCA2501298\". Enligt detta undantag ska kvantitet inte verifieras, endast ursprungsland."
+    },
+    "origin": {
+      "applicable": true,
+      "status": "MANUAL_REVIEW",
+      "confidence": 0.9,
+      "certificate_value": "HU, IT, CN",
+      "invoice_value": "Origins: CN, IT, HU, HU, HU, HU, CN, CN",
+      "rules_applied": [
+        {
+          "rule_id": "2.2",
+          "outcome": "LC-undantag aktiverat via den exakta separata certifikattexten \"LC NUMBER 09990LCA2501298\"; endast ursprungsland får verifieras."
+        },
+        {
+          "rule_id": "4.5.4",
+          "outcome": "Landskoderna HU, IT och CN är identifierbara som länder efter tillåten normalisering."
+        },
+        {
+          "rule_id": "2.2",
+          "outcome": "Vid LC måste varje ursprungsland kunna identifieras i ett explicit origin-fält i fakturan; radnivåkolumnen \"Origins\" är inte tillräcklig."
+        }
+      ],
+      "motivation": "Certifikatet anger ursprungsland \"HU, IT, CN\" och innehåller den exakta separata LC-hänvisningen \"LC NUMBER 09990LCA2501298\", vilket aktiverar LC-undantaget. Fakturan innehåller visserligen koderna CN, IT och HU i artikelkolumnen \"Origins\" på radnivå, men någon separat dedikerad ursprungsangivelse såsom \"Country of Origin\", \"Origin\" eller \"Made in\" har inte identifierats. Under LC-regeln räcker inte en radnivåkolumn för automatisk verifiering av ursprung, därför blir resultatet MANUAL_REVIEW och inte MATCH."
+    }
+  },
+  "overall_assessment": {
+    "comparison_result": "MANUAL_REVIEW",
+    "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
+    "auto_approval_eligible": false,
+    "confidence": 0.91,
+    "critical_failures": [],
+    "manual_review_triggers": [
+      "LC-undantaget aktiverades av den separata certifikattexten \"LC NUMBER 09990LCA2501298\".",
+      "Fakturan saknar ett dedikerat explicit ursprungsfält.",
+      "Ursprungskoderna HU, IT och CN förekommer endast i radnivåkolumnen \"Origins\", vilket inte räcker för automatisk LC-verifiering."
+    ],
+    "decision_summary": "Dokumentparet är konsekvent parat genom exakt matchande fakturanummer 8392007846 och tydlig förekomst av Ericsson AB i fakturan. Eftersom certifikatet uttryckligen innehåller den separata LC-referensen \"LC NUMBER 09990LCA2501298\" tillämpas LC-undantaget och endast ursprungsland ska verifieras. Ursprungen HU, IT och CN kan bara hittas i fakturans radnivåkolumn \"Origins\" och inte i ett dedikerat ursprungsfält, vilket kräver manuell granskning.",
+    "human_explanation": "Certifikatet innehåller en uttrycklig LC-hänvisning, så endast ursprungsland ska kontrolleras. Certifikatet anger HU, IT och CN, men i fakturan finns dessa bara i artikelkolumnen \"Origins\" och inte i ett separat ursprungsfält. Därför krävs manuell granskning."
+  },
+  "_meta": {
+    "tested_at": "2026-03-31T16:32:52.059792+00:00",
+    "prompt_hash": "a489bae7fc43",
+    "pair": "P015_MATCH",
+    "expected": "IDENTICAL",
+    "actual": "MANUAL_REVIEW",
+    "status": "REVIEW"
+  }
+}

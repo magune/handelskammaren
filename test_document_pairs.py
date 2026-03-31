@@ -215,12 +215,13 @@ def delete_files(file_ids: dict[str, str]):
             pass
 
 
+
 # ---------------------------------------------------------------------------
 # Batch construction & submission
 # ---------------------------------------------------------------------------
 
 def build_request(pair: dict, file_ids: dict[str, str]) -> dict:
-    content = [
+    user_message = [
         {"type": "file", "file": {"file_id": file_ids[f]}}
         for f in pair["files"]
     ]
@@ -230,10 +231,10 @@ def build_request(pair: dict, file_ids: dict[str, str]) -> dict:
         "url": "/v1/chat/completions",
         "body": {
             "model": "gpt-5.4",
-            "reasoning_effort": "high",
+            "reasoning_effort": "medium",
             "messages": [
                 {"role": "system", "content": system_prompt},
-                {"role": "user", "content": content},
+                {"role": "user", "content": user_message},
             ],
             "response_format": {
                 "type": "json_schema",
@@ -248,9 +249,10 @@ def build_request(pair: dict, file_ids: dict[str, str]) -> dict:
 
 
 def submit_chunk(chunk: list[dict], chunk_index: int) -> dict:
-    """Upload PDFs and submit batch for one chunk. Returns chunk state dict."""
-    print(f"\n  [chunk {chunk_index+1}] Uploading {len(chunk)*2} PDFs...")
+    """Upload PDFs and submit batch for one chunk."""
     all_paths = list({f for p in chunk for f in p["files"]})
+
+    print(f"\n  [chunk {chunk_index+1}] Uploading {len(all_paths)} PDFs...")
     file_ids = upload_pdfs(all_paths)
 
     lines = [json.dumps(build_request(p, file_ids), ensure_ascii=False) for p in chunk]
