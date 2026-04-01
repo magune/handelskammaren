@@ -1,11 +1,11 @@
 """
-mini_fullrun.py — Tier 1: Run all 242 pairs through gpt-4.1-mini (conservative sorter).
+fullrun_4_1.py — Run all 242 pairs through gpt-4.1 with a $25 cost kill switch.
 
-Uses api_prompt_mini.md — tuned to escalate uncertain cases to MANUAL_REVIEW.
-MANUAL_REVIEW cases are picked up by fullrun_54.py for tier-2 resolution.
+Submits pairs in chunks of 20 via Batch API. After each chunk completes, checks
+cumulative cost and aborts if it would exceed COST_LIMIT_USD.
 
-Results saved to: MiniFullrunResults/
-State file:       mini_fullrun_state.json  (resume-safe)
+Results saved to: Fullrun41Results/
+State file:       fullrun_4_1_state.json  (resume-safe)
 """
 
 import datetime
@@ -21,16 +21,16 @@ load_dotenv()
 
 BASE_DIR        = Path(__file__).parent
 TESTSYSTEM_DIR  = BASE_DIR / "Testdata" / "Testsystem företag"
-RESULTS_DIR     = BASE_DIR / "MiniFullrunResults"
-PROMPT_FILE     = BASE_DIR / "api_prompt_mini.md"
+RESULTS_DIR     = BASE_DIR / "Fullrun41Results"
+PROMPT_FILE     = BASE_DIR / "api_prompt.md"
 SCHEMA_FILE     = BASE_DIR / "schema_slim_strict.json"
-STATE_FILE      = BASE_DIR / "mini_fullrun_state.json"
+STATE_FILE      = BASE_DIR / "fullrun_4_1_state.json"
 
 RESULTS_DIR.mkdir(exist_ok=True)
 
-MODEL           = "gpt-4.1-mini"
-INPUT_PRICE     = 0.05   # $/1M tokens (Batch API)
-OUTPUT_PRICE    = 0.20   # $/1M tokens (Batch API)
+MODEL           = "gpt-4.1"
+INPUT_PRICE     = 1.00   # $/1M tokens (Batch API)
+OUTPUT_PRICE    = 2.00   # $/1M tokens (Batch API)
 COST_LIMIT_USD  = 25.0   # hard stop if cumulative cost exceeds this
 CHUNK_SIZE      = 20     # pairs per batch submission
 POLL_INTERVAL   = 30     # seconds between status checks
@@ -150,6 +150,7 @@ def build_request(pair: dict, file_ids: dict[str, str]) -> dict:
                     "schema": schema,
                 },
             },
+            "max_completion_tokens": 8192,
         },
     }
 
@@ -222,10 +223,6 @@ def collect_chunk(batch_obj, chunk_state: dict, pair_by_name: dict) -> list[dict
         is_pass            = comparison_result == pair["expected"]
         is_review          = comparison_result == "MANUAL_REVIEW"
         status             = "PASS" if is_pass else ("REVIEW" if is_review else "FAIL")
-        conf               = overall.get("confidence", "?")
-
-        status_icon = "✓" if status == "PASS" else ("?" if status == "REVIEW" else "✗")
-        print(f"    {status_icon} {custom_id:35s} {status:6s}  got={comparison_result:14s}  conf={conf}", flush=True)
 
         results.append({
             "name":       custom_id,
@@ -311,7 +308,7 @@ def main():
     pair_by_name = {p["name"]: p for p in pairs}
     chunks = [pairs[i:i+CHUNK_SIZE] for i in range(0, len(pairs), CHUNK_SIZE)]
 
-    print(f"mini_fullrun — model={MODEL}  prompt={PROMPT_FILE.name}  hash={prompt_hash}")
+    print(f"mini_fullrun — model={MODEL}  prompt={prompt_hash}")
     print(f"{len(pairs)} pairs in {len(chunks)} chunks of {CHUNK_SIZE}")
     print(f"Cost limit: ${COST_LIMIT_USD}  (est. max ~${cost_usd(len(pairs)*5000, len(pairs)*500):.2f} at 5k/500 tok/pair)")
 
