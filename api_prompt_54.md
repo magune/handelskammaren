@@ -1328,6 +1328,9 @@ ska denna uppgift anses verifierad även om motsvarande kvantitet inte uttryckli
 
 **VIKTIGT:** Försändelsekvantiteten kan förekomma antingen i kvantitetsfältet (ruta 7) ELLER i varubeskrivningsfältet (ruta 6), där "antal och slag av kolli" (number and kind of packages) normalt anges. När certifikatet innehåller BÅDE en försändelsekvantitet (t.ex. "1 CASE" i ruta 6) OCH en vikt i kvantitetsfältet (t.ex. "37.0 KG GW" i ruta 7), utgör dessa TVÅ separata kvantitetsuppgifter. Enligt avsnitt 4.4.3.1 räcker det att verifiera MINST EN av dem.
 
+**KRITISK BEGRÄNSNING – Box 7-viktvärde har alltid företräde (avsnitt 4.4.3.2.1):**
+Om box 7 innehåller ett EXPLICIT VIKTVÄRDE (t.ex. "7801.920 G.W.", "37.0 KG GW", "187,905 MT/GW") ska detta viktvärde ALLTID verifieras — oavsett om en försändelsekvantitet från box 6 (t.ex. "80 DRUM", "1 CASE") redan kan matchas mot fakturan. Försändelsekvantitet från box 6 får INTE användas som enda verifierad kvantitet och därmed kringgå verifiering av box 7-vikten. Regel 4.4.2.1 (box 7 alltid verifieringsgrundande) har företräde framför 4.4.3.1 (minst en räcker) i detta fall. Om box 7-vikten inte kan verifieras mot fakturan ska resultatet vara MANUAL_REVIEW eller MISMATCH enligt 4.4.2.2 och 4.4.4 — även om en försändelsekvantitet från box 6 matchar.
+
 **KRITISK REGEL – Försändelsekvantitet som enda verifierbara uppgift:**
 Om vikten i kvantitetsfältet inte kan verifieras mot fakturan (t.ex. fakturan saknar uttrycklig vikt) men certifikatet OCKSÅ innehåller en försändelsekvantitet som uppfyller villkoren ovan, ska försändelsekvantiteten användas som den verifierade kvantitetsuppgiften. Systemet ska INTE returnera MISMATCH enbart för att vikten inte kan identifieras i fakturan, om en giltig försändelsekvantitet finns och kan verifieras via fakturareferens. Om certifikatet uttryckligen anger att vikten avser ett annat dokument (t.ex. "Gross Weight refers to Cargospec" eller liknande), förstärker detta att vikten inte ska verifieras mot fakturan utan att en annan kvantitetsuppgift ska användas.
 
@@ -1385,7 +1388,7 @@ Skillnad i benämning mellan viktkategori i certifikatet och fakturan ska i sig 
 **Strikt krav på viktuppgift i certifikatet:**
 - När vikt anges ska BÅDE numeriskt värde OCH måttenhet framgå uttryckligen i samma fält.
 - Om GW, NW, Gross eller Net anges ska även viktenheten (t.ex. KG, MT, LB) anges uttryckligen.
-- Angivelse av enbart numeriskt värde tillsammans med GW/NW UTAN uttrycklig enhet: om fakturan bekräftar samma numeriska värde med en enhet (och ingen motstridande enhetsinformation finns i certifikatet) → MATCH. Motivering: GW/NW anger viktkategori och det numeriska värdet matchar fakturans uttryckliga viktangivelse med enhet — enheten kan entydigt härledas. Om fakturan INTE bekräftar värdet → MISMATCH.
+- Angivelse av enbart numeriskt värde tillsammans med GW/NW UTAN uttrycklig viktenhet (t.ex. "7801.920 G.W." utan KG/MT/LB): om fakturan bekräftar samma numeriska värde med en enhet → MANUAL_REVIEW (inte MATCH). Motivering: Certifikatet saknar uttrycklig viktenhet, vilket är ett formkrav. Även om det numeriska värdet matchar och viktkategorin (GW/NW) framgår, kan enheten inte anses uttryckligen angiven i certifikatet. Om fakturan INTE bekräftar värdet → MISMATCH.
 - Enheten får INTE fastställas om fakturan inte uttryckligen anger en enhet för samma numeriska värde.
 
 ### 4.4.5 Ingen summering eller beräkning – huvudregel
@@ -1569,12 +1572,14 @@ Summerad vikt ska överensstämma inom tolerans: **±0,1 % eller ±0,001 av angi
 Om avvikelsen överstiger toleransen → MISMATCH.
 
 **Styckantal utan uttrycklig enhet i box 7 (avsnitt 4.4.5.7):**
-Om certifikatets box 7 anger enbart numeriska värden UTAN uttrycklig enhet (t.ex. "82", "30", "5" — bara siffror, ingen enhet som "pcs", "kg", "m³"), och fakturan anger SAMMA numeriska värden PER RAD med en enhet (t.ex. "82 pcs", "30 pcs"), ska resultatet vara MATCH — förutsatt att:
+Om certifikatets box 7 anger FLERA (minst 2) distinkta numeriska värden UTAN uttrycklig enhet (t.ex. "82", "30", "5" — bara siffror, ingen enhet som "pcs", "kg", "m³"), och fakturan anger SAMMA numeriska värden PER RAD med en enhet (t.ex. "82 pcs", "30 pcs"), ska resultatet vara MATCH — förutsatt att:
 1. VARJE numeriskt värde i certifikatets box 7 kan matchas mot exakt motsvarande rad i fakturan.
 2. Matchningen är entydig (ingen tvetydighet om vilken rad som avser vilken kvantitet).
 3. Ordningen av värdena i box 7 stämmer överens med ordningen i fakturan eller kan entydigt kopplas via artikelnummer.
 
-Motivering: I Certificate of Origin-formulär har box 7 ofta begränsat utrymme. Det är vedertagen praxis att enbart ange numeriska kvantiteter i box 7 utan enhet, eftersom enheten (styck, paket, etc.) framgår av varuspecifikationen i box 6 eller av fakturan. Att kräva att enheten explicit står i box 7 när fakturan bekräftar varje värde är onödigt restriktivt.
+**KRITISK BEGRÄNSNING:** Denna regel gäller ENBART när certifikatets box 7 innehåller MINST TVÅ distinkta numeriska värden. Om box 7 anger ett ENDA numeriskt värde utan enhet (t.ex. enbart "1") är matchningen för tvetydig — ett ensamt tal utan enhet kan avse styck, set, kolli, parti eller annan enhet. I sådana fall ska regeln i 4.4.2 tillämpas istället (krav på uttrycklig enhet), vilket innebär MANUAL_REVIEW eller MISMATCH beroende på om värdet kan identifieras i fakturan.
+
+Motivering: I Certificate of Origin-formulär har box 7 ofta begränsat utrymme. Det är vedertagen praxis att enbart ange numeriska kvantiteter i box 7 utan enhet, eftersom enheten (styck, paket, etc.) framgår av varuspecifikationen i box 6 eller av fakturan. Men detta undantag kräver flera värden som tillsammans bildar ett mönster — ett enda värde utan enhet ger inte tillräcklig säkerhet för automatisk verifiering.
 
 ### 4.4.6 MATCH / MISMATCH
 **MATCH:** den numeriska uppgiften kan identifieras i fakturan enligt ovan.

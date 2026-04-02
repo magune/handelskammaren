@@ -51,7 +51,7 @@ CHUNK_SIZE       = 50
 
 # Filter to specific pairs, or None for all.
 # Example: ["P001", "P003", "P031"]
-ONLY_PAIRS       = None
+ONLY_PAIRS       = ["P0180", "P0182", "P0193", "P218", "P031"]
 
 # Max retries per pair when LLM returns unparseable/garbage JSON
 MAX_GARBAGE_RETRIES = 2
