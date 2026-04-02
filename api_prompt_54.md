@@ -249,12 +249,18 @@ Identifiera:
 
 Om fakturan identifieras som skannad eller bildbaserad ska detta noteras som en riskfaktor för verifieringens tillförlitlighet.
 
+**Särskild regel – Packlist, följesedel eller proformafaktura som verifieringsdokument (avsnitt 8.1.2):**
+Fakturafilen (fil 2) kan vara rubricerad som "Packing List", "Packlist", "Master Packlist", "Delivery Note", "Proforma Invoice", "Shipping Note" eller liknande — inte nödvändigtvis som "Invoice" eller "Commercial Invoice". Om certifikatet UTTRYCKLIGEN refererar till detta dokument (t.ex. "please refer to the attached master packlist shipment nr: 297532006") ska dokumentet behandlas som ett giltigt verifieringsunderlag. Kontrollpunkterna ska verifieras mot de uppgifter som faktiskt framgår av dokumentet (avsändare, mottagare, varor, kvantitet, ursprung etc.). Avsaknad av fakturaspecifika fält (t.ex. pris, betalningsvillkor) ska INTE i sig medföra MANUAL_REVIEW om övriga kontrollpunkter kan verifieras.
+
 **KRITISK REGEL – Otillräcklig läsbarhet → MANUAL_REVIEW:**
 Om en kontrollpunkt INTE kan verifieras på grund av att fakturan är bildbaserad/skannad och relevant text inte kan läsas med tillräcklig säkerhet — exempelvis att consignee-blocket, varubeskriving eller kvantitet inte är läsbart — ska den kontrollpunkten sättas till MANUAL_REVIEW, INTE MISMATCH.
 
 Logiken är: avsaknad av läsbar information är inte detsamma som ett bevisat fel. Om informationen finns i dokumentet men inte kan läsas tekniskt → MANUAL_REVIEW.
 
 Detta gäller ENBART när orsaken till att uppgiften inte kan identifieras är bristande läsbarhet, inte när uppgiften faktiskt är frånvarande eller motsäger certifikatet.
+
+**KRITISK FÖRTYDLIGANDE – Läsbarhetstest (avsnitt 8.1.1):**
+Innan en kontrollpunkt sätts till MANUAL_REVIEW på grund av bristande läsbarhet, ska systemet uttryckligen kontrollera om den relevanta texten FAKTISKT har extraherats framgångsrikt. Om systemet kan extrahera och redovisa den relevanta texten (t.ex. consignee-namn, varubeskriving, kvantitet) i extraction-steget — dvs. texten förekommer i de extraherade fälten — ska dokumentet INTE betraktas som oläsbart, oavsett om det är bildbaserat eller skannat. MANUAL_REVIEW för bristande läsbarhet får ENBART tillämpas när texten faktiskt inte kan extraheras eller är uppenbart osammanhängande/korrupt.
 
 ### Steg 2 – LC-kontroll (avsnitt 2.2)
 
@@ -368,7 +374,10 @@ En enskild PDF-fil kan innehålla MER ÄN ETT dokument. Exempelvis kan en PDF in
 - flera fakturor från olika utställare
 
 **ABSOLUT KRITISK REGEL – Filbaserad dokumentparning (avsnitt 8.5.0):**
-Systemet tar emot EXAKT TVÅ filer: en certifikatfil och en fakturafil. Följande principer gäller:
+Systemet tar emot MINST TVÅ filer: en certifikatfil och en eller flera fakturafiler. Vid exakt två filer gäller standardregeln nedan. Vid FLER ÄN TVÅ filer, se utökad regel 8.5.0.1.
+
+**Standardregel (två filer):**
+Följande principer gäller:
 
 1. **Certifikatet** ska hämtas från certifikatfilen (fil 1).
 2. **Fakturan för verifiering** ska hämtas från fakturafilen (fil 2). Fakturafilen är den fil som INTE innehåller certifikatet.
@@ -394,6 +403,20 @@ Systemet tar emot EXAKT TVÅ filer: en certifikatfil och en fakturafil. Följand
 
 Om systemet inte kan avgöra vilket dokumentpar som avses → MANUAL_REVIEW.
 
+**Utökad regel – Flera fakturafiler (avsnitt 8.5.0.1):**
+När systemet tar emot FLER ÄN TVÅ filer (t.ex. 1 certifikat + 2–3 fakturor) gäller följande:
+
+1. **Certifikatet** ska identifieras bland de bifogade filerna (normalt den fil som innehåller ett Certificate of Origin).
+2. **Alla övriga filer** utgör faktura-/stöddokument och ska SAMTLIGA beaktas vid verifieringen.
+3. **Dokumentparning:** Om certifikatet uttryckligen refererar till specifika fakturanummer (t.ex. "Invoice 8280581" och "Proforma 0001703399"), ska varje refererat dokument identifieras bland de bifogade filerna. Verifieringen ska ske mot SAMTLIGA refererade dokument gemensamt.
+4. **Kontrollpunkter vid flera fakturor:**
+   - **Consignor (4.1):** Samtliga fakturor ska ha samma utställare, och utställaren ska matcha certifikatets consignor. Om en faktura har en annan utställare → MANUAL_REVIEW.
+   - **Consignee (4.2):** Samtliga regler i avsnitt 4.2 (inklusive prioritetsordning 4.2.0.2, Ship-To-begränsning 4.2.0.3.1, och Bill-To-identifiering 4.2.0.2.1) gäller FULLT UT även vid flera fakturafiler. Att flera fakturor bifogas ändrar INTE vilken part som är den auktoritativa consignee — om fakturans Bill-To/Buyer anger part X ska certifikatets consignee verifieras mot X, inte mot ett Dealer- eller Delivery-fält med part Y. Regeln att "EN faktura räcker" avser enbart att consignee-fältet inte behöver finnas i varje faktura — den tillåter INTE att bypassa prioritetsordningen (4.2.0.2).
+   - **Varubeskrivning (4.3):** Certifikatets varubeskrivning ska kunna verifieras mot det kombinerade innehållet i samtliga fakturor. Generell varubeskrivning med fakturareferens (4.3.5) är uppfylld om certifikatet refererar till de bifogade fakturanumren.
+   - **Kvantitet (4.4):** Certifikatets totalkvantitet får verifieras mot SUMMAN av kvantiteter från samtliga refererade fakturor, enligt undantag 3A (4.4.5.2). Detta gäller både vikt och styckantal.
+   - **Ursprungsland (4.5):** Samtliga ursprungsländer som anges i certifikatet ska kunna identifieras i minst en av de bifogade fakturorna.
+5. **Regel 8.5.0 (inbäddade fakturor i certifikatfilen)** gäller fortfarande: om certifikatfilen även innehåller inbäddade fakturakopior ska dessa INTE användas som verifieringsunderlag — enbart de separata faktura-filerna.
+
 **KRITISK REGEL – Flera fakturor från samma utställare (avsnitt 8.5.1):**
 När faktura-PDF:en innehåller FLERA separata fakturor utställda av SAMMA företag (samma consignor/utställare), och certifikatet INTE hänvisar till ett specifikt fakturanummer som entydigt identifierar en av dem, ska resultatet vara MANUAL_REVIEW.
 
@@ -405,7 +428,18 @@ Vid jämförelse av certifikatets fakturanummerreferens mot fakturans fakturanum
 2. **Suffixvariant:** Om certifikatets fakturanummer är "X-Y" (t.ex. "11428-2") och fakturafilen innehåller faktura med nummer "X" (t.ex. "11428") utan suffixet, ska detta betraktas som MANUAL_REVIEW — inte MISMATCH — eftersom suffixet kan avse delförsändelse, sida eller revision.
 
 **KRITISK REGEL – Fakturareferens i certifikatet vs fakturafilen (avsnitt 8.5.2):**
-Om certifikatet hänvisar till ett specifikt fakturanummer (prioritet 1 ovan) MEN ingen faktura i FAKTURAFILEN (fil 2) bär detta exakta nummer (efter normalisering enligt 8.5.1.1), ska resultatet vara MANUAL_REVIEW med motivering att den refererade fakturan inte kan återfinnas i den bifogade fakturafilen. Systemet får INTE i detta fall:
+Om certifikatet hänvisar till ett specifikt fakturanummer (prioritet 1 ovan) MEN ingen faktura i FAKTURAFILEN (fil 2) bär detta exakta nummer (efter normalisering enligt 8.5.1.1), ska resultatet bestämmas enligt följande:
+
+**8.5.2.1 – Helt avvikande fakturanummer → NOT_IDENTICAL:**
+Om fakturafilen innehåller en faktura vars fakturanummer är HELT ANNORLUNDA än certifikatets referens — dvs. numren inte delar en gemensam bas, inte är prefix/suffix-varianter av varandra, och inte kan förklaras av ledande nollor eller formatskillnader — ska resultatet vara NOT_IDENTICAL (inte MANUAL_REVIEW). Motivering: när certifikatet uttryckligen refererar till faktura X men den bifogade filen innehåller faktura Y med ett HELT ANNAT nummer, innebär detta att fel faktura har bifogats. Det är inte en osäkerhet som kräver manuell bedömning — det är ett konstaterat faktum att det refererade dokumentet saknas.
+
+Exempel: Certifikatet refererar "Invoice No. 2005654". Fakturafilen innehåller faktura "Invoice No. 3019882". Numren har ingen gemensam bas → NOT_IDENTICAL.
+Exempel: Certifikatet refererar "Invoice No. 10998". Fakturafilen innehåller faktura "Invoice No. 11030". Numren är numeriskt närliggande men INTE varianter av varandra → NOT_IDENTICAL.
+
+**8.5.2.2 – Möjlig variant eller osäkerhet → MANUAL_REVIEW:**
+Om fakturanumren DELVIS överensstämmer (t.ex. delar en gemensam bas med suffix/prefix-skillnad som INTE fångas av 8.5.1.1) eller om det råder genuint tvivel om numren avser samma faktura → MANUAL_REVIEW.
+
+Systemet får INTE i något fall:
 - falla tillbaka på prioritet 2 (consignor-matchning) och välja en annan faktura
 - använda en inbäddad fakturakopia från certifikatfilen som ersättning
 
@@ -487,6 +521,9 @@ Relevanta benämningar kan exempelvis vara:
 - eller motsvarande
 
 Om särskild rubrik saknas ska systemet utgå från den part som har utfärdat fakturan (fakturautställaren), normalt angiven i dokumentets sidhuvud eller genom företagsuppgifter kopplade till fakturan.
+
+**Särskild regel – Logotyp/branding som säljaridentifikation (avsnitt 4.1.1.1):**
+Om fakturan saknar ett explicit "Seller"-fält men visar en företagslogotyp eller varumärkestext (branding) i sidhuvudet, och denna logotyp/branding överensstämmer med certifikatets consignor-namn (efter normalisering av juridiska suffix som AB, Inc, Ltd, GmbH etc.), ska fakturautställaren anses identifierad. Att fakturan enbart visar "ERICSSON" som logotyp medan certifikatet anger "ERICSSON AB" är tillräckligt — den juridiska bolagsformen (AB) hanteras av normaliseringsregeln 4.1.3.6. Avsaknad av ett explicit säljaradressfält ska INTE i sig medföra MANUAL_REVIEW om consignor-identiteten kan fastställas via logotyp/branding OCH certifikatets fakturanummer matchar fakturans fakturanummer.
 
 ### 4.1.2 Verifiering
 Systemet ska verifiera att avsändarens företagsnamn OCH land som anges i certifikatet kan identifieras i fakturan.
@@ -765,6 +802,15 @@ Fakturan kan innehålla flera parter i olika roller. Systemet ska tillämpa föl
 
 Konsekvens: Om fakturan har ett tydligt faktureringsfält med part X men certifikatet anger consignee Y (och Y enbart förekommer i ett leveransadressfält), är verifieringskravet INTE uppfyllt — resultatet ska vara MISMATCH, inte MATCH. Att Y förekommer i fakturan som leveransmottagare räcker inte när fakturans faktureringsfält anger en annan part.
 
+**KRITISK REGEL – Kombinerat Consignee/Delivery-fält med separat Bill-To (avsnitt 4.2.0.2.1):**
+När fakturan innehåller BÅDE:
+- ett faktureringsfält ("Bill to", "Buyer", "Sold to", "Invoice to" eller motsvarande) med part X, OCH
+- ett separat fält benämnt "Consignee", "Consignee and deliveryaddress", "Consignee/Delivery" eller liknande med part Y,
+
+och part X och part Y är OLIKA JURIDISKA ENTITETER — ska det kombinerade Consignee/Delivery-fältet behandlas som ett LEVERANSFÄLT (Ship-To), INTE som det auktoritativa faktureringsfältet. Anledningen är att fakturan redan har ett uttryckligt faktureringsfält (Bill-To/Buyer) som anger den kommersiella motparten; ett separat "Consignee"-fält i denna kontext anger den fysiska mottagaren av varorna, inte den fakturerade parten.
+
+Konsekvens: Om certifikatets consignee matchar Y (Consignee/Delivery-fältet) men INTE X (Bill-To/Buyer), ska detta behandlas som ett Ship-To-scenario och bedömas enligt reglerna i 4.2.0.3 och 4.2.0.3.1 — inte som en direkt MATCH via 4.2.0.2.
+
 **UNDANTAG – Certifikat utfärdat för slutmottagare (Ship-To-regel, avsnitt 4.2.0.3):**
 I internationell handel utfärdas Certificate of Origin regelmässigt för den slutliga mottagaren av varorna (Ship-To-parten), inte för det fakturerande mellanledet (Bill-To-parten). Systemet ska tillämpa detta undantag när SAMTLIGA villkor är uppfyllda:
 1. Certifikatets consignee kan identifieras exakt i fakturans Ship-To/Delivery address-fält (efter tillåten normalisering).
@@ -774,7 +820,19 @@ I internationell handel utfärdas Certificate of Origin regelmässigt för den s
 
 När detta undantag tillämpas ska resultatet för consignee vara MATCH. Undantaget erkänner att COO-certifikatet följer varuflödet (till slutmottagaren) medan fakturan följer betalningsflödet (till den fakturerade parten).
 
-Om villkoren INTE är uppfyllda — t.ex. om certifikatets consignee inte förekommer alls i fakturan, eller om fakturans Ship-To-part är i ett helt annat land än certifikatets consignee — gäller huvudregeln och resultatet ska vara MISMATCH.
+**KRITISK BEGRÄNSNING – Ship-To-regeln ger MANUAL_REVIEW, inte MATCH, vid oberoende Bill-To-part (avsnitt 4.2.0.3.1):**
+Ship-To-regeln (4.2.0.3) ska ge MANUAL_REVIEW — inte MATCH — när fakturans Bill-To/Invoice-To-part är en helt OBEROENDE juridisk entitet som saknar varje identifierbar koppling till certifikatets consignee. Med "oberoende" avses att:
+1. Bill-To-parten och certifikatets consignee är OLIKA JURIDISKA ENTITETER utan gemensam identitet — dvs. de kan inte identifieras som samma juridiska part ens efter tillämpning av normaliseringsreglerna i 4.1.3.1–4.1.3.6. Att namnen delar ett gemensamt geografiskt prefix (t.ex. en stadförkortning), varumärkesnamn eller koncernprefix räcker INTE för att anse dem relaterade — det avgörande är om det juridiska ENTITETSNAMNET (inte bara prefixet) matchar. (T.ex. "Aurobay Powertrain Mfg" vs "Volvo Car Engine Mfg" är olika entiteter trots ett gemensamt geografiskt prefix.)
+2. Ingen uppgift i fakturan (t.ex. koncernreferens, gemensamt VAT-nummer, gemensam organisationsstruktur, moderbolagsangivelse) styrker ett samband mellan Bill-To-parten och certifikatets consignee.
+
+Om BÅDA punkterna ovan är uppfyllda — dvs. Bill-To och certifikatets consignee är helt orelaterade juridiska parter utan styrkt samband — ska Ship-To-regeln ge MANUAL_REVIEW. Motivering: när Bill-To-parten är en substantiell, oberoende kommersiell aktör (inte en speditör eller logistikförmedlare) krävs manuell bedömning av om certifikatet korrekt utfärdats för Ship-To-parten.
+
+Om MINST EN av punkterna ovan INTE uppfylls (t.ex. Bill-To och consignee kan identifieras som samma part, eller fakturan styrker ett koncernsamband) → Ship-To-regeln kan ge MATCH enligt 4.2.0.3.
+
+Om villkoren i 4.2.0.3 INTE är uppfyllda — t.ex. om certifikatets consignee inte förekommer alls i fakturan, eller om fakturans Ship-To-part är i ett helt annat land än certifikatets consignee — gäller huvudregeln och resultatet ska vara MISMATCH.
+
+**FÖRTYDLIGANDE – Ship-To-matchning kräver adressöverensstämmelse (avsnitt 4.2.0.3.2):**
+När certifikatets consignee identifieras i fakturans Ship-To/Delivery-fält via namnmatchning, ska systemet även verifiera att den fysiska adressen inte uppvisar en VÄSENTLIG avvikelse. Om certifikatets consignee-adress och fakturans leveransadress avser samma företagsnamn men OLIKA fysiska adresser (t.ex. helt olika gatuadresser i samma stad), ska detta noteras som en riskfaktor men inte i sig medföra MISMATCH — adresser kan ändras. Dock: om fakturans Bill-To/Buyer-fält anger en HELT ANNAN juridisk entitet i ett ANNAT LAND (t.ex. "CORESYS TECHNOLOGIES LIMITED, Hong Kong" som buyer när cert consignee är "DIEP NAM HUNG TECHNOLOGY, Vietnam"), och cert consignee bara återfinns i leveransadressen med avvikande adressuppgifter, ska bedömningen skärpas till MANUAL_REVIEW (inte MATCH).
 
 ### 4.2.0.1 Särskilda regler
 **Koncernstruktur:** Consignee får avvika från ovanstående fält om företagsnamnet uttryckligen förekommer i fakturans sidhuvud eller i adress-/identifieringsblock (t.ex. VAT-block).
@@ -913,12 +971,13 @@ Om artikelnummer anges i certifikatet ska matchning PRIMÄRT ske via artikelnumm
 - Om artikelnummer i certifikatet inte kan identifieras i fakturan → pröva 4.3.2.3 innan MISMATCH fastställs.
 
 **Särskild regel – Artikelnummer ej i fakturan men produktnamn matchar (avsnitt 4.3.2.3):**
-Om certifikatet anger BÅDE ett artikelnummer OCH ett produktnamn/varubeskrivning, och artikelnumret INTE kan identifieras i fakturan, men produktnamnet/varubeskrivningen KAN identifieras exakt i fakturan (efter tillåten normalisering), ska resultatet vara MANUAL_REVIEW — inte MISMATCH.
-Exempel: Certifikatet anger "Minivisc Plus; MPFY24100B". Fakturan anger "Minivisc Plus" men innehåller inte koden "MPFY24100B" → MANUAL_REVIEW (produktnamnet matchar, artikelnumret kan inte verifieras).
+Om certifikatet anger BÅDE ett artikelnummer OCH ett produktnamn/varubeskrivning, och artikelnumret INTE kan identifieras i fakturan, men produktnamnet/varubeskrivningen KAN identifieras exakt i fakturan (efter tillåten normalisering), ska resultatet vara MATCH — inte MISMATCH eller MANUAL_REVIEW — under förutsättning att samtliga nedanstående villkor är uppfyllda.
+Motivering: Certifikat och fakturor kan använda olika interna artikelnummersystem (t.ex. tillverkarens artikelnummer vs köparens interna varunummer). Att artikelnumren inte matchar innebär inte att produkterna skiljer sig, om produktnamn och kvantitet entydigt identifierar samma vara.
 Villkor:
 1. Certifikatet anger BÅDE artikelnummer OCH en identifierbar produktbeteckning.
-2. Produktbeteckningen kan identifieras exakt i fakturan.
-3. Ingen annan produkt med liknande beteckning förekommer i fakturan.
+2. Produktbeteckningen kan identifieras exakt i fakturan (efter tillåten normalisering).
+3. Ingen annan produkt med liknande beteckning förekommer i fakturan (entydighet).
+4. Kvantiteten för den matchade produkten överensstämmer mellan certifikat och faktura.
 Om produktnamnet INTE heller kan identifieras → MISMATCH.
 
 **Särskild regel – Artikelnummer som prefix (avsnitt 4.3.2.1):**
@@ -946,6 +1005,7 @@ Tillåten normalisering inför textmatchning:
 - radbrytningar
 - extra mellanslag
 - bindestreck
+- triviala prepositioner som infogats eller utelämnats mellan substantiv i en varubeskrivning (t.ex. "to", "for", "of"), NÄR de omgivande substantiven och eventuella artikelnummer är identiska. Exempel: "Installation Kit Pillar" och "Installation Kit to Pillar" är likvärdiga om artikelnumren matchar.
 
 **Identitetsbärande huvudbeteckning (avsnitt 4.3.3):**
 Systemet ska identifiera den produktbeteckning som bär produktens identitet (identitetsbärande huvudbeteckning) utan att använda semantisk tolkning, synonymi eller branschmässiga antaganden.
@@ -1297,6 +1357,14 @@ Exempel: 1599 MM i certifikatet får identifieras i fakturan som 1.599 MM eller 
 
 Normalisering får ENDAST användas när det är entydigt att avskiljaren fungerar som tusentalsavskiljare och INTE som decimaltecken.
 
+#### 4.4.3.4 Normalisering av blandade decimalseparatorer
+Vid kvantitets- och viktverifiering kan certifikatet och fakturan använda OLIKA konventioner för decimaltecken och tusentalsavskiljare. Systemet ska normalisera numeriska värden till samma format innan jämförelse NÄR:
+1. Det ena dokumentet använder punkt som decimaltecken (t.ex. "7801.920") och det andra använder komma som decimaltecken med punkt som tusentalsavskiljare (t.ex. "7.801,920").
+2. De normaliserade värdena är numeriskt identiska.
+3. Tolkningen av tusentalsavskiljare respektive decimaltecken är entydig utifrån siffergruppering (t.ex. "7.801,920" = punkt efter 1 siffra + komma följt av 3 siffror → punkt är tusentalsavskiljare, komma är decimaltecken → 7801.920).
+
+Exempel: Certifikat "7801.920 G.W." och faktura "Gross Weight 7.801,920 KG" → normaliserat 7801.920 = 7801.920 → MATCH.
+
 ### 4.4.4 Total vikt i faktura
 När certifikatet anger vikt för hela försändelsen (t.ex. Gross Weight eller Net Weight) får denna uppgift verifieras mot en total vikt som anges i fakturan, exempelvis:
 - "Total Weight"
@@ -1346,7 +1414,7 @@ Varje prövat undantag ska redovisas i rule_evaluation_log med utfall.
 
 ### 4.4.5.2 Undantag 3A – Summering av flera fakturor
 
-Systemet får summera total vikt från flera fakturor ENDAST när SAMTLIGA villkor är uppfyllda:
+Systemet får summera kvantiteter (vikt ELLER styckantal) från flera fakturor ENDAST när SAMTLIGA villkor är uppfyllda:
 
 **Fakturareferenser (4.4.5.2.1):**
 - Certifikatet ska uttryckligen ange den totala kvantiteten eller kvantitet per artikel.
@@ -1354,7 +1422,10 @@ Systemet får summera total vikt från flera fakturor ENDAST när SAMTLIGA villk
 - Om certifikatet saknar uttrycklig numerisk kvantitet → MISMATCH.
 - Samtliga fakturor ska vara bifogade.
 
-**Typ av vikt (4.4.5.2.2):**
+**Typ av kvantitet (4.4.5.2.2):**
+Summering får ske för VIKT eller STYCKANTAL:
+
+*Vikt:*
 - Certifikatet ska uttryckligen ange viktkategori: GW och/eller NW.
 - Viktenheten (KG eller MT) ska vara uttryckligen angiven.
 - Summering sker PER viktkategori:
@@ -1362,6 +1433,12 @@ Systemet får summera total vikt från flera fakturor ENDAST när SAMTLIGA villk
   - NW jämförs uteslutande mot summan av "Total Net Weight" från respektive faktura.
 - Endast fakturornas uttryckliga totalrader får användas.
 - Om någon faktura saknar totalrad → MISMATCH.
+
+*Styckantal (pcs/PCE/units):*
+- Om certifikatet anger en total kvantitet i styckantal (t.ex. "15790 pcs") och certifikatet refererar till flera fakturor/proformor, får systemet summera styckantal från samtliga refererade dokument.
+- Summering sker per ENHET (pcs, PCE, units etc.) — enheten ska vara densamma eller ekvivalent.
+- Varje refererat dokuments radkvantiteter får summeras internt (per undantag 3D/3E om tillämpligt) innan den totala summan beräknas.
+- Samma tolerans (4.4.5.2.4) gäller.
 
 **Enhet (4.4.5.2.3):**
 - Endast vikter i KG eller konverterade till KG enligt 3B får summeras.

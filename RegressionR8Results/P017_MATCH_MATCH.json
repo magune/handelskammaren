@@ -1,0 +1,185 @@
+{
+  "schema_version": "3.0",
+  "metadata": {
+    "verification_timestamp": "2026-04-02T00:00:00Z",
+    "document_pair_id": null,
+    "certificate_issue_date": "2026-02-25",
+    "source_documents_received": 2
+  },
+  "task": {
+    "task_type": "customs_document_pair_verification",
+    "comparison_mode": "certificate_vs_invoice",
+    "strictness": "conservative"
+  },
+  "documents": {
+    "document_a": {
+      "label": "Document A",
+      "assumed_role": "certificate",
+      "document_type": "Certificate of Origin"
+    },
+    "document_b": {
+      "label": "Document B",
+      "assumed_role": "invoice",
+      "document_type": "Customs Invoice"
+    }
+  },
+  "rule_activation": {
+    "lc_exception_active": false,
+    "lc_number_found": null,
+    "general_goods_description_with_invoice_reference_active": false,
+    "mixed_origins_rule_active": false,
+    "to_order_rule_active": false,
+    "quantity_exception_applied": null,
+    "eu_origin_normalization_active": false,
+    "activated_rules": [
+      {
+        "rule_id": "8.5.0",
+        "rule_name": "Filbaserad dokumentparning med certifikat i fil 1 och faktura i fil 2"
+      },
+      {
+        "rule_id": "8.6",
+        "rule_name": "Obligatorisk parningsvalidering passerad via matchande fakturanummer, consignor och consignee"
+      },
+      {
+        "rule_id": "4.2.0.2",
+        "rule_name": "Prioritetsordning för consignee-identifiering med Bill to/Sold to som auktoritativa fält"
+      },
+      {
+        "rule_id": "4.4.2.1",
+        "rule_name": "Box 7 är verifieringsgrundande kvantitet"
+      }
+    ]
+  },
+  "control_points": {
+    "consignor": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.97,
+      "certificate_value": "ERICSSON AB\nTORSHAMNSGATAN 23\n164 83, STOCKHOLM\nSWEDEN",
+      "invoice_value": "Ericsson AB\nVAT no : SE556056625801\nTax rep : EAB\nReg office : Ericsson AB SE-164 83 Stockholm,Sweden\nRemit to : Ericsson AB\nTorshamnsgatan 23\nSE-164 83 STOCKHOLM\nIBAN: SE8150000000057468212767",
+      "rules_applied": [
+        {
+          "rule_id": "4.1.0",
+          "outcome": "MATCH - consignor-namnet återfinns uttryckligen i fakturan"
+        },
+        {
+          "rule_id": "4.1.2.1",
+          "outcome": "MATCH - Sverige verifieras via adress och VAT/IBAN-prefix SE"
+        },
+        {
+          "rule_id": "4.1.4",
+          "outcome": "MATCH - land överensstämmer"
+        }
+      ],
+      "motivation": "Certifikatet anger consignor som ERICSSON AB i Sverige. Fakturan innehåller uttryckligen Ericsson AB i footer/remit/reg office samt svensk adress och svenska identifierare (SE-prefix i VAT och IBAN). Samma juridiska part och land kan därför identifieras i fakturan."
+    },
+    "consignee": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.89,
+      "certificate_value": "SAFARICOM LIMITED\nSAFARICOM HOUSE WAIYAKI WAY,\nP.O. BOX 66827-00800 ,NAIROBI.\nP051129820X\ninboundlogistics@safaricom.co.ke\nKENYA",
+      "invoice_value": "Bill to\nSAFARICOM\nPO Box 46350\n00100 NAIROBI\nKENYA\n\nSold to\nSAFARICOM\nSAFARICOM HOUSE WAIYAKI WAY NAIROBI\n00800 NAIROBI\nKENYA\n\nShip to\nSAFARICOM\nSAFARICOM HOUSE WAIYAKI WAY NAIROBI\n00800 NAIROBI\nKENYA",
+      "rules_applied": [
+        {
+          "rule_id": "4.2.0.2",
+          "outcome": "APPLIED - Bill to/Sold to prioriterades före leveransadress"
+        },
+        {
+          "rule_id": "4.2.2.1",
+          "outcome": "MATCH - normalisering av versaler/gemener och vanliga företagsbeteckningar"
+        },
+        {
+          "rule_id": "4.2.3",
+          "outcome": "MATCH - Kenya överensstämmer"
+        }
+      ],
+      "motivation": "Certifikatet anger mottagaren som SAFARICOM LIMITED i Kenya. Fakturan anger SAFARICOM i både Bill to, Sold to och Ship to, samtliga i Kenya. Efter tillåten normalisering av företagsbeteckning och formatering kan mottagaren identifieras som samma part i samma land."
+    },
+    "goods_description": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.98,
+      "certificate_value": "PRINTED BOARD ASSEMB/NPU 1006 /HS code 851779000000/ Hungary\nInvoice No. 9209877429 dated 2026-01-22",
+      "invoice_value": "Description\nPRINTED BOARD ASSEMB/NPU 1006\nCoO HS code Qty Price Price unit Amount\nHU 851779000000 1,00 PC 759,32 1 PC 759,32\nInvoice No. 9209877429\nInvoice Date 2026-01-22",
+      "rules_applied": [
+        {
+          "rule_id": "4.3.2",
+          "outcome": "NOT_USED - inget artikelnummer i certifikatet som primär verifieringsgrund"
+        },
+        {
+          "rule_id": "4.3.3",
+          "outcome": "MATCH - identitetsbärande huvudbeteckning återfinns exakt i fakturan"
+        },
+        {
+          "rule_id": "4.3.5",
+          "outcome": "MATCH - fakturanummer och fakturadatum i certifikatet stämmer med fakturan"
+        }
+      ],
+      "motivation": "Varubeskrivningen PRINTED BOARD ASSEMB/NPU 1006 återfinns exakt i fakturans produktrad. Certifikatet anger dessutom Invoice No. 9209877429 dated 2026-01-22, vilket överensstämmer exakt med fakturans nummer och datum. HS-koden 851779000000 är också konsekvent mellan dokumenten."
+    },
+    "quantity": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.95,
+      "certificate_value": "Box 7: 1 item",
+      "invoice_value": "Qty 1,00 PC",
+      "rules_applied": [
+        {
+          "rule_id": "4.4.2.1",
+          "outcome": "APPLIED - box 7 användes som verifieringsgrundande kvantitet"
+        },
+        {
+          "rule_id": "4.4.3",
+          "outcome": "MATCH - numeriskt värde 1 kan identifieras i fakturan"
+        },
+        {
+          "rule_id": "4.4.3.1",
+          "outcome": "MATCH - minst en kvantitetsuppgift verifierad utan motsägelse"
+        }
+      ],
+      "motivation": "Certifikatets verifieringsgrundande kvantitet i box 7 är 1 item. Fakturan anger Qty 1,00 PC för samma vara. Det numeriska värdet 1 kan därför identifieras direkt i fakturan. Inga motstridiga kvantitetsuppgifter förekommer; dessutom stöds paret av att fakturan även visar Number of packages 1 och Total gross weight 1,500 KG, vilket är förenligt med certifikatets övriga uppgifter."
+    },
+    "origin": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.98,
+      "certificate_value": "Hungary",
+      "invoice_value": "CoO\nHU",
+      "rules_applied": [
+        {
+          "rule_id": "4.5.1",
+          "outcome": "MATCH - explicit ursprungsangivelse finns i fakturan"
+        },
+        {
+          "rule_id": "4.5.4",
+          "outcome": "MATCH - fullständigt landsnamn och landskod normaliserades"
+        },
+        {
+          "rule_id": "4.5.5",
+          "outcome": "MATCH - certifikatets ursprungsland kan uttryckligen identifieras i fakturan"
+        }
+      ],
+      "motivation": "Certifikatet anger ursprungsland Hungary. Fakturan anger explicit CoO HU på produktraden. HU är vedertagen landskod för Hungary, så ursprungslandet är uttryckligen verifierat efter tillåten landnormalisering."
+    }
+  },
+  "overall_assessment": {
+    "comparison_result": "IDENTICAL",
+    "workflow_recommendation": "AUTO_APPROVAL_ELIGIBLE",
+    "auto_approval_eligible": true,
+    "confidence": 0.96,
+    "critical_failures": [],
+    "manual_review_triggers": [],
+    "decision_summary": "Samtliga tillämpliga kontrollpunkter kan verifieras mot fakturan: consignor Ericsson AB/Sweden, consignee Safaricom/Kenya, varubeskrivningen PRINTED BOARD ASSEMB/NPU 1006, kvantiteten 1 och ursprungslandet Hungary/HU. Fakturanumret 9209877429 och fakturadatum 2026-01-22 matchar också certifikatet, vilket bekräftar dokumentparningen.",
+    "human_explanation": "Alla kontrollpunkter stämmer mellan certifikatet och fakturan. Certifikatet hänvisar till faktura 9209877429 daterad 2026-01-22, och avsändare, mottagare, vara, kvantitet och ursprung kan verifieras i fakturan. Dokumentparet kan godkännas automatiskt."
+  },
+  "_meta": {
+    "tested_at": "2026-04-02T09:24:46.801356+00:00",
+    "prompt_hash": "e85be43641bd",
+    "model": "gpt-5.4",
+    "pair": "P017_MATCH",
+    "expected": "IDENTICAL",
+    "actual": "IDENTICAL",
+    "status": "PASS",
+    "rerun": "regression_r8"
+  }
+}

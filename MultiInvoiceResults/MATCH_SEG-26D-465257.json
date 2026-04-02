@@ -1,0 +1,210 @@
+{
+  "schema_version": "3.0",
+  "metadata": {
+    "verification_timestamp": "2026-04-02T00:00:00Z",
+    "document_pair_id": null,
+    "certificate_issue_date": "2026-02-27",
+    "source_documents_received": 3
+  },
+  "task": {
+    "task_type": "customs_document_pair_verification",
+    "comparison_mode": "certificate_vs_invoice",
+    "strictness": "conservative"
+  },
+  "documents": {
+    "document_a": {
+      "label": "Certificate file",
+      "assumed_role": "certificate",
+      "document_type": "Certificate of Origin"
+    },
+    "document_b": {
+      "label": "Primary invoice file",
+      "assumed_role": "invoice",
+      "document_type": "Commercial Invoice"
+    }
+  },
+  "rule_activation": {
+    "lc_exception_active": false,
+    "lc_number_found": null,
+    "general_goods_description_with_invoice_reference_active": true,
+    "mixed_origins_rule_active": true,
+    "to_order_rule_active": false,
+    "quantity_exception_applied": null,
+    "eu_origin_normalization_active": false,
+    "activated_rules": [
+      {
+        "rule_id": "8.5.0.1",
+        "rule_name": "Flera fakturafiler - använd endast certifikatets refererade dokument"
+      },
+      {
+        "rule_id": "8.5.0",
+        "rule_name": "Inbäddade fakturor i certifikatfilen får inte användas som verifieringsunderlag"
+      },
+      {
+        "rule_id": "4.3.5",
+        "rule_name": "Generell varubeskrivning med fakturareferens"
+      },
+      {
+        "rule_id": "4.3.7",
+        "rule_name": "Koppling vara-ursprungsland vid flera ursprung via fakturahänvisning"
+      },
+      {
+        "rule_id": "4.5.3",
+        "rule_name": "Blandade ursprung"
+      }
+    ]
+  },
+  "control_points": {
+    "consignor": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.89,
+      "certificate_value": "Wellspect Healthcare\nP.O Box 14\n431 21, Mölndal\nSweden",
+      "invoice_value": "Wellspect AB\nP.O. BOX 14\nAminogatan 1\nS-431 21 Mölndal\nSweden\nREG.NO. 559332-0673 V.A.T. NO.SE559332067301",
+      "rules_applied": [
+        {
+          "rule_id": "4.1.0",
+          "outcome": "NO_MATCH_VIA_GLOBAL_SEARCH"
+        },
+        {
+          "rule_id": "4.1.3.4",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.4",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatet anger consignor som \"Wellspect Healthcare\" medan den separata fakturan 8280581 anger utställaren som \"Wellspect AB\". Samma boxadress (P.O. Box 14), samma postnummer/plats (431 21 Mölndal) och samma land (Sweden) framgår i båda dokumenten, och fakturan visar det registrerade bolagsnamnet uttryckligen. Detta accepteras som kommersiellt namn kontra registrerat bolagsnamn."
+    },
+    "consignee": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.98,
+      "certificate_value": "Anmar United Trading Co.\nAbi Baker Elsediq Branch Road,\nExit 6, At Tawon District\n12477 RIYADH\nSaudi Arabia",
+      "invoice_value": "Invoice recipient\nAnmar United Trading Co.\nAbi Baker Elsediq Branch Road,\nExit 6, At Tawon District\n12477 RIYADH\nSaudi Arabia",
+      "rules_applied": [
+        {
+          "rule_id": "4.2.0.2",
+          "outcome": "BILL_TO_USED_AS_PRIMARY"
+        },
+        {
+          "rule_id": "4.2.2",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.2.3",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatets consignee kan identifieras direkt i fakturans primära faktureringsfält \"Invoice recipient\". Namn och land överensstämmer, och skillnaden \"Tawon\"/\"Tawon\" ligger inom samma exakt läsbara adresskontext utan att påverka företagsidentiteten."
+    },
+    "goods_description": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.9,
+      "certificate_value": "18 pallets\nMedical Equipment\n(8280581 Invoice, invoice date 2026-02-27)\n(Proforma 0001703399, invoice date 2026-02-27)",
+      "invoice_value": "Invoice no 8280581; Invoice date 260227; line items include \"Consumable Set Small\", \"Classic System Small\", \"LoFric Origo Nel 40cm CH12\", \"LoFric Origo Nel 40cm CH14\", \"LoFric Sense Nel 15cm CH12\", \"LoFric Sense Nel 15cm CH14\", \"LoFric Nel 20cm CH14 Saudi\"",
+      "rules_applied": [
+        {
+          "rule_id": "4.3.5",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.3.5.2",
+          "outcome": "CONTENT_COMPATIBLE"
+        },
+        {
+          "rule_id": "8.5.0.1",
+          "outcome": "PRIMARY_REFERENCED_INVOICE_SELECTED"
+        }
+      ],
+      "motivation": "Certifikatet använder en generell varubeskrivning, \"Medical Equipment\", och anger samtidigt fakturanummer 8280581 samt fakturadatum 2026-02-27. Den separata fakturan 8280581 bär samma nummer och datum, och dess varuinnehåll är förenligt med kategorin medicinsk utrustning/medicintekniska produkter. Därmed är varubeskrivningen verifierbar via regeln om generell varubeskrivning med fakturareferens."
+    },
+    "quantity": {
+      "applicable": true,
+      "status": "MISMATCH",
+      "confidence": 0.95,
+      "certificate_value": "15790 pcs",
+      "invoice_value": "Selected separate invoice 8280581 contains line quantities 1251 PCE, 76 PCE, 1800 PCE, 9600 PCE, 1080 PCE, 960 PCE, 960 PCE; no explicit 15790 pcs total is shown in the separate invoice file.",
+      "rules_applied": [
+        {
+          "rule_id": "4.4.1",
+          "outcome": "VALUE_NOT_FOUND"
+        },
+        {
+          "rule_id": "4.4.5.1",
+          "outcome": "SEQUENTIAL_EXCEPTION_REVIEW_REQUIRED"
+        },
+        {
+          "rule_id": "4.4.5.2",
+          "outcome": "NOT_APPLICABLE_ALL_REFERENCED_DOCUMENTS_NOT_SEPARATELY_ATTACHED"
+        },
+        {
+          "rule_id": "8.5.0",
+          "outcome": "EMBEDDED_PROFORMA_NOT_ALLOWED_AS_VERIFICATION_BASIS"
+        },
+        {
+          "rule_id": "4.4.6",
+          "outcome": "MISMATCH"
+        }
+      ],
+      "motivation": "Certifikatet anger kvantiteten 15790 pcs. Den separata verifieringsfakturan 8280581 innehåller inte detta numeriska värde som explicit total, och det refererade proformadokumentet 0001703399 finns endast inbäddat i certifikatfilen och får därför inte användas som oberoende verifieringsunderlag. Undantaget för summering av flera fakturor kan inte användas när samtliga refererade dokument inte finns som separata bifogade verifieringsdokument. Därför kan certifikatets kvantitet inte verifieras mot den bifogade fakturan."
+    },
+    "origin": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.97,
+      "certificate_value": "Slovakia\nSweden",
+      "invoice_value": "CoO column in invoice 8280581 shows SE for multiple lines and SK for \"LoFric Nel 20cm CH14 Saudi\"",
+      "rules_applied": [
+        {
+          "rule_id": "4.5.1",
+          "outcome": "EXPLICIT_ORIGIN_FIELD_FOUND"
+        },
+        {
+          "rule_id": "4.5.3",
+          "outcome": "MIXED_ORIGINS_LINKED_IN_INVOICE"
+        },
+        {
+          "rule_id": "4.5.4",
+          "outcome": "ISO_CODE_NORMALIZATION_APPLIED"
+        },
+        {
+          "rule_id": "4.5.5",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatet anger två ursprungsländer: Slovakia och Sweden. Den separata fakturan 8280581 innehåller en uttrycklig CoO-kolumn där flera rader har SE och en rad har SK. Efter normalisering av landskoder motsvarar SE = Sweden och SK = Slovakia, så varje ursprungsland i certifikatet kan identifieras uttryckligen i fakturan."
+    }
+  },
+  "overall_assessment": {
+    "comparison_result": "NOT_IDENTICAL",
+    "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
+    "auto_approval_eligible": false,
+    "confidence": 0.93,
+    "critical_failures": [
+      "Kvantiteten 15790 pcs i certifikatet kan inte verifieras mot den separata bifogade fakturan 8280581.",
+      "Certifikatet hänvisar även till proforma 0001703399, men den finns endast som inbäddad sida i certifikatfilen och får inte användas som oberoende verifieringsunderlag."
+    ],
+    "manual_review_triggers": [],
+    "decision_summary": "Originalcertifikatet i certifikatfilen har parats med den separata fakturan 8280581 eftersom detta fakturanummer uttryckligen refereras i certifikatet. Consignor, consignee, generell varubeskrivning och ursprungsländerna Sweden/Slovakia kan verifieras mot den separata fakturan. Kvantiteten 15790 pcs kan däremot inte verifieras, eftersom den separata fakturan inte visar detta värde och den ytterligare refererade proforman 0001703399 endast finns inbäddad i certifikatfilen, vilket inte är tillåtet som verifieringsunderlag.",
+    "human_explanation": "Certifikatet anger 15790 pcs, men den separata bifogade fakturan 8280581 innehåller inte detta antal. Certifikatet hänvisar också till proforma 0001703399, men den finns bara inbäddad i certifikatfilen och kan därför inte användas som oberoende verifieringsunderlag. Övriga uppgifter om avsändare, mottagare, varubeskrivning och ursprung kan verifieras."
+  },
+  "_meta": {
+    "tested_at": "2026-04-02T08:55:53.100805+00:00",
+    "prompt_hash": "e85be43641bd",
+    "model": "gpt-5.4",
+    "case": "MATCH_SEG-26D-465257",
+    "expected": "IDENTICAL",
+    "actual": "NOT_IDENTICAL",
+    "status": "FAIL",
+    "num_invoices": 2,
+    "invoice_files": [
+      "Invoice 8280581.pdf",
+      "Invoice_20260302124116_008280595_OIS199PF.pdf"
+    ],
+    "cert_file": "SEG-26D-465257.pdf",
+    "test_type": "multi_invoice"
+  }
+}

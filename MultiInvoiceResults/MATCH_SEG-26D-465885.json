@@ -1,0 +1,206 @@
+{
+  "schema_version": "3.0",
+  "metadata": {
+    "verification_timestamp": "2026-04-02T00:00:00Z",
+    "document_pair_id": null,
+    "certificate_issue_date": "2026-03-02",
+    "source_documents_received": 4
+  },
+  "task": {
+    "task_type": "customs_document_pair_verification",
+    "comparison_mode": "certificate_vs_invoice",
+    "strictness": "conservative"
+  },
+  "documents": {
+    "document_a": {
+      "label": "Certificate file",
+      "assumed_role": "certificate",
+      "document_type": "Certificate of Origin"
+    },
+    "document_b": {
+      "label": "Invoice package",
+      "assumed_role": "invoice",
+      "document_type": "Commercial invoice package (3 invoices)"
+    }
+  },
+  "rule_activation": {
+    "lc_exception_active": false,
+    "lc_number_found": null,
+    "general_goods_description_with_invoice_reference_active": true,
+    "mixed_origins_rule_active": true,
+    "to_order_rule_active": false,
+    "quantity_exception_applied": null,
+    "eu_origin_normalization_active": false,
+    "activated_rules": [
+      {
+        "rule_id": "8.5.0.1",
+        "rule_name": "Flera fakturafiler ska beaktas gemensamt"
+      },
+      {
+        "rule_id": "4.3.5",
+        "rule_name": "Generell varubeskrivning med fakturareferens"
+      },
+      {
+        "rule_id": "4.3.7",
+        "rule_name": "Koppling vara–ursprungsland vid flera ursprung"
+      },
+      {
+        "rule_id": "4.4.3.1",
+        "rule_name": "Minst en kvantitetsuppgift ska verifieras"
+      },
+      {
+        "rule_id": "4.2.0.3.1",
+        "rule_name": "Ship-To-regeln ger MANUAL_REVIEW vid oberoende Bill-To-part"
+      }
+    ]
+  },
+  "control_points": {
+    "consignor": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.97,
+      "certificate_value": "Eton AB\nStora Vägen 8\nSE507 71, GÅNGHESTER\nSweden",
+      "invoice_value": "Eton AB\nBox 15002\n507 15 Gånghester\nSweden\nVisiting address\nStora vägen 8\n507 71 Gånghester\nSweden\nVAT No. SE556255243901",
+      "rules_applied": [
+        {
+          "rule_id": "4.1.0",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.2.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.4",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatets consignor 'Eton AB' återfinns uttryckligen i samtliga fakturor som utställare. Landet Sverige framgår explicit i adressblocken och stöds även av VAT-prefix 'SE' och IBAN som börjar med 'SE'."
+    },
+    "consignee": {
+      "applicable": true,
+      "status": "MANUAL_REVIEW",
+      "confidence": 0.74,
+      "certificate_value": "Noul LLC For-Bloomingdales Store Du\nC/O Al Tayer Logistics Warehouse,\nDubai Investment Park 2\nDubai\nUnited Arab Emirates",
+      "invoice_value": "Delivery address:\nNoul LLC For-Bloomingdales Store Dubai\nC/O Al Tayer Logistics Warehouse,\nDubai Investment Park 2\nDubai\nUnited Arab Emirates\n\nPayer:\nNoul (Dubai) LLC\nPO Box 2623\nDubai\nUnited Arab Emirates",
+      "rules_applied": [
+        {
+          "rule_id": "4.2.0.2",
+          "outcome": "Bill-to/Payer identified as authoritative billing party"
+        },
+        {
+          "rule_id": "4.2.0.3",
+          "outcome": "Certificate consignee found in Ship-To/Delivery address"
+        },
+        {
+          "rule_id": "4.2.2.1.1",
+          "outcome": "Certificate text appears layout-truncated ('Du' vs 'Dubai')"
+        },
+        {
+          "rule_id": "4.2.0.3.1",
+          "outcome": "MANUAL_REVIEW"
+        }
+      ],
+      "motivation": "Certifikatets consignee kan identifieras i fakturornas delivery address som 'Noul LLC For-Bloomingdales Store Dubai', och certifikatets 'Du' bedöms som layoutavkortning av 'Dubai'. Samtidigt anger fakturorna en annan part i faktureringsfältet/Payer: 'Noul (Dubai) LLC'. Eftersom sambandet mellan Bill-To-parten och certifikatets consignee inte uttryckligen styrks i fakturorna ska Ship-To-scenariot enligt reglerna leda till MANUAL_REVIEW, inte MATCH."
+    },
+    "goods_description": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.91,
+      "certificate_value": "6205200090 Motif Resort Shirt RO\n6205200090 Semi Solid Cotton TENCEL™ Lyocell Shirt RO\nInvoice 31394738 Invoice date 2/18/2026\n6205200090 Solid Signature Twill Shirt LT\n6205200090 Solid Signature Twill Shirt RO\n6205200090 Solid Textured Twill Shirt LT\n6205200090 Solid Textured Twill Shirt RO\nInvoice 31397835 Invoice date 2/27/2026\n6205901090 Herringbone Linen Jersey Soft Jacket IT\nInvoice 31398108 Invoice date 2/27/2026",
+      "invoice_value": "Invoice 31394738 dated 2/18/2026: 'MOTIF RESORT SHIRT' and 'SEMI SOLID COTTON TENCEL LYOCELL SHIRT'\nInvoice 31397835 dated 2/27/2026: multiple lines for 'SOLID SIGNATURE TWILL SHIRT' and 'SOLID TEXTURED TWILL SHIRT'\nInvoice 31398108 dated 2/27/2026: 'HERRINGBONE LINEN JERSEY SOFT JACKET'",
+      "rules_applied": [
+        {
+          "rule_id": "8.5.0.1",
+          "outcome": "Referenced invoices verified across multiple invoice files"
+        },
+        {
+          "rule_id": "4.3.5",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.3.5.2",
+          "outcome": "Invoice contents are consistent with general goods descriptions"
+        },
+        {
+          "rule_id": "4.3.7",
+          "outcome": "Certificate links goods to origins via RO/LT/IT suffixes"
+        }
+      ],
+      "motivation": "Certifikatet anger fakturanummer och fakturadatum för tre specifika fakturor. De varubeskrivningar som anges i certifikatet kan återfinnas i respektive refererad faktura: 'Motif Resort Shirt', 'Semi Solid Cotton TENCEL Lyocell Shirt', 'Solid Signature Twill Shirt', 'Solid Textured Twill Shirt' och 'Herringbone Linen Jersey Soft Jacket'. Fakturainnehållet är förenligt med certifikatets beskrivningar."
+    },
+    "quantity": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.87,
+      "certificate_value": "8 Pcs\n16 Pcs\n32 Pcs\n68 Pcs\n7 Pcs\n47 Pcs\n5 Pcs",
+      "invoice_value": "Invoice 31394738 total quantity 24 with line splits 16 and 8; Invoice 31397835 total quantity 154; Invoice 31398108 total quantity 5",
+      "rules_applied": [
+        {
+          "rule_id": "8.5.0.1",
+          "outcome": "Multiple referenced invoices evaluated jointly"
+        },
+        {
+          "rule_id": "4.4.1",
+          "outcome": "Explicit quantities identified in invoices"
+        },
+        {
+          "rule_id": "4.4.3.1",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Flera kvantiteter anges i certifikatet. Minst en och i praktiken flera av dessa kan verifieras explicit i fakturorna: 16 och 8 i invoice 31394738 samt 5 i invoice 31398108. För invoice 31397835 framgår en sammanlagd fakturakvantitet om 154, vilket motsvarar summan av certifikatets fyra relevanta poster (32+68+7+47). Ingen uttrycklig kvantitetsuppgift i fakturorna motsäger certifikatets värden."
+    },
+    "origin": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.95,
+      "certificate_value": "Romania\nLithuania\nItaly",
+      "invoice_value": "Invoice 31394738: Country of origin : Romania\nInvoice 31397835: Country of origin : Romania, Lithuania,\nInvoice 31398108: Country of origin : Italy",
+      "rules_applied": [
+        {
+          "rule_id": "8.5.0.1",
+          "outcome": "Origins checked across all referenced invoice files"
+        },
+        {
+          "rule_id": "4.5.1",
+          "outcome": "Explicit origin fields identified"
+        },
+        {
+          "rule_id": "4.5.5",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Varje ursprungsland som anges i certifikatet återfinns uttryckligen i ett dedikerat origin-fält i de refererade fakturorna: Romania, Lithuania och Italy."
+    }
+  },
+  "overall_assessment": {
+    "comparison_result": "MANUAL_REVIEW",
+    "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
+    "auto_approval_eligible": false,
+    "confidence": 0.79,
+    "critical_failures": [],
+    "manual_review_triggers": [
+      "Certifikatets consignee matchar leveransadressfältet, men fakturornas Payer/Bill-To är 'Noul (Dubai) LLC' och sambandet mellan denna part och certifikatets consignee styrks inte uttryckligen."
+    ],
+    "decision_summary": "Consignor, goods description, quantity and origin can be verified against the referenced invoice package. The consignee appears in the delivery address, but the invoice billing party is a different named legal entity without explicit documentary linkage, so the pair requires manual handling.",
+    "human_explanation": "Avsändare, varor, kvantiteter och ursprung kan verifieras mot de tre bifogade fakturorna. Mottagaren i certifikatet återfinns som leveransadress, men fakturorna är samtidigt ställda till en annan namngiven betalningspart, Noul (Dubai) LLC. Eftersom sambandet mellan dessa två parter inte framgår uttryckligen krävs manuell granskning."
+  },
+  "_meta": {
+    "tested_at": "2026-04-02T08:55:53.101362+00:00",
+    "prompt_hash": "e85be43641bd",
+    "model": "gpt-5.4",
+    "case": "MATCH_SEG-26D-465885",
+    "expected": "IDENTICAL",
+    "actual": "MANUAL_REVIEW",
+    "status": "REVIEW",
+    "num_invoices": 3,
+    "invoice_files": [
+      "31394738.pdf",
+      "31397835.pdf",
+      "31398108.pdf"
+    ],
+    "cert_file": "SEG-26D-465885.pdf",
+    "test_type": "multi_invoice"
+  }
+}

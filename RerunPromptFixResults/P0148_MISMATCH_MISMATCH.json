@@ -1,0 +1,167 @@
+{
+  "schema_version": "3.0",
+  "metadata": {
+    "verification_timestamp": null,
+    "document_pair_id": null,
+    "certificate_issue_date": "2023-04-20",
+    "source_documents_received": 2
+  },
+  "task": {
+    "task_type": "customs_document_pair_verification",
+    "comparison_mode": "certificate_vs_invoice",
+    "strictness": "conservative"
+  },
+  "documents": {
+    "document_a": {
+      "label": "Document A",
+      "assumed_role": "certificate",
+      "document_type": "Certificate of Origin"
+    },
+    "document_b": {
+      "label": "Document B",
+      "assumed_role": "invoice",
+      "document_type": "Pro Forma Invoice"
+    }
+  },
+  "rule_activation": {
+    "lc_exception_active": false,
+    "lc_number_found": null,
+    "general_goods_description_with_invoice_reference_active": false,
+    "mixed_origins_rule_active": true,
+    "to_order_rule_active": false,
+    "quantity_exception_applied": null,
+    "eu_origin_normalization_active": true,
+    "activated_rules": [
+      {
+        "rule_id": "4.1.0",
+        "rule_name": "Consignor identified anywhere in invoice text"
+      },
+      {
+        "rule_id": "4.2.0.3.1",
+        "rule_name": "Ship-to consignee with independent Bill-To party gives manual review"
+      },
+      {
+        "rule_id": "4.5.4.2",
+        "rule_name": "EU and specific EU member state normalization"
+      }
+    ]
+  },
+  "control_points": {
+    "consignor": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.97,
+      "certificate_value": "Lantmännen Reppe AB\nJungmansgatan 8\nSE-531 40, LIDKÖPING\nSweden",
+      "invoice_value": "Lantmännen Reppe AB\nJungmansgatan 8\n53140 LIDKÖPING SWEDISH VAT NUMBER :SE556000153801\n...\nDanske Bank\nSweden",
+      "rules_applied": [
+        {
+          "rule_id": "4.1.0",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.2.1",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatets consignor 'Lantmännen Reppe AB' återfinns uttryckligen i fakturan längst ned på sidan. Landet Sverige styrks både av texten 'Sweden', svensk VAT-kod 'SE556000153801' och svensk IBAN-prefix 'SE89'. Samma juridiska part och land kan därför verifieras."
+    },
+    "consignee": {
+      "applicable": true,
+      "status": "MANUAL_REVIEW",
+      "confidence": 0.74,
+      "certificate_value": "Meelunie America Inc.\n3000 Town Center, Suite 2237\nSouthfield, MI 48075\nUnited States Of America",
+      "invoice_value": "TO\nName Meelunie B.V.\nVinoly Tower - 18Th Floor\nClaude Debussylaan 40\n1082 MD Amserdam\nNETHERLANDS\n...\nRecipient adress :\nMeelunie America Inc.\n3000 Town Center, Suite 2237\nSouthfield, MI 48075\nUnited States Of America",
+      "rules_applied": [
+        {
+          "rule_id": "4.2.0.2",
+          "outcome": "Bill-To has priority"
+        },
+        {
+          "rule_id": "4.2.0.3",
+          "outcome": "Ship-To exception considered"
+        },
+        {
+          "rule_id": "4.2.0.3.1",
+          "outcome": "MANUAL_REVIEW"
+        }
+      ],
+      "motivation": "Certifikatets consignee 'Meelunie America Inc.' återfinns i fakturan endast som 'Recipient adress', medan fakturans primära faktureringsfält 'TO' anger en annan juridisk part: 'Meelunie B.V.' i Nederländerna. Eftersom Bill-To-parten är en annan juridisk entitet och fakturan inte uttryckligen styrker relationen mellan Meelunie B.V. och Meelunie America Inc. leder Ship-To-undantaget till MANUAL_REVIEW, inte MATCH."
+    },
+    "goods_description": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.96,
+      "certificate_value": "20 Pallets\nOrganic VWG From Lantmännen Reppe AB\nProduced In Sweden With Wheat From EU Region",
+      "invoice_value": "20 000,00 Reppal VWG Organic 25 Kg\nBatch No: 2303090003\nOrganic VWG From Lantmännen Reppe AB\nProduced In Sweden With Wheat From EU Region",
+      "rules_applied": [
+        {
+          "rule_id": "4.3.3",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.3.4",
+          "outcome": "Extra non-identity-bearing text accepted"
+        }
+      ],
+      "motivation": "Den identitetsbärande texten 'Organic VWG From Lantmännen Reppe AB Produced In Sweden With Wheat From EU Region' återfinns uttryckligen i fakturan. Fakturans tillägg 'Reppal', batchnummer och '25 Kg' motsäger inte certifikatets varubeskrivning. Varubeskrivningen kan därför verifieras utan semantisk tolkning."
+    },
+    "quantity": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.91,
+      "certificate_value": "20000 Kg",
+      "invoice_value": "20 000,00",
+      "rules_applied": [
+        {
+          "rule_id": "4.4.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.4.3",
+          "outcome": "Numeric value identified in invoice"
+        }
+      ],
+      "motivation": "Certifikatet anger kvantiteten '20000 Kg'. Fakturan innehåller det numeriska värdet '20 000,00' i kvantitetskolumnen, vilket motsvarar 20000 efter normalisering av mellanslag och formatering. Det numeriska värdet kan därmed identifieras i fakturan."
+    },
+    "origin": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.87,
+      "certificate_value": "EU Sweden",
+      "invoice_value": "Produced In Sweden With Wheat From EU Region",
+      "rules_applied": [
+        {
+          "rule_id": "4.5.4.1",
+          "outcome": "EU reference accepted"
+        },
+        {
+          "rule_id": "4.5.4.2",
+          "outcome": "Specific EU member state and EU both verified"
+        }
+      ],
+      "motivation": "Certifikatet anger ursprung 'EU Sweden'. Fakturan innehåller uttrycklig text om 'Produced In Sweden' samt 'Wheat From EU Region'. Därmed kan både Sverige och EU återfinnas i fakturatexten efter tillåten EU-normalisering."
+    }
+  },
+  "overall_assessment": {
+    "comparison_result": "MANUAL_REVIEW",
+    "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
+    "auto_approval_eligible": false,
+    "confidence": 0.81,
+    "critical_failures": [],
+    "manual_review_triggers": [
+      "Consignee differs between invoice Bill-To ('Meelunie B.V.') and certificate consignee/recipient ('Meelunie America Inc.'), and no explicit linkage between the two legal entities is shown in the invoice."
+    ],
+    "decision_summary": "Consignor, goods description, quantity and origin can be verified against the invoice. The consignee field cannot be conclusively approved automatically because the invoice is addressed to Meelunie B.V. while the certificate names Meelunie America Inc., which appears only as recipient address.",
+    "human_explanation": "Avsändare, varubeskrivning, mängd och ursprungsland kan verifieras mot fakturan. Däremot är fakturan ställd till Meelunie B.V. i Nederländerna medan certifikatet anger Meelunie America Inc. i USA som mottagare. Eftersom sambandet mellan dessa två bolag inte framgår tydligt krävs manuell granskning."
+  },
+  "_meta": {
+    "tested_at": "2026-04-02T07:11:58.024059+00:00",
+    "prompt_hash": "da2ba0433c7a",
+    "model": "gpt-5.4",
+    "pair": "P0148_MISMATCH",
+    "expected": "NOT_IDENTICAL",
+    "actual": "MANUAL_REVIEW",
+    "status": "REVIEW",
+    "rerun": "prompt_fixes_r6"
+  }
+}

@@ -1,0 +1,234 @@
+{
+  "schema_version": "3.0",
+  "metadata": {
+    "verification_timestamp": "2026-04-02T00:00:00Z",
+    "document_pair_id": null,
+    "certificate_issue_date": "2025-10-01",
+    "source_documents_received": 2
+  },
+  "task": {
+    "task_type": "customs_document_pair_verification",
+    "comparison_mode": "certificate_vs_invoice",
+    "strictness": "conservative"
+  },
+  "documents": {
+    "document_a": {
+      "label": "Document A",
+      "assumed_role": "certificate",
+      "document_type": "Certificate of Origin"
+    },
+    "document_b": {
+      "label": "Document B",
+      "assumed_role": "invoice",
+      "document_type": "Commercial Invoice"
+    }
+  },
+  "rule_activation": {
+    "lc_exception_active": false,
+    "lc_number_found": null,
+    "general_goods_description_with_invoice_reference_active": false,
+    "mixed_origins_rule_active": false,
+    "to_order_rule_active": false,
+    "quantity_exception_applied": null,
+    "eu_origin_normalization_active": false,
+    "activated_rules": [
+      {
+        "rule_id": "8.5.0",
+        "rule_name": "Filbaserad dokumentparning – certifikatet ska verifieras mot separat fakturafil, inte mot inbäddad faktura i certifikatfilen"
+      },
+      {
+        "rule_id": "8.6",
+        "rule_name": "Obligatorisk parningsvalidering"
+      },
+      {
+        "rule_id": "4.1.0",
+        "rule_name": "Consignor kan verifieras genom uttrycklig förekomst i fakturan"
+      },
+      {
+        "rule_id": "4.2.0.2",
+        "rule_name": "Primärt faktureringsfält har prioritet för consignee"
+      },
+      {
+        "rule_id": "4.3.3",
+        "rule_name": "Kontrollerad textmatchning för varubeskrivning"
+      },
+      {
+        "rule_id": "4.4.2.1",
+        "rule_name": "Box 7 är verifieringsgrundande för kvantitet"
+      },
+      {
+        "rule_id": "4.5.1",
+        "rule_name": "Ursprungsland måste framgå explicit i fakturan"
+      }
+    ]
+  },
+  "control_points": {
+    "consignor": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.98,
+      "certificate_value": "mFiber AB, Drottninggatan 21, SE-411 14 Gothenburg, Sweden",
+      "invoice_value": "mFiber AB, Drottninggatan 21, SE-411 14 Gothenburg, Sweden; VAT no: SE556863963601",
+      "rules_applied": [
+        {
+          "rule_id": "8.5.0",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "8.6",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.0",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.2.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.5",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Verifieringen har gjorts mot den separata fakturafilen (Document B), inte mot den inbäddade fakturasidan i certifikatfilen. Certifikatets consignor är \"mFiber AB ... Sweden\" och samma juridiska part framgår uttryckligen i fakturans header/footer och adressblock som \"mFiber AB ... Sweden\". Landet verifieras både genom explicit adress och svensk VAT-prefix (SE), därför är kontrollpunkten MATCH."
+    },
+    "consignee": {
+      "applicable": true,
+      "status": "MISMATCH",
+      "confidence": 0.99,
+      "certificate_value": "CENTURY GATE CO. LTD, P.O. BOX 14368, C R NO. 1010277465, RIYADH 7097, Saudi Arabia",
+      "invoice_value": "Bill To: Paper Vantage Point Pvt Ltd, ... Thane West, 400607 Maharashtra, India; Ship To: Paper Vantage Point Pvt Ltd, ... India",
+      "rules_applied": [
+        {
+          "rule_id": "8.5.0",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "8.6",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.2.0.2",
+          "outcome": "MISMATCH"
+        },
+        {
+          "rule_id": "4.2.1",
+          "outcome": "MISMATCH"
+        },
+        {
+          "rule_id": "4.2.4",
+          "outcome": "MISMATCH"
+        }
+      ],
+      "motivation": "I den separata fakturafilen är det primära faktureringsfältet \"Bill To\" angivet som \"Paper Vantage Point Pvt Ltd\" i Indien, och även \"Ship To\" anger samma part i Indien. Certifikatets consignee \"CENTURY GATE CO. LTD\" i Saudiarabien kan inte identifieras i fakturan. Detta är en direkt avvikelse i både företagsnamn och land, därför är kontrollpunkten MISMATCH."
+    },
+    "goods_description": {
+      "applicable": true,
+      "status": "MISMATCH",
+      "confidence": 0.99,
+      "certificate_value": "PAPER IN REELS; gross weight = net weight; Shipped in container(s); 434 reels of Tissue Paper - (Napkin & Facial)",
+      "invoice_value": "Kraft Liner Board (2 rader), HS Code: 4804 41 00",
+      "rules_applied": [
+        {
+          "rule_id": "8.5.0",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.3.2",
+          "outcome": "NOT_APPLICABLE"
+        },
+        {
+          "rule_id": "4.3.3",
+          "outcome": "MISMATCH"
+        },
+        {
+          "rule_id": "4.3.8",
+          "outcome": "MISMATCH"
+        }
+      ],
+      "motivation": "Certifikatet beskriver varorna som \"Tissue Paper - (Napkin & Facial)\" i rullar. Den separata fakturafilen beskriver varorna som \"Kraft Liner Board\". De identitetsbärande huvudbeteckningarna är olika och kan inte verifieras mot varandra utan otillåten semantisk tolkning, därför är kontrollpunkten MISMATCH."
+    },
+    "quantity": {
+      "applicable": true,
+      "status": "MISMATCH",
+      "confidence": 0.99,
+      "certificate_value": "GW/NW: 88452 kg; 434 reels",
+      "invoice_value": "Total MT: 53.8900; radkvantiteter 12.0840 MT och 41.8060 MT; Units 4 Reels + 14 Reels",
+      "rules_applied": [
+        {
+          "rule_id": "8.5.0",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.4.2.1",
+          "outcome": "BOX7_SELECTED"
+        },
+        {
+          "rule_id": "4.4.3",
+          "outcome": "MISMATCH"
+        },
+        {
+          "rule_id": "4.4.3.1",
+          "outcome": "MISMATCH"
+        },
+        {
+          "rule_id": "4.4.5.1",
+          "outcome": "NO_EXCEPTION_MATCH"
+        },
+        {
+          "rule_id": "4.4.6",
+          "outcome": "MISMATCH"
+        }
+      ],
+      "motivation": "Certifikatets verifieringsgrundande kvantitet i box 7 är \"GW/NW: 88452 kg\". Den separata fakturafilen anger i stället total vikt \"53.8900 MT\" (53 890 kg), vilket inte matchar 88 452 kg, och fakturan visar dessutom endast 18 reels totalt (4 + 14), inte 434 reels. Minst en uttrycklig kvantitetsuppgift motsägs därför av fakturan, vilket ger MISMATCH."
+    },
+    "origin": {
+      "applicable": true,
+      "status": "MISMATCH",
+      "confidence": 0.99,
+      "certificate_value": "India",
+      "invoice_value": "Country of Origin: Sweden",
+      "rules_applied": [
+        {
+          "rule_id": "8.5.0",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.5.1",
+          "outcome": "MISMATCH"
+        },
+        {
+          "rule_id": "4.5.5",
+          "outcome": "MISMATCH"
+        }
+      ],
+      "motivation": "Certifikatet anger ursprungsland \"India\". Den separata fakturafilen anger uttryckligen \"Country of Origin: Sweden\". Detta är en direkt motsägelse i explicit origin-fält, därför är kontrollpunkten MISMATCH."
+    }
+  },
+  "overall_assessment": {
+    "comparison_result": "NOT_IDENTICAL",
+    "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
+    "auto_approval_eligible": false,
+    "confidence": 0.99,
+    "critical_failures": [
+      "Consignee i certifikatet är CENTURY GATE CO. LTD, medan fakturan är ställd till Paper Vantage Point Pvt Ltd.",
+      "Varubeskrivningen i certifikatet avser Tissue Paper (Napkin & Facial), medan fakturan avser Kraft Liner Board.",
+      "Kvantiteten i certifikatet är 88452 kg / 434 reels, medan fakturan anger 53.8900 MT och totalt 18 reels.",
+      "Ursprungslandet i certifikatet är India, medan fakturan uttryckligen anger Sweden."
+    ],
+    "manual_review_triggers": [],
+    "decision_summary": "Det korrekta dokumentparet enligt filbaserad parning är certifikatet i Document A och den separata fakturan i Document B. När verifieringen görs mot den separata fakturafilen uppstår flera explicita avvikelser: consignee, varubeskrivning, kvantitet och ursprungsland matchar inte. Eftersom minst en tillämplig kontrollpunkt är MISMATCH ska totalresultatet vara NOT_IDENTICAL.",
+    "human_explanation": "Certifikatet anger mottagaren CENTURY GATE CO. LTD i Saudiarabien, men fakturan är ställd till Paper Vantage Point Pvt Ltd i Indien. Certifikatet avser Tissue Paper, 434 reels och 88 452 kg med ursprung India, medan fakturan avser Kraft Liner Board, 53.8900 MT och ursprung Sweden. Dokumentparet stämmer därför inte överens och kräver manuell hantering."
+  },
+  "_meta": {
+    "tested_at": "2026-04-02T07:11:58.023097+00:00",
+    "prompt_hash": "da2ba0433c7a",
+    "model": "gpt-5.4",
+    "pair": "P0117_MISMATCH",
+    "expected": "NOT_IDENTICAL",
+    "actual": "NOT_IDENTICAL",
+    "status": "PASS",
+    "rerun": "prompt_fixes_r6"
+  }
+}
