@@ -1,0 +1,171 @@
+{
+  "schema_version": "3.0",
+  "metadata": {
+    "verification_timestamp": null,
+    "document_pair_id": null,
+    "certificate_issue_date": "2023-04-27",
+    "source_documents_received": 2
+  },
+  "task": {
+    "task_type": "customs_document_pair_verification",
+    "comparison_mode": "certificate_vs_invoice",
+    "strictness": "conservative"
+  },
+  "documents": {
+    "document_a": {
+      "label": "Document A",
+      "assumed_role": "certificate",
+      "document_type": "Certificate of Origin"
+    },
+    "document_b": {
+      "label": "Document B",
+      "assumed_role": "invoice",
+      "document_type": "Invoice"
+    }
+  },
+  "rule_activation": {
+    "lc_exception_active": false,
+    "lc_number_found": null,
+    "general_goods_description_with_invoice_reference_active": false,
+    "mixed_origins_rule_active": false,
+    "to_order_rule_active": false,
+    "quantity_exception_applied": null,
+    "eu_origin_normalization_active": true,
+    "activated_rules": [
+      {
+        "rule_id": "4.5.4",
+        "rule_name": "Normalisering av ursprungsland inklusive EU-regler"
+      },
+      {
+        "rule_id": "4.1.0",
+        "rule_name": "Koncernstruktur vid consignor"
+      },
+      {
+        "rule_id": "4.1.3.1",
+        "rule_name": "Juridisk partname match med normalisering"
+      },
+      {
+        "rule_id": "4.2.0.2",
+        "rule_name": "Prioritetsordning för mottagare (consignee)"
+      },
+      {
+        "rule_id": "4.4.3",
+        "rule_name": "Kvantitetsverifiering från certifikat mot faktura"
+      },
+      {
+        "rule_id": "4.4.3.3",
+        "rule_name": "Tusentalsavskiljare normalisering för kvantitet"
+      },
+      {
+        "rule_id": "4.5.4.1",
+        "rule_name": "EU-normalisering av ursprungsland"
+      }
+    ]
+  },
+  "control_points": {
+    "consignor": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.9,
+      "certificate_value": "Bakels Sweden AB",
+      "invoice_value": "Bakels Sweden AB",
+      "rules_applied": [
+        {
+          "rule_id": "4.1.0",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.3.1",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Consignor 'Bakels Sweden AB' i certifikatet exakt motsvaras av fakturans utställare och adressblock med samma företagsnamn och land Sverige efter normalisering (4.1.0, 4.1.3.1). Ingen avvikelse noterad."
+    },
+    "consignee": {
+      "applicable": true,
+      "status": "MISMATCH",
+      "confidence": 0.9,
+      "certificate_value": "CBL Foods International (PVT) Ltd",
+      "invoice_value": "National Food Company, Cake Division (AMERICANA), SA21543 Jeddah, Saudi Arabia",
+      "rules_applied": [
+        {
+          "rule_id": "4.2.0.2",
+          "outcome": "MISMATCH"
+        }
+      ],
+      "motivation": "Certifikatet anger mottagare 'CBL Foods International (PVT) Ltd', medan fakturan anger 'National Food Company' som mottagare i primärt faktureringsfält (Invoice to / Bill to), med annan geografisk plats (Saudi Arabia). Namnen och adresserna överensstämmer inte, vilket medför MISMATCH enligt 4.2.0.2."
+    },
+    "goods_description": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.88,
+      "certificate_value": "20 pallets\n.\n20 pallets Colco\nstuffed into one 20 ft container with no: EITU 034629-7\nSeal no: 0928060\nBakery Ingredients",
+      "invoice_value": "16 Cake Flavour K2000 Lemon\n4 pallets Jilk 60\nNet weight: 19 908 kg\nGross weight: 21 028 kg",
+      "rules_applied": [
+        {
+          "rule_id": "4.3.3",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Varubeskrivningen i certifikatet och fakturan avser bakverksingredienser med likartade beskrivningar; fakturans varuposter för 'Cake Flavour K2000 Lemon' och 'Jilk 60' kan anses inkluderas trots viss variation i precision. Delar av varubeskrivningen kunde identifieras vilket medger MATCH."
+    },
+    "quantity": {
+      "applicable": true,
+      "status": "MISMATCH",
+      "confidence": 0.92,
+      "certificate_value": "9600 kg net\n10400 kg gross",
+      "invoice_value": "Net weight: 19 908 kg\nGross weight: 21 028 kg",
+      "rules_applied": [
+        {
+          "rule_id": "4.4.3",
+          "outcome": "MISMATCH"
+        },
+        {
+          "rule_id": "4.4.3.3",
+          "outcome": "MISMATCH"
+        }
+      ],
+      "motivation": "Certifikatets net weight (9600 kg) och gross weight (10400 kg) skiljer sig tydligt från fakturans net weight (19 908 kg) och gross weight (21 028 kg), vilket utgör uttrycklig motsägelse (4.4.3). Ingen tillåten normalisering eller undantag kan förklara skillnaden, resulterande i MISMATCH."
+    },
+    "origin": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.9,
+      "certificate_value": "EC; SWEDEN",
+      "invoice_value": "Origin: SWE",
+      "rules_applied": [
+        {
+          "rule_id": "4.5.4.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.5.4.2",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatets ursprungsangivelse 'EC; SWEDEN' motsvaras entydigt av fakturans 'Origin: SWE'. EU-normalisering och landkodsnormalisering tillämpades (4.5.4.1, 4.5.4.2), resulterande i MATCH."
+    }
+  },
+  "overall_assessment": {
+    "comparison_result": "NOT_IDENTICAL",
+    "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
+    "auto_approval_eligible": false,
+    "confidence": 0.9,
+    "critical_failures": [
+      "consignee",
+      "quantity"
+    ],
+    "manual_review_triggers": [],
+    "decision_summary": "Mottagaren och kvantiteten i certifikatet kan inte verifieras entydigt mot fakturan. Consignee skiljer sig och kvantitetsvärdena har stora avvikelser.",
+    "human_explanation": "Certifikatet anger mottagaren som CBL Foods International (PVT) Ltd medan fakturan är ställd till National Food Company i Saudiarabien. Även angiven kvantitet i kilogram skiljer sig tydligt mellan dokumenten. Övriga kontrollpunkter verifieras korrekt."
+  },
+  "_meta": {
+    "tested_at": "2026-04-01T06:30:58.908724+00:00",
+    "prompt_hash": "5d40e84ffac4",
+    "model": "gpt-4.1-mini",
+    "pair": "P090_MISMATCH",
+    "expected": "NOT_IDENTICAL",
+    "actual": "NOT_IDENTICAL",
+    "status": "PASS"
+  }
+}

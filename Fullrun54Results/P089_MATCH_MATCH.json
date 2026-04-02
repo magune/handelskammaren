@@ -1,0 +1,209 @@
+{
+  "schema_version": "3.0",
+  "metadata": {
+    "verification_timestamp": "2026-04-01T00:00:00Z",
+    "document_pair_id": null,
+    "certificate_issue_date": "2023-03-06",
+    "source_documents_received": 2
+  },
+  "task": {
+    "task_type": "customs_document_pair_verification",
+    "comparison_mode": "certificate_vs_invoice",
+    "strictness": "conservative"
+  },
+  "documents": {
+    "document_a": {
+      "label": "Document A",
+      "assumed_role": "certificate",
+      "document_type": "Certificate of Origin"
+    },
+    "document_b": {
+      "label": "Document B",
+      "assumed_role": "invoice",
+      "document_type": "Commercial Invoice"
+    }
+  },
+  "rule_activation": {
+    "lc_exception_active": false,
+    "lc_number_found": null,
+    "general_goods_description_with_invoice_reference_active": false,
+    "mixed_origins_rule_active": false,
+    "to_order_rule_active": false,
+    "quantity_exception_applied": null,
+    "eu_origin_normalization_active": false,
+    "activated_rules": [
+      {
+        "rule_id": "8.5.0",
+        "rule_name": "Filbaserad dokumentparning"
+      },
+      {
+        "rule_id": "8.6",
+        "rule_name": "Obligatorisk parningsvalidering"
+      },
+      {
+        "rule_id": "4.1.0",
+        "rule_name": "Consignor identifierad i fakturan"
+      },
+      {
+        "rule_id": "4.2.1.1",
+        "rule_name": "Alternativ mottagaradress"
+      },
+      {
+        "rule_id": "4.3.4",
+        "rule_name": "Tillägg som inte påverkar produktidentitet"
+      },
+      {
+        "rule_id": "4.4.3.1",
+        "rule_name": "Flera kvantitetsuppgifter"
+      },
+      {
+        "rule_id": "4.5.4",
+        "rule_name": "Normalisering av landsnamn och ISO-koder"
+      }
+    ]
+  },
+  "control_points": {
+    "consignor": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.98,
+      "certificate_value": "Bakels Sweden AB\nBox 13099\n40252, Göteborg\nSweden",
+      "invoice_value": "Bakels Sweden AB\nSE-40252 Gothenburg\nSweden\nVAT registration number SE556042136301",
+      "rules_applied": [
+        {
+          "rule_id": "4.1.0",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.2.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.5",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatets consignor 'Bakels Sweden AB' återfinns uttryckligen i fakturan, både i adress-/issuerblocket och i sidfoten. Landet Sverige framgår explicit i fakturans adressblock och stöds även av VAT-prefix 'SE'. Företagsnamn och land kan därför verifieras mot fakturan."
+    },
+    "consignee": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.96,
+      "certificate_value": "Parskak\nP.O. Box 16765 - 436\nTehran\nIran",
+      "invoice_value": "Delivery address\nParskak\nP.O.Box 16765 - 436\nTEHRAN 0000\nIran\n\nBusiness address\nParskak\nP.O.Box 16765 - 436\nTEHRAN 0000\nIran",
+      "rules_applied": [
+        {
+          "rule_id": "4.2.0.2",
+          "outcome": "NO_PRIMARY_BILL_TO_FOUND"
+        },
+        {
+          "rule_id": "4.2.1.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.2.3",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.2.4",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Fakturan saknar tydligt primärt faktureringsfält som 'Bill to' eller 'Invoice to'. Certifikatets consignee 'Parskak' återfinns däremot uttryckligen i fakturans 'Delivery address' och även i 'Business address', med samma boxadress och land Iran. Mottagaren kan därför verifieras mot fakturan."
+    },
+    "goods_description": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.88,
+      "certificate_value": "40 Pallets Emulsifier Jilk 60\nStuffed into 1x40ft Container\nwith no: MIOU 505910-8\nSeal no: 9418565",
+      "invoice_value": "225721 Jilk 60\n225715 Jilk 60\n40 Pallets = Bakery Ingredients\nContainer No: MIOU 505910-8\nSeal: 9418565",
+      "rules_applied": [
+        {
+          "rule_id": "4.3.2",
+          "outcome": "NO_ARTICLE_NUMBER_IN_CERTIFICATE"
+        },
+        {
+          "rule_id": "4.3.3",
+          "outcome": "MATCH_ON_MAIN_DESIGNATION"
+        },
+        {
+          "rule_id": "4.3.4",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.3.8",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatet innehåller ingen artikelnummerstyrd verifiering. Den identitetsbärande huvudbeteckningen 'Jilk 60' återfinns exakt i fakturans varurader. Tilläggen 'Emulsifier', '40 Pallets', containernummer 'MIOU 505910-8' och seal '9418565' är förenliga med fakturan och motsäger inte produktidentiteten. Varubeskrivningen kan därför verifieras."
+    },
+    "quantity": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.99,
+      "certificate_value": "23 552 Kg net\n25 150 Kg gross",
+      "invoice_value": "23 552 Kg net\n25 150 Kg gross",
+      "rules_applied": [
+        {
+          "rule_id": "4.4.2",
+          "outcome": "VALID_QUANTITY_WITH_UNIT"
+        },
+        {
+          "rule_id": "4.4.3.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.4.4",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.4.6",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatet anger två uttryckliga viktuppgifter med numeriskt värde och enhet: 23 552 Kg net och 25 150 Kg gross. Båda återfinns ordagrant i fakturan. Det finns ingen motsägelse mellan dokumenten, och kvantiteten är därför verifierad."
+    },
+    "origin": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.97,
+      "certificate_value": "Sweden",
+      "invoice_value": "Origin: SWE",
+      "rules_applied": [
+        {
+          "rule_id": "4.5.1",
+          "outcome": "EXPLICIT_ORIGIN_FOUND"
+        },
+        {
+          "rule_id": "4.5.4",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.5.5",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatet anger ursprungsland 'Sweden'. Fakturan anger uttryckligen 'Origin: SWE' på varuraderna. ISO-koden SWE är en tillåten normalisering av Sweden, så ursprungslandet kan verifieras explicit i fakturan."
+    }
+  },
+  "overall_assessment": {
+    "comparison_result": "IDENTICAL",
+    "workflow_recommendation": "AUTO_APPROVAL_ELIGIBLE",
+    "auto_approval_eligible": true,
+    "confidence": 0.95,
+    "critical_failures": [],
+    "manual_review_triggers": [],
+    "decision_summary": "Alla tillämpliga kontrollpunkter är verifierade som MATCH. Dokumentparet består av ett ursprungscertifikat och en separat faktura, och parningsvalideringen passerar via både consignor- och consignee-identifiering i fakturan.",
+    "human_explanation": "Avsändare, mottagare, varubeskrivning, kvantitet och ursprungsland i certifikatet kan återfinnas i fakturan. Certifikatet anger Bakels Sweden AB / Parskak, varan Jilk 60, 23 552 kg netto och 25 150 kg brutto samt ursprung Sverige, och samma uppgifter finns i fakturan. Dokumentparet kan därför godkännas automatiskt."
+  },
+  "_meta": {
+    "tested_at": "2026-04-01T14:07:23.238705+00:00",
+    "prompt_hash": "9b9df42642d8",
+    "model": "gpt-5.4",
+    "tier": 2,
+    "pair": "P089_MATCH",
+    "expected": "IDENTICAL",
+    "actual": "IDENTICAL",
+    "status": "PASS"
+  }
+}

@@ -1,0 +1,197 @@
+{
+  "schema_version": "3.0",
+  "metadata": {
+    "verification_timestamp": "2026-04-01T00:00:00Z",
+    "document_pair_id": null,
+    "certificate_issue_date": "2025-09-05",
+    "source_documents_received": 2
+  },
+  "task": {
+    "task_type": "customs_document_pair_verification",
+    "comparison_mode": "certificate_vs_invoice",
+    "strictness": "conservative"
+  },
+  "documents": {
+    "document_a": {
+      "label": "Document A",
+      "assumed_role": "certificate",
+      "document_type": "Certificate of Origin"
+    },
+    "document_b": {
+      "label": "Document B",
+      "assumed_role": "invoice",
+      "document_type": "Commercial Invoice"
+    }
+  },
+  "rule_activation": {
+    "lc_exception_active": false,
+    "lc_number_found": null,
+    "general_goods_description_with_invoice_reference_active": false,
+    "mixed_origins_rule_active": false,
+    "to_order_rule_active": false,
+    "quantity_exception_applied": null,
+    "eu_origin_normalization_active": false,
+    "activated_rules": [
+      {
+        "rule_id": "8.5.0",
+        "rule_name": "Filbaserad dokumentparning"
+      },
+      {
+        "rule_id": "8.6",
+        "rule_name": "Obligatorisk parningsvalidering"
+      },
+      {
+        "rule_id": "4.1.0",
+        "rule_name": "Sökning efter consignor i hela fakturan"
+      },
+      {
+        "rule_id": "4.2.0.2",
+        "rule_name": "Prioritetsordning för consignee-identifiering"
+      },
+      {
+        "rule_id": "4.1.3.7",
+        "rule_name": "Saknat bolagsformsord eller verksamhetsord i certifikatet – MANUAL_REVIEW"
+      }
+    ]
+  },
+  "control_points": {
+    "consignor": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.99,
+      "certificate_value": "Evolabel AB\nJohannefredsgatan 9\n43153, Mölndal\nSweden",
+      "invoice_value": "Evolabel AB\nJohannefredsgatan 9\n431 53 Mölndal\nSweden",
+      "rules_applied": [
+        {
+          "rule_id": "4.1.0",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.2.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.4",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatets consignor 'Evolabel AB' återfinns uttryckligen i fakturan som utställare/shipper samt i sidhuvud/footer. Adressen och landet Sverige framgår i båda dokumenten. Landet verifieras dessutom av VAT-prefix 'SE' och svensk adress i fakturan."
+    },
+    "consignee": {
+      "applicable": true,
+      "status": "MANUAL_REVIEW",
+      "confidence": 0.74,
+      "certificate_value": "Kofmelk Ingeniería y Automatización\nCallejón Hijuelas 2, Lot 5, Warehou\nRomeral VII Region 711002\nRomeral\nChile",
+      "invoice_value": "Customer Kofmelk Ingeniería y\nAutomatización Spa",
+      "rules_applied": [
+        {
+          "rule_id": "4.2.0.2",
+          "outcome": "primary_billing_field_selected"
+        },
+        {
+          "rule_id": "4.1.3.1",
+          "outcome": "no_exact_legal_name_match"
+        },
+        {
+          "rule_id": "4.1.3.7",
+          "outcome": "MANUAL_REVIEW"
+        },
+        {
+          "rule_id": "4.2.3",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Primärt faktureringsfält i fakturan är 'Customer Kofmelk Ingeniería y Automatización Spa'. Certifikatet anger 'Kofmelk Ingeniería y Automatización' utan det extra ordet 'Spa'. Namnet i certifikatet är en exakt delmängd av fakturans namn och det extra ordet framstår som bolagsform, vilket enligt regelverket ger MANUAL_REVIEW snarare än automatisk MATCH. Landet Chile kan verifieras i fakturans importerblock."
+    },
+    "goods_description": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.96,
+      "certificate_value": "Print and apply machines for automatic labeling\nHS code 8422 30 00\nT43 CW Printer, CPU Standard Edition\nBelt G3 CW Applicator\nHolder Tube 460 mm\nTube Holder\nFixed Stand 1000 mm\nFloor Stand Base\nStatus Beacon Pillar Holder for 96\nStatus Beacon with 2 m Cable\n13\" Touch Display with Arm for 96 and 1.8 m Cable for CPU SE\nReflective Trig Sensor Kit",
+      "invoice_value": "HS Code Export: 8422 30 00\nA200047-639 1 T43 CW Printer, CPU Standard Edition\n100-045-792 1 Belt G3 CW Applicator\nP100077 1 Holder Tube 460 mm\nA100141 1 Tube Holder\nA100509 1 Fixed Stand 1000 mm\nA100367 1 Floor Stand Base\nA100194 1 Status Beacon Pillar Holder for 96\nA100638 1 Status Beacon with 2 m Cable\nK100455-639 1 13\" Touch Display with Arm for 96 and 1.8 m Cable for CPU SE\nK100023 1 Reflective Trig Sensor Kit",
+      "rules_applied": [
+        {
+          "rule_id": "4.3.2",
+          "outcome": "article_numbers_not_present_in_certificate"
+        },
+        {
+          "rule_id": "4.3.3",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.3.4",
+          "outcome": "additional_invoice_information_accepted"
+        }
+      ],
+      "motivation": "Certifikatet innehåller samma identitetsbärande varubeskrivningar som fakturan för samtliga tio listade artiklar. HS-kod 8422 30 00 återfinns också i fakturan. Fakturans artikelnummer är extra information och skapar ingen motsägelse eftersom certifikatet saknar artikelnummer."
+    },
+    "quantity": {
+      "applicable": true,
+      "status": "MISMATCH",
+      "confidence": 0.97,
+      "certificate_value": "NW 26kg\nNW 3,6kg\nNW 1,5kg\nNW 1,45kg\nNW 6,5kg\nNW 9,4kg\nNW 0,5kg\nNW 0,3kg\nNW 5,24kg\nNW 0,2kg",
+      "invoice_value": "Total Weight [kg] 67kg(32+4,5+2,5+8,5+7,5+12)",
+      "rules_applied": [
+        {
+          "rule_id": "4.4.2.1",
+          "outcome": "box_7_values_selected"
+        },
+        {
+          "rule_id": "4.4.3.1",
+          "outcome": "no_certificate_quantity_identified_in_invoice"
+        },
+        {
+          "rule_id": "4.4.5.1",
+          "outcome": "all_exceptions_tested_not_applicable"
+        },
+        {
+          "rule_id": "4.4.6",
+          "outcome": "MISMATCH"
+        }
+      ],
+      "motivation": "Certifikatets verifieringsgrundande kvantiteter i box 7 är tio separata netto-vikter: 26kg, 3,6kg, 1,5kg, 1,45kg, 6,5kg, 9,4kg, 0,5kg, 0,3kg, 5,24kg och 0,2kg. Fakturan innehåller endast ett totalviktsvärde '67kg(32+4,5+2,5+8,5+7,5+12)' och inga per-artikelvikter eller netto-vikter som motsvarar certifikatets värden. Ingen tillåten undantagsregel 3A–3E kan användas för att härleda eller bekräfta box 7-värdena. Därför är kvantitetsuppgiften MISMATCH."
+    },
+    "origin": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.99,
+      "certificate_value": "Sweden",
+      "invoice_value": "Country of origin Sweden\nThe Exporter of the products covered by this document (Customs authorization NO. SE/TTA/033594) declares that, except where otherwise clearly indicated, these products are of Swedish preferential origin.",
+      "rules_applied": [
+        {
+          "rule_id": "4.5.1",
+          "outcome": "explicit_origin_field_found"
+        },
+        {
+          "rule_id": "4.5.5",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatet anger ursprungsland 'Sweden'. Fakturan innehåller ett explicit ursprungsfält 'Country of origin Sweden' och dessutom en uttrycklig ursprungsdeklaration om 'Swedish preferential origin'. Ursprungslandet kan därför identifieras uttryckligen i fakturan."
+    }
+  },
+  "overall_assessment": {
+    "comparison_result": "NOT_IDENTICAL",
+    "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
+    "auto_approval_eligible": false,
+    "confidence": 0.94,
+    "critical_failures": [
+      "Kvantitetskontrollpunkten är MISMATCH eftersom certifikatets box 7-vikter inte kan återfinnas i fakturan."
+    ],
+    "manual_review_triggers": [
+      "Consignee skiljer sig genom tillagt bolagsformsord 'Spa' i fakturan."
+    ],
+    "decision_summary": "Dokumentparet passerar parningskontroll och matchar för consignor, varubeskrivning och ursprungsland. Consignee kräver manuell bedömning på grund av tillagt bolagsformsord 'Spa'. Den avgörande avvikelsen är dock kvantitet: certifikatets tio NW-värden i box 7 kan inte verifieras mot fakturans enda totalviktsuppgift 67kg. Minst en tillämplig kontrollpunkt är därför MISMATCH och slutresultatet blir NOT_IDENTICAL.",
+    "human_explanation": "Certifikatet anger mottagaren som 'Kofmelk Ingeniería y Automatización' medan fakturan anger 'Kofmelk Ingeniería y Automatización Spa', vilket kräver manuell bedömning av bolagsformen. Framför allt kan certifikatets mängduppgifter 'NW 26kg, 3,6kg, 1,5kg, 1,45kg, 6,5kg, 9,4kg, 0,5kg, 0,3kg, 5,24kg, 0,2kg' inte återfinnas i fakturan, som endast anger 'Total Weight 67kg(32+4,5+2,5+8,5+7,5+12)'. Därför stämmer dokumenten inte överens."
+  },
+  "_meta": {
+    "tested_at": "2026-04-01T13:16:28.128438+00:00",
+    "prompt_hash": "9b9df42642d8",
+    "model": "gpt-5.4",
+    "tier": 2,
+    "pair": "P216_MISMATCH",
+    "expected": "NOT_IDENTICAL",
+    "actual": "NOT_IDENTICAL",
+    "status": "PASS"
+  }
+}

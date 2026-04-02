@@ -1,0 +1,158 @@
+{
+  "schema_version": "3.0",
+  "metadata": {
+    "verification_timestamp": null,
+    "document_pair_id": null,
+    "certificate_issue_date": "2026-03-02",
+    "source_documents_received": 2
+  },
+  "task": {
+    "task_type": "customs_document_pair_verification",
+    "comparison_mode": "certificate_vs_invoice",
+    "strictness": "conservative"
+  },
+  "documents": {
+    "document_a": {
+      "label": "Document A",
+      "assumed_role": "certificate",
+      "document_type": "Certificate of Origin"
+    },
+    "document_b": {
+      "label": "Document B",
+      "assumed_role": "invoice",
+      "document_type": "Invoice"
+    }
+  },
+  "rule_activation": {
+    "lc_exception_active": false,
+    "lc_number_found": null,
+    "general_goods_description_with_invoice_reference_active": false,
+    "mixed_origins_rule_active": false,
+    "to_order_rule_active": false,
+    "quantity_exception_applied": null,
+    "eu_origin_normalization_active": true,
+    "activated_rules": [
+      {
+        "rule_id": "4.5.4.1",
+        "rule_name": "EU-normalisering – fakturan innehåller fler EU-ursprung än certifikatet"
+      },
+      {
+        "rule_id": "4.6",
+        "rule_name": "Kina/Hongkong ekvivalens"
+      }
+    ]
+  },
+  "control_points": {
+    "consignor": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.95,
+      "certificate_value": "ERICSSON AB",
+      "invoice_value": "ERICSSON AB",
+      "rules_applied": [
+        {
+          "rule_id": "4.1.0",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.4",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatets consignor \"ERICSSON AB\" kan identifieras i faktura som samma juridiska part. Företagsnamnet återfinns i fakturans utställarinformation inklusive adress och VAT-numret bekräftar identiteten. Landet Sverige överensstämmer exakt. Inga avvikelser noterades."
+    },
+    "consignee": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.95,
+      "certificate_value": "ERICSSON INDIA PRIVATE LTD.\n(FORMERLY ERICSSON INDIA GLOBAL\nS/N 3RD & 4TH FLOOR BUILDING NO 7A\nPHASE 3 DLF CYBER CITY SECTOR 25A\n122002 GURUGRAM GURUGRAM\nINDIA",
+      "invoice_value": "ERICSSON INDIA PRIVATE LTD.\n(FORMERLY ERICSSON INDIA GLOBAL\nS/N 3RD & 4TH FLOOR BUILDING NO 7A\nPHASE 3 DLF CYBER CITY SECTOR 25A\n122002 GURUGRAM GURUGRAM\nIndia",
+      "rules_applied": [
+        {
+          "rule_id": "4.2.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.2.3",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Mottagaren i certifikatet matchar fakturans Invoice address och Buyer på samtliga nivåer inklusive adress och land (India). Företagsnamnet är exakt identiskt efter normalisering. Land överensstämmer."
+    },
+    "goods_description": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.9,
+      "certificate_value": "TELEOM EQUIPMENT",
+      "invoice_value": "Telecom equipment",
+      "rules_applied": [
+        {
+          "rule_id": "4.3.3",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Varubeskrivningen \"TELEOM EQUIPMENT\" i certifikatet kan verifieras mot fakturans \"Telecom equipment\" efter tillåten textnormalisering (versaler, mellanslag). Skillnaden i stavning är minimal och anses en acceptabel normalisering enligt reglerna."
+    },
+    "quantity": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.95,
+      "certificate_value": "1507 KG GW",
+      "invoice_value": "1,507.000 Total gross weight Kg",
+      "rules_applied": [
+        {
+          "rule_id": "4.4.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.4.3.3",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.4.4",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatets vikt \"1507 KG GW\" kan identifieras i fakturan som \"1,507.000 Total gross weight Kg\". Tusentalsavskiljaren (komma) normaliserades bort och värdet matchar exakt efter trunkering av decimaler. Viktenheten och viktkategorin stämmer."
+    },
+    "origin": {
+      "applicable": true,
+      "status": "MISMATCH",
+      "confidence": 1,
+      "certificate_value": "Czech Republic",
+      "invoice_value": "India",
+      "rules_applied": [
+        {
+          "rule_id": "4.5.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.5.5",
+          "outcome": "MISMATCH"
+        }
+      ],
+      "motivation": "Certifikatets ursprungsland är angivet som \"Czech Republic\" men fakturan anger \"India\" som ursprung i fältet Invoice address och Delivery address samt i fakturans adressblock. Certifikatets ursprung kan inte verifieras i fakturan vilket utgör en tydlig motsägelse."
+    }
+  },
+  "overall_assessment": {
+    "comparison_result": "NOT_IDENTICAL",
+    "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
+    "auto_approval_eligible": false,
+    "confidence": 0.8,
+    "critical_failures": [
+      "origin"
+    ],
+    "manual_review_triggers": [],
+    "decision_summary": "Avvikelser i ursprungslandet mellan certifikat (Czech Republic) och faktura (India). Övriga kontrollpunkter stämmer.",
+    "human_explanation": "Certifikatet anger ursprungslandet som Czech Republic medan fakturan tydligt anger India som ursprungsland. Övriga uppgifter såsom avsändare, mottagare, varubeskrivning och kvantitet överensstämmer. Detta utgör en otvetydig avvikelse som kräver manuell handläggning."
+  },
+  "_meta": {
+    "tested_at": "2026-04-01T06:29:48.640563+00:00",
+    "prompt_hash": "5d40e84ffac4",
+    "model": "gpt-4.1-mini",
+    "pair": "P016_MATCH",
+    "expected": "IDENTICAL",
+    "actual": "NOT_IDENTICAL",
+    "status": "FAIL"
+  }
+}

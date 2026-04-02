@@ -1,0 +1,201 @@
+{
+  "schema_version": "3.0",
+  "metadata": {
+    "verification_timestamp": "2026-04-01T00:00:00Z",
+    "document_pair_id": null,
+    "certificate_issue_date": "2023-03-23",
+    "source_documents_received": 2
+  },
+  "task": {
+    "task_type": "customs_document_pair_verification",
+    "comparison_mode": "certificate_vs_invoice",
+    "strictness": "conservative"
+  },
+  "documents": {
+    "document_a": {
+      "label": "Document A",
+      "assumed_role": "certificate",
+      "document_type": "certificate of origin"
+    },
+    "document_b": {
+      "label": "Document B",
+      "assumed_role": "invoice",
+      "document_type": "commercial invoice"
+    }
+  },
+  "rule_activation": {
+    "lc_exception_active": false,
+    "lc_number_found": null,
+    "general_goods_description_with_invoice_reference_active": false,
+    "mixed_origins_rule_active": false,
+    "to_order_rule_active": false,
+    "quantity_exception_applied": null,
+    "eu_origin_normalization_active": true,
+    "activated_rules": [
+      {
+        "rule_id": "4.1.0",
+        "rule_name": "Consignor identified anywhere in invoice text"
+      },
+      {
+        "rule_id": "4.2.2.1.1",
+        "rule_name": "Layout truncation/prefix match for consignee name in certificate"
+      },
+      {
+        "rule_id": "4.5.4.2",
+        "rule_name": "EU member state and EU collective origin normalization"
+      },
+      {
+        "rule_id": "8.6",
+        "rule_name": "Mandatory document pairing validation"
+      }
+    ]
+  },
+  "control_points": {
+    "consignor": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.9,
+      "certificate_value": "Elmo Sweden AB\nKyrkogatan 18\n51250, Svenljunga",
+      "invoice_value": "Elmo Sweden AB\nSE-512 81 SVENLJUNGA\nSWEDEN\nVAT.NO: SE556821587401",
+      "rules_applied": [
+        {
+          "rule_id": "8.6",
+          "outcome": "PASS - valid document pair established through consignor and consignee presence in invoice"
+        },
+        {
+          "rule_id": "4.1.0",
+          "outcome": "MATCH - certificate consignor name found explicitly in invoice footer/postal address block"
+        },
+        {
+          "rule_id": "4.1.2.1",
+          "outcome": "MATCH - Sweden verified through explicit country text and SE VAT/IBAN prefixes"
+        },
+        {
+          "rule_id": "4.1.5",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatet anger consignor som \"Elmo Sweden AB\" i Sverige. I fakturan återfinns samma företagsnamn uttryckligen i footer/postadressblocket tillsammans med \"SWEDEN\" samt svenska företagsidentifierare (VAT.NO SE556821587401 och IBAN som börjar med SE). Detta uppfyller kravet att consignor ska kunna identifieras någonstans i fakturan och att land ska verifieras."
+    },
+    "consignee": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.88,
+      "certificate_value": "Boretius Objekt Nähservice\nSüdring 4\n76473 Iffezheim\nGermany",
+      "invoice_value": "Payer / Ship-to:\nBoretius Objekt Nähservice (11007861)\nfür Dekorationen GmbH\nSüdring 4\nDE 76473 - Iffezheim , Germany",
+      "rules_applied": [
+        {
+          "rule_id": "8.6",
+          "outcome": "PASS - valid document pair established through consignee presence in invoice"
+        },
+        {
+          "rule_id": "4.2.0.2",
+          "outcome": "Applied - primary billing and ship-to fields reviewed"
+        },
+        {
+          "rule_id": "4.2.2.1.1",
+          "outcome": "MATCH - certificate consignee name is exact prefix of full invoice name and appears truncated by certificate layout"
+        },
+        {
+          "rule_id": "4.2.3",
+          "outcome": "MATCH - Germany matches Germany"
+        },
+        {
+          "rule_id": "4.2.4",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatet anger mottagaren som \"Boretius Objekt Nähservice\" på adress Südring 4, 76473 Iffezheim, Germany. Fakturan anger samma part i både Payer- och Ship-to-fält, men med fullständigt namn \"Boretius Objekt Nähservice für Dekorationen GmbH\". Certifikatets namn utgör en exakt inledande del av fakturans fullständiga namn och framstår som layoutavkortat i certifikatet; landet är samma."
+    },
+    "goods_description": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.98,
+      "certificate_value": "Elmosoft 97038 I\nUpholstery Leather",
+      "invoice_value": "ELMOSOFT 97038 I\nUpholstery Leather",
+      "rules_applied": [
+        {
+          "rule_id": "4.3.2",
+          "outcome": "Priority order followed; no separate certificate article number used as controlling identifier"
+        },
+        {
+          "rule_id": "4.3.3",
+          "outcome": "MATCH - identity-bearing goods description found explicitly in invoice text after case normalization"
+        },
+        {
+          "rule_id": "4.3.8",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatets varubeskrivning är \"Elmosoft 97038 I\" och \"Upholstery Leather\". Fakturan innehåller exakt samma produktbeteckning \"ELMOSOFT 97038 I\" samt texten \"Upholstery Leather\". Matchningen kan göras direkt utan semantisk tolkning."
+    },
+    "quantity": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.92,
+      "certificate_value": "4 Kgs",
+      "invoice_value": "Weight 4 kgs",
+      "rules_applied": [
+        {
+          "rule_id": "4.4.2",
+          "outcome": "PASS - certificate quantity contains numeric value and unit"
+        },
+        {
+          "rule_id": "4.4.2.2",
+          "outcome": "MATCH - single weight value without category accepted because invoice shows one corresponding weight and no conflicting alternative"
+        },
+        {
+          "rule_id": "4.4.3",
+          "outcome": "MATCH - numeric value 4 identified explicitly in invoice"
+        },
+        {
+          "rule_id": "4.4.6",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatet anger kvantiteten som \"4 Kgs\". Fakturan anger uttryckligen \"Weight 4 kgs\". Det finns endast ett viktvärde i fakturan och ingen motstridig alternativ viktkategori, därför är uppgiften verifierad."
+    },
+    "origin": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.9,
+      "certificate_value": "EUROPEAN UNION\nSwedish Origin",
+      "invoice_value": "Swedish Origin",
+      "rules_applied": [
+        {
+          "rule_id": "4.5.1",
+          "outcome": "PASS - explicit origin statement found in invoice text"
+        },
+        {
+          "rule_id": "4.5.4.2",
+          "outcome": "MATCH - certificate EU origin is verified by specific EU member state Sweden in invoice"
+        },
+        {
+          "rule_id": "4.5.5",
+          "outcome": "MATCH - Swedish origin explicitly identified in invoice"
+        }
+      ],
+      "motivation": "Certifikatet anger ursprung som \"EUROPEAN UNION\" och \"Swedish Origin\". Fakturan innehåller en uttrycklig ursprungsangivelse \"Swedish Origin\". Sverige är ett EU-medlemsland, vilket verifierar både den specifika svenska ursprungsangivelsen och EU-angivelsen i certifikatet."
+    }
+  },
+  "overall_assessment": {
+    "comparison_result": "IDENTICAL",
+    "workflow_recommendation": "AUTO_APPROVAL_ELIGIBLE",
+    "auto_approval_eligible": true,
+    "confidence": 0.92,
+    "critical_failures": [],
+    "manual_review_triggers": [],
+    "decision_summary": "All five applicable control points are verified as MATCH. Document pairing is valid through identifiable consignor and consignee in the invoice. No LC exception applies, no control point is below the confidence floor for an IDENTICAL result, and no contradiction was identified.",
+    "human_explanation": "Avsändare, mottagare, varubeskrivning, mängd och ursprungsland kan verifieras mot fakturan. Certifikatet anger Elmo Sweden AB, Boretius Objekt Nähservice, Elmosoft 97038 I / Upholstery Leather, 4 Kgs och svenskt/EU-ursprung, och motsvarande uppgifter finns i fakturan. Dokumentparet kan därför godkännas automatiskt."
+  },
+  "_meta": {
+    "tested_at": "2026-04-01T12:52:20.261018+00:00",
+    "prompt_hash": "9b9df42642d8",
+    "model": "gpt-5.4",
+    "tier": 2,
+    "pair": "P0124_MATCH",
+    "expected": "IDENTICAL",
+    "actual": "IDENTICAL",
+    "status": "PASS"
+  }
+}

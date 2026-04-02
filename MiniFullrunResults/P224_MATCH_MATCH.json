@@ -1,0 +1,160 @@
+{
+  "schema_version": "3.0",
+  "metadata": {
+    "verification_timestamp": null,
+    "document_pair_id": null,
+    "certificate_issue_date": "2025-05-15",
+    "source_documents_received": 2
+  },
+  "task": {
+    "task_type": "customs_document_pair_verification",
+    "comparison_mode": "certificate_vs_invoice",
+    "strictness": "conservative"
+  },
+  "documents": {
+    "document_a": {
+      "label": "Document A",
+      "assumed_role": "certificate",
+      "document_type": "Certificate of Origin"
+    },
+    "document_b": {
+      "label": "Document B",
+      "assumed_role": "invoice",
+      "document_type": "Invoice"
+    }
+  },
+  "rule_activation": {
+    "lc_exception_active": false,
+    "lc_number_found": null,
+    "general_goods_description_with_invoice_reference_active": false,
+    "mixed_origins_rule_active": false,
+    "to_order_rule_active": true,
+    "quantity_exception_applied": null,
+    "eu_origin_normalization_active": true,
+    "activated_rules": [
+      {
+        "rule_id": "2.2",
+        "rule_name": "Special exception for Letter of Credit (LC) - not applicable"
+      },
+      {
+        "rule_id": "4.2.2.2",
+        "rule_name": "Special exception - To order consignee"
+      },
+      {
+        "rule_id": "4.5.4.1",
+        "rule_name": "EU origin normalization active"
+      }
+    ]
+  },
+  "control_points": {
+    "consignor": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.9,
+      "certificate_value": "New Wave Mode AB\nSE-455 83, DINGLE\nSweden",
+      "invoice_value": "New Wave Mode AB\nÅkarevägen 18\n455 83 Dingle\nSweden",
+      "rules_applied": [
+        {
+          "rule_id": "4.1.0",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.3.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.4",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Consignor 'New Wave Mode AB' with address 'SE-455 83, DINGLE, Sweden' in the certificate is explicitly identified in the invoice as 'New Wave Mode AB, Åkarevägen 18, 455 83 Dingle, Sweden' with matching country. The consignor name matches exactly after normalization. No contradictions found. Rule 4.1.0 confirms consignor presence beyond issuer field."
+    },
+    "consignee": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.95,
+      "certificate_value": "To order\nGermany",
+      "invoice_value": null,
+      "rules_applied": [
+        {
+          "rule_id": "4.2.2.2",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Consignee in the certificate is stated as 'To order' with country 'Germany'. Per rule 4.2.2.2, for consignee listed as 'To order', no company name verification is required and only the country 'Germany' needs to be identifiable in the invoice. The invoice contains delivery addresses in Germany, confirming country presence. Therefore, consignee verification is MATCH."
+    },
+    "goods_description": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.92,
+      "certificate_value": "804 NE\nUtah Jacket W Reflective",
+      "invoice_value": "020943-949-4 Utah Jacket W Reflective S\n020943-949-5 Utah Jacket W Reflective M\n020943-949-6 Utah Jacket W Reflective L",
+      "rules_applied": [
+        {
+          "rule_id": "4.3.2",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certificate's goods description 'Utah Jacket W Reflective' matches the invoice lines with item descriptions 'Utah Jacket W Reflective S/M/L'. Article numbers match closely with allowed suffix variants. Therefore, goods descriptions are verified."
+    },
+    "quantity": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.9,
+      "certificate_value": "Gr weight 371 kg",
+      "invoice_value": "Order line total 11.381,294 (amount), quantities per size given as 145, 330, 329 units",
+      "rules_applied": [
+        {
+          "rule_id": "4.4.3.2",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.4.6.1",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Quantity in the certificate is the gross weight '371 kg' (rounded). The invoice provides quantities of items but does not explicitly provide total gross weight clearly matching 371 kg. However, the certificate's quantity relates to shipment quantity and weight and since the certificate uses gross weight 371 kg and invoice contains sufficient corroboration including quantities and no contradicting weight, quantity verification is MATCH per 4.4.3.2 exception for shipment quantities and 4.4.6.1 that handles lack of weight explicitly but presence of corroborating info."
+    },
+    "origin": {
+      "applicable": true,
+      "status": "MISMATCH",
+      "confidence": 0.95,
+      "certificate_value": "Myanmar",
+      "invoice_value": "Country of origin: CN",
+      "rules_applied": [
+        {
+          "rule_id": "4.5.1",
+          "outcome": "MISMATCH"
+        },
+        {
+          "rule_id": "4.5.5",
+          "outcome": "MISMATCH"
+        }
+      ],
+      "motivation": "Certificate states country of origin as 'Myanmar'. Invoice explicitly states country of origin as 'CN' (China) for all items. Myanmar does not appear in invoice's origin fields. This is a direct and explicit contradiction between certificate and invoice on origin. Rule 4.5.1 and 4.5.5 dictate MISMATCH."
+    }
+  },
+  "overall_assessment": {
+    "comparison_result": "NOT_IDENTICAL",
+    "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
+    "auto_approval_eligible": false,
+    "confidence": 0.88,
+    "critical_failures": [
+      "origin"
+    ],
+    "manual_review_triggers": [
+      "origin"
+    ],
+    "decision_summary": "The origin country stated in the certificate (Myanmar) does not match the origin country on the invoice (China). Other control points match or require manual review.",
+    "human_explanation": "Certifikatets ursprungsland är Myanmar medan fakturan anger Kina som ursprungsland. Övriga kontrollpunkter är korrekta eller kräver manuell granskning, varför ärendet måste handläggas manuellt."
+  },
+  "_meta": {
+    "tested_at": "2026-04-01T06:31:28.477762+00:00",
+    "prompt_hash": "5d40e84ffac4",
+    "model": "gpt-4.1-mini",
+    "pair": "P224_MATCH",
+    "expected": "IDENTICAL",
+    "actual": "NOT_IDENTICAL",
+    "status": "FAIL"
+  }
+}

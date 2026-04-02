@@ -1,0 +1,182 @@
+{
+  "schema_version": "3.0",
+  "metadata": {
+    "verification_timestamp": null,
+    "document_pair_id": null,
+    "certificate_issue_date": "2025-12-29",
+    "source_documents_received": 2
+  },
+  "task": {
+    "task_type": "customs_document_pair_verification",
+    "comparison_mode": "certificate_vs_invoice",
+    "strictness": "conservative"
+  },
+  "documents": {
+    "document_a": {
+      "label": "Document A",
+      "assumed_role": "certificate",
+      "document_type": "Certificate of Origin"
+    },
+    "document_b": {
+      "label": "Document B",
+      "assumed_role": "invoice",
+      "document_type": "Invoice"
+    }
+  },
+  "rule_activation": {
+    "lc_exception_active": false,
+    "lc_number_found": null,
+    "general_goods_description_with_invoice_reference_active": true,
+    "mixed_origins_rule_active": true,
+    "to_order_rule_active": false,
+    "quantity_exception_applied": null,
+    "eu_origin_normalization_active": true,
+    "activated_rules": [
+      {
+        "rule_id": "2.2",
+        "rule_name": "Letter of Credit exception"
+      },
+      {
+        "rule_id": "4.3.5",
+        "rule_name": "General goods description with invoice reference"
+      },
+      {
+        "rule_id": "4.3.7",
+        "rule_name": "Mixed origins per article or invoice reference"
+      },
+      {
+        "rule_id": "4.5.4.1",
+        "rule_name": "EU origin normalization and multiple EU country handling"
+      }
+    ]
+  },
+  "control_points": {
+    "consignor": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.92,
+      "certificate_value": "SKF Eurotrade AB\n415 50, GÖTEBORG\nSweden",
+      "invoice_value": "SKF Eurotrade AB \n415 50 Goteborg\nSweden",
+      "rules_applied": [
+        {
+          "rule_id": "4.1.0",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.3.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.4",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Consignor 'SKF Eurotrade AB' from certificate is explicitly found as invoice issuer 'SKF Eurotrade AB' with consistent address and country Sweden (after normalization of spelling and company form), satisfying rules 4.1.0 (direct identification), 4.1.3.1 (juridical name match) and 4.1.4 (land verification)."
+    },
+    "consignee": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.93,
+      "certificate_value": "Proxima LLC\nCity Point, 2nd floor \nAZ1078 Baku\nAzerbaijan",
+      "invoice_value": "Proxima LLC \nCity Point, 2nd floor \nAZ1078 Baku\nAzerbaijan",
+      "rules_applied": [
+        {
+          "rule_id": "4.2.0",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.2.2.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.2.3",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Consignee 'Proxima LLC' from certificate matches invoice 'Bill to', 'Sold to', and 'Ship to' fields with full address and country Azerbaijan as per rules 4.2.0 (consignee role identification), 4.2.2.1 (normalization), and 4.2.3 (land matching)."
+    },
+    "goods_description": {
+      "applicable": true,
+      "status": "MANUAL_REVIEW",
+      "confidence": 0.75,
+      "certificate_value": "Bearings and components, chains, lubricators,\nmeasuring equipment\nFor detailed description refer to the inv 8500026528\ndated 18.12.2025",
+      "invoice_value": "Multiple detailed line items with article numbers matching certificate numbers including ball bearings, seals, chains, lubricators, etc. See invoice pages 2-14 for full list.",
+      "rules_applied": [
+        {
+          "rule_id": "4.3.2",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.3.5",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.3.7",
+          "outcome": "MANUAL_REVIEW"
+        }
+      ],
+      "motivation": "General goods description in certificate accompanied with explicit invoice reference (invoice number and date) activates rule 4.3.5 for verifying goods by invoice reference. Article numbers in certificate appear in invoice. However, multiple articles and several origins listed in certificate and invoice require manual verification per 4.3.7; no explicit article-to-origin mapping found in certificate, and invoice lists multiple countries of manufacture matching those in certificate, hence MANUAL_REVIEW to confirm linkage."
+    },
+    "quantity": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.88,
+      "certificate_value": "GW in KGS:\n2.087,860\nNETW in KGS:\n1.858,748\n16 CASE(S)",
+      "invoice_value": "Total quantity and weights in invoice exactly matching gross weight 2,087.860 KG (2.087,860 with comma as decimal) and net weight 1,858.748 KG (1.858,748), total quantity 16 cases as specified in invoice pages and transport details on page 15.",
+      "rules_applied": [
+        {
+          "rule_id": "4.4.3",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.4.3.2",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certificate's total gross and net weights match invoice totals within tolerances after decimal normalization; quantity '16 CASE(S)' confirmed with invoice package counts. Verifications comply with 4.4.3 for quantity numeric matching and 4.4.3.2 on shipment quantity, resulting in MATCH."
+    },
+    "origin": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.95,
+      "certificate_value": "Austria,Bulgaria,China,India,Poland,\nCzech Republic,Finland,Italy,Sweden\nFrance,Germany,Netherlands,USA",
+      "invoice_value": "Invoice lists country of manufacturing matching all certificate origins, including Austria, Bulgaria, China, India, Poland, Czech Republic, Finland, Italy, Sweden, France, Germany, Netherlands, USA; no origin outside certificate set found; EU normalization applies.",
+      "rules_applied": [
+        {
+          "rule_id": "4.5.4.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.5.4.2",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.6",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "All country of origin names in certificate explicitly found in invoice's Country of manufacturing fields as per rules 4.5.4.1 and 4.5.4.2; EU origin normalization and allowed equivalences applied. No additional unlisted origins appear in invoice; consistent with 4.6 for China/Hongkong equivalence."
+    }
+  },
+  "overall_assessment": {
+    "comparison_result": "MANUAL_REVIEW",
+    "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
+    "auto_approval_eligible": false,
+    "confidence": 0.86,
+    "critical_failures": [],
+    "manual_review_triggers": [
+      "4.3.7 Mixed origins per article or lack of explicit origin-article linkage"
+    ],
+    "decision_summary": "Certificate consignor and consignee match invoice with high confidence. Quantity and origin also match explicitly. The goods description is generally supported but requires manual review due to multiple articles and origins without explicit linkage.",
+    "human_explanation": "Varubeskrivningen är generell och hänvisar till faktura 8500026528, men kopplingen mellan artikel och ursprungsland är otydlig och kräver manuell granskning. Consignor, consignee, kvantitet och ursprungsland stämmer väl överens mellan certifikat och faktura. En manuell handläggning behövs för att säkerställa varubeskrivningens detaljer."
+  },
+  "_meta": {
+    "tested_at": "2026-04-01T06:30:31.313601+00:00",
+    "prompt_hash": "5d40e84ffac4",
+    "model": "gpt-4.1-mini",
+    "pair": "P060_MATCH",
+    "expected": "IDENTICAL",
+    "actual": "MANUAL_REVIEW",
+    "status": "REVIEW"
+  }
+}

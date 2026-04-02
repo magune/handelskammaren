@@ -1,0 +1,197 @@
+{
+  "schema_version": "3.0",
+  "metadata": {
+    "verification_timestamp": "2026-04-02T00:00:00Z",
+    "document_pair_id": null,
+    "certificate_issue_date": "2026-02-03",
+    "source_documents_received": 2
+  },
+  "task": {
+    "task_type": "customs_document_pair_verification",
+    "comparison_mode": "certificate_vs_invoice",
+    "strictness": "conservative"
+  },
+  "documents": {
+    "document_a": {
+      "label": "Document A",
+      "assumed_role": "certificate",
+      "document_type": "Certificate of Origin"
+    },
+    "document_b": {
+      "label": "Document B",
+      "assumed_role": "invoice",
+      "document_type": "Pro Forma Invoice"
+    }
+  },
+  "rule_activation": {
+    "lc_exception_active": false,
+    "lc_number_found": null,
+    "general_goods_description_with_invoice_reference_active": true,
+    "mixed_origins_rule_active": false,
+    "to_order_rule_active": false,
+    "quantity_exception_applied": "3D",
+    "eu_origin_normalization_active": false,
+    "activated_rules": [
+      {
+        "rule_id": "8.5.0",
+        "rule_name": "Filbaserad dokumentparning; använd certifikat från certifikatfil och faktura från separat fakturafil"
+      },
+      {
+        "rule_id": "8.6",
+        "rule_name": "Obligatorisk parningsvalidering"
+      },
+      {
+        "rule_id": "4.1.0",
+        "rule_name": "Consignor kan verifieras om företagsnamnet förekommer uttryckligen någonstans i fakturan"
+      },
+      {
+        "rule_id": "4.2.1.1",
+        "rule_name": "Alternativ mottagaradress när primärt faktureringsfält saknas"
+      },
+      {
+        "rule_id": "4.3.5",
+        "rule_name": "Generell varubeskrivning med fakturareferens och fakturadatum"
+      },
+      {
+        "rule_id": "4.4.5.5",
+        "rule_name": "Summering av flera rader inom samma faktura"
+      },
+      {
+        "rule_id": "4.4.5.5.1",
+        "rule_name": "Samlande varubeskrivning i certifikatet med flera fakturarader"
+      },
+      {
+        "rule_id": "4.5.1",
+        "rule_name": "Ursprungsland ska framgå uttryckligen i fakturan"
+      }
+    ]
+  },
+  "control_points": {
+    "consignor": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.9,
+      "certificate_value": "Wellspect Healthcare\nP.O Box 14\n431 21, Mölndal\nSweden",
+      "invoice_value": "Mölndal Sweden 29th of January 2026\nWellspect Healthcare Wellspect AB",
+      "rules_applied": [
+        {
+          "rule_id": "4.1.0",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.0.2",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.2.1",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatets consignor är \"Wellspect Healthcare ... Sweden\". I den separata fakturafilen förekommer företagsnamnet uttryckligen på sida 2 i texten \"Wellspect Healthcare Wellspect AB\", och Sverige framgår uttryckligen i samma område genom \"Mölndal Sweden\" samt i issuer-/footeruppgifterna. Därmed är consignor verifierad via uttrycklig förekomst i fakturan och landöverensstämmelse."
+    },
+    "consignee": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.97,
+      "certificate_value": "Paracare SpA\nLas Dalias #3072 - Macul\n7810864 Santiago de Chile\nChile",
+      "invoice_value": "Delivery Address\nPARACARE SpA\nLas Dalias 3072\nMacul 1 Santiago\n7810864 Santiago de Chile",
+      "rules_applied": [
+        {
+          "rule_id": "4.2.0.2",
+          "outcome": "PRIMARY_FIELDS_NOT_USABLE"
+        },
+        {
+          "rule_id": "4.2.1.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.2.3",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Fakturan har inget ifyllt primärt faktureringsfält med namngiven kommersiell part under \"Invoice recipient\", \"Customer\" eller \"Payer\". Certifikatets consignee kan däremot identifieras i fakturans sekundära fält \"Delivery Address\" som \"PARACARE SpA ... 7810864 Santiago de Chile\", och landet Chile överensstämmer. Skillnaden \"#3072\" vs \"3072\" påverkar inte matchningen."
+    },
+    "goods_description": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.88,
+      "certificate_value": "Medical Equipment (According to Proforma 0001701171 dated 260129",
+      "invoice_value": "Invoice number\n0001701171\nDate\n29th of January 2026\nRectal Catheter Set Regular 80\nRectal Catheter Set Small 80\nClassic System Regular ES\nClassic System Small ES\nNavina Tube Set 80",
+      "rules_applied": [
+        {
+          "rule_id": "4.3.5",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.3.5.2",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatet använder en generell varubeskrivning men hänvisar uttryckligen till \"Proforma 0001701171 dated 260129\". Den separata fakturafilen har fakturanummer \"0001701171\" och datum \"29th of January 2026\", vilket efter datumformatnormalisering motsvarar 260129. Fakturans varor är medicintekniska produkter och är förenliga med den generella beskrivningen \"Medical Equipment\"."
+    },
+    "quantity": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.86,
+      "certificate_value": "35pcs",
+      "invoice_value": "20\n10\n2\n1\n2",
+      "rules_applied": [
+        {
+          "rule_id": "4.4.1",
+          "outcome": "NOT_EXPLICITLY_FOUND_AS_SINGLE_TOTAL"
+        },
+        {
+          "rule_id": "4.4.5.1",
+          "outcome": "SEQUENTIAL_EXCEPTION_REVIEW_COMPLETED"
+        },
+        {
+          "rule_id": "4.4.5.5",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.4.5.5.1",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatet anger total kvantitet \"35pcs\". Fakturan saknar en explicit totalrad för antal, men innehåller fem rader med kvantiteterna 20, 10, 2, 1 och 2 för de varor som omfattas av certifikatets samlande beskrivning. Summering inom samma faktura ger 35, vilket verifierar certifikatets kvantitet enligt undantaget för flera rader inom samma faktura."
+    },
+    "origin": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.99,
+      "certificate_value": "Sweden",
+      "invoice_value": "Country of Origin: Sweden",
+      "rules_applied": [
+        {
+          "rule_id": "4.5.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.5.5",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatet anger ursprungsland \"Sweden\". I den separata fakturafilen finns ett explicit ursprungsfält på sida 2: \"Country of Origin: Sweden\". Ursprungslandet kan därför verifieras direkt utan ytterligare tolkning."
+    }
+  },
+  "overall_assessment": {
+    "comparison_result": "IDENTICAL",
+    "workflow_recommendation": "AUTO_APPROVAL_ELIGIBLE",
+    "auto_approval_eligible": true,
+    "confidence": 0.92,
+    "critical_failures": [],
+    "manual_review_triggers": [],
+    "decision_summary": "Original-certifikatet i certifikatfilen har parats med den separata proformafakturan i fakturafilen via fakturanummer 0001701171. Consignor, consignee, generell varubeskrivning med fakturareferens, kvantitet 35 pcs och ursprungsland Sweden kan verifieras mot fakturan. Inga tillämpliga kontrollpunkter gav MISMATCH eller MANUAL_REVIEW.",
+    "human_explanation": "Certifikatet hänvisar till proformafaktura 0001701171 daterad 2026-01-29, och denna faktura finns i den separata fakturafilen. Avsändare, mottagare, varubeskrivning, kvantitet 35 pcs och ursprungsland Sweden kan verifieras mot fakturan. Dokumentparet kan därför godkännas automatiskt."
+  },
+  "_meta": {
+    "tested_at": "2026-04-02T05:17:47.505137+00:00",
+    "prompt_hash": "303c97261590",
+    "model": "gpt-5.4",
+    "pair": "P0145_MATCH",
+    "expected": "IDENTICAL",
+    "actual": "IDENTICAL",
+    "status": "PASS",
+    "rerun": "prompt_fixes_r2r3"
+  }
+}

@@ -1,0 +1,179 @@
+{
+  "schema_version": "3.0",
+  "metadata": {
+    "verification_timestamp": null,
+    "document_pair_id": null,
+    "certificate_issue_date": "2026-02-27",
+    "source_documents_received": 2
+  },
+  "task": {
+    "task_type": "customs_document_pair_verification",
+    "comparison_mode": "certificate_vs_invoice",
+    "strictness": "conservative"
+  },
+  "documents": {
+    "document_a": {
+      "label": "Document A",
+      "assumed_role": "certificate",
+      "document_type": "Certificate of Origin"
+    },
+    "document_b": {
+      "label": "Document B",
+      "assumed_role": "invoice",
+      "document_type": "Invoice"
+    }
+  },
+  "rule_activation": {
+    "lc_exception_active": false,
+    "lc_number_found": null,
+    "general_goods_description_with_invoice_reference_active": true,
+    "mixed_origins_rule_active": false,
+    "to_order_rule_active": false,
+    "quantity_exception_applied": null,
+    "eu_origin_normalization_active": true,
+    "activated_rules": [
+      {
+        "rule_id": "2.2",
+        "rule_name": "Letter of Credit exceptions (not activated)"
+      },
+      {
+        "rule_id": "4.3.5",
+        "rule_name": "General goods description with invoice reference"
+      },
+      {
+        "rule_id": "4.5.4.1",
+        "rule_name": "EU origin normalization and handling of extra EU members"
+      }
+    ]
+  },
+  "control_points": {
+    "consignor": {
+      "applicable": true,
+      "status": "MISMATCH",
+      "confidence": 0.9,
+      "certificate_value": "Forest Papper AB",
+      "invoice_value": "Oral Ofset Amb. San. Ve Tic. A.S",
+      "rules_applied": [
+        {
+          "rule_id": "4.1.0",
+          "outcome": "not matched"
+        },
+        {
+          "rule_id": "4.1.1",
+          "outcome": "checked invoice issuer"
+        },
+        {
+          "rule_id": "4.1.3.1",
+          "outcome": "juridical name does not match invoice issuer"
+        }
+      ],
+      "motivation": "Consignor 'Forest Papper AB' in certificate does not match invoice issuer name 'Oral Ofset Amb. San. Ve Tic. A.S', nor is it found anywhere in the invoice document text after allowed normalization. Therefore, consignor cannot be verified (rule 4.1.1, 4.1.3.1)."
+    },
+    "consignee": {
+      "applicable": true,
+      "status": "MISMATCH",
+      "confidence": 0.95,
+      "certificate_value": "KÜTAHYA ENTEGRE KAGIT SAN ve TIC.AS",
+      "invoice_value": "Oral Ofset Amb. San. Ve Tic. A.S",
+      "rules_applied": [
+        {
+          "rule_id": "4.2.0",
+          "outcome": "consignee verification against invoice buyer"
+        },
+        {
+          "rule_id": "4.2.1",
+          "outcome": "invoice buyer is different from certificate consignee"
+        },
+        {
+          "rule_id": "4.2.3",
+          "outcome": "countries do not match (Türkiye vs Turkey)"
+        }
+      ],
+      "motivation": "Certificate consignee 'KÜTAHYA ENTEGRE KAGIT SAN ve TIC.AS' is not found in the invoice fields 'Buyer', 'Invoice to' or primary consignee fields. The invoice buyer is 'Oral Ofset Amb. San. Ve Tic. A.S', a different entity. The certificate consignee country 'Türkiye' does not match invoice consignee country 'Turkey' even after allowed normalization (rule 4.2.0, 4.2.3)."
+    },
+    "goods_description": {
+      "applicable": true,
+      "status": "MANUAL_REVIEW",
+      "confidence": 0.75,
+      "certificate_value": "126 Packages Kraftliner",
+      "invoice_value": "TESTLINER & FLUTING",
+      "rules_applied": [
+        {
+          "rule_id": "4.3.2",
+          "outcome": "no article numbers to match"
+        },
+        {
+          "rule_id": "4.3.3",
+          "outcome": "textual description mismatch and suspicious match"
+        },
+        {
+          "rule_id": "4.3.5",
+          "outcome": "general goods description with invoice reference active"
+        }
+      ],
+      "motivation": "Certificate goods description is '126 Packages Kraftliner' whereas invoice description is 'TESTLINER & FLUTING'. The article numbers are missing in the certificate, and textual descriptions differ significantly, requiring manual review. However, certificate includes explicit invoice number and date enabling application of general goods description with invoice reference exception (4.3.5)."
+    },
+    "quantity": {
+      "applicable": true,
+      "status": "MISMATCH",
+      "confidence": 0.9,
+      "certificate_value": "325987 KG",
+      "invoice_value": "Total Quantity 24,938",
+      "rules_applied": [
+        {
+          "rule_id": "4.4.2",
+          "outcome": "certificate quantity has unit KG"
+        },
+        {
+          "rule_id": "4.4.3",
+          "outcome": "no matching total quantity in invoice with same numeric value"
+        }
+      ],
+      "motivation": "Quantity stated in certificate is '325987 KG' (Gross and Net Weight), but invoice shows total quantity of '24,938' units without explicit matching weight value. Invoice weight is not given as a total KG amount to match certificate. Therefore, quantity cannot be matched."
+    },
+    "origin": {
+      "applicable": true,
+      "status": "MISMATCH",
+      "confidence": 0.95,
+      "certificate_value": "Austria",
+      "invoice_value": "Goods origin Germany",
+      "rules_applied": [
+        {
+          "rule_id": "4.5.1",
+          "outcome": "invoice origin is explicit and differs from certificate origin"
+        },
+        {
+          "rule_id": "4.5.4",
+          "outcome": "no allowed normalization resolves mismatch"
+        }
+      ],
+      "motivation": "Certificate origin is 'Austria' but invoice declares 'Goods origin Germany'. The difference in countries cannot be normalized or reconciled, resulting in MISMATCH."
+    }
+  },
+  "overall_assessment": {
+    "comparison_result": "NOT_IDENTICAL",
+    "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
+    "auto_approval_eligible": false,
+    "confidence": 0.87,
+    "critical_failures": [
+      "consignor",
+      "consignee",
+      "quantity",
+      "origin"
+    ],
+    "manual_review_triggers": [
+      "goods_description"
+    ],
+    "decision_summary": "Certificate and invoice differ in consignor, consignee, quantity and origin. Goods description requires manual review due to different text.",
+    "human_explanation": "Certifikatet anger avsändaren och mottagaren som andra företag än fakturans utställare och köpare. Kvantitet i certifikatet kan inte verifieras mot fakturans total mängd. Ursprungsländer skiljer sig mellan certifikat och faktura. Varubeskrivningen är otydlig och behöver granskas manuellt."
+  },
+  "_meta": {
+    "tested_at": "2026-04-01T06:28:51.372153+00:00",
+    "prompt_hash": "5d40e84ffac4",
+    "model": "gpt-4.1-mini",
+    "pair": "P0108_MISMATCH",
+    "expected": "NOT_IDENTICAL",
+    "actual": "NOT_IDENTICAL",
+    "status": "PASS"
+  }
+}

@@ -1,0 +1,142 @@
+{
+  "schema_version": "3.0",
+  "metadata": {
+    "verification_timestamp": null,
+    "document_pair_id": null,
+    "certificate_issue_date": "2026-03-13",
+    "source_documents_received": 2
+  },
+  "task": {
+    "task_type": "customs_document_pair_verification",
+    "comparison_mode": "certificate_vs_invoice",
+    "strictness": "conservative"
+  },
+  "documents": {
+    "document_a": {
+      "label": "Document A",
+      "assumed_role": "certificate",
+      "document_type": "Certificate of Origin"
+    },
+    "document_b": {
+      "label": "Document B",
+      "assumed_role": "invoice",
+      "document_type": "Commercial Invoice"
+    }
+  },
+  "rule_activation": {
+    "lc_exception_active": false,
+    "lc_number_found": null,
+    "general_goods_description_with_invoice_reference_active": true,
+    "mixed_origins_rule_active": false,
+    "to_order_rule_active": false,
+    "quantity_exception_applied": null,
+    "eu_origin_normalization_active": true,
+    "activated_rules": [
+      {
+        "rule_id": "2.2",
+        "rule_name": "LC exception not activated"
+      },
+      {
+        "rule_id": "4.3.5",
+        "rule_name": "General goods description with invoice reference"
+      },
+      {
+        "rule_id": "4.5.4.1",
+        "rule_name": "EU origin normalization active"
+      }
+    ]
+  },
+  "control_points": {
+    "consignor": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.9,
+      "certificate_value": "Vitrolife Sweden AB",
+      "invoice_value": "Vitrolife Sweden AB",
+      "rules_applied": [
+        {
+          "rule_id": "4.1.0",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Consignor 'Vitrolife Sweden AB' with address in Sweden is explicitly found as the invoice issuer and in invoice footer and address blocks. Land 'Sweden' matches exactly after normalization. No conflicting parties found."
+    },
+    "consignee": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.9,
+      "certificate_value": "Medical Experts Services LLC",
+      "invoice_value": "Medical Experts Services LLC",
+      "rules_applied": [
+        {
+          "rule_id": "4.2.0",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Consignee 'Medical Experts Services LLC' with address in Oman is found in invoice 'Delivery address'. Land 'Oman' matches exactly. No contradictory consignee information present. Factoring invoice address priority, consignee matches."
+    },
+    "goods_description": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.85,
+      "certificate_value": "Components for Culturing Media for In Vitro Fertilisation(IVF)",
+      "invoice_value": "Components for culturing media & medical instruments for In Vitro Fertillsation IV= - Sterile saline solutions",
+      "rules_applied": [
+        {
+          "rule_id": "4.3.5",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certificate's general goods description is verified via explicit invoice reference 'See attached invoice 5007905 dated 20260313'. Invoice contains detailed product lines consistent with description. General goods description accepted per special rule 4.3.5."
+    },
+    "quantity": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.9,
+      "certificate_value": "43,8 kg GW",
+      "invoice_value": "Gross weight (kg): 43,8",
+      "rules_applied": [
+        {
+          "rule_id": "4.4.3.1",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certificate quantity '43,8 kg GW' matches invoice gross weight '43,8 kg' exactly. Despite absence of explicit 'GW' in invoice, value matches and no contradictory weight value present. Confidence high due to exact value match and consistent unit."
+    },
+    "origin": {
+      "applicable": true,
+      "status": "MISMATCH",
+      "confidence": 1.0,
+      "certificate_value": "European Community",
+      "invoice_value": "Country of Origin: Sweden",
+      "rules_applied": [
+        {
+          "rule_id": "4.5.4.1",
+          "outcome": "MISMATCH"
+        }
+      ],
+      "motivation": "Certificate origin 'European Community' vs invoice origin 'Country of Origin: Sweden'. Although Sweden is EU member, certificate uses 'European Community' as origin but invoice specifies explicitly 'Sweden'. Per rule 4.5.4.1, certificate naming EU Community without listing Sweden explicitly conflicts with invoice specifying Sweden only, causing MISMATCH."
+    }
+  },
+  "overall_assessment": {
+    "comparison_result": "NOT_IDENTICAL",
+    "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
+    "auto_approval_eligible": false,
+    "confidence": 0.91,
+    "critical_failures": [
+      "origin"
+    ],
+    "manual_review_triggers": [],
+    "decision_summary": "All control points except origin match between certificate and invoice. Origin differs where certificate lists 'European Community' but invoice lists 'Sweden'.",
+    "human_explanation": "Ursprungslandet i certifikatet är angivet som 'European Community', medan fakturan explicit anger 'Sweden' som ursprungsland. Detta är en otvetydig avvikelse som kräver manuell granskning."
+  },
+  "_meta": {
+    "tested_at": "2026-04-01T06:31:28.482662+00:00",
+    "prompt_hash": "5d40e84ffac4",
+    "model": "gpt-4.1-mini",
+    "pair": "P235_MISMATCH",
+    "expected": "NOT_IDENTICAL",
+    "actual": "NOT_IDENTICAL",
+    "status": "PASS"
+  }
+}

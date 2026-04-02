@@ -1,0 +1,152 @@
+{
+  "schema_version": "3.0",
+  "metadata": {
+    "verification_timestamp": null,
+    "document_pair_id": null,
+    "certificate_issue_date": "2025-11-25",
+    "source_documents_received": 2
+  },
+  "task": {
+    "task_type": "customs_document_pair_verification",
+    "comparison_mode": "certificate_vs_invoice",
+    "strictness": "conservative"
+  },
+  "documents": {
+    "document_a": {
+      "label": "Document A",
+      "assumed_role": "certificate",
+      "document_type": "Certificate of Origin"
+    },
+    "document_b": {
+      "label": "Document B",
+      "assumed_role": "invoice",
+      "document_type": "Commercial Invoice"
+    }
+  },
+  "rule_activation": {
+    "lc_exception_active": false,
+    "lc_number_found": null,
+    "general_goods_description_with_invoice_reference_active": false,
+    "mixed_origins_rule_active": false,
+    "to_order_rule_active": false,
+    "quantity_exception_applied": null,
+    "eu_origin_normalization_active": false,
+    "activated_rules": [
+      {
+        "rule_id": "8.5.2",
+        "rule_name": "Fakturareferens i certifikatet vs fakturafilen"
+      },
+      {
+        "rule_id": "8.6",
+        "rule_name": "Obligatorisk parningsvalidering – sanity check"
+      },
+      {
+        "rule_id": "4.1.0",
+        "rule_name": "Consignor i fakturan via uttrycklig förekomst"
+      }
+    ]
+  },
+  "control_points": {
+    "consignor": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.98,
+      "certificate_value": "Bohus BioTech AB\nTrädgårdsgatan 4\nSE-452 31, STRÖMSTAD\nSweden",
+      "invoice_value": "Bohus Biotech AB\nTrädgårdsgatan 4\n45231 Strömstad\nSWEDEN",
+      "rules_applied": [
+        {
+          "rule_id": "4.1.0",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.4",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatets consignor 'Bohus BioTech AB' kan identifieras uttryckligen i fakturans företags- och adressblock som 'Bohus Biotech AB'. Skillnaden i versaler/gemener är tillåten normalisering, och landet Sweden/SWEDEN överensstämmer."
+    },
+    "consignee": {
+      "applicable": true,
+      "status": "MANUAL_REVIEW",
+      "confidence": 0.76,
+      "certificate_value": "NT Solutions Co LTD\n35 A4 Street\nWard 12\nTan Binh District\n70000 Ho Chi Minh City\nViet Nam",
+      "invoice_value": "Invoice address / Delivery address:\nDr. Salem Al-Ajmi company\n... \nKUWAIT",
+      "rules_applied": [
+        {
+          "rule_id": "8.5.2",
+          "outcome": "MANUAL_REVIEW"
+        },
+        {
+          "rule_id": "8.6",
+          "outcome": "PAIRING_VALIDATION_PASSED_VIA_CONSIGNOR_ONLY"
+        }
+      ],
+      "motivation": "Certifikatet hänvisar uttryckligen till 'Commercial Invoice no.: 240, 2025-11-24', men fakturafilen innehåller 'Commercial Invoice - 250' daterad 2026-01-13. Eftersom den refererade fakturan inte finns i fakturafilen får systemet inte använda den bifogade fakturan 250 som ersättning för mottagarverifiering; mottagaren kan därför inte tekniskt verifieras mot rätt faktura."
+    },
+    "goods_description": {
+      "applicable": true,
+      "status": "MANUAL_REVIEW",
+      "confidence": 0.78,
+      "certificate_value": "Medical devices Total Net weight 3 boxes: 24,75kg\nMinivisc Plus; MPFY24100B, 750pcs",
+      "invoice_value": "Decoria Intense Strong\nDecoria Voluma\nPart no. 1225 / 1217",
+      "rules_applied": [
+        {
+          "rule_id": "8.5.2",
+          "outcome": "MANUAL_REVIEW"
+        }
+      ],
+      "motivation": "Certifikatet avser faktura 240 och beskriver varorna som 'Medical devices' och 'Minivisc Plus; MPFY24100B, 750pcs'. Den bifogade fakturafilen innehåller i stället faktura 250 med andra varubeskrivningar. Enligt parningsregeln får denna andra faktura inte användas som ersättning för den refererade fakturan, så varubeskrivningen kan inte verifieras mot rätt faktura."
+    },
+    "quantity": {
+      "applicable": true,
+      "status": "MANUAL_REVIEW",
+      "confidence": 0.77,
+      "certificate_value": "Net weight 24,75kg",
+      "invoice_value": "Total by CN code\nQuantity 1 650,00 pcs\nNet weight 89,25 kg",
+      "rules_applied": [
+        {
+          "rule_id": "8.5.2",
+          "outcome": "MANUAL_REVIEW"
+        }
+      ],
+      "motivation": "Certifikatet anger kvantitet/vikt för den refererade fakturan 240 ('Net weight 24,75kg'). Fakturafilen innehåller endast faktura 250 med andra kvantiteter och annan totalvikt. Eftersom rätt faktura saknas i fakturafilen kan kvantiteten inte verifieras på ett giltigt och oberoende sätt."
+    },
+    "origin": {
+      "applicable": true,
+      "status": "MANUAL_REVIEW",
+      "confidence": 0.79,
+      "certificate_value": "Sweden",
+      "invoice_value": "Country of Origin:Sweden",
+      "rules_applied": [
+        {
+          "rule_id": "8.5.2",
+          "outcome": "MANUAL_REVIEW"
+        }
+      ],
+      "motivation": "Även om den bifogade fakturan 250 innehåller texten 'Country of Origin:Sweden', hänvisar certifikatet uttryckligen till faktura 240. När den refererade fakturan inte återfinns i fakturafilen får systemet inte slutföra ursprungsverifieringen mot en annan faktura, därför krävs manuell handläggning."
+    }
+  },
+  "overall_assessment": {
+    "comparison_result": "MANUAL_REVIEW",
+    "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
+    "auto_approval_eligible": false,
+    "confidence": 0.95,
+    "critical_failures": [],
+    "manual_review_triggers": [
+      "Certifikatet hänvisar till Commercial Invoice no. 240 daterad 2025-11-24, men fakturafilen innehåller endast Commercial Invoice - 250 daterad 2026-01-13.",
+      "Den refererade fakturan kan inte återfinnas i den bifogade fakturafilen, och systemet får inte använda en annan faktura som ersättning."
+    ],
+    "decision_summary": "Dokumentrollen kan identifieras, och consignor kan återfinnas i fakturan, men certifikatet refererar till en annan faktura än den som finns i fakturafilen. Därför kan dokumentparet inte verifieras som korrekt parat, och ärendet måste gå till manuell handläggning.",
+    "human_explanation": "Certifikatet hänvisar till Commercial Invoice no. 240 daterad 2025-11-24, men den bifogade fakturafilen innehåller Commercial Invoice - 250 daterad 2026-01-13. Eftersom den refererade fakturan inte finns i fakturafilen går dokumentparet inte att verifiera automatiskt. Ärendet måste därför hanteras manuellt."
+  },
+  "_meta": {
+    "tested_at": "2026-04-01T13:16:28.117786+00:00",
+    "prompt_hash": "9b9df42642d8",
+    "model": "gpt-5.4",
+    "tier": 2,
+    "pair": "P202_MISMATCH",
+    "expected": "NOT_IDENTICAL",
+    "actual": "MANUAL_REVIEW",
+    "status": "REVIEW"
+  }
+}

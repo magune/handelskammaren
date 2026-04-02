@@ -1,0 +1,165 @@
+{
+  "schema_version": "3.0",
+  "metadata": {
+    "verification_timestamp": null,
+    "document_pair_id": null,
+    "certificate_issue_date": "2026-02-27",
+    "source_documents_received": 2
+  },
+  "task": {
+    "task_type": "customs_document_pair_verification",
+    "comparison_mode": "certificate_vs_invoice",
+    "strictness": "conservative"
+  },
+  "documents": {
+    "document_a": {
+      "label": "Document A",
+      "assumed_role": "certificate",
+      "document_type": "Certificate of Origin"
+    },
+    "document_b": {
+      "label": "Document B",
+      "assumed_role": "invoice",
+      "document_type": "Commercial Invoice"
+    }
+  },
+  "rule_activation": {
+    "lc_exception_active": false,
+    "lc_number_found": null,
+    "general_goods_description_with_invoice_reference_active": false,
+    "mixed_origins_rule_active": false,
+    "to_order_rule_active": false,
+    "quantity_exception_applied": null,
+    "eu_origin_normalization_active": true,
+    "activated_rules": [
+      {
+        "rule_id": "4.1.0",
+        "rule_name": "Koncernstruktur allowed for consignor verification"
+      },
+      {
+        "rule_id": "4.1.3.6",
+        "rule_name": "Förkortning av juridisk bolagsform allowed"
+      },
+      {
+        "rule_id": "4.4.2.2",
+        "rule_name": "Särskilt krav – viktangivelse handling"
+      },
+      {
+        "rule_id": "4.4.3",
+        "rule_name": "Verifiering mot faktura - kvantitet"
+      },
+      {
+        "rule_id": "4.5.4.1",
+        "rule_name": "EU-normalisering vid ursprungsland"
+      },
+      {
+        "rule_id": "4.6",
+        "rule_name": "Kina/Hongkong landnormalisering"
+      }
+    ]
+  },
+  "control_points": {
+    "consignor": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.9,
+      "certificate_value": "Fortex International AB\nVallgatan 22\n41116, GÖTEBORG\nSweden",
+      "invoice_value": "Fortex International AB\nVallgatan 22\nGothenburg, Sweden 411 16",
+      "rules_applied": [
+        {
+          "rule_id": "4.1.0",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.3.6",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Consignor 'Fortex International AB' kan identifieras i fakturan som fakturautställare efter normalisering av versaler, bolagsform (AB), och adress. Företagsnamnet och landet (Sweden) är identiska. Koncernstrukturell kontroll har bekräftat identifierbarhet i fakturan."
+    },
+    "consignee": {
+      "applicable": true,
+      "status": "MISMATCH",
+      "confidence": 1.0,
+      "certificate_value": "PJSC Kyiv Cardboard and Paper Mill\n130 Kyivska Str.\nObukhiv, Kyiv region, 08703\nObukhiv\nUkraine",
+      "invoice_value": "Arab cardboard Manufacturing CO.LTD\nSahab - King Abdullah II Industrial area -\nGate 1\nAmman,\nJordan\n300004613",
+      "rules_applied": [
+        {
+          "rule_id": "4.2.0",
+          "outcome": "MISMATCH"
+        }
+      ],
+      "motivation": "Mottagaren i certifikatet 'PJSC Kyiv Cardboard and Paper Mill' med land Ukraine kan inte identifieras i fakturan. Fakturans consignee är 'Arab cardboard Manufacturing CO.LTD' i Jordan, vilket skiljer sig från certifikatets mottagare. De primära faktureringsfälten och leveransadresserna matchar inte certifikatets consignee."
+    },
+    "goods_description": {
+      "applicable": true,
+      "status": "MISMATCH",
+      "confidence": 1.0,
+      "certificate_value": "33 Bales of Bleached Eucaliputs Sulphate Bio pulp\nFSC Mix Credit\nADMT weight: 65.295",
+      "invoice_value": "Multiple reels of Fluting Medium, Testliner 3, High Performance Testliner etc.",
+      "rules_applied": [
+        {
+          "rule_id": "4.3.2",
+          "outcome": "MISMATCH"
+        }
+      ],
+      "motivation": "Varubeskrivningen i certifikatet '33 Bales of Bleached Eucaliputs Sulphate Bio pulp' förekommer inte explicit i fakturan. Fakturan beskriver andra produkter som 'Fluting Medium' och 'Testliner' med olika specifikationer, vilket inte kan verifieras som samma vara utan semantisk tolkning, varför MISMATCH fastställs."
+    },
+    "quantity": {
+      "applicable": true,
+      "status": "MISMATCH",
+      "confidence": 1.0,
+      "certificate_value": "Gross 66.000 MT",
+      "invoice_value": "Total Weight Quantity: 54.146 MT",
+      "rules_applied": [
+        {
+          "rule_id": "4.4.1",
+          "outcome": "MISMATCH"
+        }
+      ],
+      "motivation": "Den kvantitet som anges i certifikatet (Gross 66.000 MT) skiljer sig tydligt från fakturans totalvikt (54.146 MT). Avvikelsen överskrider den tillåtna toleransen och kan inte verifieras. Ingen tillämplig undantagsregel ändrar detta. Därmed bedöms kvantitet som MISMATCH."
+    },
+    "origin": {
+      "applicable": true,
+      "status": "MISMATCH",
+      "confidence": 1.0,
+      "certificate_value": "Brazil",
+      "invoice_value": "Country of Origin: Germany, Netherlands, Switzerland",
+      "rules_applied": [
+        {
+          "rule_id": "4.5.1",
+          "outcome": "MISMATCH"
+        },
+        {
+          "rule_id": "4.5.4.1",
+          "outcome": "MISMATCH"
+        }
+      ],
+      "motivation": "Ursprungslandet som angetts i certifikatet ('Brazil') kan inte identifieras i fakturan. Fakturans ursprung är 'Germany, Netherlands, Switzerland' och enligt reglerna är detta en uttrycklig motsägelse eftersom 'Brazil' inte förekommer i fakturan alls."
+    }
+  },
+  "overall_assessment": {
+    "comparison_result": "NOT_IDENTICAL",
+    "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
+    "auto_approval_eligible": false,
+    "confidence": 0.85,
+    "critical_failures": [
+      "consignee",
+      "goods_description",
+      "quantity",
+      "origin"
+    ],
+    "manual_review_triggers": [],
+    "decision_summary": "Consignor verifieras korrekt, men mottagare, varubeskrivning, kvantitet och ursprungsland matchar inte.",
+    "human_explanation": "Certifikatet anger mottagaren som PJSC Kyiv Cardboard and Paper Mill i Ukraina medan fakturan är ställd till Arab cardboard Manufacturing CO.LTD i Jordan. Varubeskrivningen och kvantiteten i certifikatet stämmer inte med fakturans. Ursprungslandet Brazil i certifikatet finns inte i fakturan, som anger Tyskland, Nederländerna och Schweiz."
+  },
+  "_meta": {
+    "tested_at": "2026-04-01T06:28:51.365823+00:00",
+    "prompt_hash": "5d40e84ffac4",
+    "model": "gpt-4.1-mini",
+    "pair": "P003_MISMATCH",
+    "expected": "NOT_IDENTICAL",
+    "actual": "NOT_IDENTICAL",
+    "status": "PASS"
+  }
+}

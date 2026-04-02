@@ -1,0 +1,211 @@
+{
+  "schema_version": "3.0",
+  "metadata": {
+    "verification_timestamp": "2026-04-01T00:00:00Z",
+    "document_pair_id": null,
+    "certificate_issue_date": "2026-03-12",
+    "source_documents_received": 2
+  },
+  "task": {
+    "task_type": "customs_document_pair_verification",
+    "comparison_mode": "certificate_vs_invoice",
+    "strictness": "conservative"
+  },
+  "documents": {
+    "document_a": {
+      "label": "Document A",
+      "assumed_role": "certificate",
+      "document_type": "certificate_of_origin"
+    },
+    "document_b": {
+      "label": "Document B",
+      "assumed_role": "invoice",
+      "document_type": "commercial_invoice"
+    }
+  },
+  "rule_activation": {
+    "lc_exception_active": false,
+    "lc_number_found": null,
+    "general_goods_description_with_invoice_reference_active": false,
+    "mixed_origins_rule_active": false,
+    "to_order_rule_active": false,
+    "quantity_exception_applied": null,
+    "eu_origin_normalization_active": true,
+    "activated_rules": [
+      {
+        "rule_id": "4.1.0",
+        "rule_name": "Consignor kan verifieras via uttrycklig förekomst någonstans i fakturan"
+      },
+      {
+        "rule_id": "4.4.3.1",
+        "rule_name": "Minst en kvantitetsuppgift ska verifieras; ytterligare matchande kvantiteter tillåts"
+      },
+      {
+        "rule_id": "4.4.3",
+        "rule_name": "Tillåten trunkering av decimaler vid kvantitetsverifiering"
+      },
+      {
+        "rule_id": "4.5.4.1",
+        "rule_name": "EU-normalisering"
+      },
+      {
+        "rule_id": "4.5.4.2",
+        "rule_name": "EU-samlingsbegrepp och specifikt EU-medlemsland"
+      },
+      {
+        "rule_id": "4.3.3.2",
+        "rule_name": "Certifikatets huvudbeteckning som ordsekvens i fakturan ger MANUAL_REVIEW"
+      }
+    ]
+  },
+  "control_points": {
+    "consignor": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.97,
+      "certificate_value": "Elmo Sweden AB\nKyrkogatan 18\n51250, Svenljunga\nSweden",
+      "invoice_value": "Elmo Sweden AB\nSE-512 81 SVENLJUNGA\nSWEDEN\nVAT.NO:\nSE556821587401",
+      "rules_applied": [
+        {
+          "rule_id": "4.1.0",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.2.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.5",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatets consignor 'Elmo Sweden AB' återfinns uttryckligen i fakturan i footer/postadress och bankbetalningsblock. Landet 'Sweden' framgår explicit i fakturan och bekräftas även av VAT-prefix 'SE'. Samma juridiska part och land kan därför verifieras."
+    },
+    "consignee": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.89,
+      "certificate_value": "Brusarosco de Mexico S.A de C.Vv\nAvenida Industrial #168\n37564 Leon\nMexico",
+      "invoice_value": "Payer: BRUSAROSCO DE MEXICO S.A. de C.V. ( 17500040 )\nIND.ZAPATERA, FIDEICOMISO CIUDAD INDUSTRIAL 168-1,\n37564 - LEON DE LOS ALDAMA GTO, Mexico\nShip-to:\nBrusarosco de Mexico S.A. de C.Vv ( 18007237 )\nAvenida Industrial #168\n37564 - Leon GTO, Mexico",
+      "rules_applied": [
+        {
+          "rule_id": "4.2.0.2",
+          "outcome": "Primary billing party and ship-to identify the same consignee in invoice"
+        },
+        {
+          "rule_id": "4.2.0.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.2.2.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.2.3",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.2.4",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatets consignee-namn förekommer uttryckligen i fakturans Ship-to-block som 'Brusarosco de Mexico S.A. de C.Vv' med samma adress på Avenida Industrial #168 i Mexico. Fakturans primära Payer-fält visar samma kommersiella motpart med endast mindre interpunktions-/OCR-variation i bolagsformsdelen. Landet Mexico överensstämmer."
+    },
+    "goods_description": {
+      "applicable": true,
+      "status": "MANUAL_REVIEW",
+      "confidence": 0.74,
+      "certificate_value": "Provence Santorini",
+      "invoice_value": "PROVENCE 116H SANTORINI",
+      "rules_applied": [
+        {
+          "rule_id": "4.3.2",
+          "outcome": "Priority 2 text matching used; no article number in certificate for primary article matching"
+        },
+        {
+          "rule_id": "4.3.3",
+          "outcome": "Not an exact contiguous text match"
+        },
+        {
+          "rule_id": "4.3.3.2",
+          "outcome": "MANUAL_REVIEW"
+        }
+      ],
+      "motivation": "Certifikatet anger varubeskrivningen 'Provence Santorini'. Fakturan anger 'PROVENCE 116H SANTORINI', där alla ord från certifikatets huvudbeteckning förekommer i samma ordning men med det mellanliggande tillägget '116H'. Enligt regeln för ordsekvens med mellanliggande specifikationskod ska kontrollpunkten därför sättas till MANUAL_REVIEW, inte MATCH."
+    },
+    "quantity": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.98,
+      "certificate_value": "182,19 M2\n219 kgs\n149 kgs",
+      "invoice_value": "Q-ty 182,190 M2\nTotal M2: 182,19 M2\nGross weight 219 kgs\nNet weight 149 kgs",
+      "rules_applied": [
+        {
+          "rule_id": "4.4.2.1",
+          "outcome": "Box 7 used as verification basis"
+        },
+        {
+          "rule_id": "4.4.3.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.4.3",
+          "outcome": "Decimal truncation/precision normalization accepted for 182,190 vs 182,19"
+        },
+        {
+          "rule_id": "4.4.6",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatets kvantiteter i box 7 kan identifieras i fakturan: 182,19 M2 motsvaras av både 'Q-ty 182,190 M2' och 'Total M2: 182,19 M2', och vikterna 219 kgs respektive 149 kgs återfinns exakt som 'Gross weight 219 kgs' och 'Net weight 149 kgs'. Ingen motsägelse finns."
+    },
+    "origin": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.96,
+      "certificate_value": "EUROPEAN UNION\nSweden",
+      "invoice_value": "Swedish Origin\nGOODS OF EUROPEAN COMMUNITY ORIGIN\nthese products are of European preferential origin",
+      "rules_applied": [
+        {
+          "rule_id": "4.5.1",
+          "outcome": "Explicit origin fields found in invoice"
+        },
+        {
+          "rule_id": "4.5.4.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.5.4.2",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.5.5",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatet anger ursprung 'EUROPEAN UNION' och 'Sweden'. Fakturan innehåller både den explicita angivelsen 'Swedish Origin' och det explicita samlingsuttalandet 'GOODS OF EUROPEAN COMMUNITY ORIGIN' samt 'European preferential origin'. Samtliga ursprung som anges i certifikatet kan därför identifieras uttryckligen i fakturan."
+    }
+  },
+  "overall_assessment": {
+    "comparison_result": "MANUAL_REVIEW",
+    "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
+    "auto_approval_eligible": false,
+    "confidence": 0.83,
+    "critical_failures": [],
+    "manual_review_triggers": [
+      "Varubeskrivningen i certifikatet ('Provence Santorini') återfinns i fakturan endast som ordsekvens med mellanliggande modellkod ('PROVENCE 116H SANTORINI')."
+    ],
+    "decision_summary": "Consignor, consignee, quantity and origin are verifiable against the invoice. Goods description cannot be auto-approved because the certificate text is only identifiable as an ordered word sequence with an inserted specification code in the invoice, which triggers manual review.",
+    "human_explanation": "Avsändare, mottagare, mängd och ursprung kan verifieras mot fakturan. Varubeskrivningen i certifikatet är 'Provence Santorini' medan fakturan anger 'PROVENCE 116H SANTORINI', vilket tyder på samma vara men kräver manuell bekräftelse. Ärendet ska därför hanteras manuellt."
+  },
+  "_meta": {
+    "tested_at": "2026-04-01T12:41:47.894492+00:00",
+    "prompt_hash": "560a24ca7498",
+    "model": "gpt-5.4",
+    "tier": 2,
+    "pair": "P241_MATCH",
+    "expected": "IDENTICAL",
+    "actual": "MANUAL_REVIEW",
+    "status": "REVIEW"
+  }
+}

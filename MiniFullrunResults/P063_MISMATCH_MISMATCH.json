@@ -1,0 +1,211 @@
+{
+  "schema_version": "3.0",
+  "metadata": {
+    "verification_timestamp": null,
+    "document_pair_id": null,
+    "certificate_issue_date": null,
+    "source_documents_received": 2
+  },
+  "task": {
+    "task_type": "customs_document_pair_verification",
+    "comparison_mode": "certificate_vs_invoice",
+    "strictness": "conservative"
+  },
+  "documents": {
+    "document_a": {
+      "label": "Document A",
+      "assumed_role": "certificate",
+      "document_type": "Certificate of Origin"
+    },
+    "document_b": {
+      "label": "Document B",
+      "assumed_role": "invoice",
+      "document_type": "Invoice"
+    }
+  },
+  "rule_activation": {
+    "lc_exception_active": false,
+    "lc_number_found": null,
+    "general_goods_description_with_invoice_reference_active": false,
+    "mixed_origins_rule_active": false,
+    "to_order_rule_active": false,
+    "quantity_exception_applied": null,
+    "eu_origin_normalization_active": true,
+    "activated_rules": [
+      {
+        "rule_id": "4.1.0",
+        "rule_name": "Consignor identification via group/conglomerate structure"
+      },
+      {
+        "rule_id": "4.1.3.1",
+        "rule_name": "Consignor legal entity exact matching"
+      },
+      {
+        "rule_id": "4.1.4",
+        "rule_name": "Consignor country normalization and matching"
+      },
+      {
+        "rule_id": "4.2.0.2",
+        "rule_name": "Priority order for consignee identification"
+      },
+      {
+        "rule_id": "4.2.2.1",
+        "rule_name": "Consignee normalization matching rules"
+      },
+      {
+        "rule_id": "4.2.3",
+        "rule_name": "Consignee country normalization and matching"
+      },
+      {
+        "rule_id": "4.3.1",
+        "rule_name": "Goods description identification in invoice"
+      },
+      {
+        "rule_id": "4.3.2",
+        "rule_name": "Goods description verification priority using article number"
+      },
+      {
+        "rule_id": "4.3.8",
+        "rule_name": "Goods description final match/mismatch"
+      },
+      {
+        "rule_id": "4.4.1",
+        "rule_name": "Quantity numeric value identification rule"
+      },
+      {
+        "rule_id": "4.4.3.3",
+        "rule_name": "Quantity thousands separator normalization"
+      },
+      {
+        "rule_id": "4.4.4",
+        "rule_name": "Quantity verification against total weight in invoice"
+      },
+      {
+        "rule_id": "4.4.6",
+        "rule_name": "Quantity match and mismatch rules"
+      },
+      {
+        "rule_id": "4.5.4",
+        "rule_name": "Origin country normalization and equivalent matching"
+      },
+      {
+        "rule_id": "4.5.4.1",
+        "rule_name": "EU origin normalization and multiple origin handling"
+      }
+    ]
+  },
+  "control_points": {
+    "consignor": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.95,
+      "certificate_value": "SKF Eurotrade AB\n415 50, GÖTEBORG\nSweden",
+      "invoice_value": "SKF Eurotrade AB\n415 50 Goteborg, Sweden\nSWEDEN",
+      "rules_applied": [
+        {
+          "rule_id": "4.1.0",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.3.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.4",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Consignor 'SKF Eurotrade AB' in certificate identified exactly in invoice header and address blocks with allowed normalizations (versals, spacing, company suffix). Country 'Sweden' matches exactly after normalization. No contradictions found."
+    },
+    "consignee": {
+      "applicable": true,
+      "status": "MISMATCH",
+      "confidence": 1,
+      "certificate_value": "Technotorg-Don LLC\nHeroiv Ukrainy avenue, 113/1\n54025 Mykolaiv\nUKRAINE",
+      "invoice_value": "MIR PODSHIPNIKOV LLC\n210, Lev Tolstoy Str.\n720031 Bishkek\nKYRGYZSTAN",
+      "rules_applied": [
+        {
+          "rule_id": "4.2.0.2",
+          "outcome": "MISMATCH"
+        }
+      ],
+      "motivation": "Consignee in certificate 'Technotorg-Don LLC' not found in invoice. Invoice consignee is 'MIR PODSHIPNIKOV LLC' with address in Kyrgyzstan, differing from certificate consignee in Ukraine. No match or allowed normalization possible."
+    },
+    "goods_description": {
+      "applicable": true,
+      "status": "MANUAL_REVIEW",
+      "confidence": 0.7,
+      "certificate_value": "WATER PUMP,WHEEL BEARING KIT,OTH KIT COMPONENTS,\nSUSPENSION TRACK CONTROL ARM BUSH",
+      "invoice_value": "NEEDLE ROLLER BRG, SPHERICAL ROLLER BRG, CYLINDRICAL ROLLER BRG, DEEP GROOVE BALL BRG OD > 30 MM, FITTING CAPS OF PLASTIC, ROLLER CHAINS, RADIAL SHAFT SEALS, LINKS FOR CHAINS, NUTS",
+      "rules_applied": [
+        {
+          "rule_id": "4.3.2",
+          "outcome": "MISMATCH"
+        },
+        {
+          "rule_id": "4.3.3",
+          "outcome": "MANUAL_REVIEW"
+        }
+      ],
+      "motivation": "Certificate goods description and invoice goods descriptions differ significantly. No exact article numbers present in certificate to verify via priority 1. Textual match fails. Due to different terminology and partial overlap in product types, result requires manual review."
+    },
+    "quantity": {
+      "applicable": true,
+      "status": "MISMATCH",
+      "confidence": 1,
+      "certificate_value": "GW in KGS\n844,96\nNW in KGS\n714,30",
+      "invoice_value": "Total Gross Weight 171,55 KG\nTotal Net Weight 125,20 KG",
+      "rules_applied": [
+        {
+          "rule_id": "4.4.1",
+          "outcome": "MISMATCH"
+        },
+        {
+          "rule_id": "4.4.4",
+          "outcome": "MISMATCH"
+        }
+      ],
+      "motivation": "Certificate gross and net weights (844.96 KG GW, 714.30 KG NW) do not match invoice total weights (171.55 KG GW, 125.20 KG NW). Differences exceed allowed tolerances. This is a clear quantitative mismatch."
+    },
+    "origin": {
+      "applicable": true,
+      "status": "MISMATCH",
+      "confidence": 1,
+      "certificate_value": "DEU,ESP,ITA,TUR,CHN,TWN",
+      "invoice_value": "Slovakia, Sweden, Germany, France, India, China, United States",
+      "rules_applied": [
+        {
+          "rule_id": "4.5.4.1",
+          "outcome": "MISMATCH"
+        }
+      ],
+      "motivation": "Certificate origin countries (Germany, Spain, Italy, Turkey, China, Taiwan) cannot be fully matched in invoice origin countries (Slovakia, Sweden, Germany, France, India, China, United States). Spain, Italy, Turkey, Taiwan from certificate origin not found in invoice. This is a mismatch."
+    }
+  },
+  "overall_assessment": {
+    "comparison_result": "NOT_IDENTICAL",
+    "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
+    "auto_approval_eligible": false,
+    "confidence": 0.8,
+    "critical_failures": [
+      "Consignee mismatch",
+      "Goods description mismatch/uncertainty",
+      "Quantity mismatch",
+      "Origin mismatch"
+    ],
+    "manual_review_triggers": [
+      "Goods description requires manual review"
+    ],
+    "decision_summary": "Consignor matches, but consignee, goods description, quantity and origin exhibit clear mismatches or uncertainties requiring manual handling.",
+    "human_explanation": "Consignornamnet kan verifieras mot fakturan, men mottagaren skiljer sig mellan certifikat och faktura. Varubeskrivningen i certifikatet matchar inte varorna i fakturan. Kvantiteterna i certifikatet överensstämmer inte med fakturans totalvikter. Ursprungslandet i certifikatet stämmer inte med de som anges i fakturan."
+  },
+  "_meta": {
+    "tested_at": "2026-04-01T06:30:31.314605+00:00",
+    "prompt_hash": "5d40e84ffac4",
+    "model": "gpt-4.1-mini",
+    "pair": "P063_MISMATCH",
+    "expected": "NOT_IDENTICAL",
+    "actual": "NOT_IDENTICAL",
+    "status": "PASS"
+  }
+}

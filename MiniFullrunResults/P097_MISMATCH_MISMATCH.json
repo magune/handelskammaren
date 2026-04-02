@@ -1,0 +1,154 @@
+{
+  "schema_version": "3.0",
+  "metadata": {
+    "verification_timestamp": null,
+    "document_pair_id": null,
+    "certificate_issue_date": "2025-12-18",
+    "source_documents_received": 2
+  },
+  "task": {
+    "task_type": "customs_document_pair_verification",
+    "comparison_mode": "certificate_vs_invoice",
+    "strictness": "conservative"
+  },
+  "documents": {
+    "document_a": {
+      "label": "Document A",
+      "assumed_role": "certificate",
+      "document_type": "Certificate of Origin"
+    },
+    "document_b": {
+      "label": "Document B",
+      "assumed_role": "invoice",
+      "document_type": "Invoice"
+    }
+  },
+  "rule_activation": {
+    "lc_exception_active": false,
+    "lc_number_found": null,
+    "general_goods_description_with_invoice_reference_active": false,
+    "mixed_origins_rule_active": false,
+    "to_order_rule_active": false,
+    "quantity_exception_applied": null,
+    "eu_origin_normalization_active": true,
+    "activated_rules": [
+      {
+        "rule_id": "4.5.4.1",
+        "rule_name": "EU-normalisering med extra EU-länder i faktura"
+      },
+      {
+        "rule_id": "4.4.3.2",
+        "rule_name": "Varubeskrivning via kontrollerad textmatchning"
+      },
+      {
+        "rule_id": "4.1.0",
+        "rule_name": "Koncernstruktur - consignor identifierad i faktura"
+      },
+      {
+        "rule_id": "4.2.0.2",
+        "rule_name": "Prioritering av consignee-verifiering mot faktura"
+      }
+    ]
+  },
+  "control_points": {
+    "consignor": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.9,
+      "certificate_value": "SKF Sverige AB",
+      "invoice_value": "SKF Sverige AB",
+      "rules_applied": [
+        {
+          "rule_id": "4.1.0",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Consignor 'SKF Sverige AB' från certifikatet kan identifieras i fakturan som fakturautställare inklusive adress och land 'Sweden' utan avvikelse. Regler för juridisk partsmatchning och koncernstruktur är uppfyllda samt landmatch är exakt. Ingen otillåten normalisering behövdes utöver versaler och företagsbeteckningar."
+    },
+    "consignee": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.9,
+      "certificate_value": "SKF Asia Pacific Pte. Ltd",
+      "invoice_value": "SKF Asia Pacific Pte. Ltd.",
+      "rules_applied": [
+        {
+          "rule_id": "4.2.0.2",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Mottagaren 'SKF Asia Pacific Pte. Ltd' från certifikatet matchar fakturans primära faktureringsfält 'Bill to' och 'Sold to' som är exakt samma juridiska part inklusive adress och land Malaysia. Enkel normalisering av versaler och punkt i företagsnamn tillämpades."
+    },
+    "goods_description": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.9,
+      "certificate_value": "71 COLLIE\nDEEP GROOVE BALL BRG OD > 30 MM\nSPHERICAL ROLLER BRG",
+      "invoice_value": "DEEP GROOVE BALL BRG OD > 30 MM\nSELF-ALIGNING BALL BRG OD > 30 MM\nSPHERICAL ROLLER BRG",
+      "rules_applied": [
+        {
+          "rule_id": "4.3.2",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Varubeskrivningen i certifikatet kan verifieras mot fakturans varubeskrivning på artikelradnivå med textuell matchning av produktnamn och artikelnummer där tillämpligt. Varorna 'DEEP GROOVE BALL BRG', 'SPHERICAL ROLLER BRG' samt beskrivning 'BALL BRG OD > 30 MM' förekommer i fakturan utan motstridighet."
+    },
+    "quantity": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.9,
+      "certificate_value": "635 pcs\n545 pcs",
+      "invoice_value": "625 pcs\n545 pcs",
+      "rules_applied": [
+        {
+          "rule_id": "4.4.1",
+          "outcome": "MANUAL_REVIEW"
+        },
+        {
+          "rule_id": "4.4.3.1",
+          "outcome": "MANUAL_REVIEW"
+        }
+      ],
+      "motivation": "Certifikatets kvantitet 635 pcs för 'DEEP GROOVE BALL BRG' avviker något från fakturans 625 pcs, vilket är en avvikelse utanför strikt identisk match. Skillnaden är exakt 10 pcs. Systemet kan inte medger fri tolkning eller acceptans av små numeriska skillnader utan uttryckligt regelstöd, därför krävs MANUAL_REVIEW. För den andra kvantiteten 545 pcs är det en exakt match."
+    },
+    "origin": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.95,
+      "certificate_value": "SWEDEN",
+      "invoice_value": "Sweden",
+      "rules_applied": [
+        {
+          "rule_id": "4.5.4.2",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.5.4.1",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Ursprungslandet 'Sweden' kan tydligt identifieras i fakturan såsom 'Sweden' under column 'Country of origin' på flera varurader. EU-normalisering stöds och certifikatets angivna 'European Union' accepteras i kombination med klassificering som Sweden."
+    }
+  },
+  "overall_assessment": {
+    "comparison_result": "MANUAL_REVIEW",
+    "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
+    "auto_approval_eligible": false,
+    "confidence": 0.91,
+    "critical_failures": [],
+    "manual_review_triggers": [
+      "4.4.1: Kvantitetsavvikelse för consignor 635 pcs vs 625 pcs i faktura"
+    ],
+    "decision_summary": "Alla kontrollpunkter utom kvantitet har explicit matchning. Kvantiteten för en artikel avviker med 10 pcs vilket utlöser MANUAL_REVIEW enligt regelverket.",
+    "human_explanation": "Alla andra uppgifter utom kvantiteten stämmer mellan certifikat och faktura. Kvantiteten 635 pcs i certifikatet skiljer sig från 625 pcs i fakturan, vilket kräver manuell granskning."
+  },
+  "_meta": {
+    "tested_at": "2026-04-01T06:30:58.911388+00:00",
+    "prompt_hash": "5d40e84ffac4",
+    "model": "gpt-4.1-mini",
+    "pair": "P097_MISMATCH",
+    "expected": "NOT_IDENTICAL",
+    "actual": "MANUAL_REVIEW",
+    "status": "REVIEW"
+  }
+}

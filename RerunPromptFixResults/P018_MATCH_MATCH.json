@@ -1,0 +1,187 @@
+{
+  "schema_version": "3.0",
+  "metadata": {
+    "verification_timestamp": null,
+    "document_pair_id": null,
+    "certificate_issue_date": "2026-02-13",
+    "source_documents_received": 2
+  },
+  "task": {
+    "task_type": "customs_document_pair_verification",
+    "comparison_mode": "certificate_vs_invoice",
+    "strictness": "conservative"
+  },
+  "documents": {
+    "document_a": {
+      "label": "Document A",
+      "assumed_role": "certificate",
+      "document_type": "Certificate of Origin"
+    },
+    "document_b": {
+      "label": "Document B",
+      "assumed_role": "invoice",
+      "document_type": "Commercial Invoice"
+    }
+  },
+  "rule_activation": {
+    "lc_exception_active": false,
+    "lc_number_found": null,
+    "general_goods_description_with_invoice_reference_active": true,
+    "mixed_origins_rule_active": false,
+    "to_order_rule_active": false,
+    "quantity_exception_applied": null,
+    "eu_origin_normalization_active": false,
+    "activated_rules": [
+      {
+        "rule_id": "8.5.0",
+        "rule_name": "Filbaserad dokumentparning"
+      },
+      {
+        "rule_id": "8.6",
+        "rule_name": "Obligatorisk parningsvalidering"
+      },
+      {
+        "rule_id": "4.3.5",
+        "rule_name": "Generell varubeskrivning med fakturareferens"
+      },
+      {
+        "rule_id": "4.1.3.10",
+        "rule_name": "Consignor utan explicit säljaradress men med identifierbart namn"
+      }
+    ]
+  },
+  "control_points": {
+    "consignor": {
+      "applicable": true,
+      "status": "MANUAL_REVIEW",
+      "confidence": 0.62,
+      "certificate_value": "ERICSSON AB\nTorshamnsgatan 21-23 Kista\nSE-164 83 , Stockholm\nSweden",
+      "invoice_value": "ERICSSON\nSeller Reference\nMohammad Rakib Hassan",
+      "rules_applied": [
+        {
+          "rule_id": "8.6",
+          "outcome": "pairing_validated_via_invoice_number_and_consignee"
+        },
+        {
+          "rule_id": "4.1.0",
+          "outcome": "partial_name_presence_found_in_invoice_header_only"
+        },
+        {
+          "rule_id": "4.1.3.10",
+          "outcome": "manual_review"
+        }
+      ],
+      "motivation": "Certifikatet anger consignor som \"ERICSSON AB ... Sweden\". I fakturan återfinns endast \"ERICSSON\" i sidhuvudet på sida 1–2, men fakturan saknar ett explicit säljar-/issuer-adressblock eller annan tydlig landuppgift för utställaren. Därför kan consignor-namnet identifieras i branding, men consignor-landet Sverige kan inte verifieras fullt ut och inget i fakturan motsäger heller Sverige; utfallet blir MANUAL_REVIEW."
+    },
+    "consignee": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.98,
+      "certificate_value": "UNITEL SA\nKINAXIXI INGOMBOTAS\nRUA MARECHAL BROZ TITO 77C-79D S/N\nLUANDA-KINAXIXI INGOMBOTAS\nAngola",
+      "invoice_value": "618186 Invoice address\nUNITEL SA\nKINAXIXI INGOMBOTAS\nRUA MARECHAL BROZ TITO 77C-79D S/N\nLUANDA-KINAXIXI INGOMBOTAS\nANGOLA",
+      "rules_applied": [
+        {
+          "rule_id": "4.2.0.2",
+          "outcome": "matched_against_primary_billing_field"
+        },
+        {
+          "rule_id": "4.2.3",
+          "outcome": "country_match"
+        },
+        {
+          "rule_id": "4.2.4",
+          "outcome": "match"
+        }
+      ],
+      "motivation": "Certifikatets consignee kan identifieras exakt i fakturans primära faktureringsfält \"Invoice address\". Företagsnamn och land överensstämmer uttryckligen: \"UNITEL SA\" och \"Angola\"."
+    },
+    "goods_description": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.88,
+      "certificate_value": "6200115520\nTelecom equipment as INV. 9209878872 dated 11.02.2026\n8 pieces",
+      "invoice_value": "Invoice number 9209878872\nInvoice Date 11.02.2026\nShipment number 40000088226 part of 6200115520\nLine item Product no Description CoO HS Code Qty UoM\n... RPM2533512/10M 2F LC-LC SM 10M CN ...",
+      "rules_applied": [
+        {
+          "rule_id": "4.3.5",
+          "outcome": "general_goods_description_with_invoice_reference_applied"
+        },
+        {
+          "rule_id": "4.3.5.2",
+          "outcome": "invoice_contents_consistent_with_general_description"
+        },
+        {
+          "rule_id": "4.3.8",
+          "outcome": "match"
+        }
+      ],
+      "motivation": "Certifikatet använder en generell varubeskrivning tillsammans med uttrycklig fakturareferens: \"Telecom equipment as INV. 9209878872 dated 11.02.2026\". Fakturan har samma fakturanummer och datum, och fakturans varor är telekomrelaterade produkter; innehållet är därför förenligt med den generella beskrivningen. Referensen 6200115520 återfinns också i fakturan som del av shipment number."
+    },
+    "quantity": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.97,
+      "certificate_value": "GW 14,93 kgs",
+      "invoice_value": "Total Gross Weight\nKG 14.93",
+      "rules_applied": [
+        {
+          "rule_id": "4.4.2.1",
+          "outcome": "box_7_quantity_selected"
+        },
+        {
+          "rule_id": "4.4.4",
+          "outcome": "matched_to_invoice_total_weight"
+        },
+        {
+          "rule_id": "4.4.6",
+          "outcome": "match"
+        }
+      ],
+      "motivation": "Den verifieringsgrundande kvantiteten i certifikatets box 7 är \"GW 14,93 kgs\". Fakturan anger uttryckligen \"Total Gross Weight KG 14.93\". Det numeriska värdet och vikttypen gross weight överensstämmer efter normalisering av decimaltecken."
+    },
+    "origin": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.96,
+      "certificate_value": "CHINA",
+      "invoice_value": "CoO\nCN",
+      "rules_applied": [
+        {
+          "rule_id": "4.5.1",
+          "outcome": "explicit_origin_found_in_invoice"
+        },
+        {
+          "rule_id": "4.5.4",
+          "outcome": "country_name_iso_code_normalization"
+        },
+        {
+          "rule_id": "4.5.5",
+          "outcome": "match"
+        }
+      ],
+      "motivation": "Certifikatet anger ursprungsland \"CHINA\". Fakturan anger ursprung explicit i CoO-kolumnen som \"CN\" på varuraderna. Efter tillåten landnormalisering är detta en verifierad matchning."
+    }
+  },
+  "overall_assessment": {
+    "comparison_result": "MANUAL_REVIEW",
+    "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
+    "auto_approval_eligible": false,
+    "confidence": 0.74,
+    "critical_failures": [],
+    "manual_review_triggers": [
+      "Consignor kan endast identifieras som \"ERICSSON\" i fakturans sidhuvud, medan fakturan saknar explicit säljaradress eller säker landuppgift för att fullt verifiera \"ERICSSON AB, Sweden\"."
+    ],
+    "decision_summary": "Dokumentparet är giltigt via matchande fakturanummer 9209878872 och matchande consignee. Consignee, varubeskrivning, kvantitet och ursprungsland verifieras mot fakturan. Consignor kan dock inte slutligt verifieras eftersom fakturan endast visar \"ERICSSON\" i branding och saknar tydligt säljaradressblock med land.",
+    "human_explanation": "Fakturanummer, mottagare, varubeskrivning, vikt och ursprungsland stämmer mot certifikatet. Däremot framgår avsändaren bara som \"ERICSSON\" i fakturans sidhuvud och fakturan saknar tydlig säljaradress med land, så \"ERICSSON AB, Sweden\" kan inte verifieras fullt ut. Ärendet behöver därför manuell granskning."
+  },
+  "_meta": {
+    "tested_at": "2026-04-02T06:14:56.192423+00:00",
+    "prompt_hash": "0927549d60df",
+    "model": "gpt-5.4",
+    "pair": "P018_MATCH",
+    "expected": "IDENTICAL",
+    "actual": "MANUAL_REVIEW",
+    "status": "REVIEW",
+    "rerun": "prompt_fixes_r4"
+  }
+}

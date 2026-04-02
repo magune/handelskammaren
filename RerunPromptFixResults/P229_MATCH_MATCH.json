@@ -1,0 +1,181 @@
+{
+  "schema_version": "3.0",
+  "metadata": {
+    "verification_timestamp": "2026-04-02T00:00:00Z",
+    "document_pair_id": null,
+    "certificate_issue_date": "2026-03-02",
+    "source_documents_received": 2
+  },
+  "task": {
+    "task_type": "customs_document_pair_verification",
+    "comparison_mode": "certificate_vs_invoice",
+    "strictness": "conservative"
+  },
+  "documents": {
+    "document_a": {
+      "label": "Document A",
+      "assumed_role": "certificate",
+      "document_type": "Certificate of Origin"
+    },
+    "document_b": {
+      "label": "Document B",
+      "assumed_role": "invoice",
+      "document_type": "Commercial Invoice"
+    }
+  },
+  "rule_activation": {
+    "lc_exception_active": false,
+    "lc_number_found": null,
+    "general_goods_description_with_invoice_reference_active": true,
+    "mixed_origins_rule_active": false,
+    "to_order_rule_active": false,
+    "quantity_exception_applied": "3D",
+    "eu_origin_normalization_active": true,
+    "activated_rules": [
+      {
+        "rule_id": "4.3.5.3",
+        "rule_name": "Ordernummer med fakturanummer utan datum"
+      },
+      {
+        "rule_id": "4.4.5.5",
+        "rule_name": "Summering av flera rader inom samma faktura"
+      },
+      {
+        "rule_id": "4.4.5.5.1",
+        "rule_name": "Generell/samlande varubeskrivning i certifikatet"
+      },
+      {
+        "rule_id": "4.5.4.2",
+        "rule_name": "EU-medlemsland och EU-samlingsbeteckning"
+      }
+    ]
+  },
+  "control_points": {
+    "consignor": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.93,
+      "certificate_value": "AB Akronmaskiner AB\nAkrons industriområde 1\n53194, Järpås\nSverige",
+      "invoice_value": "AB Akronmaskiner\nSE-531 94 JÄRPÅS\nVAT.No SE556102009901\nIban no. SE6060000000000569337178",
+      "rules_applied": [
+        {
+          "rule_id": "4.1.0",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.2.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.4",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatets consignor kan identifieras i fakturan genom företagsnamnet Akronmaskiner i fakturans footer/headermaterial. Skillnaden mellan \"AB Akronmaskiner AB\" och \"AB Akronmaskiner\" ligger inom tillåten normalisering av vanliga företagsbeteckningar. Landet Sverige verifieras i fakturan via SE-prefix i VAT-nummer och IBAN, utan motstridiga landuppgifter."
+    },
+    "consignee": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.91,
+      "certificate_value": "Karlovskiy Machine-Building Plant L\nSergei Nigoyan Street, 2\nPoltava region\nKarlovka city, 39500\nUkraine",
+      "invoice_value": "Invoice address\nKarlovskiy Machine-Building Plant Ltd\nSergei Nigoyan Street, 2\nPoltava region\nKarlovka city, 39500\nUkraine",
+      "rules_applied": [
+        {
+          "rule_id": "4.2.0.2",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.2.2.1.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.2.3",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Fakturan har ett primärt faktureringsfält (Invoice address) för mottagaren. Certifikatets namn \"Karlovskiy Machine-Building Plant L\" är en exakt inledande del av fakturans fullständiga namn \"Karlovskiy Machine-Building Plant Ltd\" och framstår som layoutavkortat i certifikatet. Landet Ukraine överensstämmer exakt."
+    },
+    "goods_description": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.88,
+      "certificate_value": "Invoice 175585\nOrder 80490\nFans AKL",
+      "invoice_value": "Invoice - 175585\nOrder No. 80490\n1 12712926 Fan AKL125glv J140L12FM ...\n2 12712928 Fan AKL125glv J140L06FM ...",
+      "rules_applied": [
+        {
+          "rule_id": "4.3.5.3",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.3.5.2",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.3.8",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatet innehåller en generell varubeskrivning (\"Fans AKL\") samt både fakturanummer 175585 och ordernummer 80490. Fakturan visar exakt samma fakturanummer och ordernummer. Enligt undantaget för ordernummer med fakturanummer utan datum kan datumkravet anses uppfyllt, och fakturans två produktrader för Fan AKL125glv är förenliga med certifikatets generella beskrivning \"Fans AKL\"."
+    },
+    "quantity": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.89,
+      "certificate_value": "2 pcs",
+      "invoice_value": "Qty\n1,00 pcs\n1,00 pcs",
+      "rules_applied": [
+        {
+          "rule_id": "4.4.5.5",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.4.5.5.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.4.6",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatet anger total kvantitet 2 pcs för den samlande varubeskrivningen \"Fans AKL\". Fakturan innehåller två relevanta rader inom samma produktfamilj, vardera med 1,00 pcs, vilket får summeras enligt undantaget för flera rader inom samma faktura och generell/samlande varubeskrivning. Summan 2 pcs överensstämmer med certifikatet."
+    },
+    "origin": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.9,
+      "certificate_value": "European Community\nSweden",
+      "invoice_value": "these products are of SE preferential origin.",
+      "rules_applied": [
+        {
+          "rule_id": "4.5.4.2",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.5.5",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Fakturan innehåller en explicit ursprungsangivelse: \"these products are of SE preferential origin.\" Landskoden SE verifierar Sweden. Samtidigt är Sweden ett EU-medlemsland, vilket gör att certifikatets uppgift \"European Community\" också verifieras genom EU-normaliseringsregeln. Ingen motstridig ursprungsuppgift förekommer i fakturan."
+    }
+  },
+  "overall_assessment": {
+    "comparison_result": "IDENTICAL",
+    "workflow_recommendation": "AUTO_APPROVAL_ELIGIBLE",
+    "auto_approval_eligible": true,
+    "confidence": 0.9,
+    "critical_failures": [],
+    "manual_review_triggers": [],
+    "decision_summary": "Certifikatet kan verifieras mot den bifogade fakturan. Fakturanummer 175585 och ordernummer 80490 överensstämmer, consignor och consignee kan identifieras, kvantiteten 2 pcs verifieras genom summering av två fakturarader, och ursprunget Sweden/European Community stöds av fakturans explicita ursprungsuttalande.",
+    "human_explanation": "Alla relevanta uppgifter i certifikatet kan verifieras mot fakturan. Avsändare, mottagare, varubeskrivning, mängd och ursprung stämmer efter tillåten normalisering. Dokumentparet kan därför godkännas automatiskt."
+  },
+  "_meta": {
+    "tested_at": "2026-04-02T06:34:08.996069+00:00",
+    "prompt_hash": "7cd73c7c3da6",
+    "model": "gpt-5.4",
+    "pair": "P229_MATCH",
+    "expected": "IDENTICAL",
+    "actual": "IDENTICAL",
+    "status": "PASS",
+    "rerun": "prompt_fixes_r5"
+  }
+}

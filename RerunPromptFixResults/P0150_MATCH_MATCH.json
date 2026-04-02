@@ -1,0 +1,185 @@
+{
+  "schema_version": "3.0",
+  "metadata": {
+    "verification_timestamp": "2026-04-02T00:00:00Z",
+    "document_pair_id": null,
+    "certificate_issue_date": "2026-02-13",
+    "source_documents_received": 2
+  },
+  "task": {
+    "task_type": "customs_document_pair_verification",
+    "comparison_mode": "certificate_vs_invoice",
+    "strictness": "conservative"
+  },
+  "documents": {
+    "document_a": {
+      "label": "Document A",
+      "assumed_role": "certificate",
+      "document_type": "Certificate of Origin"
+    },
+    "document_b": {
+      "label": "Document B",
+      "assumed_role": "invoice",
+      "document_type": "Invoice with packing list attachment"
+    }
+  },
+  "rule_activation": {
+    "lc_exception_active": false,
+    "lc_number_found": null,
+    "general_goods_description_with_invoice_reference_active": false,
+    "mixed_origins_rule_active": false,
+    "to_order_rule_active": false,
+    "quantity_exception_applied": null,
+    "eu_origin_normalization_active": false,
+    "activated_rules": [
+      {
+        "rule_id": "8.6",
+        "rule_name": "Obligatorisk parningsvalidering"
+      },
+      {
+        "rule_id": "4.1.3.9",
+        "rule_name": "Consignor som fakturautställare utan explicit säljaradress"
+      },
+      {
+        "rule_id": "4.1.3.8",
+        "rule_name": "Enstaka teckenavvikelse i företagsnamn med bekräftande identifierare"
+      },
+      {
+        "rule_id": "4.4.3.1",
+        "rule_name": "Flera kvantitetsuppgifter – minst en ska verifieras"
+      }
+    ]
+  },
+  "control_points": {
+    "consignor": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.86,
+      "certificate_value": "WOODPIE AB\nBackadalsgatan 13\n54332 , Tibro\nSweden",
+      "invoice_value": "Wood Pie\nCountry of Origin: Sweden\nPort of loading: Any port in Sweden",
+      "rules_applied": [
+        {
+          "rule_id": "8.6",
+          "outcome": "PASS"
+        },
+        {
+          "rule_id": "4.1.0",
+          "outcome": "NOT_FULLY_APPLICABLE"
+        },
+        {
+          "rule_id": "4.1.3.9",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatet anger consignor som \"WOODPIE AB\" i Sverige. Fakturan saknar ett dedikerat säljaradressblock, men header/branding visar \"Wood Pie\", vilket efter tillåten normalisering av mellanslag och bolagsform identifierar samma namnkärna. Två oberoende landkorroborerande uppgifter i fakturan pekar på Sverige (\"Country of Origin: Sweden\" och \"Port of loading: Any port in Sweden\"), och ingen fakturauppgift motsäger Sverige. Därför är consignor verifierad som MATCH."
+    },
+    "consignee": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.9,
+      "certificate_value": "SARASWATI WOOD PRIVATE LIMITED\nSURVEY NO. 362/1, MITHI ROHAR\nNATIONAL HIGHWAY\nGANDHIDHAMGUJARAT-370201,\nGST NO: 24AAPCS6579L1ZG,\nIEC CODE: 0511009909\nIndia",
+      "invoice_value": "INVOICE TO:\nSARASATI WOOD PRIVATE LIMITED\nSURVEY NO. 362/1, MITHI ROHAR,\nNATIONAL HIGHWAY,GANDHIDHAMGUJARAT-370201,\nINDIA GST NO: 24AAPCS6579L1ZG,",
+      "rules_applied": [
+        {
+          "rule_id": "8.6",
+          "outcome": "PASS"
+        },
+        {
+          "rule_id": "4.2.0.2",
+          "outcome": "PRIMARY_BILL_TO_USED"
+        },
+        {
+          "rule_id": "4.1.3.8",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.2.3",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatet anger mottagaren som \"SARASWATI WOOD PRIVATE LIMITED\" i India. Fakturans primära faktureringsfält \"INVOICE TO\" anger \"SARASATI WOOD PRIVATE LIMITED\" i India med samma adress och exakt samma GST-nummer 24AAPCS6579L1ZG. Skillnaden mellan \"SARASWATI\" och \"SARASATI\" är en enstaka teckenavvikelse, och den bekräftande identifieraren gör att samma juridiska part kan verifieras. Därför är consignee MATCH."
+    },
+    "goods_description": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.91,
+      "certificate_value": "Pinus sylvestris\n.\nPine AB Grade/pine",
+      "invoice_value": "Product: Pine ab grade\nDescription: PINE AB GRADE;PINE",
+      "rules_applied": [
+        {
+          "rule_id": "4.3.2",
+          "outcome": "NO_ARTICLE_NUMBER_IN_CERTIFICATE"
+        },
+        {
+          "rule_id": "4.3.3",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.3.4",
+          "outcome": "ADDITIONAL_TEXT_NOT_IDENTITY_BEARING"
+        }
+      ],
+      "motivation": "Certifikatets identitetsbärande varubeteckning är \"Pine AB Grade/pine\". Fakturan anger \"Pine ab grade\" och packing list-sidan anger \"PINE AB GRADE;PINE\", vilket återger samma huvudbeteckning efter normalisering av versaler/gemener och skiljetecken. Den botaniska texten \"Pinus sylvestris\" i certifikatet utgör ytterligare beskrivning och motsägs inte av fakturan. Varubeskrivningen är därför verifierad som MATCH."
+    },
+    "quantity": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.89,
+      "certificate_value": "38.459 CBM\n24000.000 KGSgross",
+      "invoice_value": "Qty m³: 38.459 m3\nTotal volume: 38.459 m3",
+      "rules_applied": [
+        {
+          "rule_id": "4.4.2.1",
+          "outcome": "BOX_7_USED"
+        },
+        {
+          "rule_id": "4.4.3.1",
+          "outcome": "MATCH_ON_AT_LEAST_ONE_QUANTITY"
+        },
+        {
+          "rule_id": "4.4.3",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatets kvantitetsfält (box 7) innehåller två kvantitetsuppgifter: 38.459 CBM och 24000.000 KGS gross. Fakturan anger uttryckligen \"Qty m³ 38.459 m3\" och packing list anger \"Total volume: 38.459 m3\", vilket verifierar den första kvantitetsuppgiften exakt. Fakturan innehåller ingen uttrycklig viktuppgift som motsäger 24000.000 KGS gross. Enligt regeln för flera kvantitetsuppgifter räcker det att minst en uppgift verifieras när ingen annan uttrycklig motsägelse finns. Därför är quantity MATCH."
+    },
+    "origin": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.98,
+      "certificate_value": "SWEDEN",
+      "invoice_value": "Country of Origin: Sweden",
+      "rules_applied": [
+        {
+          "rule_id": "4.5.1",
+          "outcome": "EXPLICIT_ORIGIN_FIELD_FOUND"
+        },
+        {
+          "rule_id": "4.5.5",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatet anger ursprungsland som \"SWEDEN\". Fakturan innehåller ett explicit ursprungsfält: \"Country of Origin: Sweden\". Ursprungslandet kan därför uttryckligen identifieras i fakturan utan ytterligare tolkning. Resultatet är MATCH."
+    }
+  },
+  "overall_assessment": {
+    "comparison_result": "IDENTICAL",
+    "workflow_recommendation": "AUTO_APPROVAL_ELIGIBLE",
+    "auto_approval_eligible": true,
+    "confidence": 0.91,
+    "critical_failures": [],
+    "manual_review_triggers": [],
+    "decision_summary": "Dokumentparet passerar parningsvalideringen. Consignor verifieras via fakturans branding \"Wood Pie\" tillsammans med två oberoende Sverige-indikatorer, consignee verifieras trots en enstaka teckenavvikelse genom identiskt GST-nummer och adress, varubeskrivningen återfinns i både invoice och packing list, kvantiteten 38.459 m3 matchar exakt och ursprungslandet Sweden framgår uttryckligen i fakturan. Samtliga tillämpliga kontrollpunkter är MATCH, och ingen applicable MATCH-kontrollpunkt ligger under confidence-golvet 0.85.",
+    "human_explanation": "Alla tillämpliga uppgifter i certifikatet kan verifieras mot fakturan. Mottagaren har en liten stavningsskillnad (SARASWATI/SARASATI), men samma adress och samma GST-nummer visar att det är samma part. Dokumentparet kan därför godkännas automatiskt."
+  },
+  "_meta": {
+    "tested_at": "2026-04-02T06:14:56.183278+00:00",
+    "prompt_hash": "0927549d60df",
+    "model": "gpt-5.4",
+    "pair": "P0150_MATCH",
+    "expected": "IDENTICAL",
+    "actual": "IDENTICAL",
+    "status": "PASS",
+    "rerun": "prompt_fixes_r4"
+  }
+}

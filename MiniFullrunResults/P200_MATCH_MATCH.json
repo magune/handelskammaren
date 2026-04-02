@@ -1,0 +1,176 @@
+{
+  "schema_version": "3.0",
+  "metadata": {
+    "verification_timestamp": null,
+    "document_pair_id": null,
+    "certificate_issue_date": "2026-01-27",
+    "source_documents_received": 2
+  },
+  "task": {
+    "task_type": "customs_document_pair_verification",
+    "comparison_mode": "certificate_vs_invoice",
+    "strictness": "conservative"
+  },
+  "documents": {
+    "document_a": {
+      "label": "Document A",
+      "assumed_role": "certificate",
+      "document_type": "Certificate of Origin"
+    },
+    "document_b": {
+      "label": "Document B",
+      "assumed_role": "invoice",
+      "document_type": "Invoice"
+    }
+  },
+  "rule_activation": {
+    "lc_exception_active": false,
+    "lc_number_found": null,
+    "general_goods_description_with_invoice_reference_active": false,
+    "mixed_origins_rule_active": false,
+    "to_order_rule_active": false,
+    "quantity_exception_applied": null,
+    "eu_origin_normalization_active": true,
+    "activated_rules": [
+      {
+        "rule_id": "4.1.0",
+        "rule_name": "Consignor verification via explicit mention anywhere in invoice"
+      },
+      {
+        "rule_id": "4.1.3.6",
+        "rule_name": "For consignor, allowed abbreviation of legal company form"
+      },
+      {
+        "rule_id": "4.2.0.2",
+        "rule_name": "Consignee prioritization of invoice fields including Bill to, Buyer and Ship to"
+      },
+      {
+        "rule_id": "4.3.2",
+        "rule_name": "Goods description verification priority 1: article number exact match"
+      },
+      {
+        "rule_id": "4.4.1",
+        "rule_name": "Quantity verification must be explicit and match"
+      },
+      {
+        "rule_id": "4.4.3.1",
+        "rule_name": "At least one quantity value must match"
+      },
+      {
+        "rule_id": "4.4.4",
+        "rule_name": "Total weight in invoice can be used to verify total weight in certificate"
+      },
+      {
+        "rule_id": "4.5.4",
+        "rule_name": "Origin country normalization, including EU normalization"
+      }
+    ]
+  },
+  "control_points": {
+    "consignor": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.9,
+      "certificate_value": "Gunnar Dafgård AB",
+      "invoice_value": "Gunnar Dafgård AB",
+      "rules_applied": [
+        {
+          "rule_id": "4.1.0",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.3.6",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "The consignor 'Gunnar Dafgård AB' as stated in the certificate exactly matches the issuer of the invoice 'Gunnar Dafgård AB' with allowed normalization of legal form recognition (AB). The consignor name is explicitly found in the invoice header and address block, ensuring direct match without assumption."
+    },
+    "consignee": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.9,
+      "certificate_value": "JAMES CRISP LTD UNILEVER ASIA PRIVATE LTD 202 PARNELL READ PARNELL 1052 AUCKLAND New Zealand",
+      "invoice_value": "JAMES CRISP LTD UNILEVER ASIA PRIVATE LTD 202 PARNELL READ PARNELL SE-1052 AUCKLAND New Zealand",
+      "rules_applied": [
+        {
+          "rule_id": "4.2.0.2",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "The consignee named in the certificate 'JAMES CRISP LTD UNILEVER ASIA PRIVATE LTD 202 PARNELL READ PARNELL 1052 AUCKLAND New Zealand' is matched in the invoice as the explicit invoice recipient and delivery address. Prioritization of invoice fields gives precedence to invoiced party fields which align with the certificate consignee. Country and address are consistent."
+    },
+    "goods_description": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.95,
+      "certificate_value": "4692 LAC Whopper SG Batch code L60081HN04, L60091HN04 BBD 03.04.2027, 04.04.2027",
+      "invoice_value": "20 4692 LAC Whopper SG\n30 4692 LAC Whopper SG",
+      "rules_applied": [
+        {
+          "rule_id": "4.3.2",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "The article number '4692' and product description 'LAC Whopper SG' in the certificate exactly match invoice lines containing article number 4692 and the same product name. Exact article number match allows straightforward verification. Batch codes and BBD in certificate are additional and do not contradict invoice."
+    },
+    "quantity": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.9,
+      "certificate_value": "1380ct Gr weight: 15600,9 Net weight: 15180",
+      "invoice_value": "Total Nettovikt 15.180,000 KG\nLine quantities: 9.240,000 KG + 5.940,000 KG = 15.180,000 KG",
+      "rules_applied": [
+        {
+          "rule_id": "4.4.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.4.3.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.4.4",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "The net weight quantity '15180' in the certificate matches the total net weight '15.180,000 KG' stated in the invoice after normalization (commas as thousand separator and decimal point). The invoice clearly shows net weight per line summing to the total, supporting quantity verification."
+    },
+    "origin": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.9,
+      "certificate_value": "European Union",
+      "invoice_value": "Country of Origin: SE (Sweden)",
+      "rules_applied": [
+        {
+          "rule_id": "4.5.4",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.5.4.1",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "The certificate states 'European Union' as origin, and the invoice explicitly lists 'Country of Origin: SE', Sweden, which is an EU member state. EU origin normalization allows Sweden to be accepted as verifying the certificate's EU origin claim."
+    }
+  },
+  "overall_assessment": {
+    "comparison_result": "IDENTICAL",
+    "workflow_recommendation": "AUTO_APPROVAL_ELIGIBLE",
+    "auto_approval_eligible": true,
+    "confidence": 0.9,
+    "critical_failures": [],
+    "manual_review_triggers": [],
+    "decision_summary": "All control points match with explicit verified data and allowed normalizations. The consignor, consignee, goods description, quantities and origin are consistent between certificate and invoice.",
+    "human_explanation": "Alla relevanta uppgifter i certifikatet kan identifieras i fakturan med korrekta matchningar för avsändare, mottagare, varubeskrivning, mängd och ursprungsland. Dokumenten kan godkännas automatiskt."
+  },
+  "_meta": {
+    "tested_at": "2026-04-01T06:30:58.913833+00:00",
+    "prompt_hash": "5d40e84ffac4",
+    "model": "gpt-4.1-mini",
+    "pair": "P200_MATCH",
+    "expected": "IDENTICAL",
+    "actual": "IDENTICAL",
+    "status": "PASS"
+  }
+}

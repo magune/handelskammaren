@@ -1,0 +1,173 @@
+{
+  "schema_version": "3.0",
+  "metadata": {
+    "verification_timestamp": "2024-06-09T12:00:00Z",
+    "document_pair_id": null,
+    "certificate_issue_date": "2025-11-20",
+    "source_documents_received": 2
+  },
+  "task": {
+    "task_type": "customs_document_pair_verification",
+    "comparison_mode": "certificate_vs_invoice",
+    "strictness": "conservative"
+  },
+  "documents": {
+    "document_a": {
+      "label": "Document A",
+      "assumed_role": "certificate",
+      "document_type": "Certificate of Origin"
+    },
+    "document_b": {
+      "label": "Document B",
+      "assumed_role": "invoice",
+      "document_type": "Commercial Invoice"
+    }
+  },
+  "rule_activation": {
+    "lc_exception_active": false,
+    "lc_number_found": null,
+    "general_goods_description_with_invoice_reference_active": false,
+    "mixed_origins_rule_active": false,
+    "to_order_rule_active": false,
+    "quantity_exception_applied": null,
+    "eu_origin_normalization_active": true,
+    "activated_rules": [
+      {
+        "rule_id": "4.6",
+        "rule_name": "Kina / Hongkong landnormalisering – ekvivalens"
+      },
+      {
+        "rule_id": "4.5.4.1",
+        "rule_name": "EU-normalisering och hantering av extra EU-medlemsländer i fakturan"
+      },
+      {
+        "rule_id": "4.5.4.2",
+        "rule_name": "EU-medlemsland och European Union – utbytbarhet"
+      },
+      {
+        "rule_id": "4.1.0",
+        "rule_name": "Consignor koncernstruktur – consignor-namnet förekommer i fakturan"
+      },
+      {
+        "rule_id": "4.1.4",
+        "rule_name": "Consignor landkontroll"
+      },
+      {
+        "rule_id": "4.2.0.2",
+        "rule_name": "Consignee prioritering och roller"
+      },
+      {
+        "rule_id": "4.2.3",
+        "rule_name": "Consignee landkontroll"
+      }
+    ]
+  },
+  "control_points": {
+    "consignor": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.9,
+      "certificate_value": "SKF Sverige AB, Kvibergs Broväg 8, SE-415 05, GÖTEBORG, Sweden",
+      "invoice_value": "SKF Sverige AB, von Utfallsgatan 4, 415 50 Göteborg, Sweden",
+      "rules_applied": [
+        {
+          "rule_id": "4.1.0",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.4",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatets consignor 'SKF Sverige AB' identifieras tydligt i fakturan både som utfärdare och i adressblock, dock med annan gatuadress (Kvibergs Broväg 8 vs von Utfallsgatan 4), vilket inte påverkar matchningen enligt regelverket. Land överensstämmer (Sweden). Regeln 4.1.0 om koncernstruktur tillämpad då consignor-namnet uttryckligen förekommer i fakturan på flera ställen."
+    },
+    "consignee": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.9,
+      "certificate_value": "SKF Vietnam CO Ltd, 105 Ton Dat Tien, Tan Phu Ward, 700000 Ho Chi Minh, Viet Nam",
+      "invoice_value": "Fakturan anger 'Ship To: Türkiye' men avsändare och andra adresser är SKF Sverige AB. Consignee-namnet 'SKF Vietnam CO Ltd' eller liknande återfinns ej i fakturan, dock är 'Ship to' landet 'Türkiye'. Fakturan har inget tydligt 'Invoice to' fält som motsvarar certifikatets consignee. Eftersom dokumentet är på engelska och turkiska och namnet inte kan bekräftas i fakturan exakt, men land och leveransland avviker, krävs manuell granskning.",
+      "rules_applied": [
+        {
+          "rule_id": "4.2.0.2",
+          "outcome": "MANUAL_REVIEW"
+        },
+        {
+          "rule_id": "4.2.3",
+          "outcome": "MANUAL_REVIEW"
+        }
+      ],
+      "motivation": "Certifikatets mottagare är 'SKF Vietnam CO Ltd' i Vietnam, medan fakturan endast visar leveransadressen 'Türkiye' och saknar uttrycklig identifikation av same mottagare i fakturans 'Invoice to' eller liknande fält. Avvikelse i land kräver manuell handläggning då verifiering inte kan genomföras med säkerhet."
+    },
+    "goods_description": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.95,
+      "certificate_value": "LOCK WASHER NUTS",
+      "invoice_value": "DEEP GROOVE BALL BRG OD > 30 MM, CARB BEARING, SPHERICAL ROLLER BRG mm enligt fakturaartiklar",
+      "rules_applied": [
+        {
+          "rule_id": "4.3.2",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Varubeskrivningen i certifikatet 'LOCK WASHER NUTS' överensstämmer med fakturans produktgruppsbeskrivningar och artikelnummer SEG-25D-400602 finns i certifikatet och delvis i fakturan. Ingen semantisk tolkning behövdes då artikelnummer är fullt identifierbart."
+    },
+    "quantity": {
+      "applicable": true,
+      "status": "MISMATCH",
+      "confidence": 0.9,
+      "certificate_value": "2 pcs",
+      "invoice_value": "87 pcs totalt (specificerade per artikel i fakturan), men avvikande totalantal för samma varor i certifikatet",
+      "rules_applied": [
+        {
+          "rule_id": "4.4.1",
+          "outcome": "MISMATCH"
+        },
+        {
+          "rule_id": "4.4.3.1",
+          "outcome": "MISMATCH"
+        }
+      ],
+      "motivation": "Certifikatets kvantitet är 2 pcs (styck) medan fakturan summerar till 87 pcs totalt för motsvarande varor. Avvikelsen är tydlig och innebär motsägelse mellan kvantitet i certifikatet och fakturan, varför status är MISMATCH enligt regel 4.4.3.1."
+    },
+    "origin": {
+      "applicable": true,
+      "status": "MISMATCH",
+      "confidence": 0.98,
+      "certificate_value": "SWEDEN",
+      "invoice_value": "Country of origin i fakturan anger flera länder: Sweden, P.R. China, Chinese Taiwan, Germany, Poland",
+      "rules_applied": [
+        {
+          "rule_id": "4.5.4.1",
+          "outcome": "MISMATCH"
+        }
+      ],
+      "motivation": "Certifikatet anger ursprungsland som SWEDEN, medan fakturan innehåller flera ursprungsländer inklusive P.R. China, Chinese Taiwan, Germany och Poland utöver Sweden. Eftersom dessa icke-Sverige-länder i fakturan inte finns i certifikatet och det inte är tillåtet med att fakturan innehåller icke-angivna icke-EU-länder, föreligger en tydlig motsägelse (MISMATCH) enligt regel 4.5.4.1."
+    }
+  },
+  "overall_assessment": {
+    "comparison_result": "NOT_IDENTICAL",
+    "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
+    "auto_approval_eligible": false,
+    "confidence": 0.91,
+    "critical_failures": [
+      "quantity",
+      "origin"
+    ],
+    "manual_review_triggers": [
+      "consignee"
+    ],
+    "decision_summary": "Avsändare i certifikatet finns verifierad i fakturan med matchande land och identifierbar part. Mottagaren i certifikatet kan inte entydigt identifieras i fakturan och differensen i land för mottagaren kräver manuell kontroll. Varubeskrivning är verifierad baserat på artikelnummer. Kvantitet visar tydliga avvikelser och motsägelser mellan certifikat och faktura. Ursprungslandet SWEDEN i certifikatet motsägs av fakturans flera angivna ursprungsländer, vilket leder till avslag.",
+    "human_explanation": "Avsändaren i certifikatet överensstämmer med fakturan, men mottagaren kan inte verifieras. Kvantiteten i certifikatet (2 pcs) skiljer sig tydligt från fakturans total (87 pcs). Ursprungslandet Sverige i certifikatet motsägs av flera andra ursprungsländer i fakturan. Dokumenten kan därför inte godkännas automatiskt och kräver manuell granskning."
+  },
+  "_meta": {
+    "tested_at": "2026-04-01T06:30:58.911794+00:00",
+    "prompt_hash": "5d40e84ffac4",
+    "model": "gpt-4.1-mini",
+    "pair": "P098_MISMATCH",
+    "expected": "NOT_IDENTICAL",
+    "actual": "NOT_IDENTICAL",
+    "status": "PASS"
+  }
+}

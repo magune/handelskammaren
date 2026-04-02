@@ -1,0 +1,187 @@
+{
+  "schema_version": "3.0",
+  "metadata": {
+    "verification_timestamp": "2026-04-01T00:00:00Z",
+    "document_pair_id": null,
+    "certificate_issue_date": "2026-01-27",
+    "source_documents_received": 2
+  },
+  "task": {
+    "task_type": "customs_document_pair_verification",
+    "comparison_mode": "certificate_vs_invoice",
+    "strictness": "conservative"
+  },
+  "documents": {
+    "document_a": {
+      "label": "Document A",
+      "assumed_role": "certificate",
+      "document_type": "Certificate of Origin"
+    },
+    "document_b": {
+      "label": "Document B",
+      "assumed_role": "invoice",
+      "document_type": "Commercial invoice (scanned/image-based PDF)"
+    }
+  },
+  "rule_activation": {
+    "lc_exception_active": false,
+    "lc_number_found": null,
+    "general_goods_description_with_invoice_reference_active": false,
+    "mixed_origins_rule_active": false,
+    "to_order_rule_active": false,
+    "quantity_exception_applied": null,
+    "eu_origin_normalization_active": true,
+    "activated_rules": [
+      {
+        "rule_id": "8.5.0",
+        "rule_name": "Filbaserad dokumentparning"
+      },
+      {
+        "rule_id": "8.6",
+        "rule_name": "Obligatorisk parningsvalidering"
+      },
+      {
+        "rule_id": "4.1.0",
+        "rule_name": "Koncernstruktur/sökning av consignor i hela fakturan"
+      },
+      {
+        "rule_id": "4.3.2",
+        "rule_name": "Artikelnummer prioriteras för varubeskrivning"
+      },
+      {
+        "rule_id": "4.5.4.1",
+        "rule_name": "EU-normalisering"
+      },
+      {
+        "rule_id": "4.5.4.2",
+        "rule_name": "EU-medlemsland ↔ EU"
+      }
+    ]
+  },
+  "control_points": {
+    "consignor": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.93,
+      "certificate_value": "Mann Teknik AB\nStrandvägen 16\nSE542 39, MARIESTAD\nSweden",
+      "invoice_value": "Mann Teknik AB\nPostal address: Box126\nSE-542 22 MARIESTAD\nDelivery address: Strandvägen 16\nSE-542 39 MARIESTAD\nSWEDEN",
+      "rules_applied": [
+        {
+          "rule_id": "4.1.0",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.2.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.5",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatets consignor 'Mann Teknik AB' återfinns uttryckligen i fakturans synliga text i nederdelen av sidan. Landet 'Sweden/SWEDEN' framgår också explicit i fakturans adressblock. Därmed är certifikatets avsändare verifierad mot fakturan."
+    },
+    "consignee": {
+      "applicable": true,
+      "status": "MANUAL_REVIEW",
+      "confidence": 0.32,
+      "certificate_value": "Kanon Liquid Handling\nSuite 4, Brookside Business C.\nSpring Road, Ibstock\nLeicestershire LE67 6LR\nUnited Kingdom of Great Britain and\nNorthern Ireland",
+      "invoice_value": "Ingen läsbar 'Invoice to'/'Bill to'/'Ship to'-uppgift kunde identifieras i tillgänglig OCR eller i den synliga fakturabilden.",
+      "rules_applied": [
+        {
+          "rule_id": "8",
+          "outcome": "MANUAL_REVIEW"
+        },
+        {
+          "rule_id": "4.2.0.2",
+          "outcome": "KAN INTE AVGÖRAS TEKNISKT"
+        }
+      ],
+      "motivation": "Fakturan är skannad/bildbaserad och den tillgängliga OCR-texten innehåller ingen läsbar mottagarruta. I den synliga fakturabilden framgår säljaruppgifter, varurader, ursprung och vikter, men ingen tillräckligt läsbar eller identifierbar 'Invoice to', 'Bill to', 'Sold to' eller 'Ship to' för att verifiera certifikatets consignee 'Kanon Liquid Handling'. Detta är en teknisk läsbarhets-/tillgänglighetsbrist, inte en bevisad motsägelse, ולכן kontrollpunkten ska hanteras manuellt."
+    },
+    "goods_description": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.97,
+      "certificate_value": "One pallet of couplings\nN6100D4401 Breakaway Ind. 6\"-6\" ANSI Cl. 150 SS FPM",
+      "invoice_value": "1 N6100D4401 84818099\nBREAKAWAY IND. 6\"- 6\" ANSI Cl.150\nSS  FPM",
+      "rules_applied": [
+        {
+          "rule_id": "4.3.2",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.3.8",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatet anger artikelnummer 'N6100D4401'. Samma artikelnummer återfinns exakt i fakturan. Den tillhörande produkttexten 'Breakaway Ind. 6\"-6\" ANSI Cl. 150 SS FPM' kan också identifieras i fakturans varurad med endast tillåtna formateringsskillnader. Därför är varubeskrivningen verifierad via prioritet 1 artikelnummer."
+    },
+    "quantity": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.95,
+      "certificate_value": "1 pcs",
+      "invoice_value": "QUANT. 1",
+      "rules_applied": [
+        {
+          "rule_id": "4.4.2",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.4.3",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.4.6",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatet anger kvantiteten '1 pcs'. Fakturan visar numeriskt värde '1' för artikelraden N6100D4401. Det numeriska värdet kan därmed identifieras i fakturan för motsvarande vara, vilket uppfyller huvudregeln för kvantitetsverifiering."
+    },
+    "origin": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.94,
+      "certificate_value": "EU (Sweden)",
+      "invoice_value": "These products are of European Community preferential origin.\nCountry of origin: Sweden",
+      "rules_applied": [
+        {
+          "rule_id": "4.5.4.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.5.4.2.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.5.5",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatet anger ursprung 'EU (Sweden)'. Fakturan innehåller ett explicit ursprungsuttalande 'European Community preferential origin' samt ett explicit fält 'Country of origin: Sweden'. Både EU-ursprung och Sverige kan därför uttryckligen identifieras i fakturan."
+    }
+  },
+  "overall_assessment": {
+    "comparison_result": "MANUAL_REVIEW",
+    "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
+    "auto_approval_eligible": false,
+    "confidence": 0.76,
+    "critical_failures": [],
+    "manual_review_triggers": [
+      "Consignee kan inte verifieras tekniskt eftersom fakturan är skannad/bildbaserad och läsbar mottagaruppgift saknas i tillgänglig OCR/synlig sida."
+    ],
+    "decision_summary": "Dokumentparet är korrekt klassificerat och parningsvalideringen passerar eftersom certifikatets consignor kan identifieras i fakturan. Consignor, varubeskrivning, kvantitet och ursprungsland verifieras mot fakturan. Consignee kan däremot inte verifieras tekniskt på grund av otillräcklig läsbarhet/tillgänglighet i den skannade fakturan, vilket medför MANUAL_REVIEW.",
+    "human_explanation": "Avsändare, varubeskrivning, mängd och ursprung stämmer mot fakturan. Mottagaren 'Kanon Liquid Handling' kan däremot inte läsas eller identifieras säkert i den bifogade skannade fakturan eftersom mottagarfältet inte finns i den läsbara texten. Därför krävs manuell granskning."
+  },
+  "_meta": {
+    "tested_at": "2026-04-01T20:23:52.698254+00:00",
+    "prompt_hash": "9b9df42642d8",
+    "model": "gpt-5.4",
+    "tier": 2,
+    "pair": "P0164_MATCH",
+    "expected": "IDENTICAL",
+    "actual": "MANUAL_REVIEW",
+    "status": "REVIEW"
+  }
+}

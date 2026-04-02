@@ -1,0 +1,166 @@
+{
+  "schema_version": "3.0",
+  "metadata": {
+    "verification_timestamp": null,
+    "document_pair_id": null,
+    "certificate_issue_date": "2025-11-25",
+    "source_documents_received": 2
+  },
+  "task": {
+    "task_type": "customs_document_pair_verification",
+    "comparison_mode": "certificate_vs_invoice",
+    "strictness": "conservative"
+  },
+  "documents": {
+    "document_a": {
+      "label": "Document A",
+      "assumed_role": "certificate",
+      "document_type": "Certificate of Origin"
+    },
+    "document_b": {
+      "label": "Document B",
+      "assumed_role": "invoice",
+      "document_type": "Commercial Invoice"
+    }
+  },
+  "rule_activation": {
+    "lc_exception_active": false,
+    "lc_number_found": null,
+    "general_goods_description_with_invoice_reference_active": true,
+    "mixed_origins_rule_active": false,
+    "to_order_rule_active": false,
+    "quantity_exception_applied": null,
+    "eu_origin_normalization_active": true,
+    "activated_rules": [
+      {
+        "rule_id": "4.3.5",
+        "rule_name": "Generell varubeskrivning med fakturareferens"
+      },
+      {
+        "rule_id": "4.5.4.1",
+        "rule_name": "EU-normalisering - Ytterligare EU-medlemsländer i fakturan (blandade ursprung)"
+      }
+    ]
+  },
+  "control_points": {
+    "consignor": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.9,
+      "certificate_value": "Bohus BioTech AB\nTrädgårdsgatan 4\nSE-452 31, STRÖMSTAD\nSweden",
+      "invoice_value": "Bohus Biotech AB\nTrädgårdsgatan 4\n45231 Strömstad\nSWEDEN",
+      "rules_applied": [
+        {
+          "rule_id": "4.1.0",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.3.6",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.4",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Consignor 'Bohus BioTech AB' (certifikat) exakt identifierbart i fakturan inklusive adress och land. Skillnad i versalisering och formatering av företagsnamn hanteras enligt normaliseringsregler. Land 'Sweden' överensstämmer exakt efter normalisering (4.1.4). Regler för koncernstruktur (4.1.0) och juridisk bolagsformsskillnad (4.1.3.6) godkända."
+    },
+    "consignee": {
+      "applicable": true,
+      "status": "MISMATCH",
+      "confidence": 0.95,
+      "certificate_value": "NT Solutions Co LTD\n35 A4 Street\nWard 12\nTan Binh District\n70000 Ho Chi Minh City\nViet Nam",
+      "invoice_value": "Dr. Salem Al-Ajmi company\nBuilding 9, Apartment 14\nBlock 3, Street 9\n20003 Salmiya\nKUWAIT",
+      "rules_applied": [
+        {
+          "rule_id": "4.2.0",
+          "outcome": "MISMATCH"
+        },
+        {
+          "rule_id": "4.2.1",
+          "outcome": "MISMATCH"
+        },
+        {
+          "rule_id": "4.2.2.1",
+          "outcome": "MISMATCH"
+        },
+        {
+          "rule_id": "4.2.3",
+          "outcome": "MISMATCH"
+        }
+      ],
+      "motivation": "Certifikatets consignee 'NT Solutions Co LTD' i Vietnam kan inte identifieras i fakturans primära faktureringsfält eller leverans/fakturaadress, som enbart avser 'Dr. Salem Al-Ajmi company' i Kuwait (4.2.0). Land skiljer sig ('Viet Nam' vs 'KUWAIT') vilket ger MISMATCH enligt 4.2.3."
+    },
+    "goods_description": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.9,
+      "certificate_value": "Medical devices Total Net weight 3 boxes: 24,75kg\nMinivisc Plus; MPFY24100B, 750pcs",
+      "invoice_value": "Decoria Intense Strong 33049900 64,91kg 1 200,00 pcs\nDecoria Intense Strong 33049900 6,49kg 120,00 pcs\nDecoria Voluma 33049900 16,23kg 300,00 pcs\nDecoria Voluma 33049900 1,62kg 30,00 pcs\nCountry of Origin:Sweden\nThe exporter of the products covered by this document (customs authorization No.\nSE/TTA/000794) declares that, except where otherwise clearly indicated, these\nproducts are of European Community preferential origin.\n",
+      "rules_applied": [
+        {
+          "rule_id": "4.3.5",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatet anger generell varubeskrivning med koppling till faktura via fakturanummer '240' och datum '2025-11-24' (4.3.5). Fakturan bekräftar ursprung från Sverige och EU via uttryck i 'Country of Origin: Sweden' och EU-preferens. Varubeskrivningen accepteras utan exakt textmatchning enligt regler för generell varubeskrivning med fakturareferens."
+    },
+    "quantity": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.88,
+      "certificate_value": "Net weight 24,75kg",
+      "invoice_value": "Total by CN code\nCN code Quantity Net weight Amount\n33049900 1 650,00 pcs 89,25 kg",
+      "rules_applied": [
+        {
+          "rule_id": "4.4.3.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.4.4",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatets angivna vikt '24,75kg' kan inte direkt identifieras som ett enskilt totalviktvärde i fakturan, men fakturan anger total nettovikt 89,25 kg för viss artikel och kvantitet. Certifikatet innehåller generellt net weight för 3 boxes och 750 pcs medan fakturan specificerar radvikter och total nettovikt. Reglerna för generell varubeskrivning med fakturareferens samt total vikt i faktura (4.4.4 och 4.3.5) tillsammans ger MATCH då certifikatet refererar till fakturan som helhet."
+    },
+    "origin": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.95,
+      "certificate_value": "Sweden",
+      "invoice_value": "Country of Origin:Sweden\nThe exporter of the products covered by this document (customs authorization No.\nSE/TTA/000794) declares that, except where otherwise clearly indicated, these\nproducts are of European Community preferential origin.",
+      "rules_applied": [
+        {
+          "rule_id": "4.5.4.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.5.4.2",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatets ursprungsland 'Sweden' entydigt uttryckt och identifierat i fakturan i fält märkta 'Country of Origin' och förklaring av EU-preferens (4.5.4.1, 4.5.4.2). EU-normalisering aktiverad och fakturans ursprung bekräftar certifikatets angivelse."
+    }
+  },
+  "overall_assessment": {
+    "comparison_result": "NOT_IDENTICAL",
+    "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
+    "auto_approval_eligible": false,
+    "confidence": 0.89,
+    "critical_failures": [
+      "Consignee mismatch"
+    ],
+    "manual_review_triggers": [],
+    "decision_summary": "Consignee i certifikatet och fakturan skiljer sig uppenbart i namn och land, vilket ger MISMATCH. Övriga kontrollpunkter matchar eller kan godkännas med normalisering och hänvisning till faktura. Totalbedömning blir NOT_IDENTICAL p.g.a. mottagare.",
+    "human_explanation": "Certifikatet anger mottagaren som NT Solutions Co LTD i Vietnam medan fakturan är ställd till Dr. Salem Al-Ajmi company i Kuwait. Övriga uppgifter som avsändare, varubeskrivning, kvantitet och ursprung stämmer."
+  },
+  "_meta": {
+    "tested_at": "2026-04-01T06:31:14.015446+00:00",
+    "prompt_hash": "5d40e84ffac4",
+    "model": "gpt-4.1-mini",
+    "pair": "P202_MISMATCH",
+    "expected": "NOT_IDENTICAL",
+    "actual": "NOT_IDENTICAL",
+    "status": "PASS"
+  }
+}

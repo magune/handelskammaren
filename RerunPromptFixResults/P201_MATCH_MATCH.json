@@ -1,0 +1,191 @@
+{
+  "schema_version": "3.0",
+  "metadata": {
+    "verification_timestamp": null,
+    "document_pair_id": null,
+    "certificate_issue_date": "2025-11-25",
+    "source_documents_received": 2
+  },
+  "task": {
+    "task_type": "customs_document_pair_verification",
+    "comparison_mode": "certificate_vs_invoice",
+    "strictness": "conservative"
+  },
+  "documents": {
+    "document_a": {
+      "label": "Document A",
+      "assumed_role": "certificate",
+      "document_type": "certificate_of_origin"
+    },
+    "document_b": {
+      "label": "Document B",
+      "assumed_role": "invoice",
+      "document_type": "commercial_invoice"
+    }
+  },
+  "rule_activation": {
+    "lc_exception_active": false,
+    "lc_number_found": null,
+    "general_goods_description_with_invoice_reference_active": false,
+    "mixed_origins_rule_active": false,
+    "to_order_rule_active": false,
+    "quantity_exception_applied": null,
+    "eu_origin_normalization_active": false,
+    "activated_rules": [
+      {
+        "rule_id": "8.5.0",
+        "rule_name": "Filbaserad dokumentparning"
+      },
+      {
+        "rule_id": "8.6",
+        "rule_name": "Obligatorisk parningsvalidering"
+      },
+      {
+        "rule_id": "4.1.0",
+        "rule_name": "Consignor via uttrycklig förekomst i fakturan"
+      },
+      {
+        "rule_id": "4.3.2.3",
+        "rule_name": "Artikelnummer saknas i fakturan men produktnamn matchar"
+      },
+      {
+        "rule_id": "4.4.2.1",
+        "rule_name": "Box 7 är verifieringsgrundande för kvantitet"
+      }
+    ]
+  },
+  "control_points": {
+    "consignor": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.97,
+      "certificate_value": "Bohus BioTech AB\nTrädgårdsgatan 4\nSE-452 31, STRÖMSTAD\nSweden",
+      "invoice_value": "Bohus Biotech AB\nTrädgårdsgatan 4\n45231 Strömstad\nSWEDEN",
+      "rules_applied": [
+        {
+          "rule_id": "4.1.0",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.2.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.5",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatets consignor 'Bohus BioTech AB' återfinns uttryckligen i fakturans footer/adressblock som 'Bohus Biotech AB'. Skillnaden i versalisering är tillåten normalisering. Landet Sverige framgår explicit i fakturans adressblock och stöds även av VAT-prefix 'SE' och IBAN-prefix 'SE'."
+    },
+    "consignee": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.98,
+      "certificate_value": "NT Solutions Co LTD\n35 A4 Street\nWard 12\nTan Binh District\n70000 Ho Chi Minh City\nViet Nam",
+      "invoice_value": "Invoice address\nNT Solutions Co LTD\n35 A4 Street, Ward 12, Tan Binh District\nHo Chi Minh City 70000\nVIETNAM",
+      "rules_applied": [
+        {
+          "rule_id": "4.2.0.2",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.2.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.2.3",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.2.4",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatets consignee kan identifieras i fakturans primära faktureringsfält 'Invoice address'. Företagsnamnet 'NT Solutions Co LTD' är exakt samma och landet 'Viet Nam/VIETNAM' överensstämmer efter normalisering. Skillnader i radbrytning och adressordning påverkar inte bedömningen."
+    },
+    "goods_description": {
+      "applicable": true,
+      "status": "MANUAL_REVIEW",
+      "confidence": 0.74,
+      "certificate_value": "Medical devices Total Net weight 3 boxes: 24,75kg\nMinivisc Plus; MPFY24100B, 750pcs",
+      "invoice_value": "10 1184 Minivisc Plus 14mg/ml 30049000 24,75kg 2025-11-24 750,00 pcs 9,00 6 750,00",
+      "rules_applied": [
+        {
+          "rule_id": "4.3.2",
+          "outcome": "ARTICLE_NUMBER_NOT_FOUND"
+        },
+        {
+          "rule_id": "4.3.2.3",
+          "outcome": "MANUAL_REVIEW"
+        }
+      ],
+      "motivation": "Certifikatet innehåller både produktnamnet 'Minivisc Plus' och artikelnumret 'MPFY24100B'. Fakturan innehåller produktnamnet 'Minivisc Plus 14mg/ml', så produktbeteckningen kan identifieras, men artikelnumret 'MPFY24100B' kan inte återfinnas exakt i fakturan. Enligt regeln för saknat artikelnummer men matchande produktnamn ska utfallet därför vara MANUAL_REVIEW, inte MATCH eller MISMATCH."
+    },
+    "quantity": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.98,
+      "certificate_value": "Net weight 24,75kg",
+      "invoice_value": "CN code Quantity Net weight Amount\n30049000 750,00 pcs 24,75 kg 6 750,00",
+      "rules_applied": [
+        {
+          "rule_id": "4.4.2.1",
+          "outcome": "BOX_7_SELECTED"
+        },
+        {
+          "rule_id": "4.4.2.2",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.4.3",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.4.6",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Den verifieringsgrundande kvantiteten är box 7 i certifikatet: 'Net weight 24,75kg'. Samma numeriska värde och viktenhet återfinns uttryckligen i fakturans produkt-/totalrad som '24,75 kg'. Därmed är kvantitetskontrollpunkten verifierad som MATCH."
+    },
+    "origin": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.99,
+      "certificate_value": "Sweden",
+      "invoice_value": "Country of Origin:Sweden",
+      "rules_applied": [
+        {
+          "rule_id": "4.5.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.5.5",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatet anger ursprungsland 'Sweden'. Fakturan innehåller ett explicit ursprungsfält 'Country of Origin:Sweden'. Ursprungslandet kan därför verifieras direkt utan tolkning."
+    }
+  },
+  "overall_assessment": {
+    "comparison_result": "MANUAL_REVIEW",
+    "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
+    "auto_approval_eligible": false,
+    "confidence": 0.79,
+    "critical_failures": [],
+    "manual_review_triggers": [
+      "Varubeskrivningen kräver manuell granskning eftersom certifikatet anger artikelnummer MPFY24100B men fakturan visar inte detta artikelnummer, endast produktnamnet Minivisc Plus."
+    ],
+    "decision_summary": "Dokumentparet är korrekt parat via fakturanummer 240 och flera huvuduppgifter matchar. Consignor, consignee, kvantitet och ursprungsland är verifierade. Varubeskrivningen kan dock inte slutverifieras automatiskt eftersom artikelnumret i certifikatet saknas i fakturan trots att produktnamnet kan identifieras.",
+    "human_explanation": "Avsändare, mottagare, kvantitet och ursprungsland stämmer mellan certifikatet och fakturan. Certifikatet anger dock artikelnumret MPFY24100B medan fakturan endast visar produkten Minivisc Plus 14mg/ml utan detta artikelnummer. Därför krävs manuell handläggning."
+  },
+  "_meta": {
+    "tested_at": "2026-04-02T06:14:56.200263+00:00",
+    "prompt_hash": "0927549d60df",
+    "model": "gpt-5.4",
+    "pair": "P201_MATCH",
+    "expected": "IDENTICAL",
+    "actual": "MANUAL_REVIEW",
+    "status": "REVIEW",
+    "rerun": "prompt_fixes_r4"
+  }
+}

@@ -1,0 +1,200 @@
+{
+  "schema_version": "3.0",
+  "metadata": {
+    "verification_timestamp": null,
+    "document_pair_id": null,
+    "certificate_issue_date": "2025-11-25",
+    "source_documents_received": 2
+  },
+  "task": {
+    "task_type": "customs_document_pair_verification",
+    "comparison_mode": "certificate_vs_invoice",
+    "strictness": "conservative"
+  },
+  "documents": {
+    "document_a": {
+      "label": "Document A",
+      "assumed_role": "certificate",
+      "document_type": "Certificate of Origin"
+    },
+    "document_b": {
+      "label": "Document B",
+      "assumed_role": "invoice",
+      "document_type": "Pro Forma Invoice"
+    }
+  },
+  "rule_activation": {
+    "lc_exception_active": false,
+    "lc_number_found": null,
+    "general_goods_description_with_invoice_reference_active": false,
+    "mixed_origins_rule_active": false,
+    "to_order_rule_active": false,
+    "quantity_exception_applied": null,
+    "eu_origin_normalization_active": true,
+    "activated_rules": [
+      {
+        "rule_id": "4.1.0",
+        "rule_name": "Consignor kan identifieras i faktura via koncernstruktur (faktura innehåller matchande företagsnamn i adress/fält)"
+      },
+      {
+        "rule_id": "4.1.3.1",
+        "rule_name": "Juridisk part match – exakt eller normaliserad företagsnamnsmatch"
+      },
+      {
+        "rule_id": "4.1.3.6",
+        "rule_name": "Förkortning av juridisk bolagsform accepteras"
+      },
+      {
+        "rule_id": "4.1.4",
+        "rule_name": "Landkontroll för consignor"
+      },
+      {
+        "rule_id": "4.2.0",
+        "rule_name": "Consignee via faktureringsfält eller leveransadress"
+      },
+      {
+        "rule_id": "4.2.3",
+        "rule_name": "Landkontroll för consignee"
+      },
+      {
+        "rule_id": "4.3.2",
+        "rule_name": "Varubeskrivning match via artikelnummer"
+      },
+      {
+        "rule_id": "4.4.1",
+        "rule_name": "Kvantitet förekomstkontroll"
+      },
+      {
+        "rule_id": "4.4.3.3",
+        "rule_name": "Tusentalsavskiljare normalisering för kvantitet"
+      },
+      {
+        "rule_id": "4.4.4",
+        "rule_name": "Verifiering mot total vikt i faktura"
+      },
+      {
+        "rule_id": "4.5.4",
+        "rule_name": "Ursprungslandsnormalisering inklusive EU-normalisering"
+      }
+    ]
+  },
+  "control_points": {
+    "consignor": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.95,
+      "certificate_value": "ERICSSON AB\nTORSHAMNSGATAN 23\n164 80, STOCKHOLM\nSWEDEN",
+      "invoice_value": "ERICSSON AB\nTorshamnsgatan 21-23\nS-164 83 STOCKHOLM\nSWEDEN",
+      "rules_applied": [
+        {
+          "rule_id": "4.1.0",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.3.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.3.6",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.4",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Consignor 'ERICSSON AB' identifieras i fakturan explicit i både sidhuvud och adress, med endast mindre variation i gatunummer (21-23 vs 23), vilket accepteras som samma juridiska part enligt reglerna. Landet 'SWEDEN' överensstämmer exakt (4.1.4). Bolagsformen AB accepteras som förkortad juridisk form (4.1.3.6). Regel 4.1.0 (koncernstruktur) gäller då consignorn förekommer i fakturans adressblock och företagsinformation. Sammanfattningsvis MATCH."
+    },
+    "consignee": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.95,
+      "certificate_value": "KCELL JSC\nALIMZHANOVA STREET 51\n050004 ALMATY\nKAZAKHSTAN",
+      "invoice_value": "KCELL JSC\nALIMZHANOVA STREET 51, 050004\nALMATY, KAZAKHSTAN",
+      "rules_applied": [
+        {
+          "rule_id": "4.2.0",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.2.3",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Consignee 'KCELL JSC' identifieras tydligt i fakturan i primära faktureringsfält och leveransadress (sidhuvud och adressblock). Land 'KAZAKHSTAN' matchar exakt efter normalisering. Namn och adress är konsistenta och inga motstridiga uppgifter finns. Resultat MATCH."
+    },
+    "goods_description": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.95,
+      "certificate_value": "PL - AIR 3258 B78V and HWACs",
+      "invoice_value": "AIR 3258 B78V and HWACs",
+      "rules_applied": [
+        {
+          "rule_id": "4.3.2",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Varubeskrivningen i certifikatet 'PL - AIR 3258 B78V and HWACs' kan verifieras i fakturan där identifiering sker via artikelnummer '8517620009' och exakt matchande varubeskrivning 'AIR 3258 B78V and HWACs' finns i två artikelrader. Certifikatets prefix 'PL -' tolkas som geografi men huvudprodukten är identisk och precis i fakturan. Resultat MATCH enligt artikelnummerverifiering."
+    },
+    "quantity": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.9,
+      "certificate_value": "G.W 5298,000 KG\n42 PACKAGES",
+      "invoice_value": "42\n5 298,000 KG",
+      "rules_applied": [
+        {
+          "rule_id": "4.4.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.4.3.3",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.4.4",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatets kvantitet anges som 42 packages och godsvikten som G.W 5298,000 KG. Fakturan anger totalt 42 st paket samt total gross weight 5 298,000 KG. Tusentalsavskiljare normalisering tillämpas (4.4.3.3) för fakturans vikt. Kvantitets- och viktuppgifterna matchar exakt efter normalisering. Resultat MATCH."
+    },
+    "origin": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.95,
+      "certificate_value": "PL",
+      "invoice_value": "Country of Origin: mentioned above",
+      "rules_applied": [
+        {
+          "rule_id": "4.5.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.5.4",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Ursprungslandet i certifikatet 'PL' (Poland) kan identifieras i fakturan via landets angivelse i artiklar och 'Country of Origin' referens i fakturan. Certifikatet anger ursprungsland 'PL' och fakturan bekräftar detta i relevanta fält. EU-normalisering behöver inte tillämpas då Polen anges explicit. Resultat MATCH."
+    }
+  },
+  "overall_assessment": {
+    "comparison_result": "IDENTICAL",
+    "workflow_recommendation": "AUTO_APPROVAL_ELIGIBLE",
+    "auto_approval_eligible": true,
+    "confidence": 0.93,
+    "critical_failures": [],
+    "manual_review_triggers": [],
+    "decision_summary": "Alla kontrollpunkter har verifierats som MATCH med hög säkerhet och utan avvikelser.",
+    "human_explanation": "Alla kontrollpunkter stämmer mellan certifikatet och fakturan. Dokumenten kan godkännas automatiskt utan manuell granskning."
+  },
+  "_meta": {
+    "tested_at": "2026-04-01T06:30:16.547096+00:00",
+    "prompt_hash": "5d40e84ffac4",
+    "model": "gpt-4.1-mini",
+    "pair": "P042_MATCH",
+    "expected": "IDENTICAL",
+    "actual": "IDENTICAL",
+    "status": "PASS"
+  }
+}

@@ -1,0 +1,206 @@
+{
+  "schema_version": "3.0",
+  "metadata": {
+    "verification_timestamp": "2026-04-01T00:00:00Z",
+    "document_pair_id": null,
+    "certificate_issue_date": "2023-03-15",
+    "source_documents_received": 2
+  },
+  "task": {
+    "task_type": "customs_document_pair_verification",
+    "comparison_mode": "certificate_vs_invoice",
+    "strictness": "conservative"
+  },
+  "documents": {
+    "document_a": {
+      "label": "Document A",
+      "assumed_role": "certificate",
+      "document_type": "Certificate of Origin"
+    },
+    "document_b": {
+      "label": "Document B",
+      "assumed_role": "invoice",
+      "document_type": "Commercial Invoice with attached Packing List"
+    }
+  },
+  "rule_activation": {
+    "lc_exception_active": false,
+    "lc_number_found": null,
+    "general_goods_description_with_invoice_reference_active": false,
+    "mixed_origins_rule_active": true,
+    "to_order_rule_active": false,
+    "quantity_exception_applied": null,
+    "eu_origin_normalization_active": false,
+    "activated_rules": [
+      {
+        "rule_id": "8.5.0",
+        "rule_name": "Filbaserad dokumentparning"
+      },
+      {
+        "rule_id": "8.6",
+        "rule_name": "Obligatorisk parningsvalidering"
+      },
+      {
+        "rule_id": "4.2.0.3",
+        "rule_name": "Ship-To-regel för slutmottagare"
+      },
+      {
+        "rule_id": "4.5.3",
+        "rule_name": "Blandade ursprung kräver tydlig koppling"
+      }
+    ]
+  },
+  "control_points": {
+    "consignor": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.86,
+      "certificate_value": "Berg Prop Prod. AB\nTärnvägen 15\nSE-475 40, HÖNÖ\nSweden",
+      "invoice_value": "Berg Propulsion Production AB\nLångesand 1, Box 1005\nSE-475 22 ÖCKERÖ",
+      "rules_applied": [
+        {
+          "rule_id": "4.1.0",
+          "outcome": "NOT_MATCHED_DIRECTLY"
+        },
+        {
+          "rule_id": "4.1.3.2",
+          "outcome": "NOT_APPLICABLE"
+        },
+        {
+          "rule_id": "4.1.3.3",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.4",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatets consignor förekommer inte som exakt samma delsträng i fakturatexten, så 4.1.0 gav inte direkt träff. Fakturan innehåller dock det fullständiga juridiska namnet \"Berg Propulsion Production AB\" på sida 11, vilket motsvarar den kommersiellt förkortade certifikatstexten \"Berg Prop Prod. AB\". Landindikationen är förenlig genom svensk adressform \"SE-475 22 ÖCKERÖ\" i samma block, varför consignor bedöms verifierad enligt 4.1.3.3 och 4.1.4."
+    },
+    "consignee": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.95,
+      "certificate_value": "HALUL OFFSHORE SERVICES COMPANY W.L\nMSM - Workshop\nBuilding Number- 56\nStreet Number -- 3019, Zone - 91\nBirkat Al Awamer\nCity- Doha,\nPIC: Vinu Vijayan Pillai - Workshop\nQatar",
+      "invoice_value": "Delivery address:\nHALUL OFFSHORE SERVICES COMPANY W.L.L\nMSM -Workshop\nBuilding Number – 56\nStreet Number – 3019, Zone – 91\nBirkat Al Awamer\nCity- Doha, Qatar\nPIC: Vinu Vijayan Pillai - Workshop Coordinator",
+      "rules_applied": [
+        {
+          "rule_id": "4.2.0.2",
+          "outcome": "BILL_TO_DIFFERS"
+        },
+        {
+          "rule_id": "4.2.0.3",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.2.2.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.2.3",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Fakturans faktureringspart är \"MILAHA SHIP MANAGEMENT W.L.L.\", men certifikatets consignee återfinns exakt i fakturans Delivery address på sida 1. Detta är samma transaktion och inget i fakturan motsäger att HALUL OFFSHORE SERVICES COMPANY W.L.L. är slutmottagaren av varorna. Därför accepteras mottagaren enligt Ship-To-regeln."
+    },
+    "goods_description": {
+      "applicable": true,
+      "status": "MISMATCH",
+      "confidence": 0.97,
+      "certificate_value": "4 Cases\nCase 1: 80*60*35 cm / 106 Kg\nCase 2: 120*80*35 cm / 282 Kg\nCase 3: 120*80*35 cm / 315 Kg\nCase 4: 80*60*55 cm / 120 Kg",
+      "invoice_value": "Commercial Invoice pages 1-11 list parts and article rows, e.g. \"PARTS FOR THE 10 YEARS SURVEY OF PROPELLER TYPE MPP690 TWIN AS PER CUSTOMER LIST\" with numerous item lines.",
+      "rules_applied": [
+        {
+          "rule_id": "4.3.2",
+          "outcome": "NO_ARTICLE_NUMBER_IN_CERTIFICATE"
+        },
+        {
+          "rule_id": "4.3.3",
+          "outcome": "MISMATCH"
+        },
+        {
+          "rule_id": "4.3.5",
+          "outcome": "NOT_APPLICABLE"
+        },
+        {
+          "rule_id": "4.3.8",
+          "outcome": "MISMATCH"
+        }
+      ],
+      "motivation": "Certifikatet innehåller ingen verifierbar varubeskrivning av själva varorna, utan endast kolli- och mått-/viktuppgifter för fyra cases. Fakturan innehåller i stället detaljerade artikelrader för reservdelar och komponenter. Regeln om generell varubeskrivning med fakturareferens kan inte användas eftersom certifikatet saknar fakturadatum, saknar fakturanummer och saknar uttrycklig formulering som \"according to attached invoice\"."
+    },
+    "quantity": {
+      "applicable": true,
+      "status": "MISMATCH",
+      "confidence": 0.94,
+      "certificate_value": "4 Cases\nCase 1: 80*60*35 cm / 106 Kg\nCase 2: 120*80*35 cm / 282 Kg\nCase 3: 120*80*35 cm / 315 Kg\nCase 4: 80*60*55 cm / 120 Kg",
+      "invoice_value": "Commercial Invoice pages 1-11 contain item-level quantities in pcs/set but no matching shipment quantity \"4 Cases\" and no matching package-weight statement for the commercial invoice itself.",
+      "rules_applied": [
+        {
+          "rule_id": "4.4.2.1",
+          "outcome": "BOX_7_EMPTY_BOX_6_USED"
+        },
+        {
+          "rule_id": "4.4.3.2",
+          "outcome": "NOT_APPLICABLE"
+        },
+        {
+          "rule_id": "4.4.5.1",
+          "outcome": "NO_EXCEPTION_APPLIES"
+        },
+        {
+          "rule_id": "4.4.6",
+          "outcome": "MISMATCH"
+        }
+      ],
+      "motivation": "Den verifieringsgrundande kvantitetsuppgiften som faktiskt finns i certifikatet är försändelseuppgiften \"4 Cases\" med individuella case-vikter i box 6; box 7 är tom. Kommersiella fakturan på sidorna 1-11 innehåller endast radkvantiteter i pcs/set och ingen uttrycklig uppgift om \"4 Cases\" eller samma case-vikter. Försändelsekvantitetsregeln kan inte användas eftersom certifikatet inte uppfyller kraven för verifierbar fakturareferens enligt 4.3.5."
+    },
+    "origin": {
+      "applicable": true,
+      "status": "MISMATCH",
+      "confidence": 0.91,
+      "certificate_value": "SE, DE, GB, CH, IT, ES, TW, AT",
+      "invoice_value": "Invoice line origins include Sweden, Germany, United Kingdom, Switzerland, Italy, Spain, Taiwan and Austria across pages 1-10.",
+      "rules_applied": [
+        {
+          "rule_id": "4.5.1",
+          "outcome": "COUNTRIES_FOUND_IN_INVOICE"
+        },
+        {
+          "rule_id": "4.5.3",
+          "outcome": "MISMATCH"
+        },
+        {
+          "rule_id": "4.5.5",
+          "outcome": "MISMATCH"
+        }
+      ],
+      "motivation": "Fakturan innehåller uttryckliga origin-uppgifter för samtliga länder som står i certifikatet. Men både certifikatet och fakturan avser blandade ursprung, och certifikatet anger inte vilken vara som hör till vilket ursprungsland. Certifikatet hänvisar inte heller tydligt till fakturan på det sätt som krävs för att låta fakturans radvisa origin-uppgifter bära kopplingen, så mixed-origins-kravet är inte uppfyllt."
+    }
+  },
+  "overall_assessment": {
+    "comparison_result": "NOT_IDENTICAL",
+    "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
+    "auto_approval_eligible": false,
+    "confidence": 0.94,
+    "critical_failures": [
+      "Goods description could not be verified: certificate lists only package/case information while invoice lists detailed spare-part lines.",
+      "Quantity could not be verified: certificate states 4 cases and case weights, but the commercial invoice does not show the same shipment quantity.",
+      "Origin control failed under mixed-origins rule: certificate lists multiple origins without item-to-origin linkage or valid invoice-reference mechanism."
+    ],
+    "manual_review_triggers": [],
+    "decision_summary": "Dokumentparet är giltigt och mottagaren kan verifieras, men certifikatets varubeskrivning, mängduppgift och ursprungsangivelse uppfyller inte regelkraven mot den bifogade kommersiella fakturan.",
+    "human_explanation": "Certifikatet innehåller bara \"4 Cases\" med kollimått och vikter, medan fakturan visar detaljerade artikelrader och inte samma verifierbara varubeskrivning eller mängduppgift. Certifikatet listar också flera ursprungsländer utan tydlig koppling mellan varje land och de aktuella varorna. Därför stämmer dokumenten inte överens."
+  },
+  "_meta": {
+    "tested_at": "2026-04-01T14:01:58.442428+00:00",
+    "prompt_hash": "9b9df42642d8",
+    "model": "gpt-5.4",
+    "pair": "P0152_MISMATCH",
+    "expected": "NOT_IDENTICAL",
+    "actual": "NOT_IDENTICAL",
+    "status": "PASS",
+    "is_mislabeled": false,
+    "rerun": "affected_pairs_prompt_fix"
+  }
+}

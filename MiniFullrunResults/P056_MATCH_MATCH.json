@@ -1,0 +1,170 @@
+{
+  "schema_version": "3.0",
+  "metadata": {
+    "verification_timestamp": null,
+    "document_pair_id": null,
+    "certificate_issue_date": "2025-07-31",
+    "source_documents_received": 2
+  },
+  "task": {
+    "task_type": "customs_document_pair_verification",
+    "comparison_mode": "certificate_vs_invoice",
+    "strictness": "conservative"
+  },
+  "documents": {
+    "document_a": {
+      "label": "Document A",
+      "assumed_role": "certificate",
+      "document_type": "Certificate of Origin"
+    },
+    "document_b": {
+      "label": "Document B",
+      "assumed_role": "invoice",
+      "document_type": "Commercial Invoice"
+    }
+  },
+  "rule_activation": {
+    "lc_exception_active": false,
+    "lc_number_found": null,
+    "general_goods_description_with_invoice_reference_active": true,
+    "mixed_origins_rule_active": false,
+    "to_order_rule_active": false,
+    "quantity_exception_applied": null,
+    "eu_origin_normalization_active": true,
+    "activated_rules": [
+      {
+        "rule_id": "2.2",
+        "rule_name": "Letter of Credit (LC) exception active"
+      },
+      {
+        "rule_id": "4.3.5",
+        "rule_name": "General goods description with invoice reference"
+      },
+      {
+        "rule_id": "4.5.4.1",
+        "rule_name": "EU origin normalization"
+      }
+    ]
+  },
+  "control_points": {
+    "consignor": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.9,
+      "certificate_value": "Vitrolife Sweden AB",
+      "invoice_value": "Vitrolife Sweden AB",
+      "rules_applied": [
+        {
+          "rule_id": "4.1.0",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.3.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.4",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Consignor 'Vitrolife Sweden AB' from certificate can be identified exactly as issuer in invoice with same legal name and same country Sweden after allowed normalization. No inconsistencies found."
+    },
+    "consignee": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.9,
+      "certificate_value": "Luvian company",
+      "invoice_value": "Luvian Company",
+      "rules_applied": [
+        {
+          "rule_id": "4.2.0",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.2.2.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.2.3",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Consignee 'Luvian company' from certificate matches exactly with 'Luvian Company' in invoice Delivery address field, with matching country Iraq after allowed normalization. Invoice contains an explicit Invoice address with consignee matching certificate consignee."
+    },
+    "goods_description": {
+      "applicable": true,
+      "status": "MANUAL_REVIEW",
+      "confidence": 0.75,
+      "certificate_value": "Reproductive Media Kits for IVF",
+      "invoice_value": "Description fields of multiple products under 'Description' in invoice",
+      "rules_applied": [
+        {
+          "rule_id": "4.3.5",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certificate uses a general goods description and includes express invoice reference 'See attached invoice 2005654 dated 20250730'. Invoice contains multiple item descriptions. According to rule 4.3.5, this justifies verifying goods description by invoice reference, but does not grant explicit match on text details. Requires manual review for descriptive verification."
+    },
+    "quantity": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.85,
+      "certificate_value": "Gross: 66,40 kg",
+      "invoice_value": "Gross weight (kg): 66,4",
+      "rules_applied": [
+        {
+          "rule_id": "4.4.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.4.3",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.4.4",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certificate gross weight '66,40 kg' corresponds exactly to invoice gross weight '66,4 kg' after allowed normalization and decimal truncation (4.4.3). Units and weight category match. Quantity '4 cartons' in certificate matches 'Number of cartons: 4' in invoice."
+    },
+    "origin": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.9,
+      "certificate_value": "European Community",
+      "invoice_value": "Country of Origin: Sweden",
+      "rules_applied": [
+        {
+          "rule_id": "4.5.4.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.5.4.2",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certificate origin 'European Community' is verified by invoice origin 'Country of Origin: Sweden', an EU member state. EU origin normalization rules applied, confirming match. No contradicting origin found in invoice."
+    }
+  },
+  "overall_assessment": {
+    "comparison_result": "MANUAL_REVIEW",
+    "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
+    "auto_approval_eligible": false,
+    "confidence": 0.86,
+    "critical_failures": [],
+    "manual_review_triggers": [
+      "4.3.5 - General goods description with invoice reference applied requiring manual review of goods description"
+    ],
+    "decision_summary": "All control points except goods description are validated by exact or normalized matches. Goods description uses general wording with invoice reference requiring manual review.",
+    "human_explanation": "Varubeskrivningen är generell och hänvisar till faktura 2005654 för detaljer, vilket kräver manuell granskning. Övriga kontrollpunkter för avsändare, mottagare, kvantitet och ursprungsland stämmer och kan verifieras automatiskt."
+  },
+  "_meta": {
+    "tested_at": "2026-04-01T06:30:31.312290+00:00",
+    "prompt_hash": "5d40e84ffac4",
+    "model": "gpt-4.1-mini",
+    "pair": "P056_MATCH",
+    "expected": "IDENTICAL",
+    "actual": "MANUAL_REVIEW",
+    "status": "REVIEW"
+  }
+}

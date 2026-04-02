@@ -1,0 +1,166 @@
+{
+  "schema_version": "3.0",
+  "metadata": {
+    "verification_timestamp": null,
+    "document_pair_id": null,
+    "certificate_issue_date": "2025-09-25",
+    "source_documents_received": 2
+  },
+  "task": {
+    "task_type": "customs_document_pair_verification",
+    "comparison_mode": "certificate_vs_invoice",
+    "strictness": "conservative"
+  },
+  "documents": {
+    "document_a": {
+      "label": "Document A",
+      "assumed_role": "certificate",
+      "document_type": "Certificate of Origin"
+    },
+    "document_b": {
+      "label": "Document B",
+      "assumed_role": "invoice",
+      "document_type": "Commercial Invoice"
+    }
+  },
+  "rule_activation": {
+    "lc_exception_active": false,
+    "lc_number_found": null,
+    "general_goods_description_with_invoice_reference_active": false,
+    "mixed_origins_rule_active": false,
+    "to_order_rule_active": false,
+    "quantity_exception_applied": null,
+    "eu_origin_normalization_active": true,
+    "activated_rules": [
+      {
+        "rule_id": "4.1.0",
+        "rule_name": "Koncernstruktur – Consignor får identifieras i fakturan utöver fakturautställare"
+      },
+      {
+        "rule_id": "4.1.3.6",
+        "rule_name": "Förkortning av juridisk bolagsform"
+      },
+      {
+        "rule_id": "4.2.0.2",
+        "rule_name": "Prioritetsordning för consignee-identifiering"
+      },
+      {
+        "rule_id": "4.2.2.1",
+        "rule_name": "Normalisering av mottagarnamn"
+      },
+      {
+        "rule_id": "4.3.5",
+        "rule_name": "Generell varubeskrivning med fakturareferens"
+      },
+      {
+        "rule_id": "4.4.3.2",
+        "rule_name": "Försändelsekvantitet ger verifiering"
+      },
+      {
+        "rule_id": "4.5.4",
+        "rule_name": "Landnormalisering och EU-normalisering"
+      }
+    ]
+  },
+  "control_points": {
+    "consignor": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.9,
+      "certificate_value": "Rosemount Tank Radar AB\nBox 150\n43523, Molnlycke\nSweden",
+      "invoice_value": "Rosemount Tank Radar AB\nBox 150\n435 33 MÖLNLYCKE\nSWEDEN",
+      "rules_applied": [
+        {
+          "rule_id": "4.1.0",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.3.6",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Consignor i certifikatet 'Rosemount Tank Radar AB, Sweden' kan identifieras i fakturan både som fakturautställare och i adressfält, inklusive land. Normalisering av juridisk bolagsform (AB) tillåts och adresseringsskillnader är acceptabla. Ingen motsägelse i företagsnamn eller land."
+    },
+    "consignee": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.9,
+      "certificate_value": "BEIJING ROSEMOUNT FAR EAST\n1st Floor Building No 1\nSouth of Shengfang Road\nQian Gao Mi Dian Economic \nDevelompent ZO Da Xing District\n102600 Beijing\nChina",
+      "invoice_value": "EMERSON FZE\nS20137 STREET S219\nPO BOX 17034\nJEBEL ALI FREE ZONE SOUTH ZONE 2\nDUBAI\nUNITED ARAB EMIRATES",
+      "rules_applied": [
+        {
+          "rule_id": "4.2.0.2",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.2.2.1",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Consignee i certifikatet är 'BEIJING ROSEMOUNT FAR EAST, Beijing, China' medan fakturan anger 'Emerson FZE, Dubai, UAE'. Företagsnamnen skiljer sig tydligt och adresser anger olika länder. Dock avser fakturans Invoice To och Sold To samma företag med exakt angivet namn och adress i UAE. Certifikatets consignee kan inte identifieras i fakturan på något relevant fält. Resultatet är MATCH eftersom consignee är inte verifierbar men verifiering av mottagare enligt 4.2 kräver exakt identifiering i fakturan. Här skiljer sig parterna och ska vara MISMATCH."
+    },
+    "goods_description": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.9,
+      "certificate_value": "5900S, Radar Level Gauge COO: SE\n2410S, Tank Hub COO: SE\n2240S, Multi-input Temperature Transmitter COO: SE\n5900C, Radar Level Gauge COO:SE",
+      "invoice_value": "Radar Level Transmitter",
+      "rules_applied": [
+        {
+          "rule_id": "4.3.5",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatet innehåller generella varubeskrivningar med artikelnummer och COO samt en fakturareferens till invoice 362944565. Fakturan anger varans generella beskrivning 'Radar Level Transmitter' och matchar fakturareferensen. Enligt regeln om generell varubeskrivning med fakturareferens anses varubeskrivningen verifierad."
+    },
+    "quantity": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.9,
+      "certificate_value": "Gross Weight: 206 KG\nNet Weight: 155,61 KG\n2 packages",
+      "invoice_value": "Packages: 2 Ctn\nGross WT: 11.30 KG\nNet WT: 4.60 KG",
+      "rules_applied": [
+        {
+          "rule_id": "4.4.3.2",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatet anger '2 packages' som försändelsekvantitet och vikt som 206 KG (Gross Weight) och 155.61 KG (Net Weight). Fakturan bekräftar '2 Ctn' som försändelsekvantitet, vilket ger matchande verifiering enligt regeln att försändelsekvantitet anses verifierad även om vikterna skiljer i dokumenten. Vikterna skiljer sig dock stort, men då försändelsekvantitet föreligger och fakturan innehåller fakturareferens styrker den verifiering av kvantitet."
+    },
+    "origin": {
+      "applicable": true,
+      "status": "MISMATCH",
+      "confidence": 0.95,
+      "certificate_value": "EUROPEAN UNION\nSweden",
+      "invoice_value": "SWEDEN\nEGYPT",
+      "rules_applied": [
+        {
+          "rule_id": "4.5.4",
+          "outcome": "MISMATCH"
+        }
+      ],
+      "motivation": "Certifikatet anger ursprungsländerna 'EUROPEAN UNION' och 'Sweden'. Fakturan anger ursprungsländer 'SWEDEN' och även 'EGYPT', där Egypten är ett icke-EU land som inte förekommer i certifikatet. Detta är en uttrycklig motsägelse som inte kan accepteras enligt 4.5.4. Reglerna om extra icke-EU länder i fakturan som inte finns i certifikatet leder till MISMATCH."
+    }
+  },
+  "overall_assessment": {
+    "comparison_result": "NOT_IDENTICAL",
+    "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
+    "auto_approval_eligible": false,
+    "confidence": 0.9,
+    "critical_failures": [
+      "origin"
+    ],
+    "manual_review_triggers": [],
+    "decision_summary": "Ursprungsland i fakturan innehåller icke-EU land Egypten som inte finns i certifikatet, vilket utgör en kritisk motsägelse. Consignee skiljer sig tydligt och kan ej verifieras. Övriga kontrollpunkter matchar eller verifieras enligt regler.",
+    "human_explanation": "Ursprungslandet i fakturan innehåller ett land (Egypten) som inte finns angivet i certifikatet, vilket utgör en viktig avvikelse. Dessutom skiljer sig mottagaren (consignee) mellan certifikatet och fakturan. Däremot har avsändaren, varubeskrivningen och kvantiteten verifierats korrekt. Ärendet kräver manuell granskning."
+  },
+  "_meta": {
+    "tested_at": "2026-04-01T06:30:44.270402+00:00",
+    "prompt_hash": "5d40e84ffac4",
+    "model": "gpt-4.1-mini",
+    "pair": "P080_MISMATCH",
+    "expected": "NOT_IDENTICAL",
+    "actual": "NOT_IDENTICAL",
+    "status": "PASS"
+  }
+}
