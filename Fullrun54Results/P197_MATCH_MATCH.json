@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-04-01T00:00:00Z",
+    "verification_timestamp": null,
     "document_pair_id": null,
     "certificate_issue_date": "2023-04-26",
     "source_documents_received": 2
@@ -34,19 +34,15 @@
     "activated_rules": [
       {
         "rule_id": "8.5.0",
-        "rule_name": "Filbaserad dokumentparning"
+        "rule_name": "Standardregel för filbaserad dokumentparning"
       },
       {
         "rule_id": "8.6",
         "rule_name": "Obligatorisk parningsvalidering"
       },
       {
-        "rule_id": "4.1.0",
-        "rule_name": "Consignor söks i hela fakturan"
-      },
-      {
         "rule_id": "4.3.2",
-        "rule_name": "Varubeskrivning verifieras primärt via artikelnummer"
+        "rule_name": "Varubeskrivning verifierad primärt via artikelnummer"
       },
       {
         "rule_id": "4.4.5.5",
@@ -54,7 +50,7 @@
       },
       {
         "rule_id": "4.5.4",
-        "rule_name": "Landnormalisering med ISO-kod"
+        "rule_name": "Landnormalisering med ISO-landkod"
       }
     ]
   },
@@ -64,14 +60,22 @@
       "status": "MATCH",
       "confidence": 0.99,
       "certificate_value": "Bolon AB\nIndustrivägen 12\nSE-523 90, ULRICEHAMN\nSweden",
-      "invoice_value": "Bolon AB, Industrivägen 12\nSE-523 90 Ulricehamn, Sweden\n...\nBolon AB SE5562024363\nIndustrivägen 12\n523 90 Ulricehamn\nSWEDEN",
+      "invoice_value": "Bolon AB, Industrivägen 12\nSE-523 90 Ulricehamn, Sweden\n...\nSender\nBolon AB\nIndustrivägen 12\n523 90 Ulricehamn\nSWEDEN",
       "rules_applied": [
+        {
+          "rule_id": "8.6",
+          "outcome": "PASS"
+        },
         {
           "rule_id": "4.1.0",
           "outcome": "MATCH"
         },
         {
           "rule_id": "4.1.2",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.2.1",
           "outcome": "MATCH"
         },
         {
@@ -83,7 +87,7 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor är \"Bolon AB\" i Sverige. Samma företagsnamn återfinns uttryckligen i fakturans sidhuvud, säljarblock och sidfot på sida 1: \"Bolon AB, Industrivägen 12, SE-523 90 Ulricehamn, Sweden\". Landet Sverige framgår explicit i fakturan. Därmed kan consignor verifieras direkt mot fakturan."
+      "motivation": "Certifikatets consignor är \"Bolon AB ... Sweden\". Samma juridiska part återfinns uttryckligen i fakturan både i sidhuvud och i sender-/issuer-uppgifter som \"Bolon AB ... Sweden\". Landet Sverige verifieras direkt i adressen och stöds även av svenska identifikatorer som EORI/VAT-prefix SE. Ingen motsägelse finns."
     },
     "consignee": {
       "applicable": true,
@@ -92,6 +96,10 @@
       "certificate_value": "MTR Squared Tiles & Flooring\nMaterials Trading LLC\nPO Box 450016\nWarehouse No. 4, Plot 71\n24B Street, Al Quoz Ind Area\nDubai\nUnited Arab Emirates",
       "invoice_value": "Invoice Address\nMTR Squared Tiles & Flooring\nMaterials Trading LLC\nPO Box 450016\nWarehouse No. 4, Plot 71\n24B Street, Al Quoz Ind. Area\nAE- Dubai\nUnited Arab Emirates",
       "rules_applied": [
+        {
+          "rule_id": "8.6",
+          "outcome": "PASS"
+        },
         {
           "rule_id": "4.2.0.2",
           "outcome": "MATCH"
@@ -105,6 +113,10 @@
           "outcome": "MATCH"
         },
         {
+          "rule_id": "4.2.2.1",
+          "outcome": "NORMALIZATION_APPLIED"
+        },
+        {
           "rule_id": "4.2.3",
           "outcome": "MATCH"
         },
@@ -113,18 +125,18 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignee återfinns i fakturans primära faktureringsfält \"Invoice Address\" med samma företagsnamn och samma adress i Förenade Arabemiraten. Fakturan innehåller även samma part i Delivery Address/Customer Address. Eftersom ett tydligt faktureringsfält finns och detta matchar certifikatet, är mottagaren verifierad."
+      "motivation": "Certifikatets consignee är \"MTR Squared Tiles & Flooring Materials Trading LLC ... United Arab Emirates\". Fakturans primära faktureringsfält \"Invoice Address\" anger samma företagsnamn och samma land. Mindre formateringsskillnader som \"Ind Area\" jämfört med \"Ind. Area\" och \"Dubai\" jämfört med \"AE- Dubai\" är tillåtna normaliseringar och innebär ingen motsägelse."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.98,
+      "confidence": 0.96,
       "certificate_value": "Art nr 102739 Slate Artisan 200 cm\nArt nr 106949 A4 sample\nArt nr 103707 Illuminate Silence 50 x 50 cm",
       "invoice_value": "102739 Slate\nArtisan 200 cm\n...\n106949 No. 01\nSample A4\n...\n103707 Illuminate\nSilence 50 x 50 cm",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "MATCH"
+          "outcome": "PRIORITY_1_APPLIED"
         },
         {
           "rule_id": "4.3.6",
@@ -135,26 +147,22 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger artikelnummer 102739, 106949 och 103707. Samtliga tre artikelnummer kan identifieras exakt i fakturan på sida 1 och tillhör varubeskrivningarna \"Slate Artisan 200 cm\", \"Sample A4\" och \"Illuminate Silence 50 x 50 cm\". Eftersom artikelnummer finns i certifikatet ska verifieringen ske primärt via artikelnummer, och dessa matchar utan avvikelse."
+      "motivation": "Certifikatet anger artikelnummer 102739, 106949 och 103707. Samtliga dessa artikelnummer kan identifieras exakt i fakturan, vilket enligt prioritetsordningen är tillräckligt för varuverifiering. Tillhörande produkttexter är också förenliga: \"Slate Artisan 200 cm\", \"A4 sample\"/\"Sample A4\" och \"Illuminate Silence 50 x 50 cm\"."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.9,
+      "confidence": 0.93,
       "certificate_value": "40 lm / 80 m²\n10 pcs / 0,623m²\n480 pcs / 120 m²",
-      "invoice_value": "102739: 25,0 lm and 50,00 m² + 15,0 lm and 30,00 m²\n106949: 10,0 pcs\n103707: 480,0 pcs and 120,00 m²",
+      "invoice_value": "102739: 25,0 lm + 15,0 lm; 50,00 m² + 30,00 m²\n106949: 10,0 pcs\n103707: 480,0 pcs; 120,00 m²",
       "rules_applied": [
-        {
-          "rule_id": "4.4.2.1",
-          "outcome": "MATCH"
-        },
         {
           "rule_id": "4.4.3.1",
           "outcome": "MATCH"
         },
         {
           "rule_id": "4.4.5.1",
-          "outcome": "MATCH"
+          "outcome": "SEQUENTIAL_EXCEPTION_REVIEW_COMPLETED"
         },
         {
           "rule_id": "4.4.5.5",
@@ -165,7 +173,7 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets box 7 innehåller flera kvantitetsuppgifter. För artikel 102739 återfinns kvantiteten i fakturan som två separata rader: 25,0 lm + 15,0 lm = 40 lm och 50,00 m² + 30,00 m² = 80 m²; detta är tillåtet enligt undantag 3D. För artikel 106949 återfinns 10,0 pcs uttryckligen i fakturan; certifikatets extra uppgift 0,623 m² saknas i fakturan men motsägs inte. För artikel 103707 återfinns 480,0 pcs och 120,00 m² uttryckligen i fakturan. Sammantaget finns verifierad kvantitet för samtliga varor och ingen uttrycklig motsägelse förekommer."
+      "motivation": "Certifikatet innehåller tre kvantitetsuppgifter kopplade till de tre artiklarna. För artikel 106949 återfinns \"10,0 pcs\" direkt i fakturan och för artikel 103707 återfinns \"480,0 pcs\" samt \"120,00 m²\" direkt. För artikel 102739 är certifikatets \"40 lm / 80 m²\" inte utskrivet som en enda rad men kan verifieras genom tillåten summering av två rader inom samma faktura: 25,0 lm + 15,0 lm = 40 lm och 50,00 m² + 30,00 m² = 80 m². Ingen uttrycklig motsägelse finns."
     },
     "origin": {
       "applicable": true,
@@ -180,29 +188,29 @@
         },
         {
           "rule_id": "4.5.4",
-          "outcome": "MATCH"
+          "outcome": "NORMALIZATION_APPLIED"
         },
         {
           "rule_id": "4.5.5",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger ursprungsland \"Sweden\". Fakturan anger uttryckligen \"Country of Origin SE\" på varuraderna för de aktuella artiklarna. ISO-koden SE är en tillåten landnormalisering för Sverige. Ursprungslandet kan därför identifieras uttryckligen i fakturan."
+      "motivation": "Certifikatet anger ursprungsland \"Sweden\". Fakturan anger uttryckligen ursprung per artikel som \"Country of Origin SE\". ISO-koden \"SE\" är en tillåten landnormalisering för Sweden och verifierar därmed certifikatets ursprungsangivelse."
     }
   },
   "overall_assessment": {
     "comparison_result": "IDENTICAL",
     "workflow_recommendation": "AUTO_APPROVAL_ELIGIBLE",
     "auto_approval_eligible": true,
-    "confidence": 0.95,
+    "confidence": 0.97,
     "critical_failures": [],
     "manual_review_triggers": [],
-    "decision_summary": "Alla tillämpliga kontrollpunkter är verifierade som MATCH mot den bifogade fakturan. Dokumentparningen valideras av att certifikatet refererar till faktura 148536 och att både consignor och consignee återfinns i fakturan. Ingen LC-regel är tillämplig och ingen motsägelse har identifierats.",
-    "human_explanation": "Certifikatet kan verifieras mot faktura 148536. Avsändare, mottagare, artikelnummer/varubeskrivning, mängd och ursprungsland stämmer överens med fakturan. Dokumentparet kan därför godkännas automatiskt."
+    "decision_summary": "Samtliga tillämpliga kontrollpunkter kan verifieras mot fakturan. Dokumentparningen stöds av fakturanummer 148536 samt matchande consignor och consignee. Ingen kontrollpunkt gav MISMATCH eller MANUAL_REVIEW.",
+    "human_explanation": "Alla uppgifter i certifikatet kan verifieras mot fakturan. Avsändare, mottagare, varor, kvantiteter och ursprungsland stämmer överens. Dokumentparet kan därför godkännas automatiskt."
   },
   "_meta": {
-    "tested_at": "2026-04-01T14:07:23.250663+00:00",
-    "prompt_hash": "9b9df42642d8",
+    "tested_at": "2026-04-02T11:36:29.852998+00:00",
+    "prompt_hash": "f81eb9b0d2ea",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P197_MATCH",

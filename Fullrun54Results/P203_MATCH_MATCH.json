@@ -1,8 +1,8 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-04-01T00:00:00Z",
-    "document_pair_id": null,
+    "verification_timestamp": "2026-04-02T00:00:00Z",
+    "document_pair_id": "P203_MATCH",
     "certificate_issue_date": "2026-01-21",
     "source_documents_received": 2
   },
@@ -15,12 +15,12 @@
     "document_a": {
       "label": "Document A",
       "assumed_role": "certificate",
-      "document_type": "Certificate of Origin"
+      "document_type": "certificate of origin"
     },
     "document_b": {
-      "label": "P203_MATCH_invoice.pdf",
+      "label": "Document B",
       "assumed_role": "invoice",
-      "document_type": "Commercial Invoice"
+      "document_type": "invoice"
     }
   },
   "rule_activation": {
@@ -34,23 +34,23 @@
     "activated_rules": [
       {
         "rule_id": "8.5.0",
-        "rule_name": "Filbaserad dokumentparning"
+        "rule_name": "Filbaserad dokumentparning: certifikat från fil 1 och faktura från fil 2"
       },
       {
         "rule_id": "8.6",
-        "rule_name": "Obligatorisk parningsvalidering"
+        "rule_name": "Parningsvalidering"
       },
       {
         "rule_id": "4.1.0",
-        "rule_name": "Consignor identifierad i fakturan"
+        "rule_name": "Consignor kan styrkas via förekomst i fakturan"
       },
       {
-        "rule_id": "4.3.2",
-        "rule_name": "Varubeskrivning via kontrollerad textmatchning"
+        "rule_id": "4.2.0.2",
+        "rule_name": "Prioritetsordning för consignee-identifiering"
       },
       {
-        "rule_id": "4.5.1",
-        "rule_name": "Explicit ursprungsangivelse i fakturan"
+        "rule_id": "4.4.3.0",
+        "rule_name": "Enhetsprefix-normalisering kpcs"
       }
     ]
   },
@@ -58,9 +58,9 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.97,
+      "confidence": 0.91,
       "certificate_value": "Emballator Tectubes Sweden AB\nTubgatan 2\nBox 103\n54422, Hjo\nSweden",
-      "invoice_value": "Emballator\nTectubes Sweden AB\nBox 103\nSE-544 22 Hjo\nSWEDEN\n...\nVAT-nr/VAT No:\nSE556425199801\n...\nIBAN\nSE54 9500 0099 6034 0703 8680",
+      "invoice_value": "Emballator\nTectubes Sweden AB\nBox 103\nSE-544 22 Hjo\nSWEDEN",
       "rules_applied": [
         {
           "rule_id": "4.1.0",
@@ -75,40 +75,40 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor-namn 'Emballator Tectubes Sweden AB' kan identifieras uttryckligen i den separata fakturafilen i issuer/footer-blocket. Landet Sverige verifieras både genom explicit adress 'SWEDEN' och indirekta identifierare med SE-prefix i VAT/IBAN. Därmed är avsändaren verifierad som MATCH."
+      "motivation": "Certifikatets consignor 'Emballator Tectubes Sweden AB' kan identifieras i fakturan i säljar-/footerblocket som 'Emballator Tectubes Sweden AB'/'Emballator Tectubes Sweden AB, Box 103, SE-544 22 Hjo, SWEDEN'. Landet Sverige framgår uttryckligen i fakturan. Skillnader i adressformat påverkar inte bedömningen."
     },
     "consignee": {
       "applicable": true,
-      "status": "MANUAL_REVIEW",
-      "confidence": 0.41,
+      "status": "MATCH",
+      "confidence": 0.9,
       "certificate_value": "The Saudi British Bank\nWestern Province Management Office\nP.O.Box 106\nSA-21411 Jeddah\nSaudi Arabia",
-      "invoice_value": null,
+      "invoice_value": "The Saudi British Bank\nWestern Province Management Office\nP.O.Box 109\nSA-21411 JEDDAH\nSaudi Arabia",
       "rules_applied": [
         {
-          "rule_id": "8.5.0",
-          "outcome": "SEPARATE_INVOICE_FILE_USED"
+          "rule_id": "4.2.0.2",
+          "outcome": "MATCH"
         },
         {
-          "rule_id": "4.2.1",
-          "outcome": "NOT_VERIFIABLE"
+          "rule_id": "4.2.3",
+          "outcome": "MATCH"
         },
         {
-          "rule_id": "8.1",
-          "outcome": "MANUAL_REVIEW"
+          "rule_id": "4.2.4",
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Verifiering måste ske mot den separata fakturafilen och inte mot den inbäddade fakturakopian i certifikatfilen. I den separata fakturafilen är köpar-/consignee-blocket inte läsbart eller inte synligt med tillräcklig säkerhet i den tillgängliga bilden, och någon säker mottagaridentifiering kan därför inte göras tekniskt. Detta är inte en bevisad motsägelse utan ett läsbarhets-/tillgänglighetsproblem, därför MANUAL_REVIEW."
+      "motivation": "Fakturans kund/faktureringspart är 'The Saudi British Bank Western Province Management Office ... Saudi Arabia', vilket identifierar samma mottagare som i certifikatet. Postboxnumret skiljer sig (106 vs 109), men företagsnamn och land överensstämmer och adresskillnader ska inte i sig ge avvikelse."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.93,
       "certificate_value": "Printed Aluminiumtubes with caps, 4 pallets\nSure Cure Gel-CMN 30g\nSure Cure Gel-CMN 30g",
-      "invoice_value": "Sure Cure Gel-CMN 30g\nPrinted Aluminiumtubes with caps\nPackages: 4 pallets\n...\nSure Cure Gel-CMN 30g",
+      "invoice_value": "Sure Cure Gel-CMN 30g\nPrinted Aluminiumtubes with caps\nPackages: 4 pallets",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "PRIORITY_2_USED"
+          "outcome": "NOT_APPLICABLE"
         },
         {
           "rule_id": "4.3.3",
@@ -119,79 +119,63 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet innehåller varubeskrivningen 'Printed Aluminiumtubes with caps' och produktnamnet 'Sure Cure Gel-CMN 30g'. Samma identitetsbärande beteckningar kan läsas i den separata fakturafilen, tillsammans med 'Packages: 4 pallets'. Ordningsföljden varierar något men huvudbeteckningarna återfinns explicit utan semantisk omtolkning, därför MATCH."
+      "motivation": "Certifikatet anger varorna som 'Printed Aluminiumtubes with caps, 4 pallets' och 'Sure Cure Gel-CMN 30g' (upprepat två gånger). Fakturan innehåller samma produktbeteckning 'Sure Cure Gel-CMN 30g' och samma förpacknings-/godstext 'Printed Aluminiumtubes with caps' samt 'Packages: 4 pallets'. Varubeskrivningen kan därför verifieras direkt utan semantisk tolkning."
     },
     "quantity": {
       "applicable": true,
-      "status": "MISMATCH",
-      "confidence": 0.89,
+      "status": "MATCH",
+      "confidence": 0.88,
       "certificate_value": "30640pcs\n30640pcs",
       "invoice_value": "30,640 kpcs\n30,640 kpcs",
       "rules_applied": [
         {
-          "rule_id": "4.4.2",
-          "outcome": "CERTIFICATE_QUANTITY_VALID"
+          "rule_id": "4.4.3.0",
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.4.3.1",
-          "outcome": "MISMATCH"
-        },
-        {
-          "rule_id": "4.4.3.3",
-          "outcome": "NOT_APPLICABLE"
-        },
-        {
-          "rule_id": "4.4.5.1",
-          "outcome": "NO_EXCEPTION_APPLICABLE"
-        },
-        {
-          "rule_id": "4.4.6",
-          "outcome": "MISMATCH"
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger kvantiteten som det explicita numeriska värdet '30640' med enheten 'pcs'. I den separata fakturafilen är den läsbara kvantiteten '30,640 kpcs'. Under regelverket ska det numeriska värdet i certifikatet kunna identifieras i fakturan; här är den läsbara numeriska strängen inte identisk, och tillåten tusentalsavskiljare-normalisering omfattar inte kommatecken. Dessutom finns inget uttryckligt regelstöd för att konvertera 'kpcs' till 'pcs'. Därför är kvantitetskontrollpunkten MISMATCH."
+      "motivation": "Certifikatet anger två kvantiteter: '30640pcs' och '30640pcs'. Fakturan visar två motsvarande rader med '30,640 kpcs' och '30,640 kpcs'. Enligt reglerna för enhetsprefix-normalisering får kpcs behandlas som tusen stycken, och den använda notationens formatskillnad accepteras i detta uttryckliga fall; respektive rad verifierar därmed 30 640 pcs."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.98,
+      "confidence": 0.97,
       "certificate_value": "Sweden",
       "invoice_value": "The origin of the material is Sweden.",
       "rules_applied": [
         {
           "rule_id": "4.5.1",
-          "outcome": "EXPLICIT_ORIGIN_FOUND"
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.5.5",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger ursprungsland 'Sweden'. Den separata fakturafilen innehåller den uttryckliga ursprungsangivelsen 'The origin of the material is Sweden.' Ursprungslandet är därför positivt verifierat som MATCH."
+      "motivation": "Certifikatet anger ursprungsland 'Sweden'. Fakturan innehåller den explicita ursprungsangivelsen 'The origin of the material is Sweden.' Ursprungslandet kan därför verifieras direkt i fakturan."
     }
   },
   "overall_assessment": {
-    "comparison_result": "NOT_IDENTICAL",
-    "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
-    "auto_approval_eligible": false,
-    "confidence": 0.84,
-    "critical_failures": [
-      "Kvantitet: certifikatet anger 30640pcs medan den separata fakturafilen visar 30,640 kpcs; detta kan inte godtas som samma verifierade numeriska uppgift enligt tillåtna regler."
-    ],
-    "manual_review_triggers": [
-      "Mottagaren kan inte verifieras tekniskt i den separata fakturafilen eftersom buyer/consignee-blocket inte är läsbart eller tillgängligt i den tillhandahållna fakturabilden."
-    ],
-    "decision_summary": "Originalcertifikatet på sida 1 i certifikatfilen användes för verifiering. Den separata fakturafilen användes som enda giltiga faktura enligt parningsreglerna. Avsändare, varubeskrivning och ursprungsland kan verifieras mot fakturan, men kvantiteten ger MISMATCH och mottagaren kan inte verifieras tekniskt i den separata fakturabilden. Eftersom minst en tillämplig kontrollpunkt är MISMATCH blir totalresultatet NOT_IDENTICAL.",
-    "human_explanation": "Avsändare, varubeskrivning och ursprungsland stämmer mellan dokumenten. Kvantiteten i certifikatet är 30640 pcs medan den separata fakturan visar 30,640 kpcs, vilket inte kan godtas som samma numeriska uppgift enligt reglerna. Mottagarfältet i den separata fakturafilen är dessutom inte läsbart och kan därför inte verifieras automatiskt."
+    "comparison_result": "IDENTICAL",
+    "workflow_recommendation": "AUTO_APPROVAL_ELIGIBLE",
+    "auto_approval_eligible": true,
+    "confidence": 0.92,
+    "critical_failures": [],
+    "manual_review_triggers": [],
+    "decision_summary": "Dokumentparningen är giltig enligt filregeln: certifikatet har hämtats från fil 1 och verifierats mot den separata fakturan i fil 2. Consignor, consignee, varubeskrivning, kvantitet och ursprungsland kan samtliga verifieras mot fakturan. Ingen tillämplig kontrollpunkt gav MISMATCH eller MANUAL_REVIEW och samtliga tillämpliga MATCH-bedömningar ligger på tillräcklig säkerhetsnivå för automatiskt godkännande.",
+    "human_explanation": "Alla relevanta uppgifter i ursprungscertifikatet kan verifieras mot fakturan. Avsändare, mottagare, varubeskrivning, mängd och ursprungsland stämmer överens. Dokumentparet kan därför godkännas automatiskt."
   },
   "_meta": {
-    "tested_at": "2026-04-01T13:16:28.118273+00:00",
-    "prompt_hash": "9b9df42642d8",
+    "tested_at": "2026-04-02T11:06:44.024406+00:00",
+    "prompt_hash": "f81eb9b0d2ea",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P203_MATCH",
     "expected": "IDENTICAL",
-    "actual": "NOT_IDENTICAL",
-    "status": "FAIL"
+    "actual": "IDENTICAL",
+    "status": "PASS"
   }
 }

@@ -1,0 +1,177 @@
+{
+  "schema_version": "3.0",
+  "metadata": {
+    "verification_timestamp": "2026-04-01T00:00:00Z",
+    "document_pair_id": null,
+    "certificate_issue_date": "2023-03-03",
+    "source_documents_received": 2
+  },
+  "task": {
+    "task_type": "customs_document_pair_verification",
+    "comparison_mode": "certificate_vs_invoice",
+    "strictness": "conservative"
+  },
+  "documents": {
+    "document_a": {
+      "label": "Document A",
+      "assumed_role": "certificate",
+      "document_type": "Certificate of Origin"
+    },
+    "document_b": {
+      "label": "Document B",
+      "assumed_role": "invoice",
+      "document_type": "Pro Forma Invoice"
+    }
+  },
+  "rule_activation": {
+    "lc_exception_active": false,
+    "lc_number_found": null,
+    "general_goods_description_with_invoice_reference_active": false,
+    "mixed_origins_rule_active": false,
+    "to_order_rule_active": false,
+    "quantity_exception_applied": null,
+    "eu_origin_normalization_active": true,
+    "activated_rules": [
+      {
+        "rule_id": "4.1.0",
+        "rule_name": "Consignor may be verified anywhere in invoice text"
+      },
+      {
+        "rule_id": "4.5.4.2.1",
+        "rule_name": "General EU origin statement covers certificate format EU plus one EU member state"
+      }
+    ]
+  },
+  "control_points": {
+    "consignor": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.97,
+      "certificate_value": "Lantmännen Reppe AB\nJungmansgatan 8\nSE-531 40, LIDKÖPING\nSweden",
+      "invoice_value": "Company name and adress of the exporter:\nLantmännen Reppe AB\nJungmansgatan 8\n531 40 Lidköping\nSweden",
+      "rules_applied": [
+        {
+          "rule_id": "4.1.0",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.2.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.5",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatets consignor 'Lantmännen Reppe AB' återfinns uttryckligen i fakturan i exportörsblocket och även i fakturans footer. Landet 'Sweden' framgår explicit i samma block och stöds dessutom av svensk IBAN/VAT-kontext. Företagsnamn och land kan därför verifieras mot fakturan utan otillåten tolkning."
+    },
+    "consignee": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.98,
+      "certificate_value": "CHORI CO., LTD\nLife Science Dept. (SEC. 0061)\n1-7-3 Awajimachi\nChuo-ku Osaka 540-8603\nJAPAN",
+      "invoice_value": "TO\nName CHORI CO.,LTD.\nLife Science Dept. (SEC. 0061)\n1-7-3, Awajimachi\nChuo-ku Osaka 540-8603\nJAPAN",
+      "rules_applied": [
+        {
+          "rule_id": "4.2.0.2",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.2.2.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.2.4",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Fakturan innehåller ett tydligt primärt mottagarfält 'TO' med namnet 'CHORI CO.,LTD.' samt samma avdelning och adress som i certifikatet. Skillnaden 'CO., LTD' kontra 'CO.,LTD.' är endast interpunktion. Landet JAPAN överensstämmer uttryckligen."
+    },
+    "goods_description": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.93,
+      "certificate_value": "20 Pallets\nReppal VWG 25 Kg Bags\nFrom Lantmännen Reppe AB\nProduced in Sweden with wheat from EU Region",
+      "invoice_value": "Reppal VWG (Vital wheat gluten)\nBatch: 2303010003\nHS:Code - 1109 00 00",
+      "rules_applied": [
+        {
+          "rule_id": "4.3.2",
+          "outcome": "No article number in certificate; text match used"
+        },
+        {
+          "rule_id": "4.3.3",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.3.4",
+          "outcome": "Additional non-identity text ignored"
+        }
+      ],
+      "motivation": "Den identitetsbärande huvudbeteckningen 'Reppal VWG' kan identifieras exakt i fakturan. Tillägget '25 Kg Bags' i certifikatet är förpackningsinformation och '(Vital wheat gluten)', batchnummer samt HS-kod i fakturan är kompletterande uppgifter som inte ändrar produktidentiteten. Varubeskrivningen kan därför verifieras utan semantisk omtolkning."
+    },
+    "quantity": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.9,
+      "certificate_value": "20000 Kg",
+      "invoice_value": "Quantity: 20 000,00",
+      "rules_applied": [
+        {
+          "rule_id": "4.4.2.1",
+          "outcome": "Box 7 quantity used as governing quantity"
+        },
+        {
+          "rule_id": "4.4.3",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.4.6",
+          "outcome": "No contradiction found"
+        }
+      ],
+      "motivation": "Den verifieringsgrundande kvantiteten i certifikatets box 7 är '20000 Kg'. Fakturan anger kvantiteten '20 000,00' i quantity-kolumnen för den aktuella varan; det numeriska värdet 20000 kan identifieras efter normalisering av mellanrum och decimalformat. Fakturan motsäger inte certifikatets kvantitet."
+    },
+    "origin": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.88,
+      "certificate_value": "EU Sweden",
+      "invoice_value": "these products are of EU preferential origin.",
+      "rules_applied": [
+        {
+          "rule_id": "4.5.1",
+          "outcome": "Explicit origin statement found in invoice"
+        },
+        {
+          "rule_id": "4.5.4.2.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.5.5",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatet anger ursprung som 'EU Sweden'. Fakturan innehåller en uttrycklig ursprungsdeklaration: 'these products are of EU preferential origin.' Detta är ett explicit generellt EU-ursprungsuttalande i exportörsdeklarationen och inga motstridiga ursprungsuppgifter förekommer. Därmed är certifikatets format 'EU + ett EU-land' verifierat mot fakturan."
+    }
+  },
+  "overall_assessment": {
+    "comparison_result": "IDENTICAL",
+    "workflow_recommendation": "AUTO_APPROVAL_ELIGIBLE",
+    "auto_approval_eligible": true,
+    "confidence": 0.93,
+    "critical_failures": [],
+    "manual_review_triggers": [],
+    "decision_summary": "Dokumentrollen kunde klassificeras säkert som Certificate of Origin respektive Pro Forma Invoice. Dokumentparningen är giltig eftersom både consignor och consignee från certifikatet kan identifieras i fakturan. Samtliga fem tillämpliga kontrollpunkter verifieras som MATCH, inklusive ursprung via explicit EU-origin statement i fakturan.",
+    "human_explanation": "Certifikatet och fakturan avser samma avsändare, mottagare, vara och mängd 20 000. Fakturan bekräftar också uttryckligen att varorna är av EU-ursprung, vilket stödjer ursprungsuppgiften i certifikatet. Dokumentparet kan därför godkännas automatiskt."
+  },
+  "_meta": {
+    "tested_at": "2026-04-01T20:23:52.687920+00:00",
+    "prompt_hash": "9b9df42642d8",
+    "model": "gpt-5.4",
+    "tier": 2,
+    "pair": "P0147_MATCH",
+    "expected": "IDENTICAL",
+    "actual": "IDENTICAL",
+    "status": "PASS"
+  }
+}

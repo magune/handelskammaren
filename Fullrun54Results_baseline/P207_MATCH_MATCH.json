@@ -1,0 +1,207 @@
+{
+  "schema_version": "3.0",
+  "metadata": {
+    "verification_timestamp": "2026-04-01T00:00:00Z",
+    "document_pair_id": null,
+    "certificate_issue_date": "2026-02-05",
+    "source_documents_received": 2
+  },
+  "task": {
+    "task_type": "customs_document_pair_verification",
+    "comparison_mode": "certificate_vs_invoice",
+    "strictness": "conservative"
+  },
+  "documents": {
+    "document_a": {
+      "label": "Document A",
+      "assumed_role": "certificate",
+      "document_type": "certificate_of_origin"
+    },
+    "document_b": {
+      "label": "Document B",
+      "assumed_role": "invoice",
+      "document_type": "master_packlist_image_based_invoice_related_document"
+    }
+  },
+  "rule_activation": {
+    "lc_exception_active": false,
+    "lc_number_found": null,
+    "general_goods_description_with_invoice_reference_active": false,
+    "mixed_origins_rule_active": true,
+    "to_order_rule_active": false,
+    "quantity_exception_applied": null,
+    "eu_origin_normalization_active": true,
+    "activated_rules": [
+      {
+        "rule_id": "8.5.0",
+        "rule_name": "Filbaserad dokumentparning"
+      },
+      {
+        "rule_id": "8.6",
+        "rule_name": "Obligatorisk parningsvalidering"
+      },
+      {
+        "rule_id": "4.2.0.3",
+        "rule_name": "Ship-To-regel för slutmottagare"
+      },
+      {
+        "rule_id": "4.3.7",
+        "rule_name": "Koppling vara–ursprungsland vid flera ursprung"
+      },
+      {
+        "rule_id": "4.5.3",
+        "rule_name": "Blandade ursprung"
+      },
+      {
+        "rule_id": "4.5.4.1",
+        "rule_name": "EU-normalisering"
+      }
+    ]
+  },
+  "control_points": {
+    "consignor": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.91,
+      "certificate_value": "Unfors Raysafe AB\nBjörklundabacken 10\nSE-43657, HOVÅS, Sweden",
+      "invoice_value": "Unfors RaySafe AB\nBjorklundabacken 10\nSE-43657 Hovas\nVAT Reg. No: SE556458975101",
+      "rules_applied": [
+        {
+          "rule_id": "4.1.0",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.2.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.4",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatets consignor \"Unfors Raysafe AB\" återfinns uttryckligen i den bifogade fakturafilen i sidhuvudet som \"Unfors RaySafe AB\". Skillnaden i versalisering är tillåten normalisering. Sverige verifieras genom adressen \"SE-43657 Hovas\" och VAT-prefix \"SE\" i fakturafilen."
+    },
+    "consignee": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.88,
+      "certificate_value": "MEASURING AND TESTING EQUIPMENT CO.\n447 AU CO ROAD, TAY HO WARD\nHANOI 10000, VIET NAM,\nVietnam",
+      "invoice_value": "SHIP TO ADDRESS MEASURING AND TESTING EQUIPMENT CO., LTD.\n447 AU CO ROAD, TAY HO WARD\nHANOI 10000, VIET NAM,\nViet Nam",
+      "rules_applied": [
+        {
+          "rule_id": "4.2.0.2",
+          "outcome": "BILL_TO_DIFFERS"
+        },
+        {
+          "rule_id": "4.2.0.3",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.3.6",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.2.3",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Fakturafilen har ett Bill-To-fält för \"FLUKE SOUTH EAST ASIA PTE LTD\" i Singapore, men certifikatets consignee återfinns exakt i Ship-To-adressen som slutmottagare. Skillnaden \"CO.\" vs \"CO., LTD.\" avser juridisk bolagsform och är tillåten. Landet Vietnam överensstämmer."
+    },
+    "goods_description": {
+      "applicable": true,
+      "status": "MISMATCH",
+      "confidence": 0.87,
+      "certificate_value": "One cardboard box 47x34x14 cm\nX2 R/F SENSOR s/n 347698\nX2 MAM SENSOR s/n 336450\nX2 BASE UNIT, MAS s/n 348254\n903010000000000\n903010000000000\n903010000000000\nPlease refer to the attached master packlist\nshipment nr: 297532006, dated 30-JAN-2026",
+      "invoice_value": "1252010, X2 R/F SENSOR ... SERIAL NUMBER 347698 ... ORIGIN SE\n1252020, X2 MAM SENSOR ... SERIAL NUMBER 336450 ... ORIGIN SE\n1251020, X2 BASE UNIT, MAS ... SERIAL NUMBER 348254 ... ORIGIN SE\nAdditional rows in the same file: RSE_X2_ACC_KIT (SE), RSE_X2_STD_CASE (DK), X2 BLUETOOTH (CN), X2 PANORAMIC HOLDER (SE)",
+      "rules_applied": [
+        {
+          "rule_id": "4.3.2",
+          "outcome": "NOT_USED_AS_ARTICLE_NUMBER"
+        },
+        {
+          "rule_id": "4.3.3",
+          "outcome": "TEXTUAL_ITEMS_FOUND"
+        },
+        {
+          "rule_id": "4.3.7",
+          "outcome": "MISMATCH"
+        }
+      ],
+      "motivation": "De tre namngivna varorna i certifikatet kan identifieras i fakturafilen via identiska produktnamn och serienummer. Certifikatet anger dock flera ursprung (\"EU: SE, DK\" och \"CN\") samtidigt som varorna anges separat, utan att ange vilket ursprung som hör till vilken vara. Certifikatet hänvisar endast till \"attached master packlist\" och inte till en uttrycklig faktura enligt regeln för flera ursprung. Därför är kopplingen vara–ursprung inte verifierad och kontrollpunkten ska vara MISMATCH."
+    },
+    "quantity": {
+      "applicable": true,
+      "status": "MANUAL_REVIEW",
+      "confidence": 0.63,
+      "certificate_value": "1,5 kg\n1,5 kg\n1,5 kg\n4,5 GW",
+      "invoice_value": "NO OF CARTON 1\nTOTAL WEIGHT (KG) 4.5\nGROSS WEIGHT (KG) 4.50",
+      "rules_applied": [
+        {
+          "rule_id": "4.4.2.1",
+          "outcome": "BOX_7_USED"
+        },
+        {
+          "rule_id": "4.4.4",
+          "outcome": "MANUAL_REVIEW"
+        },
+        {
+          "rule_id": "4.4.6.1",
+          "outcome": "NOT_APPLIED"
+        }
+      ],
+      "motivation": "Box 7 i certifikatet innehåller tre rader \"1,5 kg\" samt en totalrad \"4,5 GW\". Fakturafilen visar totalvikt 4.5/4.50 KG men inte de tre enskilda 1,5 kg-raderna. Totalraden i certifikatet anger GW utan uttrycklig viktenhet, medan fakturafilen bekräftar samma numeriska värde med enhet KG. Regeln föreskriver därför MANUAL_REVIEW, inte MISMATCH."
+    },
+    "origin": {
+      "applicable": true,
+      "status": "MISMATCH",
+      "confidence": 0.89,
+      "certificate_value": "EU: SE, DK\nCN",
+      "invoice_value": "ORIGIN SE for X2 R/F SENSOR\nORIGIN SE for X2 MAM SENSOR\nORIGIN SE for X2 BASE UNIT, MAS\nORIGIN SE for RSE_X2_ACC_KIT\nORIGIN DK for RSE_X2_STD_CASE\nORIGIN CN for X2 BLUETOOTH\nORIGIN SE for X2 PANORAMIC HOLDER",
+      "rules_applied": [
+        {
+          "rule_id": "4.5.1",
+          "outcome": "EXPLICIT_ORIGIN_FIELDS_FOUND"
+        },
+        {
+          "rule_id": "4.5.4.1",
+          "outcome": "EU_NORMALIZATION_APPLIED"
+        },
+        {
+          "rule_id": "4.5.3",
+          "outcome": "MISMATCH"
+        },
+        {
+          "rule_id": "4.5.5",
+          "outcome": "MISMATCH"
+        }
+      ],
+      "motivation": "Fakturafilen innehåller explicit ursprung per rad. För de tre varor som certifikatet faktiskt namnger visas endast SE i fakturafilen. DK och CN förekommer endast på andra rader som avser ytterligare artiklar som inte är specificerade i certifikatet. Eftersom certifikatet anger flera ursprung men inte kopplar ursprung till respektive vara, och inte heller innehåller en uttrycklig fakturahänvisning för sådan koppling, kan alla ursprung i certifikatet inte verifieras för de certifierade varorna. Detta är MISMATCH."
+    }
+  },
+  "overall_assessment": {
+    "comparison_result": "NOT_IDENTICAL",
+    "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
+    "auto_approval_eligible": false,
+    "confidence": 0.86,
+    "critical_failures": [
+      "Varubeskrivningen faller på regeln för flera ursprung eftersom certifikatet inte kopplar ursprung till respektive vara.",
+      "Ursprungsangivelserna SE, DK och CN kan inte samtliga verifieras för de varor som certifikatet faktiskt beskriver."
+    ],
+    "manual_review_triggers": [
+      "Kvantitetsfältet i certifikatet innehåller totalrad \"4,5 GW\" utan uttrycklig viktenhet medan fakturafilen anger 4.5 KG.",
+      "Fakturafilen är bildbaserad och saknade maskinextraherad text; verifieringen har därför delvis baserats på sidbilden."
+    ],
+    "decision_summary": "Dokumentparet kan inte godkännas som identiskt. Consignor och consignee kan verifieras, men kontrollpunkterna för varubeskrivning och ursprungsland ger MISMATCH eftersom certifikatet använder flera ursprung utan att knyta dem till de specifika varorna. Kvantiteten kräver dessutom manuell kontroll på grund av otydlig enhetsangivelse i certifikatet.",
+    "human_explanation": "Avsändare och mottagare kan verifieras mot underlaget, men certifikatet anger flera ursprungsländer utan att visa vilken vara som hör till vilket ursprung. I underlaget har de tre angivna varorna ursprung Sverige, medan Danmark och Kina bara förekommer på andra artiklar. Därför stämmer dokumenten inte överens och ärendet måste hanteras manuellt."
+  },
+  "_meta": {
+    "tested_at": "2026-04-01T13:16:28.120557+00:00",
+    "prompt_hash": "9b9df42642d8",
+    "model": "gpt-5.4",
+    "tier": 2,
+    "pair": "P207_MATCH",
+    "expected": "IDENTICAL",
+    "actual": "NOT_IDENTICAL",
+    "status": "FAIL"
+  }
+}

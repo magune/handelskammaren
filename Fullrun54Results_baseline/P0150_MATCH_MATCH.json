@@ -1,0 +1,187 @@
+{
+  "schema_version": "3.0",
+  "metadata": {
+    "verification_timestamp": "2026-04-01T00:00:00Z",
+    "document_pair_id": null,
+    "certificate_issue_date": "2026-02-13",
+    "source_documents_received": 2
+  },
+  "task": {
+    "task_type": "customs_document_pair_verification",
+    "comparison_mode": "certificate_vs_invoice",
+    "strictness": "conservative"
+  },
+  "documents": {
+    "document_a": {
+      "label": "Document A",
+      "assumed_role": "certificate",
+      "document_type": "Certificate of Origin"
+    },
+    "document_b": {
+      "label": "Document B",
+      "assumed_role": "invoice",
+      "document_type": "Commercial Invoice with Packing List"
+    }
+  },
+  "rule_activation": {
+    "lc_exception_active": false,
+    "lc_number_found": null,
+    "general_goods_description_with_invoice_reference_active": false,
+    "mixed_origins_rule_active": false,
+    "to_order_rule_active": false,
+    "quantity_exception_applied": null,
+    "eu_origin_normalization_active": false,
+    "activated_rules": [
+      {
+        "rule_id": "8.5.0",
+        "rule_name": "Filbaserad dokumentparning: certifikat från fil 1 och faktura från fil 2"
+      },
+      {
+        "rule_id": "8.6",
+        "rule_name": "Parningsvalidering passerad via identifierbar consignor och consignee i fakturafilen"
+      },
+      {
+        "rule_id": "4.1.0",
+        "rule_name": "Consignor sökt i alla sidor av fakturafilen"
+      },
+      {
+        "rule_id": "4.1.3.8",
+        "rule_name": "Enstaka teckenavvikelse i företagsnamn med bekräftande identifierare (tillämpad på consignee)"
+      },
+      {
+        "rule_id": "4.1.3.9",
+        "rule_name": "Consignor som fakturautställare utan explicit säljaradress"
+      },
+      {
+        "rule_id": "4.4.3.1",
+        "rule_name": "Minst en av flera kvantitetsuppgifter behöver verifieras"
+      }
+    ]
+  },
+  "control_points": {
+    "consignor": {
+      "applicable": true,
+      "status": "MANUAL_REVIEW",
+      "confidence": 0.64,
+      "certificate_value": "WOODPIE AB\nBackadalsgatan 13\n54332 , Tibro\nSweden",
+      "invoice_value": "Wood Pie\nCountry of Origin: Sweden\nPort of loading: Any port in Sweden",
+      "rules_applied": [
+        {
+          "rule_id": "4.1.0",
+          "outcome": "Consignor-namnet återfinns i fakturans sidhuvud/branding som \"Wood Pie\" på sidorna 1 och 2 efter normalisering av mellanslag och bolagsform."
+        },
+        {
+          "rule_id": "4.1.3.9",
+          "outcome": "MANUAL_REVIEW eftersom fakturan saknar explicit säljar-/issuer-adressblock med land för utställaren, men innehåller korroborerande landindikatorer \"Country of Origin: Sweden\" och \"Port of loading: Any port in Sweden\" utan motstridig uppgift."
+        }
+      ],
+      "motivation": "Certifikatets consignor \"WOODPIE AB\" kan identifieras i fakturafilen som \"Wood Pie\" i sidhuvudet/brandingen, vilket uppfyller namnsökningen i fakturan efter tillåten normalisering av versaler/gemener, mellanslag och bolagsform. Fakturan anger dock inte något dedikerat säljar- eller issuer-adressblock med land för utställaren. Eftersom det samtidigt finns korroborerande landuppgifter som pekar på Sverige men ingen explicit säljaradress, ska kontrollpunkten inte sättas till MATCH utan till MANUAL_REVIEW."
+    },
+    "consignee": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.88,
+      "certificate_value": "SARASWATI WOOD PRIVATE LIMITED\nSURVEY NO. 362/1, MITHI ROHAR\nNATIONAL HIGHWAY\nGANDHIDHAMGUJARAT-370201,\nGST NO: 24AAPCS6579L1ZG,\nIEC CODE: 0511009909\nIndia",
+      "invoice_value": "INVOICE TO:\nSARASATI WOOD PRIVATE LIMITED\nSURVEY NO. 362/1, MITHI ROHAR,\nNATIONAL HIGHWAY,GANDHIDHAMGUJARAT-370201,\nINDIA GST NO: 24AAPCS6579L1ZG,",
+      "rules_applied": [
+        {
+          "rule_id": "4.2.0.2",
+          "outcome": "Primärt faktureringsfält användes: \"INVOICE TO\"."
+        },
+        {
+          "rule_id": "4.1.3.8",
+          "outcome": "MATCH eftersom skillnaden mellan \"SARASWATI\" och \"SARASATI\" är en enstaka teckenavvikelse och samma GST-nummer 24AAPCS6579L1ZG bekräftar samma juridiska part."
+        },
+        {
+          "rule_id": "4.2.3",
+          "outcome": "Landet India/INDIA överensstämmer."
+        }
+      ],
+      "motivation": "Certifikatets consignee verifieras mot fakturans primära faktureringsfält \"INVOICE TO\". Företagsnamnet skiljer sig endast genom en enstaka teckenavvikelse i ordet \"SARASWATI\"/\"SARASATI\", och samma GST-nummer 24AAPCS6579L1ZG samt samma indiska adress stödjer att det är samma juridiska part. Landet India framgår i båda dokumenten."
+    },
+    "goods_description": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.86,
+      "certificate_value": "Total no of containers: 1\nTotal no of packages: 8\nPinus sylvestris\n.\nPine AB Grade/pine",
+      "invoice_value": "Product\nPine ab grade\n\nDescription: PINE AB GRADE;PINE",
+      "rules_applied": [
+        {
+          "rule_id": "4.3.2",
+          "outcome": "Prioritet 1 ej tillämplig eftersom artikelnummer inte anges i certifikatet."
+        },
+        {
+          "rule_id": "4.3.3",
+          "outcome": "Kontrollerad textmatchning användes."
+        },
+        {
+          "rule_id": "4.3.4",
+          "outcome": "Den identitetsbärande huvudbeteckningen \"Pine AB Grade\" kan identifieras exakt i fakturan; ytterligare text i certifikatet ändrar inte den verifierade huvudbeteckningen."
+        }
+      ],
+      "motivation": "Certifikatet innehåller ingen artikelnummerreferens, så varubeskrivningen verifieras via kontrollerad textmatchning. Den identitetsbärande huvudbeteckningen \"Pine AB Grade\" framgår uttryckligen i fakturan på sida 1 som produkt och på sida 2 som beskrivning \"PINE AB GRADE;PINE\". Fakturans text stödjer därmed certifikatets varubeskrivning utan att semantisk omtolkning behöver göras."
+    },
+    "quantity": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.91,
+      "certificate_value": "38.459 CBM\n24000.000 KGSgross",
+      "invoice_value": "Qty m³ 38.459 m3\nTotal volume: 38.459 m3",
+      "rules_applied": [
+        {
+          "rule_id": "4.4.2.1",
+          "outcome": "Verifieringsgrundande kvantiteter hämtades från box 7 i certifikatet."
+        },
+        {
+          "rule_id": "4.4.3.1",
+          "outcome": "MATCH eftersom minst en av flera kvantitetsuppgifter i certifikatet verifieras i fakturan: 38.459 återfinns explicit."
+        },
+        {
+          "rule_id": "4.4.3",
+          "outcome": "Numeriskt värde verifierat; samma numeriska värde 38.459 förekommer i fakturan."
+        }
+      ],
+      "motivation": "Box 7 i certifikatet innehåller två kvantitetsuppgifter: 38.459 CBM och 24000.000 KGS gross. Fakturan och packing list anger uttryckligen 38.459 m3 som kvantitet/totalvolym, vilket verifierar minst en av certifikatets box 7-uppgifter. Fakturan innehåller ingen uttrycklig motstridande viktuppgift för 24000.000 KGS gross, så kontrollpunkten blir MATCH enligt regeln att minst en av flera kvantitetsuppgifter ska kunna verifieras."
+    },
+    "origin": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.99,
+      "certificate_value": "SWEDEN",
+      "invoice_value": "Country of Origin: Sweden",
+      "rules_applied": [
+        {
+          "rule_id": "4.5.1",
+          "outcome": "Ursprungsland identifierat i explicit origin-fält i fakturan."
+        },
+        {
+          "rule_id": "4.5.5",
+          "outcome": "MATCH eftersom \"SWEDEN\" i certifikatet uttryckligen återfinns som \"Country of Origin: Sweden\" i fakturan."
+        }
+      ],
+      "motivation": "Certifikatet anger ursprungsland SWEDEN. Fakturan innehåller ett explicit ursprungsfält med texten \"Country of Origin: Sweden\". Ursprungslandet är därför tydligt verifierat."
+    }
+  },
+  "overall_assessment": {
+    "comparison_result": "MANUAL_REVIEW",
+    "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
+    "auto_approval_eligible": false,
+    "confidence": 0.78,
+    "critical_failures": [],
+    "manual_review_triggers": [
+      "Consignor kan identifieras i fakturans branding som \"Wood Pie\", men fakturan saknar ett explicit säljar-/issuer-adressblock med land för utställaren."
+    ],
+    "decision_summary": "Dokumentparet är korrekt parat och fakturan stödjer certifikatets consignee, varubeskrivning, kvantitet och ursprungsland. Avsändaren kan inte verifieras fullt ut till MATCH eftersom fakturan endast visar namnet i branding/sidhuvud och saknar ett tydligt säljaradressblock med land. Därför krävs manuell granskning.",
+    "human_explanation": "Certifikatet och fakturan stämmer för mottagare, varubeskrivning, mängd och ursprungsland. Avsändaren kan kopplas till fakturans sidhuvud som \"Wood Pie\", men fakturan saknar ett tydligt säljarblock med land för utställaren. Därför krävs manuell granskning."
+  },
+  "_meta": {
+    "tested_at": "2026-04-01T20:23:52.690919+00:00",
+    "prompt_hash": "9b9df42642d8",
+    "model": "gpt-5.4",
+    "tier": 2,
+    "pair": "P0150_MATCH",
+    "expected": "IDENTICAL",
+    "actual": "MANUAL_REVIEW",
+    "status": "REVIEW"
+  }
+}

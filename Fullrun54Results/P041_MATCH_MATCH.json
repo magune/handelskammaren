@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-04-01",
+    "verification_timestamp": "2026-04-02T00:00:00Z",
     "document_pair_id": null,
     "certificate_issue_date": "2026-03-02",
     "source_documents_received": 2
@@ -15,7 +15,7 @@
     "document_a": {
       "label": "Document A",
       "assumed_role": "certificate",
-      "document_type": "Certificate of Origin"
+      "document_type": "Certificate of Origin / Ursprungscertifikat"
     },
     "document_b": {
       "label": "Document B",
@@ -34,7 +34,7 @@
     "activated_rules": [
       {
         "rule_id": "8.5.0",
-        "rule_name": "Filbaserad dokumentparning"
+        "rule_name": "Filbaserad dokumentparning, två filer"
       },
       {
         "rule_id": "8.6",
@@ -42,23 +42,23 @@
       },
       {
         "rule_id": "4.1.0",
-        "rule_name": "Consignor identifierad i fakturan"
+        "rule_name": "Consignor identifierad någonstans i fakturan"
       },
       {
         "rule_id": "4.2.0.2",
-        "rule_name": "Primärt faktureringsfält för consignee"
+        "rule_name": "Prioritetsordning för consignee-identifiering"
       },
       {
         "rule_id": "4.3.3",
-        "rule_name": "Kontrollerad textmatchning av varubeskrivning"
+        "rule_name": "Kontrollerad textmatchning för varubeskrivning"
       },
       {
-        "rule_id": "4.4.3",
-        "rule_name": "Verifiering av numeriskt värde i fakturan"
+        "rule_id": "4.4.3.4",
+        "rule_name": "Normalisering av blandade decimalseparatorer"
       },
       {
         "rule_id": "4.5.1",
-        "rule_name": "Explicit ursprungsangivelse i fakturan"
+        "rule_name": "Explicit identifiering av ursprungsland i fakturan"
       }
     ]
   },
@@ -66,9 +66,9 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.98,
+      "confidence": 0.97,
       "certificate_value": "ERICSSON AB\nTORSHAMNSGATAN 23\n164 80, STOCKHOLM\nSWEDEN",
-      "invoice_value": "Ericsson AB\nEricsson AB\nVAT No: SE556056625801\nTorshamnsgatan 23\nS-164 80 STOCKHOLM\nSWEDEN",
+      "invoice_value": "Ericsson AB\nVAT No: SE556056625801\nTorshamnsgatan 23\nS-164 80 STOCKHOLM\nSWEDEN",
       "rules_applied": [
         {
           "rule_id": "4.1.0",
@@ -83,12 +83,12 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor 'ERICSSON AB' återfinns uttryckligen i fakturan flera gånger, inklusive företagsblock och adressblock. Landet 'SWEDEN' framgår explicit i fakturan och stöds även av VAT-prefixet 'SE'. Uppgiften kan därför verifieras som samma part i fakturan."
+      "motivation": "Certifikatets consignor 'ERICSSON AB' återfinns uttryckligen i fakturan i utställar-/footerblock. Landet Sverige verifieras explicit i adressen 'SWEDEN' och stöds även av VAT-prefix 'SE'."
     },
     "consignee": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.99,
+      "confidence": 0.98,
       "certificate_value": "AZERCELL TELECOM LLC\nTBILISI AVENUE 61A\n1122 BAKU\nAZERBAIJAN",
       "invoice_value": "Invoice to 566895\nAZERCELL TELECOM LLC\nTBILISI AVENUE 61A\n1122, BAKU\nAZERBAIJAN",
       "rules_applied": [
@@ -97,37 +97,37 @@
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.2.2",
+          "rule_id": "4.2.3",
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.2.3",
+          "rule_id": "4.2.4",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignee 'AZERCELL TELECOM LLC' kan identifieras exakt i fakturans primära faktureringsfält 'Invoice to'. Samma adresskärna 'TBILISI AVENUE 61A, 1122 BAKU, AZERBAIJAN' och samma land framgår i båda dokumenten. Därmed är mottagaren verifierad."
+      "motivation": "Fakturans primära faktureringsfält 'Invoice to' anger samma mottagare som certifikatet: AZERCELL TELECOM LLC, TBILISI AVENUE 61A, 1122 BAKU, AZERBAIJAN. Ingen motsägelse finns i fakturan."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.95,
-      "certificate_value": "2 PACKAGES\nTELECOM EQUIPMENT\nPL - Router 6000 HW",
-      "invoice_value": "Goods Marking\nTelecommunication Equipment\nPO Item CoO HS-code: Product Code Description Trademark Manufacturer Qty Unit price, USD USD Amount\n00150 PL 85176200 FAP1304878 Router 6000 HW Ericsson FLEXTRONICS INTERNATIONAL POLAND SP ZOO 2 13187,49 26374,98",
+      "confidence": 0.94,
+      "certificate_value": "TELECOM EQUIPMENT\nPL - Router 6000 HW",
+      "invoice_value": "Goods Marking\nTelecommunication Equipment\n...\nDescription: Router 6000 HW",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "NO_ARTICLE_NUMBER_IN_CERTIFICATE"
+          "outcome": "NOT_APPLICABLE"
         },
         {
           "rule_id": "4.3.3",
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.3.4",
+          "rule_id": "4.3.8",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger den identitetsbärande huvudbeteckningen 'Router 6000 HW'. Samma produktbeteckning återfinns uttryckligen i fakturans radbeskrivning. Den mer generella texten 'TELECOM EQUIPMENT' i certifikatet motsägs inte av fakturans 'Telecommunication Equipment' och den exakta produktbeteckningen räcker för verifiering."
+      "motivation": "Inget artikelnummer anges i certifikatet, så verifieringen sker via kontrollerad textmatchning. Den identitetsbärande huvudbeteckningen 'Router 6000 HW' återfinns exakt i fakturans varurad; den mer generella raden 'TELECOM EQUIPMENT' är förenlig med fakturans 'Telecommunication Equipment' men slutsatsen vilar på den exakta produkttexten."
     },
     "quantity": {
       "applicable": true,
@@ -137,19 +137,19 @@
       "invoice_value": "Total gross weight\n43.000 KG",
       "rules_applied": [
         {
-          "rule_id": "4.4.2.1",
-          "outcome": "BOX_7_USED"
-        },
-        {
-          "rule_id": "4.4.3",
+          "rule_id": "4.4.2.2",
           "outcome": "MATCH"
         },
         {
           "rule_id": "4.4.4",
           "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.4.3.4",
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Verifieringsgrundande kvantitet är box 7 i certifikatet: 'G.W. 43,000 KG'. Fakturan anger uttryckligen 'Total gross weight 43.000 KG'. Båda dokumenten anger samma grossovikt 43.000 kg med olika decimalnotation, utan någon motstridig grossovikt i fakturan."
+      "motivation": "Certifikatet anger ett enda bruttovärde med kategori och enhet: 'G.W. 43,000 KG'. Fakturan anger 'Total gross weight 43.000 KG'; efter tillåten normalisering av decimal-/separatorformat är värdet numeriskt identiskt."
     },
     "origin": {
       "applicable": true,
@@ -165,24 +165,28 @@
         {
           "rule_id": "4.5.4",
           "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.5.5",
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger ursprungsland 'PL'. Fakturan innehåller en explicit ursprungsangivelse i kolumnen 'CoO' med värdet 'PL' för den aktuella varuraden. Ursprungslandet kan därför identifieras uttryckligen i fakturan."
+      "motivation": "Certifikatets ursprungsland 'PL' återfinns uttryckligen i fakturans dedikerade ursprungskolumn 'CoO' som också anger 'PL'. Detta är en direkt positiv verifiering utan behov av vidare tolkning."
     }
   },
   "overall_assessment": {
     "comparison_result": "IDENTICAL",
     "workflow_recommendation": "AUTO_APPROVAL_ELIGIBLE",
     "auto_approval_eligible": true,
-    "confidence": 0.96,
+    "confidence": 0.95,
     "critical_failures": [],
     "manual_review_triggers": [],
-    "decision_summary": "Samtliga tillämpliga kontrollpunkter kan verifieras mot fakturan: consignor Ericsson AB i Sverige, consignee Azercell Telecom LLC i Azerbajdzjan, varubeskrivningen Router 6000 HW, grossovikten 43.000 KG samt ursprungslandet PL. Ingen LC-regel är aktiv och ingen motsägelse har identifierats i dokumentparet.",
-    "human_explanation": "Alla kontrollpunkter stämmer mellan certifikatet och fakturan. Avsändare, mottagare, varubeskrivning, kvantitet och ursprungsland kan verifieras i fakturan. Dokumentparet kan därför godkännas automatiskt."
+    "decision_summary": "Samtliga tillämpliga kontrollpunkter kan verifieras mot fakturan: consignor, consignee, varubeskrivning, kvantitet och ursprungsland.",
+    "human_explanation": "Certifikatet och fakturan stämmer överens för avsändare, mottagare, varubeskrivning, bruttovikt och ursprungsland. Certifikatet anger Ericsson AB, Azercell Telecom LLC, Router 6000 HW, 43,000 KG och ursprung PL, och dessa uppgifter kan återfinnas i fakturan. Dokumentparet kan därför godkännas automatiskt."
   },
   "_meta": {
-    "tested_at": "2026-04-01T14:13:26.614869+00:00",
-    "prompt_hash": "9b9df42642d8",
+    "tested_at": "2026-04-02T11:23:49.169070+00:00",
+    "prompt_hash": "f81eb9b0d2ea",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P041_MATCH",

@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-04-01T00:00:00Z",
+    "verification_timestamp": "2026-04-02T00:00:00Z",
     "document_pair_id": null,
     "certificate_issue_date": "2025-11-24",
     "source_documents_received": 2
@@ -15,7 +15,7 @@
     "document_a": {
       "label": "Document A",
       "assumed_role": "certificate",
-      "document_type": "Certificate of Origin (certificate file also contains embedded invoice copy pages)"
+      "document_type": "Certificate of Origin with embedded invoice copy on pages 2-3"
     },
     "document_b": {
       "label": "Document B",
@@ -34,159 +34,170 @@
     "activated_rules": [
       {
         "rule_id": "8.5.0",
-        "rule_name": "Filbaserad dokumentparning – certifikat ska hämtas från certifikatfilen och faktura från separat fakturafil"
+        "rule_name": "Filbaserad dokumentparning - separat fakturafil ska användas"
       },
       {
-        "rule_id": "8.5.2",
-        "rule_name": "Om certifikatet hänvisar till specifikt fakturanummer som inte finns i fakturafilen ska resultatet vara MANUAL_REVIEW"
+        "rule_id": "8.5.2.1",
+        "rule_name": "Certifikatet refererar ett helt annat fakturanummer än fakturafilen"
+      },
+      {
+        "rule_id": "8.6",
+        "rule_name": "Parningsvalidering"
       },
       {
         "rule_id": "4.3.5",
-        "rule_name": "Generell varubeskrivning med uttrycklig fakturareferens"
+        "rule_name": "Generell varubeskrivning med fakturareferens"
       },
       {
         "rule_id": "4.3.7",
-        "rule_name": "Koppling vara–ursprungsland vid flera ursprung"
+        "rule_name": "Koppling vara-ursprungsland vid flera ursprung"
       }
     ]
   },
   "control_points": {
     "consignor": {
       "applicable": true,
-      "status": "MANUAL_REVIEW",
-      "confidence": 0.34,
-      "certificate_value": "Volvo Merchandise AB\nBror Nilssons gata 5\nSE-40508, GÖTEBORG\nSweden",
-      "invoice_value": "Invoice 780687\nVisiting address\nVolvo Merchandise AB\nBror Nilssons gata 5\n40508 GOTEBORG\nSweden",
+      "status": "MATCH",
+      "confidence": 0.94,
+      "certificate_value": "Volvo Merchandise AB, Bror Nilssons gata 5, SE-40508 GÖTEBORG, Sweden",
+      "invoice_value": "Visiting address: Volvo Merchandise AB, Bror Nilssons gata 5, 40508 GOTEBORG, Sweden; VAT no SE556744915101",
       "rules_applied": [
         {
-          "rule_id": "8.5.0",
-          "outcome": "applied"
-        },
-        {
-          "rule_id": "8.5.2",
-          "outcome": "triggered"
-        },
-        {
           "rule_id": "4.1.0",
-          "outcome": "name_found_in_invoice_file_but_pairing_invalid"
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.2.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.5",
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet hänvisar uttryckligen till faktura 779910, men den separata fakturafilen innehåller faktura 780687. Även om consignor-namnet kan identifieras i fakturafilen kan kontrollpunkten inte slutligt verifieras mot ett giltigt dokumentpar, eftersom den refererade fakturan saknas i fakturafilen och den inbäddade kopian i certifikatfilen inte får användas som verifieringsunderlag."
+      "motivation": "Certifikatets consignor 'Volvo Merchandise AB' återfinns uttryckligen i fakturans footer/visiting address i den separata fakturafilen. Landet 'Sweden' styrks också av adressen och VAT-prefix SE. Därför är avsändaren verifierad trots att fakturans huvudadressblock avser köparen."
     },
     "consignee": {
       "applicable": true,
-      "status": "MANUAL_REVIEW",
-      "confidence": 0.28,
-      "certificate_value": "EURL Renault Trucks Algeria\nPropriété Zaoui Mohamed\nles Grands Vents\nSection 01, ilot 779\nDely Ibrahim\nNIF: 000216001879706\nAlger\nAlgeria",
-      "invoice_value": "Invoicing address\nVolvo Group Korea Ltd\nVolvo Construction Equipment\nVolvo Bldg., 5th fl., 726-173\nHannam-dong, Yongsan-gu,\n140-210 Seoul\nKorea\n\nDelivery address\nVolvo Group Korea\n4F, Volvo Building, 130 Hannam-daero, Yongsan-gu\n04417 Seoul\nKorea",
+      "status": "MISMATCH",
+      "confidence": 0.99,
+      "certificate_value": "EURL Renault Trucks Algeria, Propriété Zaoui Mohamed, les Grands Vents, Section 01, ilot 779, Dely Ibrahim, Alger, Algeria",
+      "invoice_value": "Invoicing address: Volvo Group Korea Ltd, Korea; Delivery address: Volvo Group Korea, Korea",
       "rules_applied": [
         {
-          "rule_id": "8.5.0",
-          "outcome": "applied"
-        },
-        {
-          "rule_id": "8.5.2",
-          "outcome": "triggered"
-        },
-        {
           "rule_id": "4.2.0.2",
-          "outcome": "not_finalized_due_to_invalid_pairing"
+          "outcome": "MISMATCH"
+        },
+        {
+          "rule_id": "4.2.1",
+          "outcome": "MISMATCH"
+        },
+        {
+          "rule_id": "4.2.4",
+          "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Den separata fakturafilen visar koreanska invoicing/delivery-adresser och inte den faktura som certifikatet refererar till. Eftersom certifikatet avser invoice 779910 men fakturafilen innehåller invoice 780687 kan mottagaren inte bedömas slutligt mot rätt oberoende faktura. Därför krävs manuell granskning av dokumentparningen."
+      "motivation": "Certifikatet anger mottagaren som 'EURL Renault Trucks Algeria' i Algeriet. Den separata fakturafilen anger i stället 'Volvo Group Korea Ltd' som invoicing address och 'Volvo Group Korea' som delivery address, båda i Korea. Certifikatets consignee kan därför inte identifieras i fakturan."
     },
     "goods_description": {
       "applicable": true,
-      "status": "MANUAL_REVIEW",
-      "confidence": 0.31,
-      "certificate_value": "32 PACKAGES\n75psc - Jackets, CN\n115pcs - Polo, TR\n30pcs - Shirt, IN\n40psc - Cable, CN\n60pcs - Bag, CN\n80pcs - Mug, CN\n40pcs - Phone holder, CN\n25pcs - Umbrella, CN\n5pcs - Pin, CN\n5pcs - Table Pylon, CN\n320pcs - Keyring, CN\n20pcs - Towel, TR\n25pcs - Beanie, CN\n30pcs - Flag, CN\n103pcs - Cap, CN\n50pcs - Back pack, CN\n20pcs - Card protector, CN\nAccording to the attached invoice number 779910 dated 2025-11-06",
-      "invoice_value": "Invoice 780687\nItem number / Description rows including:\nBelt\nFleece Jacket EN ISO 20471 Class 3\nLong Sleeve EN ISO 20471 Class 3/2 Volvo Pen\nSoftshell Jacket EN ISO 20471 Class 2/3\nFunctional Jacket EN ISO 20471 Class 3\nWaistpants Stretch\nBase Water Bottle",
+      "status": "MISMATCH",
+      "confidence": 0.99,
+      "certificate_value": "32 PACKAGES; 75psc - Jackets, CN; 115pcs - Polo, TR; 30pcs - Shirt, IN; 40pcs - Cable, CN; 60pcs - Bag, CN; 80pcs - Mug, CN; 40pcs - Phone holder, CN; 25pcs - Umbrella, CN; 5pcs - Pin, CN; 5pcs - Table Pylon, CN; 320pcs - Keyring, CN; 20pcs - Towel, TR; 25pcs - Beanie, CN; 30pcs - Flag, CN; 103pcs - Cap, CN; 50pcs - Back pack, CN; 20pcs - Card protector, CN; According to the attached invoice number 779910 dated 2025-11-06",
+      "invoice_value": "Invoice 780687 dated 2025-Nov-19; goods include Belt, Fleece Jacket EN ISO 20471 Class 3, Long Sleeve EN ISO 20471 Class 3/2 Volvo Pen, Softshell Jacket EN ISO 20471 Class 2/3, Functional Jacket EN ISO 20471 Class 3, Waistpants Stretch, Base Water Bottle",
       "rules_applied": [
         {
           "rule_id": "8.5.0",
-          "outcome": "applied"
+          "outcome": "SEPARATE_INVOICE_FILE_USED"
         },
         {
-          "rule_id": "8.5.2",
-          "outcome": "triggered"
+          "rule_id": "8.5.2.1",
+          "outcome": "MISMATCH"
         },
         {
           "rule_id": "4.3.5",
-          "outcome": "invoice_reference_present_in_certificate_but_missing_in_invoice_file"
+          "outcome": "MISMATCH"
+        },
+        {
+          "rule_id": "4.3.8",
+          "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Certifikatet använder uttrycklig fakturareferens: attached invoice number 779910 dated 2025-11-06. Den separata fakturafilen innehåller i stället invoice 780687. Eftersom regeln om generell varubeskrivning kräver att den refererade fakturan finns i dokumentparet kan varubeskrivningen inte verifieras mot korrekt oberoende faktura; den inbäddade kopian i certifikatfilen får inte användas."
+      "motivation": "Certifikatet hänvisar uttryckligen till 'attached invoice number 779910 dated 2025-11-06'. Den separata fakturafilen innehåller i stället faktura 780687 daterad 2025-11-19. Enligt filparningsregeln får den inbäddade kopian av faktura 779910 i certifikatfilen inte användas som verifieringsunderlag, och den faktiska fakturafilen visar dessutom andra varor än certifikatet."
     },
     "quantity": {
       "applicable": true,
-      "status": "MANUAL_REVIEW",
-      "confidence": 0.29,
+      "status": "MISMATCH",
+      "confidence": 0.93,
       "certificate_value": "312,44 KG NET",
-      "invoice_value": "Invoice 780687\nItem rows with per-line Kg and Qty values; no matching referenced invoice 779910 in the separate invoice file",
+      "invoice_value": "Invoice 780687 contains per-line Kg values only (e.g. 0.50, 0.60, 1.02, 0.40) and no explicit total 312.44 KG NET",
       "rules_applied": [
         {
-          "rule_id": "8.5.0",
-          "outcome": "applied"
+          "rule_id": "4.4.2.2",
+          "outcome": "CERTIFICATE_IS_NET_WEIGHT"
         },
         {
-          "rule_id": "8.5.2",
-          "outcome": "triggered"
+          "rule_id": "4.4.5.1",
+          "outcome": "EXCEPTIONS_TESTED"
         },
         {
-          "rule_id": "4.4.2.1",
-          "outcome": "box_7_quantity_identified_in_certificate"
+          "rule_id": "4.4.5.6",
+          "outcome": "NOT_APPLICABLE_FOR_MATCH"
+        },
+        {
+          "rule_id": "8.5.2.1",
+          "outcome": "MISMATCH"
+        },
+        {
+          "rule_id": "4.4.6",
+          "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Certifikatets verifieringsgrundande kvantitet i box 7 är 312,44 KG NET. Den separata fakturafilen är inte den refererade fakturan utan invoice 780687. Därför kan kvantiteten inte verifieras mot rätt oberoende faktura inom giltigt dokumentpar, och kontrollpunkten måste skickas till manuell granskning."
+      "motivation": "Certifikatet anger nettovikt 312,44 KG för den refererade sändningen på faktura 779910. Den separata fakturafilen är faktura 780687 och innehåller inte det angivna totalvärdet 312,44 KG NET. Eftersom fel faktura har bifogats och den kvantitet som certifikatet refererar inte kan verifieras i den fakturafilen blir utfallet MISMATCH."
     },
     "origin": {
       "applicable": true,
-      "status": "MANUAL_REVIEW",
-      "confidence": 0.3,
-      "certificate_value": "CN, TR, IN,",
-      "invoice_value": "Invoice 780687\nCoO values in invoice rows include CHN, MMR, SWE",
+      "status": "MISMATCH",
+      "confidence": 0.98,
+      "certificate_value": "CN, TR, IN",
+      "invoice_value": "CoO values in invoice 780687: CHN, MMR, SWE",
       "rules_applied": [
         {
-          "rule_id": "8.5.0",
-          "outcome": "applied"
+          "rule_id": "4.5.4.3",
+          "outcome": "CN_EQUIVALENT_TO_CHN"
         },
         {
-          "rule_id": "8.5.2",
-          "outcome": "triggered"
-        },
-        {
-          "rule_id": "4.5.1",
-          "outcome": "explicit_origin_found_in_invoice_file_but_not_in_referenced_invoice"
+          "rule_id": "4.5.5",
+          "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Certifikatet anger ursprung CN, TR och IN och hänvisar till invoice 779910. Den separata fakturafilen visar en annan faktura, 780687, med andra CoO-värden. Eftersom den refererade fakturan inte finns i fakturafilen kan ursprungsland inte slutligt verifieras mot korrekt oberoende faktura."
+      "motivation": "Certifikatet anger ursprungsländerna CN, TR och IN. Fakturan anger CHN, MMR och SWE. Kina/CHN kan normaliseras till match, men Turkiet (TR) och Indien (IN) kan inte identifieras i fakturan; i stället förekommer Myanmar och Sverige. Därmed är inte varje ursprungsland i certifikatet verifierat."
     }
   },
   "overall_assessment": {
-    "comparison_result": "MANUAL_REVIEW",
+    "comparison_result": "NOT_IDENTICAL",
     "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
     "auto_approval_eligible": false,
-    "confidence": 0.33,
+    "confidence": 0.97,
     "critical_failures": [
-      "Certifikatet refererar uttryckligen till invoice 779910 dated 2025-11-06, men den separata fakturafilen innehåller invoice 780687.",
-      "Den inbäddade fakturakopian i certifikatfilen får inte användas som verifieringsunderlag enligt filbaserad dokumentparning."
+      "Certifikatet refererar faktura 779910 daterad 2025-11-06 medan den separata fakturafilen innehåller faktura 780687 daterad 2025-11-19.",
+      "Certifikatfilens inbäddade fakturakopia 779910 får inte användas som verifieringsunderlag när en separat fakturafil finns.",
+      "Consignee skiljer sig: EURL Renault Trucks Algeria/Algeria i certifikatet vs Volvo Group Korea/Korea i fakturan.",
+      "Varubeskrivningen i den separata fakturafilen avser andra varor än certifikatet.",
+      "Ursprungsländerna TR och IN från certifikatet saknas i fakturan."
     ],
-    "manual_review_triggers": [
-      "Fel eller annan faktura verkar ha bifogats som separat fakturafil.",
-      "Korrekt oberoende faktura för referensen 779910 kan inte återfinnas i fakturafilen.",
-      "Dokument B är bildbaserad och saknade maskinparsad text, vilket är en sekundär teknisk risk."
-    ],
-    "decision_summary": "Certifikatet avser uttryckligen faktura 779910 daterad 2025-11-06. Den separata fakturafilen innehåller i stället faktura 780687. Enligt reglerna för dokumentparning får den inbäddade fakturakopian i certifikatfilen inte användas, därför kan korrekt dokumentpar inte verifieras tekniskt och ärendet ska gå till manuell hantering.",
-    "human_explanation": "Certifikatet hänvisar till faktura 779910, men den bifogade separata fakturafilen innehåller faktura 780687. Därför kan certifikatet inte verifieras mot rätt oberoende faktura och ärendet måste granskas manuellt."
+    "manual_review_triggers": [],
+    "decision_summary": "Det korrekta verifieringsunderlaget enligt filparningsregeln är den separata fakturafilen (invoice 780687), inte den inbäddade fakturakopian i certifikatfilen. Eftersom certifikatet uttryckligen hänvisar till invoice 779910 och den bifogade fakturafilen i stället innehåller ett helt annat fakturanummer, samtidigt som mottagare, varor, kvantitet och ursprung inte stämmer mot den separata fakturan, är dokumentparet NOT_IDENTICAL.",
+    "human_explanation": "Certifikatet hänvisar till faktura 779910 daterad 2025-11-06, men den separata fakturafilen innehåller faktura 780687 daterad 2025-11-19. Fakturan är dessutom ställd till Volvo Group Korea i Korea i stället för EURL Renault Trucks Algeria i Algeriet och avser andra varor och ursprungsländer. Dokumenten stämmer därför inte överens och kräver manuell hantering."
   },
   "_meta": {
-    "tested_at": "2026-04-01T12:52:20.256427+00:00",
-    "prompt_hash": "9b9df42642d8",
+    "tested_at": "2026-04-02T11:22:43.070259+00:00",
+    "prompt_hash": "f81eb9b0d2ea",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P0114_MISMATCH",
     "expected": "NOT_IDENTICAL",
-    "actual": "MANUAL_REVIEW",
-    "status": "REVIEW"
+    "actual": "NOT_IDENTICAL",
+    "status": "PASS"
   }
 }

@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-04-01T00:00:00Z",
+    "verification_timestamp": "2026-04-02",
     "document_pair_id": null,
     "certificate_issue_date": "2026-02-13",
     "source_documents_received": 2
@@ -20,7 +20,7 @@
     "document_b": {
       "label": "Document B",
       "assumed_role": "invoice",
-      "document_type": "Commercial Invoice"
+      "document_type": "Invoice"
     }
   },
   "rule_activation": {
@@ -33,167 +33,155 @@
     "eu_origin_normalization_active": false,
     "activated_rules": [
       {
-        "rule_id": "4.1.0",
-        "rule_name": "Consignor found in invoice header/branding"
+        "rule_id": "8.6",
+        "rule_name": "Parningsvalidering"
+      },
+      {
+        "rule_id": "4.1.1.1",
+        "rule_name": "Logotyp/branding som säljaridentifikation"
+      },
+      {
+        "rule_id": "4.1.3.10",
+        "rule_name": "Consignor utan explicit säljaradress men med identifierbart namn"
       },
       {
         "rule_id": "4.3.5",
-        "rule_name": "General goods description with explicit invoice reference and date"
+        "rule_name": "Generell varubeskrivning med fakturareferens"
       },
       {
-        "rule_id": "8.6",
-        "rule_name": "Document-pair sanity check passed"
+        "rule_id": "4.4.2.1",
+        "rule_name": "Box 7 är verifieringsgrundande för kvantitet"
       }
     ]
   },
   "control_points": {
     "consignor": {
       "applicable": true,
-      "status": "MISMATCH",
-      "confidence": 0.93,
+      "status": "MANUAL_REVIEW",
+      "confidence": 0.68,
       "certificate_value": "ERICSSON AB\nTorshamnsgatan 21-23 Kista\nSE-164 83 , Stockholm\nSweden",
       "invoice_value": "ERICSSON",
       "rules_applied": [
         {
-          "rule_id": "4.1.0",
-          "outcome": "Company name core found in invoice header after normalization of company designation"
+          "rule_id": "4.1.1.1",
+          "outcome": "Branding identifierar fakturautställaren som Ericsson"
         },
         {
           "rule_id": "4.1.2",
-          "outcome": "Land for consignor must also be verified in invoice"
+          "outcome": "Företagsnamn identifierat men land måste också verifieras"
         },
         {
-          "rule_id": "4.1.3.9",
-          "outcome": "Not applicable; invoice header shows issuer name but lacks corroborating Sweden land indicator required for MANUAL_REVIEW"
-        },
-        {
-          "rule_id": "4.1.4",
-          "outcome": "Consignor country Sweden not identifiable in invoice"
-        },
-        {
-          "rule_id": "4.1.5",
-          "outcome": "MISMATCH"
+          "rule_id": "4.1.3.10",
+          "outcome": "MANUAL_REVIEW eftersom säljarland inte framgår explicit och inte heller motsägs"
         }
       ],
-      "motivation": "Certifikatets consignor-namn kan identifieras i fakturans sidhuvud som \"ERICSSON\" efter normalisering av bolagsform från \"ERICSSON AB\". Fakturan saknar dock säljaradress, säljarland eller annan indirekt landsidentifierare för Sverige (t.ex. VAT-prefix, IBAN eller telefonprefix) för utställaren. Därmed kan inte både företagsnamn och land verifieras mot fakturan."
+      "motivation": "Certifikatets consignor 'ERICSSON AB ... Sweden' kan kopplas till fakturans utställare via tydlig Ericsson-branding i sidhuvudet. Fakturan saknar dock ett dedikerat seller/issuer-adressblock eller annan explicit landindikator för utställaren (ingen säljaradress, inget VAT-prefix, inget IBAN eller annan tydlig Sverige-indikator). Därför kan samma juridiska part inte verifieras fullt ut på landsnivå; utfallet blir MANUAL_REVIEW och inte MISMATCH eftersom inget i fakturan direkt motsäger Sverige."
     },
     "consignee": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.99,
+      "confidence": 0.97,
       "certificate_value": "UNITEL SA\nKINAXIXI INGOMBOTAS\nRUA MARECHAL BROZ TITO 77C-79D S/N\nLUANDA-KINAXIXI INGOMBOTAS\nAngola",
       "invoice_value": "618186 Invoice address\nUNITEL SA\nKINAXIXI INGOMBOTAS\nRUA MARECHAL BROZ TITO 77C-79D S/N\nLUANDA-KINAXIXI INGOMBOTAS\nANGOLA",
       "rules_applied": [
         {
           "rule_id": "4.2.0.2",
-          "outcome": "Primary billing field used"
-        },
-        {
-          "rule_id": "4.2.2.1",
-          "outcome": "Case and formatting normalization applied"
+          "outcome": "Primärt faktureringsfält användes"
         },
         {
           "rule_id": "4.2.3",
-          "outcome": "Country Angola matches"
+          "outcome": "Land Angola verifierat"
         },
         {
           "rule_id": "4.2.4",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignee återfinns uttryckligen i fakturans primära faktureringsfält \"Invoice address\" med samma företagsnamn, samma adress och samma land. Skillnaden mellan \"Angola\" och \"ANGOLA\" är endast versalisering."
+      "motivation": "Certifikatets consignee återfinns explicit i fakturans primära faktureringsfält 'Invoice address'. Företagsnamn, adressstruktur och land Angola överensstämmer direkt utan behov av otillåten tolkning. Kontrollpunkten är därför MATCH."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.89,
       "certificate_value": "6200115520\nTelecom equipment as INV. 9209878872 dated 11.02.2026\n8 pieces",
-      "invoice_value": "Invoice number\n9209878872\nInvoice Date\n11.02.2026\nGoods Marking\nSoluções Compactas [8 sites] 5G - Site Material\nLine item Product no Description CoO HS Code Qty UoM Price Price unit Amount\n500 RPM2533512/10M 2F LC-LC SM 10M CN 854470000000 8,00 PC 1PC 6,34 50,75",
+      "invoice_value": "Invoice number 9209878872\nInvoice Date 11.02.2026\nGoods Marking: Soluções Compactas [8 sites] 5G - Site Material\nLine descriptions: 2F LC-LC SM 10M",
       "rules_applied": [
         {
-          "rule_id": "4.3.2",
-          "outcome": "No usable article number in certificate for priority-1 product-number verification"
-        },
-        {
           "rule_id": "4.3.5",
-          "outcome": "Explicit invoice reference and date matched"
+          "outcome": "Generell varubeskrivning med fakturanummer och fakturadatum uppfylld"
         },
         {
-          "rule_id": "4.3.8",
-          "outcome": "MATCH"
+          "rule_id": "4.3.5.2",
+          "outcome": "Fakturainnehållet bedöms förenligt med kategorin telecom equipment"
         }
       ],
-      "motivation": "Certifikatet använder en generell varubeskrivning och hänvisar uttryckligen till faktura \"INV. 9209878872\" daterad \"11.02.2026\". Fakturans nummer och datum överensstämmer exakt, och fakturan i dokumentparet är den refererade fakturan. Därför anses varubeskrivningen verifierad enligt regeln för generell varubeskrivning med fakturareferens."
+      "motivation": "Certifikatet använder en generell varubeskrivning men anger samtidigt uttrycklig fakturahänvisning: 'INV. 9209878872 dated 11.02.2026'. Fakturan i dokumentparet har exakt samma fakturanummer och datum. Fakturans innehåll avser telekomrelaterat material/komponenter ('5G - Site Material', produktbeskrivningar för kabel/telekomkomponenter), vilket är förenligt med certifikatets generella beskrivning 'Telecom equipment'."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.99,
+      "confidence": 0.94,
       "certificate_value": "GW 14,93 kgs",
       "invoice_value": "Total Gross Weight\nKG 14.93",
       "rules_applied": [
         {
           "rule_id": "4.4.2.1",
-          "outcome": "Box 7 quantity selected as controlling quantity"
-        },
-        {
-          "rule_id": "4.4.3",
-          "outcome": "Numeric value identified directly in invoice"
+          "outcome": "Box 7-värdet användes som verifieringsgrund"
         },
         {
           "rule_id": "4.4.4",
-          "outcome": "Total gross weight in invoice accepted for shipment weight"
+          "outcome": "Verifiering mot fakturans totalvikt"
         },
         {
           "rule_id": "4.4.6",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Den verifieringsgrundande kvantiteten i certifikatets box 7 är \"GW 14,93 kgs\". Fakturan innehåller uttryckligen \"Total Gross Weight KG 14.93\", vilket är samma numeriska värde och samma vikttyp efter normalisering av decimaltecken."
+      "motivation": "Certifikatets verifieringsgrundande kvantitet i box 7 är 'GW 14,93 kgs'. Fakturan anger uttryckligen 'Total Gross Weight KG 14.93'. Efter tillåten normalisering av decimaltecken (komma/punkt) är värdena identiska. Därför är kontrollpunkten MATCH."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.97,
+      "confidence": 0.96,
       "certificate_value": "CHINA",
-      "invoice_value": "CoO\nCN",
+      "invoice_value": "CoO CN",
       "rules_applied": [
         {
           "rule_id": "4.5.1",
-          "outcome": "Explicit origin field identified in invoice line-item column CoO"
+          "outcome": "Explicit ursprungsfält identifierat i fakturan"
         },
         {
           "rule_id": "4.5.4",
-          "outcome": "Country normalization applied: CHINA = CN"
+          "outcome": "ISO-kod CN normaliserad mot China"
         },
         {
           "rule_id": "4.5.5",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger ursprungsland \"CHINA\". Fakturan anger explicit ursprung som \"CoO CN\" på varuraderna. Landkoden CN verifierar China efter tillåten landnormalisering."
+      "motivation": "Certifikatet anger ursprungsland 'CHINA'. Fakturan anger ursprung explicit per rad i CoO-kolumnen som 'CN'. ISO-koden CN motsvarar China, och ursprunget är därför uttryckligen verifierat i fakturan."
     }
   },
   "overall_assessment": {
-    "comparison_result": "NOT_IDENTICAL",
+    "comparison_result": "MANUAL_REVIEW",
     "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
     "auto_approval_eligible": false,
-    "confidence": 0.94,
-    "critical_failures": [
-      "Consignor could not be fully verified because the invoice does not verify the consignor country Sweden."
+    "confidence": 0.82,
+    "critical_failures": [],
+    "manual_review_triggers": [
+      "Consignor kan identifieras som Ericsson via branding, men fakturan saknar explicit säljaradress eller annan tydlig landsindikator som bekräftar Sverige för utställaren."
     ],
-    "manual_review_triggers": [],
-    "decision_summary": "Document pair is validly paired and the consignee, goods description, quantity and origin are verified. However, the certificate consignor is stated as ERICSSON AB, Sweden, while the invoice only shows ERICSSON in branding/header and does not provide seller-country evidence for Sweden. Because one applicable control point is MISMATCH, the overall result is NOT_IDENTICAL.",
-    "human_explanation": "Certifikatet anger avsändaren som ERICSSON AB, Sweden, men fakturan visar bara \"ERICSSON\" i sidhuvudet och innehåller ingen säljaradress eller annan tydlig uppgift som verifierar Sverige som avsändarland. Mottagare, varubeskrivning via fakturareferensen, mängd och ursprungsland stämmer. Därför kan dokumentparet inte godkännas som identiskt."
+    "decision_summary": "Dokumentparet är i huvudsak konsistent: consignee, varubeskrivning, kvantitet och ursprungsland verifieras mot fakturan. Däremot kan consignorns land 'Sweden' inte verifieras fullt ut eftersom fakturan bara visar Ericsson-branding och saknar explicit seller/issuer-land. Därför krävs manuell handläggning.",
+    "human_explanation": "Certifikatet och fakturan stämmer överens för mottagare, varubeskrivning, vikt och ursprungsland. Avsändaren kan kopplas till Ericsson via fakturans sidhuvud, men fakturan saknar en tydlig säljaradress eller annan uttrycklig uppgift som bekräftar Sverige för utställaren. Därför behövs manuell granskning."
   },
   "_meta": {
-    "tested_at": "2026-04-01T21:54:35.802978+00:00",
-    "prompt_hash": "9b9df42642d8",
+    "tested_at": "2026-04-02T11:23:49.157277+00:00",
+    "prompt_hash": "f81eb9b0d2ea",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P018_MATCH",
     "expected": "IDENTICAL",
-    "actual": "NOT_IDENTICAL",
-    "status": "FAIL"
+    "actual": "MANUAL_REVIEW",
+    "status": "REVIEW"
   }
 }

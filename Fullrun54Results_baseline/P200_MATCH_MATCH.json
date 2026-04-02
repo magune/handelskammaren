@@ -1,0 +1,181 @@
+{
+  "schema_version": "3.0",
+  "metadata": {
+    "verification_timestamp": "2026-04-01T00:00:00Z",
+    "document_pair_id": null,
+    "certificate_issue_date": "2026-01-27",
+    "source_documents_received": 2
+  },
+  "task": {
+    "task_type": "customs_document_pair_verification",
+    "comparison_mode": "certificate_vs_invoice",
+    "strictness": "conservative"
+  },
+  "documents": {
+    "document_a": {
+      "label": "Document A",
+      "assumed_role": "certificate",
+      "document_type": "Certificate of Origin"
+    },
+    "document_b": {
+      "label": "Document B",
+      "assumed_role": "invoice",
+      "document_type": "Invoice"
+    }
+  },
+  "rule_activation": {
+    "lc_exception_active": false,
+    "lc_number_found": null,
+    "general_goods_description_with_invoice_reference_active": false,
+    "mixed_origins_rule_active": false,
+    "to_order_rule_active": false,
+    "quantity_exception_applied": null,
+    "eu_origin_normalization_active": true,
+    "activated_rules": [
+      {
+        "rule_id": "8.5.0",
+        "rule_name": "Filbaserad dokumentparning"
+      },
+      {
+        "rule_id": "8.6",
+        "rule_name": "Obligatorisk parningsvalidering"
+      },
+      {
+        "rule_id": "4.1.0",
+        "rule_name": "Consignor identifierad någonstans i fakturan"
+      },
+      {
+        "rule_id": "4.2.0.3",
+        "rule_name": "Ship-To-regel för slutmottagare"
+      },
+      {
+        "rule_id": "4.5.4.2",
+        "rule_name": "EU-medlemsland ↔ EU-normalisering"
+      }
+    ]
+  },
+  "control_points": {
+    "consignor": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.98,
+      "certificate_value": "Gunnar Dafgård AB\nSjökvarnsvägen 30\nSE531 82, KÄLLBY\nSverige",
+      "invoice_value": "Gunnar Dafgård AB\nSE-531 82 Källby\nSWEDEN\nVAT registration no\nSE556080571401",
+      "rules_applied": [
+        {
+          "rule_id": "4.1.0",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.2.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.4",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatets consignor 'Gunnar Dafgård AB' återfinns uttryckligen i fakturan i sidfot/adressblock. Landet verifieras som Sverige genom explicit 'SWEDEN' samt svenska identifierare såsom VAT-prefix 'SE'."
+    },
+    "consignee": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.86,
+      "certificate_value": "JAMES CRISP LTD\nUNILEVER ASIA PRIVATE LTD\n202 PARNELL READ PARNELL\n1052 AUCKLAND\nNew Zealand",
+      "invoice_value": "JAMES CRISP LTD\nUNILEVER ASIA PRIVATE LTD\n202 PARNELL READ PARNELL\nSE-1052 AUCKLAND",
+      "rules_applied": [
+        {
+          "rule_id": "4.2.0.2",
+          "outcome": "PRIMARY_BILLING_FIELD_DIFFERENT_PARTY"
+        },
+        {
+          "rule_id": "4.2.0.3",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.2.3",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Fakturans primära faktureringsfält anger 'UNILEVER EUROPE BV', men fakturan innehåller även ett separat mottagar-/leveransblock med exakt consignee-namn och adresskedja 'JAMES CRISP LTD / UNILEVER ASIA PRIVATE LTD / 202 PARNELL READ PARNELL / SE-1052 AUCKLAND'. Detta uppfyller Ship-To-undantaget för slutmottagare i samma transaktion. Landet överensstämmer som New Zealand trots att landsnamnet inte upprepas i det separata blocket, eftersom Auckland-adressen motsvarar certifikatets mottagare och ingen motsägande mottagarlandsuppgift finns för denna part."
+    },
+    "goods_description": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.99,
+      "certificate_value": "4692\nLAC Whopper SG\nBatch code L60081HN04, L60091HN04\nBBD 03.04.2027, 04.04.2027",
+      "invoice_value": "20 4692 LAC Whopper SG 840 KAR 9.240,000 KG\n30 4692 LAC Whopper SG 540 KAR 5.940,000 KG",
+      "rules_applied": [
+        {
+          "rule_id": "4.3.2",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.3.6",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatet anger artikelnummer 4692 och varubeskrivning 'LAC Whopper SG'. Fakturan innehåller samma artikelnummer 4692 på båda relevanta raderna med exakt samma varubeskrivning, vilket ger matchning enligt artikelnummerprioritet."
+    },
+    "quantity": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.95,
+      "certificate_value": "1380ct\nGr weight: 15600,9\nNet weight: 15180",
+      "invoice_value": "Nettovikt\n15.180,000 KG",
+      "rules_applied": [
+        {
+          "rule_id": "4.4.2.1",
+          "outcome": "BOX_7_IDENTIFIED"
+        },
+        {
+          "rule_id": "4.4.3.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.4.4",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Box 7 i certifikatet innehåller flera kvantitetsuppgifter. Minst en av dessa måste verifieras. Certifikatets nettovikt 15180 återfinns exakt i fakturans totala nettovikt '15.180,000 KG' efter normalisering av tusentalsavskiljare och decimalprecision. Fakturan innehåller ingen uttrycklig motstridande nettovikt."
+    },
+    "origin": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.96,
+      "certificate_value": "European Union",
+      "invoice_value": "/ Country of Origin: SE",
+      "rules_applied": [
+        {
+          "rule_id": "4.5.1",
+          "outcome": "EXPLICIT_ORIGIN_FOUND"
+        },
+        {
+          "rule_id": "4.5.4.2",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatet anger ursprung 'European Union'. Fakturan innehåller ett explicit origin-fält '/ Country of Origin: SE'. Sverige är EU-medlemsstat och verifierar därför certifikatets EU-ursprung."
+    }
+  },
+  "overall_assessment": {
+    "comparison_result": "IDENTICAL",
+    "workflow_recommendation": "AUTO_APPROVAL_ELIGIBLE",
+    "auto_approval_eligible": true,
+    "confidence": 0.89,
+    "critical_failures": [],
+    "manual_review_triggers": [],
+    "decision_summary": "Alla tillämpliga kontrollpunkter kunde verifieras mot fakturan. Ingen tillämplig kontrollpunkt gav MISMATCH eller MANUAL_REVIEW.",
+    "human_explanation": "Alla uppgifter i certifikatet kan verifieras mot fakturan. Avsändaren Gunnar Dafgård AB återfinns i fakturan, mottagaren James Crisp Ltd / Unilever Asia Private Ltd finns som separat mottagaradress, varan 4692 LAC Whopper SG och nettovikten 15 180 kg stämmer. Ursprunget European Union verifieras av fakturans Country of Origin: SE och dokumentparet kan därför godkännas automatiskt."
+  },
+  "_meta": {
+    "tested_at": "2026-04-01T14:07:23.252952+00:00",
+    "prompt_hash": "9b9df42642d8",
+    "model": "gpt-5.4",
+    "tier": 2,
+    "pair": "P200_MATCH",
+    "expected": "IDENTICAL",
+    "actual": "IDENTICAL",
+    "status": "PASS"
+  }
+}

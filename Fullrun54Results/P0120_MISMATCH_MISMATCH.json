@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-04-01T00:00:00Z",
+    "verification_timestamp": "2026-04-02T00:00:00Z",
     "document_pair_id": null,
     "certificate_issue_date": "2023-03-06",
     "source_documents_received": 2
@@ -15,12 +15,12 @@
     "document_a": {
       "label": "Document A",
       "assumed_role": "certificate",
-      "document_type": "Certificate of Origin PDF with embedded supplementary invoice copy on page 2"
+      "document_type": "certificate_of_origin_with_embedded_invoice_copy"
     },
     "document_b": {
       "label": "Document B",
       "assumed_role": "invoice",
-      "document_type": "Commercial invoice PDF, image-based/scanned"
+      "document_type": "commercial_invoice"
     }
   },
   "rule_activation": {
@@ -34,15 +34,11 @@
     "activated_rules": [
       {
         "rule_id": "8.5.0",
-        "rule_name": "Filbaserad dokumentparning"
+        "rule_name": "Filbaserad dokumentparning – separat fakturafil ska användas, inte inbäddad faktura i certifikatfilen"
       },
       {
         "rule_id": "8.6",
         "rule_name": "Obligatorisk parningsvalidering"
-      },
-      {
-        "rule_id": "4.4.2.1",
-        "rule_name": "Box 7 är verifieringsgrundande för kvantitet"
       }
     ]
   },
@@ -52,82 +48,74 @@
       "status": "MATCH",
       "confidence": 0.97,
       "certificate_value": "Th.Brunius & Co AB\nPO Box 2516\nSE-403 17, Gothenburg\nSweden",
-      "invoice_value": "Th. Brunius & Co AB\nVAT NO: SE556011055201\nPO Box 2516\nSE-403 17 Gothenburg, Sweden\nPhone: +46 31 10 57 00",
+      "invoice_value": "Th. Brunius & Co AB\nVAT NO: SE556011055201\nPO Box 2516\nSE-403 17 Gothenburg, Sweden",
       "rules_applied": [
         {
-          "rule_id": "4.1.1",
-          "outcome": "Fakturautställaren identifierad i sidhuvud/adressblock."
+          "rule_id": "8.5.0",
+          "outcome": "APPLIED"
         },
         {
-          "rule_id": "4.1.2",
-          "outcome": "Företagsnamn och land kan identifieras i fakturan."
+          "rule_id": "8.6",
+          "outcome": "PASSED"
         },
         {
           "rule_id": "4.1.2.1",
-          "outcome": "Land Sverige verifierat via adress och VAT-prefix SE."
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.1.5",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor 'Th.Brunius & Co AB ... Sweden' kan identifieras i den separata fakturafilen som 'Th. Brunius & Co AB ... Gothenburg, Sweden'. Skillnaden 'Th.Brunius' vs 'Th. Brunius' är endast interpunktion/mellanslag och är tillåten normalisering. Landet Sverige framgår explicit i adressen och stöds även av VAT-prefix 'SE'."
+      "motivation": "Verifieringen har gjorts mot den separata fakturafilen, inte mot den inbäddade fakturakopian i certifikatfilen. Certifikatets consignor 'Th.Brunius & Co AB' kan identifieras i fakturans issuerblock som 'Th. Brunius & Co AB'. Landet Sverige verifieras både genom adressen 'Gothenburg, Sweden' och VAT-prefixet 'SE'."
     },
     "consignee": {
       "applicable": true,
       "status": "MISMATCH",
       "confidence": 0.99,
       "certificate_value": "Al-Medan Project Company For\nCorrugated Carton\nP.O.Box 51\n11351 Riyadh\nSaudi Arabia",
-      "invoice_value": "SOLD TO:\nChinese Tri-River Factory for Carton Industrialization & Packing\nNo. 3036, Block 35, Gebra Industrial Area\nKhartoum\nSudan\nCONSIGNED TO:\nChinese Tri-River Factory for Carton Industrialization & Packing\nNo. 3036, Block 35, Gebra Industrial Area\nKhartoum\nSudan",
+      "invoice_value": "SOLD TO: Chinese Tri-River Factory for Carton Industrialization & Packing\nNo. 3036, Block 35, Gebra Industrial Area\nKhartoum\nSudan\nCONSIGNED TO: Chinese Tri-River Factory for Carton Industrialization & Packing\nNo. 3036, Block 35, Gebra Industrial Area\nKhartoum\nSudan",
       "rules_applied": [
         {
+          "rule_id": "8.5.0",
+          "outcome": "APPLIED"
+        },
+        {
+          "rule_id": "8.6",
+          "outcome": "PASSED"
+        },
+        {
           "rule_id": "4.2.0.2",
-          "outcome": "Primära faktureringsfält och explicit consignee-fält anger Chinese Tri-River Factory."
-        },
-        {
-          "rule_id": "4.2.1",
-          "outcome": "Relevant mottagare identifierad i fakturans SOLD TO/CONSIGNED TO."
-        },
-        {
-          "rule_id": "4.1.3.1",
-          "outcome": "Olika företagsnamn; samma juridiska part kan inte identifieras."
-        },
-        {
-          "rule_id": "4.2.3",
-          "outcome": "Land avviker: Saudi Arabia vs Sudan."
+          "outcome": "MISMATCH"
         },
         {
           "rule_id": "4.2.4",
           "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Certifikatet anger mottagaren som 'Al-Medan Project Company For Corrugated Carton' i Saudiarabien. Den separata fakturafilen anger både SOLD TO och CONSIGNED TO som 'Chinese Tri-River Factory for Carton Industrialization & Packing' i Sudan. Detta är en direkt avvikelse i både företagsnamn och land."
+      "motivation": "Certifikatet anger mottagaren 'Al-Medan Project Company For Corrugated Carton' i Saudiarabien. Den separata fakturan anger både SOLD TO och CONSIGNED TO som 'Chinese Tri-River Factory for Carton Industrialization & Packing' i Sudan. Certifikatets consignee kan därför inte identifieras i fakturans auktoritativa mottagarfält."
     },
     "goods_description": {
       "applicable": true,
       "status": "MISMATCH",
-      "confidence": 0.98,
+      "confidence": 0.96,
       "certificate_value": "Al-Medan\nWTTL\nMade in Slovakia\nPO 1027/22\n10x40' HC Containers\n82 reels of White Top Testliner\nH.S. Code No.: 48052400\nManufacturer:\nMondi SCP A.S.\nTatranská cesta 3\n03417 Ružomberok\nSlovakia",
-      "invoice_value": "DESCRIPTION\n4 Reels: WHITE\n5 Reels: BROWN\n15 Reels: BROWN\n15 Reels: ROYAL 2000\nTotal Unit Count: 39 Reels",
+      "invoice_value": "4 Reels: WHITE\n5 Reels: BROWN\n15 Reels: BROWN\n15 Reels: ROYAL 2000\nTotal Unit Count: 39 Reels\nCOUNTRY OF ORIGIN: Sweden",
       "rules_applied": [
         {
-          "rule_id": "4.3.2",
-          "outcome": "Inga verifierbara artikelnummer i certifikatet för primär matchning."
+          "rule_id": "8.5.0",
+          "outcome": "APPLIED"
         },
         {
           "rule_id": "4.3.3",
-          "outcome": "Identitetsbärande huvudbeteckning 'White Top Testliner' kan inte identifieras i vald faktura."
-        },
-        {
-          "rule_id": "4.3.5",
-          "outcome": "Ej tillämplig; certifikatet innehåller inte uttrycklig fakturahänvisning med fakturanummer och datum."
+          "outcome": "MISMATCH"
         },
         {
           "rule_id": "4.3.8",
           "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Certifikatet beskriver varorna som '82 reels of White Top Testliner' med märkning 'WTTL'. Den separata fakturafilen beskriver i stället 'WHITE', 'BROWN' och 'ROYAL 2000' samt totalt 39 reels. Certifikatets identitetsbärande beteckning 'White Top Testliner' kan därför inte verifieras mot den valda fakturan."
+      "motivation": "Certifikatet beskriver varan som '82 reels of White Top Testliner' / 'WTTL' med HS-kod 48052400. Den separata fakturan listar i stället flera andra varubeskrivningar: 'WHITE', 'BROWN' och 'ROYAL 2000' med totalt 39 reels. Den identitetsbärande huvudbeteckningen från certifikatet kan inte verifieras mot den separata fakturan."
     },
     "quantity": {
       "applicable": true,
@@ -137,23 +125,19 @@
       "invoice_value": "Total Weight Quantity: 69.658 MT\nTotal Unit Count: 39 Reels",
       "rules_applied": [
         {
-          "rule_id": "4.4.2.1",
-          "outcome": "Box 7-värdet '247.133 mt' är verifieringsgrundande."
+          "rule_id": "8.5.0",
+          "outcome": "APPLIED"
         },
         {
-          "rule_id": "4.4.3",
-          "outcome": "Numeriskt värde 247.133 kan inte identifieras i fakturan."
-        },
-        {
-          "rule_id": "4.4.5.1",
-          "outcome": "Undantag 3A-3E behöver inte rädda utfallet; fakturan innehåller ett uttryckligt motstridigt totalvärde."
+          "rule_id": "4.4.3.1",
+          "outcome": "MISMATCH"
         },
         {
           "rule_id": "4.4.6",
           "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Certifikatets kvantitetsfält (box 7) anger uttryckligen '247.133 mt'. Den separata fakturafilen anger 'Total Weight Quantity: 69.658 MT', vilket är ett annat explicit numeriskt värde för totalvikten. Eftersom fakturan innehåller en direkt motstridig kvantitetsuppgift är resultatet MISMATCH."
+      "motivation": "Certifikatet anger kvantiteten 247.133 mt och varubeskrivningen anger även 82 reels. Den separata fakturan anger uttryckligen 'Total Weight Quantity: 69.658 MT' och 'Total Unit Count: 39 Reels'. Detta är en uttrycklig numerisk motsägelse och ska därför bedömas som MISMATCH."
     },
     "origin": {
       "applicable": true,
@@ -163,39 +147,39 @@
       "invoice_value": "COUNTRY OF ORIGIN: Sweden",
       "rules_applied": [
         {
-          "rule_id": "4.5.1",
-          "outcome": "Explicit origin-fält identifierat i fakturan."
+          "rule_id": "8.5.0",
+          "outcome": "APPLIED"
         },
         {
-          "rule_id": "4.5.4",
-          "outcome": "Normalisering prövad; Slovakia och Sweden är inte ekvivalenta."
+          "rule_id": "4.5.1",
+          "outcome": "IDENTIFIED"
         },
         {
           "rule_id": "4.5.5",
           "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Certifikatet anger ursprungsland 'Slovakia'. Den separata fakturafilen anger explicit 'COUNTRY OF ORIGIN: Sweden'. Ursprungslandet i certifikatet kan därför inte verifieras i fakturan och motsägs dessutom direkt av fakturans origin-fält."
+      "motivation": "Certifikatet anger ursprungsland 'Slovakia'. Den separata fakturan anger uttryckligen 'COUNTRY OF ORIGIN: Sweden'. Ursprungslandet i certifikatet kan därför inte verifieras mot fakturan."
     }
   },
   "overall_assessment": {
     "comparison_result": "NOT_IDENTICAL",
     "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
     "auto_approval_eligible": false,
-    "confidence": 0.99,
+    "confidence": 0.98,
     "critical_failures": [
-      "Consignee mismatch: Al-Medan Project Company For Corrugated Carton / Saudi Arabia vs Chinese Tri-River Factory for Carton Industrialization & Packing / Sudan.",
-      "Goods description mismatch: certificate states 82 reels of White Top Testliner; selected invoice states WHITE/BROWN/ROYAL 2000 and 39 reels.",
-      "Quantity mismatch: certificate 247.133 mt vs invoice 69.658 MT.",
-      "Origin mismatch: Slovakia vs Sweden."
+      "Consignee mismatch: certificate shows Al-Medan Project Company For Corrugated Carton / Saudi Arabia, invoice shows Chinese Tri-River Factory for Carton Industrialization & Packing / Sudan.",
+      "Goods description mismatch: certificate shows White Top Testliner / WTTL, invoice shows WHITE, BROWN and ROYAL 2000.",
+      "Quantity mismatch: certificate 247.133 mt (and 82 reels) vs invoice 69.658 MT (and 39 reels).",
+      "Origin mismatch: certificate Slovakia vs invoice Sweden."
     ],
     "manual_review_triggers": [],
-    "decision_summary": "Dokument A innehåller ett Certificate of Origin på sida 1 och en inbäddad fakturakopia på sida 2. Enligt filparningsregeln ska verifieringen dock göras mot den separata fakturafilen (Document B), inte mot den inbäddade fakturakopian i certifikatfilen. När certifikatet jämförs mot den separata fakturafilen matchar endast consignor; consignee, varubeskrivning, kvantitet och ursprungsland avviker tydligt. Därför är dokumentparet NOT_IDENTICAL.",
-    "human_explanation": "Certifikatet avser Al-Medan Project Company for Corrugated Carton i Saudiarabien, varor från Slovakien och 247.133 mt White Top Testliner. Den separata bifogade fakturan är däremot ställd till Chinese Tri-River Factory for Carton Industrialization & Packing i Sudan, anger ursprung Sverige och totalt 69.658 MT med annan varubeskrivning. Därför stämmer dokumenten inte överens och kräver manuell hantering."
+    "decision_summary": "Dokumentparningen har gjorts enligt filregeln: certifikatet hämtades från certifikatfilen och verifieringen utfördes mot den separata fakturafilen. Parningsvalideringen passerade eftersom consignor kunde identifieras i fakturan, men fyra tillämpliga kontrollpunkter gav MISMATCH: consignee, varubeskrivning, kvantitet och ursprungsland. Eftersom minst en tillämplig kontrollpunkt gav MISMATCH ska totalresultatet vara NOT_IDENTICAL.",
+    "human_explanation": "Verifieringen ska göras mot den separata fakturafilen, inte mot den inbäddade fakturakopian i certifikatfilen. Certifikatet anger mottagaren Al-Medan Project Company for Corrugated Carton i Saudiarabien, varan White Top Testliner, kvantiteten 247.133 mt/82 reels och ursprung Slovakia, medan den separata fakturan gäller Chinese Tri-River Factory i Sudan, andra varor, 69.658 MT/39 reels och ursprung Sweden. Dokumentparet är därför inte identiskt."
   },
   "_meta": {
-    "tested_at": "2026-04-01T12:52:20.259323+00:00",
-    "prompt_hash": "9b9df42642d8",
+    "tested_at": "2026-04-02T11:22:43.072541+00:00",
+    "prompt_hash": "f81eb9b0d2ea",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P0120_MISMATCH",

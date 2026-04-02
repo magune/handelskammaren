@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-04-01T00:00:00Z",
+    "verification_timestamp": null,
     "document_pair_id": null,
     "certificate_issue_date": "2023-03-06",
     "source_documents_received": 2
@@ -15,7 +15,7 @@
     "document_a": {
       "label": "Document A",
       "assumed_role": "certificate",
-      "document_type": "Certificate of Origin"
+      "document_type": "Certificate of Origin (page 1) with embedded invoice copy in same file"
     },
     "document_b": {
       "label": "Document B",
@@ -34,19 +34,31 @@
     "activated_rules": [
       {
         "rule_id": "8.5.0",
-        "rule_name": "Filbaserad dokumentparning"
+        "rule_name": "Filbaserad dokumentparning - separat fakturafil användes för verifiering, inbäddad fakturakopia i certifikatfilen ignorerades"
       },
       {
         "rule_id": "8.6",
-        "rule_name": "Obligatorisk parningsvalidering"
+        "rule_name": "Parningsvalidering - giltigt dokumentpar identifierat via consignor och consignee"
       },
       {
         "rule_id": "4.1.0",
-        "rule_name": "Sökning efter consignor i hela fakturan"
+        "rule_name": "Consignor identifierad uttryckligen i fakturan"
       },
       {
-        "rule_id": "4.4.2.2",
-        "rule_name": "Ett enda viktvärde utan viktkategori"
+        "rule_id": "4.2.0.2",
+        "rule_name": "Consignee verifierad mot primärt faktureringsfält"
+      },
+      {
+        "rule_id": "4.3.3",
+        "rule_name": "Kontrollerad textmatchning för varubeskrivning"
+      },
+      {
+        "rule_id": "4.4.1",
+        "rule_name": "Direkt förekomstkontroll av kvantitet"
+      },
+      {
+        "rule_id": "4.5.1",
+        "rule_name": "Explicit ursprungsangivelse i fakturan"
       }
     ]
   },
@@ -56,14 +68,10 @@
       "status": "MATCH",
       "confidence": 0.99,
       "certificate_value": "Th.Brunius & Co AB\nPO Box 2516\nSE-403 17, Gothenburg\nSweden",
-      "invoice_value": "Th. Brunius & Co AB\nVAT NO: SE556011055201\nPO Box 2516\nSE-403 17 Gothenburg, Sweden",
+      "invoice_value": "Th.Brunius & Co AB\nVAT NO: SE556011055201\nPO Box 2516\nSE-403 17 Gothenburg, Sweden",
       "rules_applied": [
         {
           "rule_id": "4.1.0",
-          "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.1.2",
           "outcome": "MATCH"
         },
         {
@@ -75,7 +83,7 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor-namn kan identifieras uttryckligen i fakturans header och signaturblock som samma juridiska part efter tillåten normalisering av punkt och mellanslag. Landet Sverige verifieras både av adressen 'Gothenburg, Sweden' och VAT-prefixet 'SE'."
+      "motivation": "Certifikatets consignor 'Th.Brunius & Co AB ... Sweden' återfinns uttryckligen i den separata fakturafilen som utställare i sidhuvud/adressblock. Landet verifieras både via adressen 'Gothenburg, Sweden' och VAT-prefix 'SE'. Samma juridiska part och land kan identifieras utan tolkning."
     },
     "consignee": {
       "applicable": true,
@@ -89,35 +97,19 @@
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.2.1",
-          "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.2.2",
-          "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.2.3",
-          "outcome": "MATCH"
-        },
-        {
           "rule_id": "4.2.4",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignee motsvarar fakturans primära faktureringsfält 'SOLD TO' med samma företagsnamn och samma land. Fakturan innehåller dessutom samma part i fältet 'CONSIGNED TO', vilket ytterligare bekräftar matchningen."
+      "motivation": "Certifikatets consignee återfinns exakt i fakturans primära faktureringsfält 'SOLD TO'. Företagsnamn, boxadress, stad och land överensstämmer efter normalisering av versaler/gemener. Fakturan har även ett separat 'CONSIGNED TO' med samma part, vilket ytterligare stödjer matchningen."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.95,
-      "certificate_value": "Al-Medan\nWTTL\nMade in Slovakia\nPO 1027/22\n10x40' HC Containers\n82 reels of White Top Testliner\nH.S. Code No.: 48052400\nManufacturer:\nMondi SCP A.S.\nTatranská cesta 3\n03417 Ružomberok\nSlovakia",
-      "invoice_value": "SHIPPING MARKS: Al-Medan\nWTTL\nMade in Slovakia\nPO 1027/22\n13 Reels: WHITE TOP TESTLINER\n9 Reels: WHITE TOP TESTLINER\n3 Reels: WHITE TOP TESTLINER\n8 Reels: WHITE TOP TESTLINER\n25 Reels: WHITE TOP TESTLINER\n24 Reels: WHITE TOP TESTLINER\nTotal Unit Count: 82 Reels\nH.S. Code No.: 48052400\nManufacturer:\nMondi SCP A.S.\nTatranská cesta 3, 03417 Ružomberok, Slovakia",
+      "certificate_value": "Al-Medan\nWTTL\nMade in Slovakia\nPO 1027/22\n\n10x40' HC Containers\n82 reels of White Top Testliner\nH.S. Code No.: 48052400\n\nManufacturer:\nMondi SCP A.S.\nTatranská cesta 3\n03417 Ružomberok\nSlovakia",
+      "invoice_value": "SHIPPING MARKS:\nAl-Medan\nWTTL\nMade in Slovakia\nPO 1027/22\n...\n13 Reels: WHITE TOP TESTLINER\n...\n24 Reels: WHITE TOP TESTLINER\n...\nTotal Unit Count: 82 Reels\nH.S. Code No.: 48052400\nManufacturer:\nMondi SCP A.S.\nTatranská cesta 3, 03417 Ružomberok, Slovakia",
       "rules_applied": [
-        {
-          "rule_id": "4.3.2",
-          "outcome": "Priority 2 used"
-        },
         {
           "rule_id": "4.3.3",
           "outcome": "MATCH"
@@ -131,21 +123,17 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Inga artikelnummer anges i certifikatet, så verifiering sker via kontrollerad textmatchning. Den identitetsbärande huvudbeteckningen 'White Top Testliner' återfinns exakt i fakturans varurader efter normalisering av versaler/gemener, och stöds ytterligare av samma shipping marks 'Al-Medan / WTTL / Made in Slovakia / PO 1027/22', samma totalantal 82 reels, samma HS-kod 48052400 och samma manufacturer Mondi SCP A.S."
+      "motivation": "Den identitetsbärande huvudbeteckningen 'White Top Testliner' kan identifieras explicit i fakturan som 'WHITE TOP TESTLINER' på samtliga relevanta rader. Certifikatets övriga stödjande uppgifter återfinns också i fakturan: shipping marks 'Al-Medan / WTTL / Made in Slovakia / PO 1027/22', totalen '82 Reels', HS-kod '48052400' och tillverkaren 'Mondi SCP A.S.'. Verifieringen kan därför göras genom kontrollerad textmatchning utan semantisk omtolkning."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.96,
+      "confidence": 0.99,
       "certificate_value": "247.133 mt",
       "invoice_value": "Total Weight Quantity: 247.133 MT",
       "rules_applied": [
         {
-          "rule_id": "4.4.2",
-          "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.4.2.2",
+          "rule_id": "4.4.1",
           "outcome": "MATCH"
         },
         {
@@ -157,14 +145,14 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger ett enda viktvärde med uttrycklig enhet: '247.133 mt'. Fakturan innehåller det exakta numeriska värdet '247.133 MT' som totalvikt för samma försändning, och fakturan innehåller ingen alternativ motstridig GW/NW-viktkategori som skulle göra certifikatets okategoriserade vikt tvetydig."
+      "motivation": "Certifikatets kvantitet i box 7 är '247.133 mt'. Samma numeriska värde och viktenhet återfinns uttryckligen i den separata fakturan som 'Total Weight Quantity: 247.133 MT'. Direkt förekomstkontroll räcker; inget undantag eller beräkning behövs."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.99,
       "certificate_value": "Slovakia",
-      "invoice_value": "COUNTRY OF ORIGIN: Slovakia",
+      "invoice_value": "COUNTRY OF ORIGIN: Slovakia\n...\nWe hereby certify that this invoice is true and correct and that the goods are of Slovakian origin.",
       "rules_applied": [
         {
           "rule_id": "4.5.1",
@@ -175,7 +163,7 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Ursprungslandet i certifikatet anges som 'Slovakia' och återfinns uttryckligen i fakturan i ett dedikerat origin-fält: 'COUNTRY OF ORIGIN: Slovakia'. Den kompletterande texten 'goods are of Slovakian origin' är förenlig och inte motstridig."
+      "motivation": "Certifikatets ursprungsland 'Slovakia' återfinns explicit i fakturan i ett dedikerat ursprungsfält: 'COUNTRY OF ORIGIN: Slovakia'. Fakturans ytterligare formulering om 'Slovakian origin' motsäger inte detta utan stödjer samma ursprung. Positiv verifiering är därmed uppfylld."
     }
   },
   "overall_assessment": {
@@ -185,12 +173,12 @@
     "confidence": 0.98,
     "critical_failures": [],
     "manual_review_triggers": [],
-    "decision_summary": "Samtliga tillämpliga kontrollpunkter kan verifieras direkt mot fakturan. Inga motsägelser, läsbarhetsproblem eller regelkonflikter har identifierats.",
-    "human_explanation": "Certifikatet och fakturan avser samma avsändare, mottagare, vara, mängd och ursprung. White Top Testliner, 247.133 MT och ursprung Slovakia framgår uttryckligen i fakturan. Dokumentparet kan godkännas automatiskt."
+    "decision_summary": "Den separata fakturafilen verifierar certifikatets consignor, consignee, varubeskrivning, kvantitet och ursprungsland. Den inbäddade fakturakopian i certifikatfilen användes inte som verifieringsunderlag; verifieringen gjordes mot den separata kommersiella fakturan. Alla tillämpliga kontrollpunkter gav MATCH.",
+    "human_explanation": "Certifikatet och den separata fakturan visar samma avsändare, mottagare, varubeskrivning, kvantitet 247.133 MT och ursprung Slovakia. Den inbäddade fakturakopian i certifikatfilen bortsågs från, och verifieringen gjordes mot den separata fakturafilen. Uppgifterna stämmer och dokumentparet kan godkännas automatiskt."
   },
   "_meta": {
-    "tested_at": "2026-04-01T12:52:20.258792+00:00",
-    "prompt_hash": "9b9df42642d8",
+    "tested_at": "2026-04-02T11:22:43.072075+00:00",
+    "prompt_hash": "f81eb9b0d2ea",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P0119_MATCH",

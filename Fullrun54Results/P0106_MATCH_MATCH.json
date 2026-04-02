@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-04-01T00:00:00Z",
+    "verification_timestamp": "2026-04-02T00:00:00Z",
     "document_pair_id": null,
     "certificate_issue_date": "2026-02-27",
     "source_documents_received": 2
@@ -26,31 +26,31 @@
   "rule_activation": {
     "lc_exception_active": false,
     "lc_number_found": null,
-    "general_goods_description_with_invoice_reference_active": false,
+    "general_goods_description_with_invoice_reference_active": true,
     "mixed_origins_rule_active": false,
     "to_order_rule_active": false,
     "quantity_exception_applied": "3D",
     "eu_origin_normalization_active": false,
     "activated_rules": [
       {
-        "rule_id": "8.6",
-        "rule_name": "Parningsvalidering passerad via matchande fakturanummer, consignor och consignee"
+        "rule_id": "4.1.0",
+        "rule_name": "Consignor identified anywhere in invoice text/header"
       },
       {
-        "rule_id": "4.1.0",
-        "rule_name": "Consignor identifierad uttryckligen i fakturans sidhuvud/företagsblock"
+        "rule_id": "4.3.5",
+        "rule_name": "General goods description with invoice reference and invoice date"
       },
       {
         "rule_id": "4.4.5.5",
-        "rule_name": "Summering av flera rader inom samma faktura"
+        "rule_name": "Summation of multiple rows within same invoice"
       },
       {
         "rule_id": "4.4.5.5.1",
-        "rule_name": "Samlande varubeskrivning i certifikatet med flera variantrader i fakturan"
+        "rule_name": "General product family description allows summation of variants"
       },
       {
-        "rule_id": "4.5.5",
-        "rule_name": "Explicit ursprungsangivelse identifierad i fakturan"
+        "rule_id": "8.6",
+        "rule_name": "Mandatory document pairing sanity check"
       }
     ]
   },
@@ -58,39 +58,47 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.98,
+      "confidence": 0.96,
       "certificate_value": "Forest Papper AB\nÅsgatan 4\n41463, GÖTEBORG\nSWEDEN",
       "invoice_value": "FOREST PAPPER AB\nÅsgatan 4, 414 63 GÖTEBORG\nVAT no: SE556878121401",
       "rules_applied": [
+        {
+          "rule_id": "8.6",
+          "outcome": "PASS"
+        },
         {
           "rule_id": "4.1.0",
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.1.2",
+          "rule_id": "4.1.2.1",
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.1.4",
+          "rule_id": "4.1.5",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor 'Forest Papper AB' återfinns uttryckligen i fakturans sidhuvud/företagsblock som 'FOREST PAPPER AB'. Landet Sverige verifieras genom adressen 'Åsgatan 4, 414 63 GÖTEBORG' samt VAT-prefix 'SE'. Endast tillåten normalisering av versaler/gemener och formatering har behövts."
+      "motivation": "Certifikatets consignor 'Forest Papper AB' återfinns uttryckligen i fakturans sidhuvud/branding som 'FOREST PAPPER AB'. Landet Sverige verifieras i fakturan via adressen 'Åsgatan 4, 414 63 GÖTEBORG' och VAT-prefix 'SE' i 'SE556878121401'. Samma juridiska part kan därför identifieras direkt i fakturan."
     },
     "consignee": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.97,
+      "confidence": 0.95,
       "certificate_value": "KÜTAHYA ENTEGRE KAGIT SAN ve TIC.AS\nMERDIVENKÖY MAH. DIKYOL SK\nB BLOK NO 2 IC KAPI NO 9\nKADIKOY\nISTANBUL\nTürkiye",
       "invoice_value": "Buyer\nKÜTAHYA ENTEGRE KAGIT SAN. Ve TIC. A.S.\nMERDIVENKÖY MAH. DIKYOL SK\nB BLOK No 2 IC KAPI NO: 9\nKADIKÖY\nISTANBUL\nTURKEY",
       "rules_applied": [
         {
+          "rule_id": "8.6",
+          "outcome": "PASS"
+        },
+        {
           "rule_id": "4.2.0.2",
-          "outcome": "MATCH"
+          "outcome": "Buyer field selected as authoritative consignee"
         },
         {
           "rule_id": "4.2.2.1",
-          "outcome": "MATCH"
+          "outcome": "Normalization applied"
         },
         {
           "rule_id": "4.2.3",
@@ -101,77 +109,77 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignee kan identifieras direkt i fakturans primära faktureringsfält 'Buyer'. Företagsnamnet matchar efter tillåten normalisering av punktnotation och bolagsform ('SAN ve TIC.AS' mot 'SAN. Ve TIC. A.S.'), och landuppgiften Türkiye/TURKEY överensstämmer efter normalisering av landsnamn."
+      "motivation": "Fakturan innehåller ett primärt faktureringsfält 'Buyer' med mottagaren 'KÜTAHYA ENTEGRE KAGIT SAN. Ve TIC. A.S.', vilket motsvarar certifikatets consignee efter tillåten normalisering av versaler/gemener, interpunktion och bolagsform. Adressuppgifterna pekar på samma part och landet Türkiye/TURKEY överensstämmer efter normalisering."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.96,
+      "confidence": 0.94,
       "certificate_value": "126 Packages Kraftliner\nInvoice Date and Number : 10.02.2026 / 111512",
-      "invoice_value": "Description of Goods  Kraftliner",
+      "invoice_value": "Description of Goods  Kraftliner\nInvoice no 111512\nInvoice date 2026-02-10",
       "rules_applied": [
         {
-          "rule_id": "4.3.2",
-          "outcome": "NOT_APPLICABLE"
+          "rule_id": "4.3.5",
+          "outcome": "APPLIED"
         },
         {
-          "rule_id": "4.3.3",
-          "outcome": "MATCH"
+          "rule_id": "4.3.5.2",
+          "outcome": "Goods content compatible"
         },
         {
           "rule_id": "4.3.8",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Något artikelnummer anges inte i certifikatet, så prioritet 1 är inte tillämplig. Den identitetsbärande huvudbeteckningen i certifikatet är 'Kraftliner', och samma ord förekommer uttryckligen i fakturan som 'Description of Goods Kraftliner'. Uppgiften kan därför verifieras utan semantisk tolkning."
+      "motivation": "Certifikatet använder en generell varubeskrivning ('Kraftliner') och anger samtidigt fakturanummer '111512' samt fakturadatum '10.02.2026'. Fakturan visar 'Description of Goods Kraftliner', 'Invoice no 111512' och datum '2026-02-10', vilket är samma kalenderdatum efter datumformatnormalisering. Fakturans varuinnehåll är förenligt med certifikatets beskrivning."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.88,
+      "confidence": 0.9,
       "certificate_value": "325987 KG",
-      "invoice_value": "12,416 MT\n16,246 MT\n14,678 MT\n36,848 MT\n34,072 MT\n48,693 MT\n45,231 MT\n23,675 MT\n71,21 MT\n22,918 MT\nTotal Quantity 325,987",
+      "invoice_value": "12,416 MT; 16,246 MT; 14,678 MT; 36,848 MT; 34,072 MT; 48,693 MT; 45,231 MT; 23,675 MT; 71,21 MT; 22,918 MT\nTotal Quantity 325,987",
       "rules_applied": [
         {
           "rule_id": "4.4.2.1",
-          "outcome": "BOX_7_SELECTED"
+          "outcome": "Box 7 quantity selected"
         },
         {
           "rule_id": "4.4.5.1",
-          "outcome": "SEQUENTIAL_EXCEPTION_REVIEW_COMPLETED"
+          "outcome": "Sequential exceptions tested"
         },
         {
           "rule_id": "4.4.5.5",
-          "outcome": "MATCH"
+          "outcome": "APPLIED"
         },
         {
           "rule_id": "4.4.5.5.1",
-          "outcome": "MATCH"
+          "outcome": "APPLIED"
         },
         {
           "rule_id": "4.4.6",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Verifieringsgrundande kvantitet är box 7 i certifikatet: '325987 KG'. Fakturan innehåller flera rader för samma produktfamilj 'Kraftliner' med uttryckliga radkvantiteter i MT: 12,416 + 16,246 + 14,678 + 36,848 + 34,072 + 48,693 + 45,231 + 23,675 + 71,21 + 22,918 = 325,987 MT. Vid tillåten tillämpning av undantag 3D för flera rader inom samma faktura, med MT↔KG-konvertering enligt den regel som uttryckligen tillåts inom detta undantag, motsvarar detta 325987 KG och matchar certifikatets värde exakt."
+      "motivation": "Verifieringsgrundande kvantitet är box 7-värdet '325987 KG'. Fakturan delar upp samma varutyp 'Kraftliner' på flera rader med kvantiteter i MT; dessa rader får summeras eftersom certifikatet använder en samlande varubeskrivning för samma produktfamilj. Summan av radkvantiteterna är 325,987 MT, vilket motsvarar 325987 KG, och matchar certifikatets kvantitet."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.99,
+      "confidence": 0.98,
       "certificate_value": "Austria",
       "invoice_value": "Goods origin Austria",
       "rules_applied": [
         {
           "rule_id": "4.5.1",
-          "outcome": "MATCH"
+          "outcome": "Explicit origin field identified"
         },
         {
           "rule_id": "4.5.5",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger ursprungsland 'Austria'. Fakturan innehåller en explicit ursprungsangivelse 'Goods origin Austria'. Ursprungslandet kan därför verifieras direkt i ett dedikerat origin-fält utan någon otillåten tolkning."
+      "motivation": "Certifikatet anger ursprungsland 'Austria'. Fakturan innehåller en uttrycklig ursprungsangivelse 'Goods origin Austria'. Ursprungslandet kan därför verifieras direkt utan tolkning."
     }
   },
   "overall_assessment": {
@@ -181,12 +189,12 @@
     "confidence": 0.95,
     "critical_failures": [],
     "manual_review_triggers": [],
-    "decision_summary": "Dokumentparet är giltigt parat via fakturanummer 111512 samt samstämmig consignor och consignee. Samtliga tillämpliga kontrollpunkter kan verifieras mot fakturan, inklusive kvantiteten som matchar efter tillåten summering av fakturarader för Kraftliner.",
-    "human_explanation": "Alla kontrollerbara uppgifter i certifikatet kan styrkas mot fakturan. Avsändare, mottagare, varubeskrivning, kvantitet och ursprungsland stämmer överens. Dokumentparet kan därför godkännas automatiskt."
+    "decision_summary": "All five applicable control points are verified as MATCH. The certificate references invoice 111512 dated 2026-02-10, the parties align, the goods description is consistent, the quantity 325987 KG is supported by summed invoice line quantities, and the origin Austria is explicitly stated on the invoice.",
+    "human_explanation": "Alla tillämpliga uppgifter i certifikatet kan verifieras mot fakturan. Avsändare, mottagare, varubeskrivning, mängd och ursprungsland stämmer överens. Dokumentparet kan därför godkännas automatiskt."
   },
   "_meta": {
-    "tested_at": "2026-04-01T21:48:56.880966+00:00",
-    "prompt_hash": "9b9df42642d8",
+    "tested_at": "2026-04-02T11:22:43.066017+00:00",
+    "prompt_hash": "f81eb9b0d2ea",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P0106_MATCH",

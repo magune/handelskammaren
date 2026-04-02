@@ -1,8 +1,8 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": null,
-    "document_pair_id": null,
+    "verification_timestamp": "2026-04-02",
+    "document_pair_id": "P235",
     "certificate_issue_date": "2026-03-13",
     "source_documents_received": 2
   },
@@ -13,14 +13,14 @@
   },
   "documents": {
     "document_a": {
-      "label": "Document A",
+      "label": "P235_MISMATCH_certificate.pdf",
       "assumed_role": "certificate",
-      "document_type": "Certificate of Origin"
+      "document_type": "certificate of origin"
     },
     "document_b": {
-      "label": "Document B",
+      "label": "P235_MISMATCH_invoice.pdf",
       "assumed_role": "invoice",
-      "document_type": "Commercial Invoice"
+      "document_type": "commercial invoice"
     }
   },
   "rule_activation": {
@@ -33,10 +33,6 @@
     "eu_origin_normalization_active": true,
     "activated_rules": [
       {
-        "rule_id": "4.2.0.3",
-        "rule_name": "Certifikat utfärdat för slutmottagare (Ship-To-regel)"
-      },
-      {
         "rule_id": "4.3.5",
         "rule_name": "Generell varubeskrivning med fakturareferens"
       },
@@ -45,8 +41,8 @@
         "rule_name": "EU-normalisering"
       },
       {
-        "rule_id": "4.5.4.2",
-        "rule_name": "EU-medlemsland"
+        "rule_id": "4.2.0.3.1",
+        "rule_name": "Ship-To-regeln ger MANUAL_REVIEW vid oberoende Bill-To-part"
       }
     ]
   },
@@ -54,20 +50,16 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.97,
+      "confidence": 0.98,
       "certificate_value": "Vitrolife Sweden AB\nBox 9080\n40092, Göteborg\nSweden",
       "invoice_value": "Vitrolife Sweden AB, Box 9080, 400 92 Göteborg, SWEDEN",
       "rules_applied": [
         {
-          "rule_id": "4.1.1",
+          "rule_id": "4.1.0",
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.1.2",
-          "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.1.4",
+          "rule_id": "4.1.2.1",
           "outcome": "MATCH"
         },
         {
@@ -75,47 +67,39 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger avsändaren som \"Vitrolife Sweden AB\" i Sverige. Fakturan visar samma företagsnamn i fakturans footer och adressblock, med landet \"SWEDEN\". Företagsnamn och land kan därför identifieras direkt i fakturan."
+      "motivation": "Certifikatets consignor 'Vitrolife Sweden AB' återfinns uttryckligen i fakturan, både i footer/adressblock och i dokumentets branding. Landet Sverige framgår explicit i fakturaadressen. Samma juridiska part och land kan därför verifieras."
     },
     "consignee": {
       "applicable": true,
-      "status": "MATCH",
-      "confidence": 0.89,
+      "status": "MANUAL_REVIEW",
+      "confidence": 0.72,
       "certificate_value": "Medical Experts Services LLC\nMuscat-Ghala Hights-Muscat Pavilion\nOffice 134 - N. Mohamad +968 959093\n0 Muscat\nOman",
-      "invoice_value": "Delivery address\nMedical Experts Services LLC\nMuscat-Ghala Hights-Muscat Pavilion\nOffice 134 - N. Mohamad +968 95909393\nOM-0 Muscat\nOman",
+      "invoice_value": "Invoice address: Lambdatech for Medical and Laboratory Equipment L.L.C., AL Barsha South 3, P.O. Box 502604, Dubai, United Arab Emirates; Delivery address: Medical Experts Services LLC, Muscat-Ghala Hights-Muscat Pavilion, Office 134 - N. Mohamad +968 95909393, OM-0 Muscat, Oman",
       "rules_applied": [
         {
           "rule_id": "4.2.0.2",
-          "outcome": "PRIMARY_BILL_TO_DIFFERS"
+          "outcome": "PRIMARY_BILL_TO_IDENTIFIED"
         },
         {
           "rule_id": "4.2.0.3",
-          "outcome": "MATCH"
+          "outcome": "SHIP_TO_EXCEPTION_CONSIDERED"
         },
         {
-          "rule_id": "4.2.3",
-          "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.2.4",
-          "outcome": "MATCH"
+          "rule_id": "4.2.0.3.1",
+          "outcome": "MANUAL_REVIEW"
         }
       ],
-      "motivation": "Fakturan har ett annat Invoice address-fält (Lambdatech for Medical and Laboratory Equipment L.L.C., United Arab Emirates), men certifikatets mottagare \"Medical Experts Services LLC\" återfinns exakt i fakturans Delivery address i Oman. Detta uppfyller Ship-To-undantaget eftersom både Bill-To-parten och slutmottagaren förekommer i samma faktura och inget motsäger att Medical Experts Services LLC är den faktiska slutmottagaren."
+      "motivation": "Certifikatets consignee 'Medical Experts Services LLC, Oman' återfinns i fakturans leveransadress, men fakturan har också ett tydligt faktureringsfält/invoice address för en annan juridisk part: 'Lambdatech for Medical and Laboratory Equipment L.L.C.' i Förenade Arabemiraten. Eftersom Bill-To-parten är en självständig annan juridisk entitet utan styrkt koppling till certifikatets consignee ska Ship-To-scenariot bedömas som MANUAL_REVIEW, inte MATCH."
     },
     "goods_description": {
       "applicable": true,
       "status": "MISMATCH",
       "confidence": 0.93,
       "certificate_value": "2 kolli\nComponents for Culturing Media for In Vitro Fertilisation(IVF)\nSee attaced invoice 5007905 dated 20260313",
-      "invoice_value": "Invoice no -5007905\nShipping date 20260311\nComponents for culturing media & medical instruments for In Vitro Fertilisation IVF - Sterile saline solutions - Store at +2 to +8 degrees C",
+      "invoice_value": "Invoice no -5007905; Shipping date 20260311; footer text: 'Components for culturing media & medical instruments for In Vitro Fertilisation IVF'",
       "rules_applied": [
         {
           "rule_id": "4.3.5",
-          "outcome": "APPLICABLE"
-        },
-        {
-          "rule_id": "4.3.5.1",
           "outcome": "MISMATCH"
         },
         {
@@ -123,29 +107,29 @@
           "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Certifikatet använder generell varubeskrivning och hänvisar uttryckligen till \"invoice 5007905 dated 20260313\". Fakturafilen visar fakturanummer \"-5007905\", men något matchande fakturadatum 20260313 kan inte identifieras; den synliga dateringen i fakturan är \"Shipping date 20260311\". Datumavvikelsen är därmed inte verifierad och om 20260311 används som relevant datum är skillnaden två dygn, vilket leder till MISMATCH."
+      "motivation": "Certifikatet använder en generell varubeskrivning och hänvisar uttryckligen till 'invoice 5007905 dated 20260313'. Fakturan visar samma fakturanummer 5007905, men bekräftar inte datum 20260313; det enda tydliga datumet i fakturahuvudet är 'Shipping date 20260311'. Kravet för generell varubeskrivning med fakturareferens är därför inte uppfyllt, vilket ger MISMATCH."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.98,
+      "confidence": 0.97,
       "certificate_value": "43,8 kg GW",
       "invoice_value": "Gross weight (kg): 43,8",
       "rules_applied": [
         {
-          "rule_id": "4.4.2",
+          "rule_id": "4.4.2.1",
+          "outcome": "BOX_7_USED"
+        },
+        {
+          "rule_id": "4.4.2.2",
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.4.3",
-          "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.4.4",
+          "rule_id": "4.4.6",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger ett explicit viktvärde i box 7: \"43,8 kg GW\". Fakturan anger uttryckligen \"Gross weight (kg): 43,8\". Det numeriska värdet kan identifieras direkt i fakturan och avser gross weight för samma försändning."
+      "motivation": "Certifikatets verifieringsgrundande kvantitet i box 7 är '43,8 kg GW'. Fakturan anger uttryckligen 'Gross weight (kg): 43,8'. Numeriskt värde, viktkategori och enhet överensstämmer."
     },
     "origin": {
       "applicable": true,
@@ -154,10 +138,6 @@
       "certificate_value": "European Community",
       "invoice_value": "Country of Origin: Sweden",
       "rules_applied": [
-        {
-          "rule_id": "4.5.1",
-          "outcome": "MATCH"
-        },
         {
           "rule_id": "4.5.4.1",
           "outcome": "MATCH"
@@ -171,24 +151,26 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger ursprung \"European Community\". Fakturan anger explicit ursprungsfält \"Country of Origin: Sweden\". Sverige är en EU-medlemsstat och verifierar därför certifikatets EU-/European Community-angivelse."
+      "motivation": "Certifikatet anger ursprung 'European Community'. Fakturan anger explicit ursprungsfält 'Country of Origin: Sweden'. Sverige är ett EU-land, så ursprunget är verifierat genom tillåten EU-normalisering."
     }
   },
   "overall_assessment": {
     "comparison_result": "NOT_IDENTICAL",
     "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
     "auto_approval_eligible": false,
-    "confidence": 0.93,
+    "confidence": 0.9,
     "critical_failures": [
-      "Varubeskrivningen använder fakturareferens med datum, men certifikatet anger \"invoice 5007905 dated 20260313\" och detta datum kan inte verifieras i den bifogade fakturan, som i stället visar \"Shipping date 20260311\"."
+      "Varubeskrivningen är kopplad till fakturareferensen 'invoice 5007905 dated 20260313', men fakturan bekräftar inte datum 20260313; det enda tydliga datumet i fakturan är 20260311."
     ],
-    "manual_review_triggers": [],
-    "decision_summary": "Dokumentparet matchar för avsändare, mottagare, kvantitet och ursprungsland. Varubeskrivningskontrollpunkten faller dock ut som MISMATCH eftersom certifikatets uttryckliga hänvisning till invoice 5007905 dated 20260313 inte kan verifieras mot fakturans dateringsuppgifter. Minst en tillämplig kontrollpunkt är därför MISMATCH och totalresultatet måste vara NOT_IDENTICAL.",
-    "human_explanation": "Certifikatet och fakturan stämmer för avsändare, mottagare, kvantitet och ursprung. Däremot hänvisar certifikatet till \"invoice 5007905 dated 20260313\", medan fakturan inte visar detta datum och i stället visar \"Shipping date 20260311\". Därför är dokumentparet inte identiskt och kräver manuell hantering."
+    "manual_review_triggers": [
+      "Certifikatets consignee återfinns endast som leveransadress medan fakturan är ställd till en annan juridisk part i Förenade Arabemiraten."
+    ],
+    "decision_summary": "Dokumentparet är inte identiskt. Consignor, kvantitet och ursprung kan verifieras, men kontrollpunkten för varubeskrivning ger MISMATCH eftersom certifikatets fakturareferens innehåller ett datum som inte bekräftas av fakturan. Consignee-frågan kräver dessutom manuell hantering eftersom certifikatets mottagare endast återfinns i Ship-To/Delivery address medan Bill-To-part är en annan juridisk entitet.",
+    "human_explanation": "Certifikatet hänvisar till faktura 5007905 daterad 2026-03-13, men den bifogade fakturan bekräftar inte detta datum; det enda tydliga datumet i fakturan är 2026-03-11. Mottagaren i certifikatet finns som leveransadress, men fakturan är ställd till ett annat bolag i Förenade Arabemiraten. Därför är dokumentparet inte identiskt och kräver manuell hantering."
   },
   "_meta": {
-    "tested_at": "2026-04-01T12:52:36.781845+00:00",
-    "prompt_hash": "9b9df42642d8",
+    "tested_at": "2026-04-02T11:06:44.039409+00:00",
+    "prompt_hash": "f81eb9b0d2ea",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P235_MISMATCH",

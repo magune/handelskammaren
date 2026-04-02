@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": null,
+    "verification_timestamp": "2026-04-02",
     "document_pair_id": null,
     "certificate_issue_date": "2026-02-18",
     "source_documents_received": 2
@@ -34,7 +34,7 @@
     "activated_rules": [
       {
         "rule_id": "8.5.0",
-        "rule_name": "Filbaserad dokumentparning"
+        "rule_name": "Filbaserad dokumentparning: certifikat från fil 1 och faktura från fil 2"
       },
       {
         "rule_id": "8.6",
@@ -42,23 +42,15 @@
       },
       {
         "rule_id": "4.1.0",
-        "rule_name": "Consignor identifierad i fakturan"
+        "rule_name": "Consignor identifierad någonstans i fakturan"
       },
       {
-        "rule_id": "4.2.0.2",
-        "rule_name": "Primärt faktureringsfält för consignee"
-      },
-      {
-        "rule_id": "4.3.4",
-        "rule_name": "Tillägg som inte påverkar produktidentitet"
-      },
-      {
-        "rule_id": "4.4.3.1",
-        "rule_name": "Flera kvantitetsuppgifter"
+        "rule_id": "4.5.4.1",
+        "rule_name": "EU-normalisering"
       },
       {
         "rule_id": "4.5.4.2",
-        "rule_name": "EU ↔ specifikt EU-medlemsland"
+        "rule_name": "EU-medlemsland utbytbart mot EU-samlingsbegrepp"
       }
     ]
   },
@@ -75,20 +67,24 @@
           "outcome": "MATCH"
         },
         {
+          "rule_id": "4.1.2",
+          "outcome": "MATCH"
+        },
+        {
           "rule_id": "4.1.2.1",
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.1.5",
+          "rule_id": "4.1.4",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor 'Ballograf AB' återfinns uttryckligen i fakturans företagsblock och footer. Landet 'Sweden' framgår explicit i fakturans adressblock. Skillnaden '11A' kontra '11 A, 2TR' är inte avgörande eftersom företagsnamn och land verifieras för samma juridiska part."
+      "motivation": "Certifikatets consignor 'Ballograf AB' identifieras uttryckligen i fakturan på sida 1 och 2 i footer/adressblock som 'Ballograf AB' med svensk adress. Landet 'Sweden' framgår explicit i fakturans adressblock och stöds även av VAT-prefix 'SE'. Detta uppfyller kravet att certifikatets avsändare ska kunna återfinnas i fakturan som samma juridiska part."
     },
     "consignee": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.98,
+      "confidence": 0.99,
       "certificate_value": "KRAVITZ IMPORT\n45 Harechess Street\n71718 Modiin\nISRAEL",
       "invoice_value": "Invoice address\nKRAVITZ IMPORT\n45 Harechess Street\n717 18 Modiin\nIsrael",
       "rules_applied": [
@@ -97,23 +93,31 @@
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.2.3",
+          "rule_id": "4.2.1",
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.2.4",
+          "rule_id": "4.2.2",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.2.3",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignee kan identifieras exakt i fakturans primära faktureringsfält 'Invoice address'. Företagsnamnet 'KRAVITZ IMPORT' och landet 'Israel' överensstämmer. Postnummerformatet '71718' kontra '717 18' är endast formatering och utgör ingen motsägelse."
+      "motivation": "Fakturans primära faktureringsfält är 'Invoice address' och anger 'KRAVITZ IMPORT, 45 Harechess Street, 717 18 Modiin, Israel'. Detta motsvarar certifikatets consignee efter tillåten normalisering av postnummerformatet '71718' vs '717 18'. Landet Israel överensstämmer."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.88,
+      "confidence": 0.92,
       "certificate_value": "Invoice 89736\nEpoca p assorted\nEpoca p vintage pink\nOriginal refill black\nEpoca p khaki green\nEpoca p turquise\nEpoca p pink\nEpoca p lavender\nEpoca p olive green\nNeutral display plastic",
       "invoice_value": "103001 EPOCA P ASSORTED EAN\n103051 EPOCA P VINTAGE PINK EAN\n190301 ORIGINAL REFILL BLACK M EAN\n103561 EPOCA P KHAKI GREEN EAN\n103281 EPOCA P TURQUISE EAN\n103301 EPOCA P PINK EAN\n103081 EPOCA P LAVENDER EAN\n103071 EPOCA P OLIVE GREEN EAN\n96802 NEUTRAL DISPLAY PLASTIC\nPen stand -005",
       "rules_applied": [
+        {
+          "rule_id": "4.3.1",
+          "outcome": "MATCH"
+        },
         {
           "rule_id": "4.3.2",
           "outcome": "NOT_APPLICABLE"
@@ -125,20 +129,16 @@
         {
           "rule_id": "4.3.4",
           "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.3.8",
-          "outcome": "MATCH"
         }
       ],
-      "motivation": "Artikelnummer anges inte i certifikatet, därför har kontrollerad textmatchning använts. Samtliga certifikatbeskrivningar återfinns i fakturan som identiska huvudbeteckningar efter normalisering av versaler/gemener; fakturans tillägg som 'EAN' och den extra raden 'Pen stand -005' utgör inte i sig en motsägelse mot de angivna certifikatvarorna. 'Original refill black' återfinns som sammanhängande ordsekvens i fakturans 'ORIGINAL REFILL BLACK M EAN', vilket fortfarande identifierar certifikatets angivna vara i den bifogade fakturan."
+      "motivation": "Certifikatet listar nio varubeskrivningar och samtliga kan identifieras i fakturans artikelrader på sida 1. De flesta matchar exakt efter normalisering av versaler/gemener. För 'Original refill black' innehåller fakturan den längre texten 'ORIGINAL REFILL BLACK M EAN'; den identitetsbärande huvudbeteckningen 'ORIGINAL REFILL BLACK' återfinns exakt och tillägget ligger efter huvudbeteckningen. Ingen annan fakturarad skapar oklarhet om vilken vara som avses."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.99,
+      "confidence": 0.98,
       "certificate_value": "360 pcs\n240 pcs\n120 Pcs\n360 Pcs\n360 Pcs\n480 Pcs\n240 Pcs\n360 Pcs\n30 Pcs",
-      "invoice_value": "Delivered quantity\n360 PCS\n240 PCS\n120 PCS\n360 PCS\n360 PCS\n480 PCS\n240 PCS\n360 PCS\n30 PCS",
+      "invoice_value": "Delivered quantity:\n360 PCS\n240 PCS\n120 PCS\n360 PCS\n360 PCS\n480 PCS\n240 PCS\n360 PCS\n30 PCS",
       "rules_applied": [
         {
           "rule_id": "4.4.2",
@@ -151,20 +151,16 @@
         {
           "rule_id": "4.4.3.1",
           "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.4.6",
-          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets box 7 innehåller nio uttryckliga kvantiteter med enhet 'pcs/Pcs'. Samma numeriska värden 360, 240, 120, 360, 360, 480, 240, 360 och 30 återfinns uttryckligen i fakturans kolumn 'Delivered quantity' med enheten 'PCS'. Ingen motsägelse förekommer mellan certifikatets och fakturans kvantitetsuppgifter."
+      "motivation": "Certifikatets nio kvantitetsuppgifter är uttryckligen angivna med numeriskt värde och enhet 'pcs/Pcs'. Fakturan visar motsvarande levererade kvantiteter per artikelrad: 360, 240, 120, 360, 360, 480, 240, 360 och 30 PCS. Ingen uttrycklig motsägelse förekommer."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.93,
+      "confidence": 0.9,
       "certificate_value": "European community",
-      "invoice_value": "\"Country of Origin Sweden\"\nCountry of origin; Sweden",
+      "invoice_value": "\"Country of Origin Sweden\" / \"Country of origin; Sweden\"",
       "rules_applied": [
         {
           "rule_id": "4.5.1",
@@ -177,28 +173,24 @@
         {
           "rule_id": "4.5.4.2",
           "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.5.5",
-          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger ursprung 'European community'. Fakturan innehåller ett explicit origin-fält med 'Country of Origin Sweden' och även 'Country of origin; Sweden'. Sverige är en EU-medlemsstat, därför är certifikatets EU-ursprung verifierat genom fakturans specifika EU-land."
+      "motivation": "Certifikatet anger ursprung 'European community'. Fakturan anger uttryckligt ursprung i dedikerat origin-fält på sida 2: 'Country of Origin Sweden' och 'Country of origin; Sweden'. Sverige är en EU-medlemsstat, vilket verifierar certifikatets EU-angivelse enligt EU-normaliseringsreglerna."
     }
   },
   "overall_assessment": {
     "comparison_result": "IDENTICAL",
     "workflow_recommendation": "AUTO_APPROVAL_ELIGIBLE",
     "auto_approval_eligible": true,
-    "confidence": 0.95,
+    "confidence": 0.96,
     "critical_failures": [],
     "manual_review_triggers": [],
-    "decision_summary": "Dokumentparet är konsekvent parat via fakturanummer 89736. Consignor, consignee, varubeskrivning, kvantiteter och ursprungsland kan verifieras mot den bifogade fakturan enligt tillåtna regler och normaliseringar.",
-    "human_explanation": "Alla uppgifter i ursprungscertifikatet kan verifieras mot fakturan. Avsändare, mottagare, varor, mängder och ursprung stämmer med den bifogade fakturan. Dokumentparet kan därför godkännas automatiskt."
+    "decision_summary": "Samtliga tillämpliga kontrollpunkter kan verifieras mot fakturan: consignor, consignee, varubeskrivning, kvantitet och ursprungsland. Fakturanummer 89736 återfinns i båda dokumenten och dokumentparningen är giltig. Ingen tillämplig kontrollpunkt ger MISMATCH eller MANUAL_REVIEW.",
+    "human_explanation": "Certifikatet och fakturan hänvisar till samma faktura 89736, samma avsändare Ballograf AB, samma mottagare Kravitz Import och samma varor med samma kvantiteter. Ursprunget kan också verifieras eftersom certifikatet anger European Community och fakturan anger Sweden som uttryckligt ursprung. Dokumentparet kan därför godkännas automatiskt."
   },
   "_meta": {
-    "tested_at": "2026-04-01T13:16:28.130635+00:00",
-    "prompt_hash": "9b9df42642d8",
+    "tested_at": "2026-04-02T11:06:44.032696+00:00",
+    "prompt_hash": "f81eb9b0d2ea",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P220_MATCH",

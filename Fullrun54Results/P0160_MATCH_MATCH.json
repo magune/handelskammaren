@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-04-01T00:00:00Z",
+    "verification_timestamp": "2026-04-02T00:00:00Z",
     "document_pair_id": null,
     "certificate_issue_date": "2025-10-15",
     "source_documents_received": 2
@@ -33,16 +33,20 @@
     "eu_origin_normalization_active": true,
     "activated_rules": [
       {
-        "rule_id": "4.3.5",
-        "rule_name": "Generell varubeskrivning med fakturareferens"
+        "rule_id": "8.5.0",
+        "rule_name": "Verifiering mot separat fakturafil, inte mot inbäddad fakturakopia i certifikatfilen"
       },
       {
-        "rule_id": "4.5.3",
-        "rule_name": "Blandade ursprung"
+        "rule_id": "8.6",
+        "rule_name": "Parningsvalidering passerad via fakturanummer, consignor/consignee-signaler"
+      },
+      {
+        "rule_id": "4.3.5",
+        "rule_name": "Generell varubeskrivning med fakturareferens och datum"
       },
       {
         "rule_id": "4.5.4.1",
-        "rule_name": "EU-normalisering och asterisk/okänt suffix på ursprungskod"
+        "rule_name": "EU-normalisering för ursprungsland"
       },
       {
         "rule_id": "4.1.3.7.1",
@@ -54,134 +58,130 @@
     "consignor": {
       "applicable": true,
       "status": "MANUAL_REVIEW",
-      "confidence": 0.62,
+      "confidence": 0.68,
       "certificate_value": "Husqvarna Construction\nJons väg 19\nSE433 75, JONSERED\nSweden",
-      "invoice_value": "Seller\nHUSQVARNA AB\nEORI-NO: SE5560005331\n56182 HUSKVARNA Sweden",
+      "invoice_value": "HUSQVARNA AB\n56182 HUSKVARNA Sweden",
       "rules_applied": [
         {
           "rule_id": "4.1.0",
-          "outcome": "Consignor-namnet 'Husqvarna Construction' kunde inte identifieras uttryckligen någonstans i den separata fakturafilen."
-        },
-        {
-          "rule_id": "4.1.3.1",
-          "outcome": "Direkt juridisk namnmatchning misslyckades: 'Husqvarna Construction' ≠ 'HUSQVARNA AB'."
-        },
-        {
-          "rule_id": "4.1.2.1",
-          "outcome": "Fakturalandet Sverige verifierades via säljaradress, VAT-prefix SE och IBAN-prefix SE."
+          "outcome": "certifikatets exakta consignor-namn kunde inte identifieras uttryckligen i den separata fakturafilen"
         },
         {
           "rule_id": "4.1.3.7.1",
-          "outcome": "Möjlig divisions-/segmentsituation ('Construction') med gemensamt kärnord 'Husqvarna' gav MANUAL_REVIEW i stället för MISMATCH."
+          "outcome": "invoice-namnet är en exakt delmängd av certifikatets namn och extraordet 'Construction' kan vara divisionsord; utan bekräftande indikator blir utfallet MANUAL_REVIEW"
+        },
+        {
+          "rule_id": "4.1.4",
+          "outcome": "landmatch Sverige"
         }
       ],
-      "motivation": "Certifikatet anger avsändaren som 'Husqvarna Construction' i Sverige. Den separata fakturafilen anger säljaren som 'HUSQVARNA AB' i Sverige och innehåller Sverige-indikatorer via adress, VAT-prefix SE och IBAN-prefix SE. Certifikatets consignor-namn kunde inte återfinnas uttryckligen i fakturatexten, så koncernstrukturregeln i 4.1.0 kunde inte användas. Skillnaden består dock av ett gemensamt distinktivt kärnord ('Husqvarna') och ett extra divisionsord ('Construction') i certifikatet, vilket enligt 4.1.3.7.1 ska hanteras som MANUAL_REVIEW och inte som automatisk MATCH eller automatisk MISMATCH."
+      "motivation": "Certifikatet anger consignor som 'Husqvarna Construction' i Sverige. Den separata fakturafilen anger säljaren som 'HUSQVARNA AB' i Sverige, och det fullständiga namnet 'Husqvarna Construction' återfinns inte uttryckligen i fakturan. Eftersom fakturans namn är en exakt delmängd av certifikatets namn och det extra ordet 'Construction' kan vara ett divisions-/segmentord, men ingen bekräftande indikator finns såsom matchande adress eller gemensam företagsidentifierare mellan namnen, ska kontrollpunkten sättas till MANUAL_REVIEW."
     },
     "consignee": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.99,
+      "confidence": 0.98,
       "certificate_value": "ORIENTAL TRADING COMPANY. LTD (AIR)\n1ST FLOOR, E-BLOCK, SALWA RD, BOX96\nALWAB AREA, DOHA\nQATAR",
-      "invoice_value": "Consignee (name and postal address)\nORIENTAL TRADING COMPANY. LTD (AIR)\n1ST FLOOR, E-BLOCK, SALWA RD, BOX96\n96 ALWAB AREA, DOHA\nQATAR",
+      "invoice_value": "ORIENTAL TRADING COMPANY. LTD (AIR)\n1ST FLOOR, E-BLOCK, SALWA RD, BOX96\n96 ALWAB AREA, DOHA\nQATAR",
       "rules_applied": [
         {
-          "rule_id": "4.2.0.2",
-          "outcome": "Verifiering gjordes mot explicit Consignee-fält i fakturan."
+          "rule_id": "4.2.1",
+          "outcome": "mottagaren identifierad i fakturans explicita consignee-fält"
         },
         {
           "rule_id": "4.2.2",
-          "outcome": "Företagsnamnet kunde identifieras direkt i fakturan."
+          "outcome": "företagsnamnet kan identifieras direkt"
         },
         {
           "rule_id": "4.2.3",
-          "outcome": "Landet Qatar överensstämmer."
+          "outcome": "landmatch Qatar"
         }
       ],
-      "motivation": "Mottagaren i certifikatet kan identifieras direkt i fakturans explicita 'Consignee'-fält med samma företagsnamn 'ORIENTAL TRADING COMPANY. LTD (AIR)' och samma land 'QATAR'. Skillnaden att fakturan också innehåller gatu-/områdesdelen med '96 ALWAB AREA, DOHA' påverkar inte bedömningen. Kontrollpunkten är därför MATCH."
+      "motivation": "Certifikatets consignee kan identifieras direkt i fakturans explicita consignee-fält. Företagsnamnet 'ORIENTAL TRADING COMPANY. LTD (AIR)' och landet Qatar överensstämmer. Smärre adressvariation som det extra gatunumret '96' i fakturan påverkar inte bedömningen."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.89,
+      "confidence": 0.9,
       "certificate_value": "6372904, 6372948,1703029,1703043\n1703228,6368771,6368990\nAttached invoice 4859319 dated on 251015\nMachines and spareparts",
-      "invoice_value": "Marks and numbers / description of goods:\n6372904,6372948,1703029\n1703043,1703228,6368771\n6368990\nDrill motors\n\nInvoice No. 4859319\nSpecification lines present on invoice.",
+      "invoice_value": "Invoice No. 4859319\nInvoice date 2025-10-15\n6372904,6372948,1703029,1703043,1703228,6368771,6368990\nDrill motors\n970 44 56-07 DRILL MOTOR DM 430\n967 96 86-01 DRILL STAND DS 500!\n536 08 98-01 WATER TANK",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "Artikelnummer i certifikatet verifierades primärt och återfanns exakt i fakturan."
+          "outcome": "de numeriska identifierarna 6372904, 6372948, 1703029, 1703043, 1703228, 6368771 och 6368990 återfinns exakt i fakturan"
         },
         {
           "rule_id": "4.3.5",
-          "outcome": "Certifikatet hänvisar uttryckligen till attached invoice 4859319; fakturan i dokumentparet bär samma nummer."
+          "outcome": "certifikatet innehåller generell varubeskrivning med uttrycklig fakturareferens 4859319 och datum 251015 som matchar fakturans 2025-10-15"
         },
         {
-          "rule_id": "4.3.8",
-          "outcome": "Varubeskrivningen ansågs verifierad."
+          "rule_id": "4.3.5.2",
+          "outcome": "fakturans varuinnehåll är förenligt med den generella beskrivningen 'Machines and spareparts'"
         }
       ],
-      "motivation": "Certifikatet innehåller artikelnumren 6372904, 6372948, 1703029, 1703043, 1703228, 6368771 och 6368990. Samtliga dessa nummer återfinns exakt i fakturans goods/marks-and-numbers-del. Certifikatet hänvisar dessutom uttryckligen till 'Attached invoice 4859319', och den separata fakturafilen har fakturanummer 4859319. Den generella texten 'Machines and spareparts' är förenlig med fakturans varuinnehåll och artikelidentifieringen i prioritet 1 uppfylls. Därför är kontrollpunkten MATCH."
+      "motivation": "Certifikatet refererar uttryckligen till 'Attached invoice 4859319 dated on 251015', och fakturan visar nummer 4859319 med datum 2025-10-15, vilket är samma datum efter tillåten datumformatnormalisering. De sju identifierarna i certifikatet återfinns exakt i fakturans gods-/marks block. Den generella beskrivningen 'Machines and spareparts' är förenlig med fakturans specificerade maskiner och tillbehör."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.97,
       "certificate_value": "Gross 1328.66kg",
-      "invoice_value": "Gross weight, kg\n1328,66",
+      "invoice_value": "Gross weight, kg 1328,66",
       "rules_applied": [
         {
           "rule_id": "4.4.2.2",
-          "outcome": "Certifikatet anger ett enda viktvärde med kategori Gross och enhet kg."
+          "outcome": "ett enda bruttovärde med viktkategori och enhet anges i certifikatet"
         },
         {
           "rule_id": "4.4.3",
-          "outcome": "Det numeriska värdet 1328.66 kunde identifieras i fakturan som 1328,66 efter normalisering av decimalnotation."
+          "outcome": "samma numeriska värde kan identifieras i fakturan"
         },
         {
-          "rule_id": "4.4.6",
-          "outcome": "Ingen motsägelse eller toleransöverskridande avvikelse föreligger."
+          "rule_id": "4.4.3.4",
+          "outcome": "punkt/komma-normalisering ger samma numeriska värde 1328.66"
         }
       ],
-      "motivation": "Certifikatet anger kvantiteten som 'Gross 1328.66kg'. Fakturan anger 'Gross weight, kg 1328,66'. Efter tillåten normalisering av decimaltecken är detta samma numeriska värde och samma vikttyp. Kontrollpunkten är därför MATCH."
+      "motivation": "Certifikatet anger ett explicit bruttovärde 'Gross 1328.66kg'. Fakturan anger 'Gross weight, kg 1328,66'. Efter tillåten normalisering av decimaltecken är värdena numeriskt identiska och avser samma försändning."
     },
     "origin": {
       "applicable": true,
       "status": "MANUAL_REVIEW",
-      "confidence": 0.49,
+      "confidence": 0.64,
       "certificate_value": "The European Community",
-      "invoice_value": "Country of origin: SEE BELOW\nOrigin column on invoice lines: DE*, CH*, DE*\nFooter statement: 'the goods are of the origin specified above in the column headed \"origin\".'",
+      "invoice_value": "Origin column: DE*, CH*, DE*\nWe hereby certify that the goods are of the origin specified above in the column headed \"origin\".",
       "rules_applied": [
         {
           "rule_id": "4.5.1",
-          "outcome": "Ursprung framgår explicit i fakturan via dedikerat origin-fält och origin-kolumn."
-        },
-        {
-          "rule_id": "4.5.3",
-          "outcome": "Fakturan innehåller flera ursprungskoder per artikelrad."
+          "outcome": "ursprung identifierat i fakturans explicita origin-kolumn"
         },
         {
           "rule_id": "4.5.4.1",
-          "outcome": "Ursprungskoderna DE* och CH* har oförklarade suffix/asterisker; detta kräver MANUAL_REVIEW."
+          "outcome": "EU-normalisering är relevant för DE men fakturan innehåller även CH*"
+        },
+        {
+          "rule_id": "4.5.4.1",
+          "outcome": "oförklarat suffix på icke-EU-koden CH* medför MANUAL_REVIEW"
         }
       ],
-      "motivation": "Certifikatet anger ursprungsland som 'The European Community'. Fakturan anger ursprung uttryckligen i en origin-kolumn, men de faktiska koderna är 'DE*', 'CH*' och 'DE*'. Asterisken/suffixet förklaras inte någonstans i fakturan. Enligt 4.5.4.1 får sådana oförklarade suffix inte tolkas automatiskt som vare sig bekräftelse eller motsägelse. Eftersom en av koderna dessutom är 'CH*', dvs. en i grunden icke-EU-kod med oklar kvalificering, ska kontrollpunkten sättas till MANUAL_REVIEW."
+      "motivation": "Certifikatet anger ursprung 'The European Community'. Fakturan har en explicit origin-kolumn med 'DE*', 'CH*' och 'DE*'. Tyskland kan omfattas av EU-normalisering, men 'CH*' är en icke-EU-kod med oförklarad asterisk och kan därför inte tolkas säkert automatiskt; ursprungskontrollpunkten ska därför sättas till MANUAL_REVIEW."
     }
   },
   "overall_assessment": {
     "comparison_result": "MANUAL_REVIEW",
     "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
     "auto_approval_eligible": false,
-    "confidence": 0.61,
+    "confidence": 0.72,
     "critical_failures": [],
     "manual_review_triggers": [
-      "Consignor anges som 'Husqvarna Construction' i certifikatet men fakturan anger 'HUSQVARNA AB'; möjlig divisions-/segmentskillnad kan inte verifieras säkert automatiskt.",
-      "Fakturans ursprungskoder DE* och CH* innehåller oförklarade suffix/asterisker, vilket förhindrar säker automatisk ursprungsverifiering."
+      "Consignor kan inte säkert fastställas som samma juridiska part: certifikatet anger 'Husqvarna Construction' medan fakturan anger 'HUSQVARNA AB'.",
+      "Ursprungsverifieringen kan inte slutföras automatiskt eftersom fakturan innehåller den oförklarade icke-EU-koden 'CH*' trots att certifikatet anger 'The European Community'."
     ],
-    "decision_summary": "Dokumentparet kunde paras korrekt via fakturanummer 4859319 och mottagaren kunde verifieras. Varubeskrivning och kvantitet matchar, men avsändaridentiteten och ursprungsangivelsen kan inte slutligt avgöras automatiskt enligt reglerna.",
-    "human_explanation": "Certifikatet hänvisar till faktura 4859319 och mottagare, artikelnummer samt vikt 1328,66 kg kan verifieras mot fakturan. Däremot anges avsändaren som 'Husqvarna Construction' medan fakturan är utställd av 'HUSQVARNA AB', vilket kan vara ett divisionsnamn men inte kan bekräftas säkert. Ursprunget anges som 'The European Community' i certifikatet men fakturan använder ursprungskoderna 'DE*' och 'CH*' med oförklarade asterisker, vilket kräver manuell granskning."
+    "decision_summary": "Dokumentparet är korrekt parat via fakturanummer 4859319 och flera kontrollpunkter verifieras: consignee, varubeskrivning/fakturareferens och bruttovikt matchar. Slutligt automatiskt beslut kan ändå inte fattas eftersom consignor-namnet i certifikatet inte säkert kan bindas till fakturans juridiska säljare och eftersom fakturans ursprungskod 'CH*' är oförklarad. Därför ska ärendet gå till manuell handläggning.",
+    "human_explanation": "Mottagare, fakturareferens, varubeskrivning och bruttovikt stämmer mellan certifikatet och fakturan. Däremot anger certifikatet avsändaren som Husqvarna Construction medan fakturan är utställd av HUSQVARNA AB, och detta kan inte bekräftas säkert automatiskt. Ursprunget behöver också granskas manuellt eftersom fakturan använder ursprungskoden CH* utan förklaring medan certifikatet anger The European Community."
   },
   "_meta": {
-    "tested_at": "2026-04-01T20:23:52.695949+00:00",
-    "prompt_hash": "9b9df42642d8",
+    "tested_at": "2026-04-02T11:21:38.825786+00:00",
+    "prompt_hash": "f81eb9b0d2ea",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P0160_MATCH",

@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-04-01T00:00:00Z",
+    "verification_timestamp": "2026-04-02T00:00:00Z",
     "document_pair_id": null,
     "certificate_issue_date": "2023-03-22",
     "source_documents_received": 2
@@ -20,7 +20,7 @@
     "document_b": {
       "label": "Document B",
       "assumed_role": "invoice",
-      "document_type": "Commercial Invoice"
+      "document_type": "Commercial Invoice (image-based scan)"
     }
   },
   "rule_activation": {
@@ -34,11 +34,11 @@
     "activated_rules": [
       {
         "rule_id": "8.6",
-        "rule_name": "Parningsvalidering passerad via consignor som återfinns i fakturan"
+        "rule_name": "Parningsvalidering passerad via identifierbar consignor i fakturan"
       },
       {
         "rule_id": "4.1.0",
-        "rule_name": "Consignor återfinns uttryckligen i fakturan"
+        "rule_name": "Consignor identifierad någonstans i fakturadokumentet"
       }
     ]
   },
@@ -46,16 +46,12 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.93,
+      "confidence": 0.96,
       "certificate_value": "Th.Brunius & Co AB\nPO Box 2516\nSE-403 17, Gothenburg\nSweden",
-      "invoice_value": "Th. Brunius & Co AB\nVAT No: SE556011055201\nPO Box 2516\nSE-403 17 Gothenburg, Sweden",
+      "invoice_value": "Th. Brunius & Co AB\nVAT NO: SE556011055201\nPO Box 2516\nSE-403 17 Gothenburg, Sweden",
       "rules_applied": [
         {
           "rule_id": "4.1.0",
-          "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.1.2.1",
           "outcome": "MATCH"
         },
         {
@@ -63,7 +59,7 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor 'Th.Brunius & Co AB' kan identifieras uttryckligen i fakturans sidhuvud som 'Th. Brunius & Co AB'. Skillnaden 'Th.Brunius' kontra 'Th. Brunius' är endast punkt/mellanslag-normalisering. Landet verifieras i fakturan genom explicit adress 'Gothenburg, Sweden' och stöds även av VAT-prefixet 'SE'."
+      "motivation": "Certifikatets consignor 'Th.Brunius & Co AB' kan identifieras uttryckligen i fakturans avsändarblock. Landet Sverige framgår också uttryckligen i fakturan. Skannad faktura saknar maskintext, men texten är läsbar i bilden och verifieringen kan därför genomföras."
     },
     "consignee": {
       "applicable": true,
@@ -74,55 +70,51 @@
       "rules_applied": [
         {
           "rule_id": "4.2.0.2",
-          "outcome": "INVOICE_PARTY_SELECTED"
+          "outcome": "MISMATCH"
         },
         {
           "rule_id": "4.2.1",
-          "outcome": "PARTY_IDENTIFIED"
-        },
-        {
-          "rule_id": "4.1.3.1",
           "outcome": "MISMATCH"
         },
         {
-          "rule_id": "4.2.4",
-          "outcome": "MISMATCH"
-        }
-      ],
-      "motivation": "Fakturans relevanta mottagarparter är 'Hongkong Topway Trading Co., Limited' i både SOLD TO- och CONSIGNED TO-fälten. Certifikatets consignee 'Xiamen Port Commerce Information Co., Ltd.' kan inte identifieras någonstans i fakturan. Landnormalisering Kina/Hongkong enligt 4.6 kan inte rädda kontrollpunkten eftersom företagsnamnet avser en annan juridisk part."
-    },
-    "goods_description": {
-      "applicable": true,
-      "status": "MATCH",
-      "confidence": 0.87,
-      "certificate_value": "Mill's standard\n5x40' HC Containers\n65 reels of Duosaica Testliner 75gsm",
-      "invoice_value": "DESCRIPTION\n20X40' HC containers\nDuosaica Testliner with sizing\nTotal Weight Quantity: 491.163 MT\nTotal Unit Count: 234 Reels\n\nLOT 6: DUOSAICA TESTLINER WITH SIZING\nSUBSTANCE: 75GSM\nMILL NAME: SAICA",
-      "rules_applied": [
-        {
-          "rule_id": "4.3.2",
-          "outcome": "NO_ARTICLE_NUMBER_IN_CERTIFICATE"
-        },
-        {
-          "rule_id": "4.3.3",
-          "outcome": "TEXT_MATCH_APPLIED"
-        },
-        {
-          "rule_id": "4.3.4",
+          "rule_id": "4.6",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Inga artikelnummer anges i certifikatet, därför användes kontrollerad textmatchning. Den identitetsbärande produktbeteckningen 'Duosaica Testliner' återfinns uttryckligen i fakturan, och fakturan innehåller även 'SUBSTANCE: 75GSM', vilket stödjer specifikationen '75gsm' i certifikatet. Tillägget 'with sizing' i fakturan ändrar inte att certifikatets angivna produkt kan identifieras i fakturan för denna kontrollpunkt."
+      "motivation": "Fakturans auktoritativa mottagarfält ('SOLD TO') och även leveransfältet ('CONSIGNED TO') anger 'Hongkong Topway Trading Co., Limited'. Certifikatets consignee är 'Xiamen Port Commerce Information Co., Ltd.' och detta företagsnamn kan inte identifieras någonstans i fakturan. Länderna China/Hong Kong är normaliseringsmässigt ekvivalenta, men företagsnamnen avser olika juridiska parter och därför är kontrollpunkten MISMATCH."
+    },
+    "goods_description": {
+      "applicable": true,
+      "status": "MISMATCH",
+      "confidence": 0.87,
+      "certificate_value": "Mill's standard\n5x40' HC Containers\n65 reels of Duosaica Testliner 75gsm",
+      "invoice_value": "DESCRIPTION:\n20X40' HC containers\nDuosaica Testliner with sizing\n\nLOT 6: DUOSAICA TESTLINER WITH SIZING\nSUBSTANCE: 75GSM",
+      "rules_applied": [
+        {
+          "rule_id": "4.3.3",
+          "outcome": "MISMATCH"
+        },
+        {
+          "rule_id": "4.3.3.4",
+          "outcome": "MISMATCH"
+        },
+        {
+          "rule_id": "4.3.8",
+          "outcome": "MISMATCH"
+        }
+      ],
+      "motivation": "Certifikatet anger '65 reels of Duosaica Testliner 75gsm' samt '5x40' HC Containers'. Fakturan anger i stället 'Duosaica Testliner with sizing' och '20X40' HC containers'. Tillägget 'with sizing' är en specifikationskvalifikator som inte kan ignoreras enligt reglerna, och containeruppgiften motsäger certifikatet. Certifikatet saknar dessutom sådan fakturareferens och fakturadatum som skulle ha tillåtit generell varubeskrivning enligt referensregeln."
     },
     "quantity": {
       "applicable": true,
       "status": "MISMATCH",
-      "confidence": 0.98,
+      "confidence": 0.99,
       "certificate_value": "125.973 mt",
       "invoice_value": "Total Weight Quantity: 491.163 MT",
       "rules_applied": [
         {
           "rule_id": "4.4.2.1",
-          "outcome": "BOX_7_SELECTED"
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.4.3",
@@ -130,50 +122,51 @@
         },
         {
           "rule_id": "4.4.5.1",
-          "outcome": "EXCEPTIONS_REVIEWED_NOT_APPLICABLE"
+          "outcome": "NOT_APPLICABLE"
         },
         {
           "rule_id": "4.4.6",
           "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Certifikatets verifieringsgrundande kvantitet är box 7: '125.973 mt'. Fakturan anger uttryckligen 'Total Weight Quantity: 491.163 MT'. Värdena överensstämmer inte och avvikelsen ligger långt utanför tillåten tolerans. Undantagen 3A-3E är inte tillämpliga: det finns inte flera fakturor, ingen relevant enhetsomräkning behövs, och ingen tillåten härledning eller summering leder till certifikatets värde."
+      "motivation": "Verifieringsgrundande kvantitet är box 7 i certifikatet: '125.973 mt'. Fakturan visar uttryckligen 'Total Weight Quantity: 491.163 MT'. Värdena avser samma kvantitetstyp men skiljer sig långt över tillåten tolerans; därför föreligger en uttrycklig motsägelse och resultatet ska vara MISMATCH. Inget undantag i 3A-3E är tillämpligt."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.96,
+      "confidence": 0.97,
       "certificate_value": "Spain",
       "invoice_value": "COUNTRY OF ORIGIN: Spain",
       "rules_applied": [
         {
           "rule_id": "4.5.1",
-          "outcome": "EXPLICIT_ORIGIN_FOUND"
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.5.5",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger ursprungsland 'Spain'. Fakturan innehåller ett explicit ursprungsfält: 'COUNTRY OF ORIGIN: Spain'. Ursprungslandet kan därför verifieras direkt utan ytterligare tolkning."
+      "motivation": "Certifikatets ursprungsland 'Spain' återfinns uttryckligen i fakturans dedikerade originfält 'COUNTRY OF ORIGIN: Spain'. Ingen tolkning eller indirekt härledning behövs."
     }
   },
   "overall_assessment": {
     "comparison_result": "NOT_IDENTICAL",
     "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
     "auto_approval_eligible": false,
-    "confidence": 0.96,
+    "confidence": 0.97,
     "critical_failures": [
-      "Consignee mismatch: certifikatet anger Xiamen Port Commerce Information Co., Ltd., medan fakturan anger Hongkong Topway Trading Co., Limited.",
+      "Consignee mismatch: certifikatet anger Xiamen Port Commerce Information Co., Ltd. medan fakturan anger Hongkong Topway Trading Co., Limited.",
+      "Goods description mismatch: certifikatet anger 5x40' HC Containers / 65 reels of Duosaica Testliner 75gsm medan fakturan anger 20X40' HC containers / Duosaica Testliner with sizing.",
       "Quantity mismatch: certifikatet anger 125.973 mt medan fakturan anger 491.163 MT."
     ],
     "manual_review_triggers": [],
-    "decision_summary": "Dokumentparet kunde paras via consignor, och ursprungsland samt varubeskrivning kunde verifieras mot fakturan. Mottagaren kan däremot inte identifieras i fakturan, och certifikatets kvantitet 125.973 mt motsägs uttryckligen av fakturans 491.163 MT. Minst en tillämplig kontrollpunkt ger därför MISMATCH, vilket medför totalresultatet NOT_IDENTICAL.",
-    "human_explanation": "Certifikatet anger mottagaren som Xiamen Port Commerce Information Co., Ltd., China, medan fakturan anger Hongkong Topway Trading Co., Limited, Hong Kong. Certifikatet anger mängden 125.973 mt medan fakturan anger 491.163 MT. Avsändare och ursprungsland stämmer, men dokumenten är därför inte identiska."
+    "decision_summary": "Dokumentparet kan inte godkännas som identiskt. Parningsvalideringen passerar eftersom certifikatets consignor Th.Brunius & Co AB kan identifieras i fakturan, och ursprungslandet Spain matchar. Däremot föreligger tydliga avvikelser i mottagare, varubeskrivning och kvantitet, vilket enligt reglerna kräver slutsatsen NOT_IDENTICAL.",
+    "human_explanation": "Certifikatet anger mottagaren som Xiamen Port Commerce Information Co., Ltd., medan fakturan är ställd till Hongkong Topway Trading Co., Limited. Certifikatet anger dessutom mängden 125.973 mt, men fakturan visar 491.163 MT. Avsändaren och ursprungslandet Spanien stämmer, men dokumentparet är därför inte identiskt."
   },
   "_meta": {
-    "tested_at": "2026-04-01T12:52:20.259697+00:00",
-    "prompt_hash": "9b9df42642d8",
+    "tested_at": "2026-04-02T11:22:43.072875+00:00",
+    "prompt_hash": "f81eb9b0d2ea",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P0121_MISMATCH",

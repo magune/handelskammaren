@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-04-01",
+    "verification_timestamp": "2026-04-02",
     "document_pair_id": null,
     "certificate_issue_date": "2026-03-02",
     "source_documents_received": 2
@@ -15,18 +15,18 @@
     "document_a": {
       "label": "Document A",
       "assumed_role": "certificate",
-      "document_type": "certificate_of_origin"
+      "document_type": "Certificate of Origin"
     },
     "document_b": {
       "label": "Document B",
       "assumed_role": "invoice",
-      "document_type": "commercial_invoice"
+      "document_type": "Invoice"
     }
   },
   "rule_activation": {
     "lc_exception_active": false,
     "lc_number_found": null,
-    "general_goods_description_with_invoice_reference_active": false,
+    "general_goods_description_with_invoice_reference_active": true,
     "mixed_origins_rule_active": false,
     "to_order_rule_active": false,
     "quantity_exception_applied": "3D",
@@ -34,27 +34,31 @@
     "activated_rules": [
       {
         "rule_id": "8.5.0",
-        "rule_name": "Filbaserad dokumentparning: certifikat från fil 1, faktura från fil 2"
+        "rule_name": "Filbaserad dokumentparning: certifikat från fil 1 och faktura från fil 2"
       },
       {
         "rule_id": "8.6",
-        "rule_name": "Obligatorisk parningsvalidering"
+        "rule_name": "Parningsvalidering passerad via fakturanummer, consignor och consignee"
       },
       {
         "rule_id": "4.1.0",
-        "rule_name": "Consignor får verifieras via uttrycklig förekomst var som helst i fakturan"
+        "rule_name": "Consignor identifierad någonstans i fakturan"
       },
       {
         "rule_id": "4.2.2.1.1",
-        "rule_name": "Layoutavkortning av mottagarnamn i certifikatet"
+        "rule_name": "Layoutavkortning i certifikatet för consignee"
+      },
+      {
+        "rule_id": "4.3.5.3",
+        "rule_name": "Generell varubeskrivning med fakturanummer och ordernummer utan fakturadatum"
       },
       {
         "rule_id": "4.4.5.5.1",
-        "rule_name": "Summering av flera rader inom samma faktura för generell produktfamilj"
+        "rule_name": "Summering av flera rader inom samma faktura för samlande varubeskrivning"
       },
       {
         "rule_id": "4.5.4.2",
-        "rule_name": "EU-medlemsland och EU-samlingsbegrepp är verifierbara i båda riktningarna"
+        "rule_name": "EU-medlemsland och EU-normalisering i båda riktningar"
       }
     ]
   },
@@ -62,162 +66,132 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.93,
+      "confidence": 0.91,
       "certificate_value": "AB Akronmaskiner AB\nAkrons industriområde 1\n53194, Järpås\nSverige",
-      "invoice_value": "AB Akronmaskiner\nSE-531 94 JÄRPÅS\nVAT.No SE556102009901\nIBAN SE6060000000000569337178",
+      "invoice_value": "AB Akronmaskiner \nSE-531 94 JÄRPÅS\nVAT.No SE556102009901\nIBAN SE6060000000000569337178",
       "rules_applied": [
         {
           "rule_id": "4.1.0",
-          "outcome": "MATCH: consignor-namnet förekommer uttryckligen i fakturans footer/identifieringsblock som 'AB Akronmaskiner'"
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.1.2.1",
-          "outcome": "MATCH: Sverige verifieras via svensk adress, VAT-prefix SE och IBAN-prefix SE"
+          "outcome": "MATCH"
         },
         {
-          "rule_id": "4.1.5",
+          "rule_id": "4.1.4",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets avsändare 'AB Akronmaskiner AB' kan identifieras i fakturan som 'AB Akronmaskiner'. Skillnaden avser endast bolagsformsnormalisering/utelämnat avslutande 'AB'. Landet Sverige styrks i fakturan genom adressen 'SE-531 94 JÄRPÅS', VAT-numret 'SE556102009901' och IBAN som börjar med 'SE'."
+      "motivation": "Certifikatets consignor är 'AB Akronmaskiner AB' i Sverige. Fakturan innehåller samma företagskärna som 'AB Akronmaskiner' i footer samt svenska landsindikatorer genom adress, VAT-prefix SE och IBAN-prefix SE. Skillnaden avser endast bolagsformsnotation och ändrar inte identifieringen av samma juridiska part."
     },
     "consignee": {
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.89,
       "certificate_value": "Karlovskiy Machine-Building Plant L\nSergei Nigoyan Street, 2\nPoltava region\nKarlovka city, 39500\nUkraine",
-      "invoice_value": "Invoice address\nKarlovskiy Machine-Building Plant Ltd\nSergei Nigoyan Street, 2\nPoltava region\nKarlovka city, 39500\nUkraine",
+      "invoice_value": "Karlovskiy Machine-Building Plant Ltd\nSergei Nigoyan Street, 2\nPoltava region\nKarlovka city, 39500\nUkraine",
       "rules_applied": [
         {
           "rule_id": "4.2.0.2",
-          "outcome": "MATCH: primärt faktureringsfält användes ('Invoice address')"
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.2.2.1.1",
-          "outcome": "MATCH: certifikatets 'Karlovskiy Machine-Building Plant L' är en exakt prefix/layoutavkortning av fakturans 'Karlovskiy Machine-Building Plant Ltd'"
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.2.3",
-          "outcome": "MATCH: Ukraine/Ukraine överensstämmer"
-        },
-        {
-          "rule_id": "4.2.4",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Mottagaren verifieras mot fakturans primära faktureringsfält 'Invoice address'. Certifikatets namn slutar med 'L' och är en exakt inledande del av fakturans 'Karlovskiy Machine-Building Plant Ltd', vilket är förenligt med layoutavkortning i certifikatet. Landet Ukraine är identiskt i båda dokumenten."
+      "motivation": "Fakturans auktoritativa faktureringsfält 'Invoice address' anger 'Karlovskiy Machine-Building Plant Ltd' i Ukraina. Certifikatets namn 'Karlovskiy Machine-Building Plant L' är en exakt inledande del av fakturans fullständiga namn och framstår som layoutavkortning i certifikatet. Landet Ukraina överensstämmer."
     },
     "goods_description": {
       "applicable": true,
-      "status": "MISMATCH",
-      "confidence": 0.88,
-      "certificate_value": "Order 80490\nFans AKL",
-      "invoice_value": "1 12712926 Fan AKL125glv J140L12FM 22kW4p4/6\n2 12712928 Fan AKL125glv J140L06FM 15kW4p4/6",
+      "status": "MATCH",
+      "confidence": 0.87,
+      "certificate_value": "Invoice 175585\nOrder 80490\nFans AKL",
+      "invoice_value": "Invoice No 175585\nOrder No. 80490\n1 12712926 Fan AKL125glv J140L12FM 22kW4p4/6\n2 12712928 Fan AKL125glv J140L06FM 15kW4p4/6",
       "rules_applied": [
         {
-          "rule_id": "4.3.2",
-          "outcome": "Not applicable: inget artikelnummer angivet i certifikatet"
+          "rule_id": "4.3.5.3",
+          "outcome": "MATCH"
         },
         {
-          "rule_id": "4.3.5",
-          "outcome": "Rejected: certifikatet saknar uttrycklig formulering som 'according to invoice/as per invoice/see attached invoice' i varubeskrivningen"
-        },
-        {
-          "rule_id": "4.3.3",
-          "outcome": "MISMATCH: den identitetsbärande huvudbeteckningen 'Fans AKL' kan inte identifieras exakt i fakturan utan otillåten tolkning"
-        },
-        {
-          "rule_id": "4.3.8",
-          "outcome": "MISMATCH"
+          "rule_id": "4.3.5.2",
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger den generella varubeskrivningen 'Fans AKL'. Fakturan innehåller två specifika rader 'Fan AKL125glv ...', men certifikatet har inte en uttrycklig varubeskrivningshänvisning av typen 'as per invoice' som aktiverar regeln för generell beskrivning med fakturareferens. Att behandla 'Fans AKL' som verifierat mot de två mer specifika raderna skulle kräva otillåten tolkning."
+      "motivation": "Certifikatet använder en generell varubeskrivning 'Fans AKL' och anger både fakturanummer 175585 och ordernummer 80490. Fakturan visar exakt samma fakturanummer och ordernummer samt varuinnehåll som är förenligt med beskrivningen genom två rader för 'Fan AKL125glv...'. Därmed är varubeskrivningen verifierad enligt undantaget för generell varubeskrivning med faktura- och orderreferens."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.86,
+      "confidence": 0.88,
       "certificate_value": "2 pcs",
       "invoice_value": "1,00 pcs\n1,00 pcs",
       "rules_applied": [
         {
-          "rule_id": "4.4.2",
-          "outcome": "MATCH: certifikatet anger både numeriskt värde och enhet i samma uppgift"
+          "rule_id": "4.4.1",
+          "outcome": "NO_EXACT_TOTAL_FOUND"
         },
         {
           "rule_id": "4.4.5.1",
-          "outcome": "Undantag prövades sekventiellt"
+          "outcome": "SEQUENTIAL_EXCEPTION_REVIEWED"
         },
         {
-          "rule_id": "4.4.5.2",
-          "outcome": "Not applicable: endast en faktura"
-        },
-        {
-          "rule_id": "4.4.5.3",
-          "outcome": "Not applicable: ingen MT↔KG-omräkning behövs"
-        },
-        {
-          "rule_id": "4.4.5.4",
-          "outcome": "Not applicable: inte styckvikt"
+          "rule_id": "4.4.5.5",
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.4.5.5.1",
-          "outcome": "MATCH: två fakturarader inom samma generella produktfamilj ('Fan AKL...') får summeras till 2 pcs"
-        },
-        {
-          "rule_id": "4.4.6",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger kvantiteten '2 pcs'. Fakturan anger två relevanta rader med '1,00 pcs' vardera för samma AKL-fläktfamilj. Enligt undantaget för summering av flera rader inom samma faktura för generell/samlande varubeskrivning får dessa summeras till 2 pcs, vilket verifierar certifikatets kvantitet."
+      "motivation": "Certifikatet anger total kvantitet 2 pcs. Fakturan visar två relevanta varurader med 1,00 pcs vardera för samma produktfamilj 'Fan AKL...'; prepayment-raden ingår inte i varusummeringen. Summering inom samma faktura ger 2 pcs och matchar certifikatets uppgift."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.92,
+      "confidence": 0.9,
       "certificate_value": "European Community\nSweden",
       "invoice_value": "The exporter of the products covered by this document declares that, except where otherwise clearly indicated, these products are of SE preferential origin.",
       "rules_applied": [
         {
           "rule_id": "4.5.1",
-          "outcome": "MATCH: fakturan innehåller ett explicit ursprungsuttalande i dedikerad exportörsdeklaration"
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.5.4",
-          "outcome": "MATCH: 'SE' normaliseras till Sweden"
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.5.4.2",
-          "outcome": "MATCH: certifikatets 'European Community' verifieras av att fakturan anger ett specifikt EU-medlemsland ('SE'/Sweden)"
-        },
-        {
-          "rule_id": "4.5.5",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Fakturan innehåller ett uttryckligt origin-fält i form av exportörsdeklarationen 'these products are of SE preferential origin'. Landskoden 'SE' verifierar Sweden. Eftersom Sweden är ett EU-medlemsland verifierar samma explicita ursprungsangivelse även certifikatets 'European Community'."
+      "motivation": "Certifikatet anger ursprung 'European Community' och 'Sweden'. Fakturan innehåller ett explicit ursprungsuttalande i dedikerad exportörsdeklaration: 'these products are of SE preferential origin'. Landskoden SE verifierar Sweden, och EU↔EU-medlemsland-normaliseringen gör att European Community samtidigt är verifierat."
     }
   },
   "overall_assessment": {
-    "comparison_result": "NOT_IDENTICAL",
-    "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
-    "auto_approval_eligible": false,
+    "comparison_result": "IDENTICAL",
+    "workflow_recommendation": "AUTO_APPROVAL_ELIGIBLE",
+    "auto_approval_eligible": true,
     "confidence": 0.89,
-    "critical_failures": [
-      "Varubeskrivningen i certifikatet ('Fans AKL') kan inte verifieras explicit mot fakturans varurader utan otillåten tolkning, och regeln för generell varubeskrivning med uttrycklig fakturahänvisning är inte aktiverad."
-    ],
+    "critical_failures": [],
     "manual_review_triggers": [],
-    "decision_summary": "Dokumentparet är korrekt parat via fakturanummer 175585 och både consignor, consignee, quantity och origin kan verifieras mot fakturan. Certifikatets varubeskrivning 'Fans AKL' kan däremot inte verifieras strikt mot fakturans två specifika rader 'Fan AKL125glv ...' eftersom certifikatet saknar den uttryckliga fakturahänvisning som krävs för generell varubeskrivning. Minst en tillämplig kontrollpunkt är därför MISMATCH, vilket ger totalresultatet NOT_IDENTICAL.",
-    "human_explanation": "Avsändare, mottagare, mängd och ursprungsland stämmer mot fakturan. Varubeskrivningen i certifikatet är 'Fans AKL', medan fakturan anger två specifika artiklar 'Fan AKL125glv ...' och certifikatet saknar en uttrycklig hänvisning som gör denna generella beskrivning godtagbar. Därför är dokumenten inte identiska."
+    "decision_summary": "Dokumentparet kunde paras säkert via fakturanummer 175585 samt matchande consignor och consignee. Samtliga tillämpliga kontrollpunkter verifieras som MATCH: consignor, consignee, varubeskrivning, kvantitet och ursprungsland. Ingen kontrollpunkt gav MISMATCH eller MANUAL_REVIEW, och samtliga MATCH-bedömningar uppnår confidence över auto-approval-golvet.",
+    "human_explanation": "Certifikatet och fakturan stämmer överens i alla kontrollerade uppgifter. Avsändare, mottagare, varubeskrivning, antal 2 pcs och ursprung Sverige/EU kan verifieras mot fakturan. Dokumentparet kan därför godkännas automatiskt."
   },
   "_meta": {
-    "tested_at": "2026-04-01T12:52:36.779105+00:00",
-    "prompt_hash": "9b9df42642d8",
+    "tested_at": "2026-04-02T11:06:44.036631+00:00",
+    "prompt_hash": "f81eb9b0d2ea",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P229_MATCH",
     "expected": "IDENTICAL",
-    "actual": "NOT_IDENTICAL",
-    "status": "FAIL"
+    "actual": "IDENTICAL",
+    "status": "PASS"
   }
 }

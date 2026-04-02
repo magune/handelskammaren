@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-04-01T00:00:00Z",
+    "verification_timestamp": "2026-04-02T00:00:00Z",
     "document_pair_id": null,
     "certificate_issue_date": "2023-03-03",
     "source_documents_received": 2
@@ -34,31 +34,27 @@
     "activated_rules": [
       {
         "rule_id": "8.5.0",
-        "rule_name": "Dokumentparning: certifikat från fil 1 och faktura från fil 2"
+        "rule_name": "Filbaserad dokumentparning"
       },
       {
         "rule_id": "8.6",
-        "rule_name": "Parningsvalidering passerad via matchande fakturanummer"
+        "rule_name": "Obligatorisk parningsvalidering"
       },
       {
-        "rule_id": "4.1.0",
-        "rule_name": "Consignor identifierad i fakturan"
+        "rule_id": "4.1.3.6",
+        "rule_name": "Förkortning av juridisk bolagsform"
       },
       {
         "rule_id": "4.2.0.2",
-        "rule_name": "Primärt faktureringsfält har prioritet för consignee"
+        "rule_name": "Prioritetsordning för consignee-identifiering"
       },
       {
-        "rule_id": "4.3.2",
-        "rule_name": "Kontrollerad textmatchning av varubeskrivning"
-      },
-      {
-        "rule_id": "4.4.3",
-        "rule_name": "Direkt förekomstkontroll av numeriskt kvantitetsvärde"
+        "rule_id": "4.4.1",
+        "rule_name": "Förekomstkontroll för kvantitet"
       },
       {
         "rule_id": "4.5.1",
-        "rule_name": "Explicit ursprungsfält i fakturan"
+        "rule_name": "Ursprungsland ska framgå explicit i fakturan"
       }
     ]
   },
@@ -71,19 +67,23 @@
       "invoice_value": "Elof Hansson Trade AB\nSE-413 80 Göteborg\nSweden",
       "rules_applied": [
         {
-          "rule_id": "4.1.0",
-          "outcome": "MATCH"
+          "rule_id": "4.1.1",
+          "outcome": "invoice issuer identified"
+        },
+        {
+          "rule_id": "4.1.2",
+          "outcome": "name and country verified"
+        },
+        {
+          "rule_id": "4.1.3.6",
+          "outcome": "AB/normalization accepted"
         },
         {
           "rule_id": "4.1.4",
-          "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.1.5",
-          "outcome": "MATCH"
+          "outcome": "country match"
         }
       ],
-      "motivation": "Certifikatets consignor \"Elof Hansson Trade AB\" återfinns uttryckligen i fakturans företagshuvud. Landet Sverige framgår också uttryckligen i fakturan. Företagsnamn och land kan därför verifieras direkt utan otillåten tolkning."
+      "motivation": "Certifikatets consignor \"Elof Hansson Trade AB\" i Sverige kan identifieras direkt i fakturans utställare/header som \"Elof Hansson Trade AB\" med adress i Göteborg, Sweden. Skillnaden \"Goteborg\"/\"Göteborg\" påverkar inte bedömningen, och landet överensstämmer."
     },
     "consignee": {
       "applicable": true,
@@ -94,62 +94,74 @@
       "rules_applied": [
         {
           "rule_id": "4.2.0.2",
-          "outcome": "MISMATCH"
+          "outcome": "bill-to/buyer field has priority"
         },
         {
           "rule_id": "4.2.1",
-          "outcome": "MISMATCH"
+          "outcome": "relevant consignee fields searched"
+        },
+        {
+          "rule_id": "4.2.1.1",
+          "outcome": "certificate consignee not found in secondary fields"
+        },
+        {
+          "rule_id": "4.2.3",
+          "outcome": "country mismatch / not identifiable"
         },
         {
           "rule_id": "4.2.4",
-          "outcome": "MISMATCH"
+          "outcome": "mismatch"
         }
       ],
-      "motivation": "Fakturans primära faktureringsfält är BUYER och anger \"ECLAT PAPER FZ LLC\" i United Arab Emirates. Certifikatets consignee \"AL SHUROOK FOR PRINTING AND PACKAGING CO.\" i Jordan kan inte identifieras i detta faktureringsfält eller någon annan synlig mottagar-/leveransroll i fakturan. Detta är en direkt avvikelse och ska därför bedömas som MISMATCH."
+      "motivation": "Fakturan innehåller ett tydligt primärt faktureringsfält \"BUYER\" med parten \"ECLAT PAPER FZ LLC\" i United Arab Emirates. Certifikatets consignee \"AL SHUROOK FOR PRINTING AND PACKAGING CO.\" i Jordanien kan inte identifieras i fakturan, varken i buyer-fältet eller i något separat ship-to/consignee-fält."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.97,
-      "certificate_value": "Mill Standard\nCoated Kraftback Board, 273 GSM, 1020 mm\nDia/core: Mill Standard\nTotal quantity: 18 reels gross for net 24,405 mt",
-      "invoice_value": "Coated Kraftback Board, 273 GSM, 1020 mm\nDia/core: Mill Standard\nTotal quantity: 18 reels gross for net 24,405 mt",
+      "confidence": 0.98,
+      "certificate_value": "Mill Standard\nCoated Kraftback Board, 273 GSM, 1020 mm\nDia/core: Mill Standard",
+      "invoice_value": "Coated Kraftback Board, 273 GSM, 1020 mm\nDia/core: Mill Standard\nSHIPPING MARKS\nMill Standard",
       "rules_applied": [
         {
+          "rule_id": "4.3.1",
+          "outcome": "goods identified in invoice"
+        },
+        {
           "rule_id": "4.3.2",
-          "outcome": "Textmatchning använd"
+          "outcome": "text comparison used"
         },
         {
           "rule_id": "4.3.3",
-          "outcome": "MATCH"
+          "outcome": "identity-bearing wording matched"
         },
         {
-          "rule_id": "4.3.8",
-          "outcome": "MATCH"
+          "rule_id": "4.3.4",
+          "outcome": "non-identity-bearing additions ignored"
         }
       ],
-      "motivation": "Den identitetsbärande huvudbeteckningen \"Coated Kraftback Board, 273 GSM, 1020 mm\" återfinns uttryckligen i fakturan. Även tilläggen \"Dia/core: Mill Standard\" och \"Total quantity: 18 reels gross for net 24,405 mt\" förekommer i fakturan. Varubeskrivningen kan därför verifieras direkt."
+      "motivation": "Den identitetsbärande varubeskrivningen i certifikatet, \"Coated Kraftback Board, 273 GSM, 1020 mm\", återfinns explicit i fakturan. Även \"Dia/core: Mill Standard\" och \"Mill Standard\" kan identifieras i fakturan, utan behov av otillåten semantisk tolkning."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.98,
+      "confidence": 0.99,
       "certificate_value": "24,405 MT",
-      "invoice_value": "24,405 MT",
+      "invoice_value": "Quantity 24,405 MT\nTotal quantity: 18 reels gross for net 24,405 mt",
       "rules_applied": [
         {
+          "rule_id": "4.4.1",
+          "outcome": "numeric value identified"
+        },
+        {
           "rule_id": "4.4.2",
-          "outcome": "Certifikatet innehåller numeriskt värde och enhet"
+          "outcome": "numeric value and unit present in certificate"
         },
         {
           "rule_id": "4.4.3",
-          "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.4.6",
-          "outcome": "MATCH"
+          "outcome": "same numeric value found in invoice"
         }
       ],
-      "motivation": "Certifikatets kvantitetsfält anger uttryckligen \"24,405 MT\". Samma numeriska värde och enhet återfinns i fakturans kvantitetsrad för varan. Kvantiteten är därför verifierad genom direkt förekomstkontroll."
+      "motivation": "Certifikatets kvantitet i ruta 7 är \"24,405 MT\". Samma numeriska värde och samma enhet återfinns uttryckligen i fakturans kvantitetskolumn och även i texten \"Total quantity: 18 reels gross for net 24,405 mt\"."
     },
     "origin": {
       "applicable": true,
@@ -160,18 +172,18 @@
       "rules_applied": [
         {
           "rule_id": "4.5.1",
-          "outcome": "Explicit origin-fält identifierat"
+          "outcome": "explicit origin field identified"
         },
         {
           "rule_id": "4.5.4",
-          "outcome": "MATCH"
+          "outcome": "standard country normalization applied"
         },
         {
           "rule_id": "4.5.5",
-          "outcome": "MATCH"
+          "outcome": "origin matched"
         }
       ],
-      "motivation": "Certifikatet anger ursprungsland \"SWEDEN\". Fakturan innehåller ett explicit ursprungsfält, \"COUNTRY OF ORIGIN\", med värdet \"SWEDEN\". Ursprungslandet är därför uttryckligen verifierat i fakturan."
+      "motivation": "Certifikatet anger ursprungsland \"SWEDEN\". Fakturan innehåller ett explicit ursprungsfält, \"COUNTRY OF ORIGIN\", med värdet \"SWEDEN\", vilket uppfyller kravet på positiv verifiering."
     }
   },
   "overall_assessment": {
@@ -180,15 +192,15 @@
     "auto_approval_eligible": false,
     "confidence": 0.98,
     "critical_failures": [
-      "Consignee mismatch: certifikatet anger AL SHUROOK FOR PRINTING AND PACKAGING CO., Jordan, medan fakturans primära mottagarfält anger ECLAT PAPER FZ LLC, United Arab Emirates."
+      "Consignee mismatch: certificate names AL SHUROOK FOR PRINTING AND PACKAGING CO., Jordan, while invoice buyer is ECLAT PAPER FZ LLC, United Arab Emirates, and no matching consignee field was found."
     ],
     "manual_review_triggers": [],
-    "decision_summary": "Dokumentparet är korrekt parat genom att certifikatets referens SI051070/CAW009834 återfinns i fakturan. Consignor, varubeskrivning, kvantitet och ursprungsland matchar. Consignee matchar däremot inte, eftersom certifikatet anger AL SHUROOK FOR PRINTING AND PACKAGING CO. i Jordan medan fakturan anger ECLAT PAPER FZ LLC i Förenade Arabemiraten som primär kommersiell motpart. Minst en tillämplig kontrollpunkt är därför MISMATCH, vilket medför comparison_result NOT_IDENTICAL.",
-    "human_explanation": "Certifikatet och fakturan stämmer för avsändare, varubeskrivning, mängd och ursprungsland. Däremot anger certifikatet mottagaren som AL SHUROOK FOR PRINTING AND PACKAGING CO. i Jordan, medan fakturan är ställd till ECLAT PAPER FZ LLC i Förenade Arabemiraten. Dokumentparet kan därför inte godkännas automatiskt."
+    "decision_summary": "Dokumentparet är korrekt parat via referenserna CAW009834 / SI051070 och flera kontrollpunkter matchar, inklusive consignor, varubeskrivning, kvantitet och ursprungsland. Mottagaren i certifikatet kan däremot inte verifieras mot fakturan, som i sitt auktoritativa buyer-fält anger en annan juridisk part i ett annat land. Därför ska resultatet vara NOT_IDENTICAL.",
+    "human_explanation": "Certifikatet anger mottagaren som AL SHUROOK FOR PRINTING AND PACKAGING CO. i Jordanien, men fakturan är ställd till ECLAT PAPER FZ LLC i Förenade Arabemiraten. Avsändare, varubeskrivning, kvantitet och ursprungsland stämmer, men mottagaren kan inte verifieras mot fakturan. Dokumentparet kan därför inte godkännas automatiskt."
   },
   "_meta": {
-    "tested_at": "2026-04-01T21:48:56.870991+00:00",
-    "prompt_hash": "9b9df42642d8",
+    "tested_at": "2026-04-02T11:22:43.061243+00:00",
+    "prompt_hash": "f81eb9b0d2ea",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P005_MISMATCH",

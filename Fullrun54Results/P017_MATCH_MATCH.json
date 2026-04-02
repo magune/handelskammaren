@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-04-01T00:00:00Z",
+    "verification_timestamp": "2026-04-02T00:00:00Z",
     "document_pair_id": null,
     "certificate_issue_date": "2026-02-25",
     "source_documents_received": 2
@@ -33,12 +33,20 @@
     "eu_origin_normalization_active": false,
     "activated_rules": [
       {
-        "rule_id": "8.6",
-        "rule_name": "Parningsvalidering passerad via matchande fakturanummer"
+        "rule_id": "8.5.0",
+        "rule_name": "Standardregel för filbaserad dokumentparning tillämpad: certifikat från fil 1, faktura från fil 2"
       },
       {
-        "rule_id": "4.1.3.6",
-        "rule_name": "Förkortning/utelämnande av juridisk bolagsform för consignee"
+        "rule_id": "8.6",
+        "rule_name": "Parningsvalidering passerad genom matchande fakturanummer, consignor och consignee"
+      },
+      {
+        "rule_id": "4.1.0",
+        "rule_name": "Consignor identifierad uttryckligen i fakturan"
+      },
+      {
+        "rule_id": "4.4.3",
+        "rule_name": "Kvantitetsverifiering baserad på identifiering av numeriskt värde i fakturan"
       }
     ]
   },
@@ -48,10 +56,10 @@
       "status": "MATCH",
       "confidence": 0.98,
       "certificate_value": "ERICSSON AB\nTORSHAMNSGATAN 23\n164 83, STOCKHOLM\nSWEDEN",
-      "invoice_value": "Ericsson AB\nTorshamnsgatan 23\nSE-164 83 STOCKHOLM\nStockholm,Sweden\nVAT no : SE556056625801",
+      "invoice_value": "Ericsson AB\nVAT no : SE556056625801\nTax rep : EAB Torshamnsgatan 23\nSE-164 83 STOCKHOLM\nReg office : Ericsson AB SE-164 83 Stockholm,Sweden\nReg No : 5560566258",
       "rules_applied": [
         {
-          "rule_id": "4.1.2",
+          "rule_id": "4.1.0",
           "outcome": "MATCH"
         },
         {
@@ -59,29 +67,25 @@
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.1.4",
-          "outcome": "MATCH"
-        },
-        {
           "rule_id": "4.1.5",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger consignor som ERICSSON AB i Sverige. Fakturan identifierar Ericsson AB uttryckligen i utställar-/footerblock med adress Torshamnsgatan 23, Stockholm, Sweden samt svenska identifierare (VAT-prefix SE och IBAN som börjar med SE). Företagsnamn och land kan därför verifieras direkt."
+      "motivation": "Certifikatets consignor är \"ERICSSON AB ... SWEDEN\". Samma företagsnamn förekommer uttryckligen i fakturan i footer/issuer-informationen som \"Ericsson AB\" och landet verifieras både genom adressen \"Stockholm,Sweden\" och VAT-prefixet \"SE\". Därmed kan samma juridiska part och land identifieras i fakturan utan otillåten tolkning."
     },
     "consignee": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.91,
+      "confidence": 0.92,
       "certificate_value": "SAFARICOM LIMITED\nSAFARICOM HOUSE WAIYAKI WAY,\nP.O. BOX 66827-00800 ,NAIROBI.\nP051129820X\ninboundlogistics@safaricom.co.ke\nKENYA",
-      "invoice_value": "Bill to\nSAFARICOM\nPO Box 46350\n00100 NAIROBI\nKENYA",
+      "invoice_value": "Bill to\nSAFARICOM\nPO Box 46350\n00100 NAIROBI\nKENYA\n\nShip to\nSAFARICOM\nSAFARICOM HOUSE WAIYAKI WAY NAIROBI\n00800 NAIROBI\nKENYA\n\nSold to\nSAFARICOM\nSAFARICOM HOUSE WAIYAKI WAY NAIROBI\n00800 NAIROBI\nKENYA",
       "rules_applied": [
         {
           "rule_id": "4.2.0.2",
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.1.3.6",
+          "rule_id": "4.2.2.1",
           "outcome": "MATCH"
         },
         {
@@ -93,13 +97,13 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Fakturan innehåller ett primärt faktureringsfält 'Bill to' med SAFARICOM i Kenya, vilket har prioritet vid consignee-verifiering. Certifikatet anger SAFARICOM LIMITED i Kenya; skillnaden består endast i juridisk bolagsform/utelämnat 'LIMITED', medan kärnnamnet SAFARICOM och landet Kenya överensstämmer. Ship to och Sold to på fakturan ger ytterligare stöd men behövs inte för slutsatsen."
+      "motivation": "Certifikatets consignee är \"SAFARICOM LIMITED ... KENYA\". Fakturan innehåller primära mottagarfält \"Bill to\", \"Ship to\" och \"Sold to\" med företagsnamnet \"SAFARICOM\" i Kenya. Skillnaden består endast i att juridisk bolagsform inte skrivs ut fullt i fakturan, medan kärnnamnet SAFARICOM och landet Kenya överensstämmer; adressen \"SAFARICOM HOUSE WAIYAKI WAY\" återfinns dessutom i Ship to/Sold to."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.97,
-      "certificate_value": "PRINTED BOARD ASSEMB/NPU 1006 /HS code 851779000000/ Hungary\nInvoice No. 9209877429 dated 2026-01-22",
+      "confidence": 0.98,
+      "certificate_value": "PRINTED BOARD ASSEMB/NPU 1006 /HS code 851779000000/ Hungary",
       "invoice_value": "PRINTED BOARD ASSEMB/NPU 1006\nHU 851779000000",
       "rules_applied": [
         {
@@ -115,18 +119,18 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Den identitetsbärande huvudbeteckningen 'PRINTED BOARD ASSEMB/NPU 1006' återfinns exakt i fakturans varurad. HS-koden 851779000000 återfinns också på fakturan, och certifikatets fakturareferens 9209877429 med datum 2026-01-22 matchar fakturan. Ingen semantisk tolkning krävs."
+      "motivation": "Certifikatets identitetsbärande huvudbeteckning är \"PRINTED BOARD ASSEMB/NPU 1006\" och denna återfinns exakt i fakturans produktrad. Fakturan visar även HS-koden \"851779000000\", vilket är konsistent med certifikatets varubeskrivning. Ingen semantisk omtolkning behövs."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.9,
-      "certificate_value": "1 item",
+      "confidence": 0.95,
+      "certificate_value": "Box 7: 1 item",
       "invoice_value": "Qty 1,00 PC",
       "rules_applied": [
         {
           "rule_id": "4.4.2.1",
-          "outcome": "BOX_7_SELECTED"
+          "outcome": "BOX_7_SELECTED_AS_VERIFICATION_BASIS"
         },
         {
           "rule_id": "4.4.3",
@@ -137,14 +141,14 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets verifieringsgrundande kvantitet är box 7: '1 item'. Fakturan anger för samma vara 'Qty 1,00 PC', vilket verifierar det numeriska värdet 1. Enheten behöver enligt huvudregeln inte vara identisk. Viktuppgiften 'Total gross weight: 1,500 KG' i certifikatets box 6 användes inte som verifieringsgrund eftersom box 7 har företräde."
+      "motivation": "Den verifieringsgrundande kvantiteten i certifikatet är box 7: \"1 item\". Fakturan innehåller motsvarande numeriska värde i produktraden som \"Qty 1,00 PC\". Enligt reglerna avser verifieringen i första hand det numeriska värdet, och värdet 1 kan identifieras tydligt i fakturan."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.96,
+      "confidence": 0.94,
       "certificate_value": "Hungary",
-      "invoice_value": "CoO\nHU",
+      "invoice_value": "CoO: HU",
       "rules_applied": [
         {
           "rule_id": "4.5.1",
@@ -159,22 +163,22 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger ursprungsland Hungary. Fakturan innehåller ett explicit ursprungsfält i varutabellen, märkt 'CoO', med värdet 'HU'. ISO-koden HU är en tillåten landnormalisering för Hungary, så ursprungslandet är uttryckligen verifierat."
+      "motivation": "Certifikatet anger ursprungsland \"Hungary\" i box 3. Fakturan anger explicit ursprung per rad i CoO-kolumnen som \"HU\". ISO-landkoden HU är en tillåten normaliserad form av Hungary, och ursprungslandet är därför uttryckligen identifierat i fakturan."
     }
   },
   "overall_assessment": {
     "comparison_result": "IDENTICAL",
     "workflow_recommendation": "AUTO_APPROVAL_ELIGIBLE",
     "auto_approval_eligible": true,
-    "confidence": 0.95,
+    "confidence": 0.96,
     "critical_failures": [],
     "manual_review_triggers": [],
-    "decision_summary": "Dokumentparet är giltigt parat genom exakt matchande fakturanummer 9209877429. Samtliga fem tillämpliga kontrollpunkter verifieras mot fakturan; consignor, consignee, varubeskrivning, kvantitet och ursprungsland matchar enligt tillåtna regler och normaliseringar.",
-    "human_explanation": "Alla uppgifter som anges i certifikatet kan verifieras mot den bifogade fakturan. Fakturanummer, avsändare, mottagare, varubeskrivning, kvantitet och ursprungsland stämmer. Ärendet kan därför godkännas automatiskt."
+    "decision_summary": "Dokumentparet har kunnat klassificeras säkert som Certificate of Origin och Customs Invoice. Fakturanummer 9209877429 och datum 2026-01-22 överensstämmer mellan dokumenten, consignor Ericsson AB kan identifieras uttryckligen i fakturan, consignee SAFARICOM kan identifieras i fakturans mottagarfält, varubeskrivningen PRINTED BOARD ASSEMB/NPU 1006 matchar, kvantiteten 1 återfinns i fakturan och ursprungslandet Hungary verifieras genom CoO-koden HU. Ingen tillämplig kontrollpunkt gav MISMATCH eller MANUAL_REVIEW, och samtliga matchande kontrollpunkter har confidence över godkännandegolvet.",
+    "human_explanation": "Alla relevanta uppgifter i certifikatet kan verifieras mot fakturan. Fakturanummer, avsändare, mottagare, varubeskrivning, mängd och ursprungsland stämmer överens. Dokumentparet kan därför godkännas automatiskt."
   },
   "_meta": {
-    "tested_at": "2026-04-01T21:51:47.291655+00:00",
-    "prompt_hash": "9b9df42642d8",
+    "tested_at": "2026-04-02T11:21:38.835184+00:00",
+    "prompt_hash": "f81eb9b0d2ea",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P017_MATCH",

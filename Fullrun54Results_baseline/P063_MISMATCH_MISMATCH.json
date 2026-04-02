@@ -1,0 +1,165 @@
+{
+  "schema_version": "3.0",
+  "metadata": {
+    "verification_timestamp": "2026-04-01T00:00:00Z",
+    "document_pair_id": null,
+    "certificate_issue_date": "2023-03-06",
+    "source_documents_received": 2
+  },
+  "task": {
+    "task_type": "customs_document_pair_verification",
+    "comparison_mode": "certificate_vs_invoice",
+    "strictness": "conservative"
+  },
+  "documents": {
+    "document_a": {
+      "label": "Document A",
+      "assumed_role": "certificate",
+      "document_type": "Certificate of Origin"
+    },
+    "document_b": {
+      "label": "Document B",
+      "assumed_role": "invoice",
+      "document_type": "Commercial Invoice"
+    }
+  },
+  "rule_activation": {
+    "lc_exception_active": false,
+    "lc_number_found": null,
+    "general_goods_description_with_invoice_reference_active": false,
+    "mixed_origins_rule_active": true,
+    "to_order_rule_active": false,
+    "quantity_exception_applied": null,
+    "eu_origin_normalization_active": false,
+    "activated_rules": [
+      {
+        "rule_id": "8.5.0",
+        "rule_name": "Filbaserad dokumentparning"
+      },
+      {
+        "rule_id": "8.5.2",
+        "rule_name": "Fakturareferens i certifikatet vs fakturafilen"
+      },
+      {
+        "rule_id": "8.6",
+        "rule_name": "Obligatorisk parningsvalidering"
+      },
+      {
+        "rule_id": "4.1.0",
+        "rule_name": "Consignor-sökning i alla fakturasidor"
+      },
+      {
+        "rule_id": "4.3.7",
+        "rule_name": "Koppling vara–ursprungsland vid flera ursprung"
+      }
+    ]
+  },
+  "control_points": {
+    "consignor": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.98,
+      "certificate_value": "SKF Eurotrade AB\n415 50, GÖTEBORG\nSweden",
+      "invoice_value": "SKF Eurotrade AB\n415 50 Goteborg, Sweden\nSWEDEN",
+      "rules_applied": [
+        {
+          "rule_id": "4.1.0",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.2.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.5",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatets consignor 'SKF Eurotrade AB' återfinns uttryckligen i fakturans issuer/header och footer på samtliga fakturasidor. Landet Sweden framgår explicit i fakturans adressblock och stöds dessutom av VAT-prefix SE och IBAN som börjar med SE. Kontrollpunkten matchar, men detta upphäver inte att certifikatet hänvisar till ett annat fakturanummer än den bifogade fakturafilen."
+    },
+    "consignee": {
+      "applicable": true,
+      "status": "MANUAL_REVIEW",
+      "confidence": 0.39,
+      "certificate_value": "Technotorg-Don LLC\nHeroiv Ukrainy avenue, 113/1\n54025 Mykolaiv\nUKRAINE",
+      "invoice_value": "Bill to / Sold to / Ship to:\nMIR PODSHIPNIKOV LLC\n210, Lev Tolstoy Str.\n720031 Bishkek\nKYRGYZSTAN",
+      "rules_applied": [
+        {
+          "rule_id": "8.5.2",
+          "outcome": "MANUAL_REVIEW"
+        }
+      ],
+      "motivation": "Certifikatet hänvisar uttryckligen till faktura 'RB6604204' daterad '2023-02-28', men den separata fakturafilen innehåller faktura 'RB6604864' daterad '2023-03-08'. Enligt parningsregeln får systemet då inte använda den synliga fakturan som ersättning för den refererade fakturan. Därför kan mottagaren inte verifieras mot avsedd faktura på ett tekniskt säkert sätt och kontrollpunkten sätts till MANUAL_REVIEW."
+    },
+    "goods_description": {
+      "applicable": true,
+      "status": "MANUAL_REVIEW",
+      "confidence": 0.36,
+      "certificate_value": "12 CASE(S) OF:\nWATER PUMP,WHEEL BEARING KIT,OTH KIT COMPONENTS,\nSUSPENSION TRACK CONTROL ARM BUSH",
+      "invoice_value": "NEEDLE ROLLER BRG; SPHERICAL ROLLER BRG; CYLINDRICAL ROLLER BRG; DEEP GROOVE BALL BRG OD > 30 MM; FITTING CAPS OF PLASTIC; ROLLER CHAINS; RADIAL SHAFT SEALS; LINKS FOR CHAINS; NUTS",
+      "rules_applied": [
+        {
+          "rule_id": "8.5.2",
+          "outcome": "MANUAL_REVIEW"
+        }
+      ],
+      "motivation": "Certifikatet refererar till en annan faktura än den som finns i fakturafilen. Därför får varubeskrivningen inte slutligt bedömas mot den synliga fakturan, även om den synliga fakturan innehåller helt andra varubeskrivningar. Eftersom den refererade fakturan inte återfinns i fakturafilen är verifiering mot korrekt underlag tekniskt omöjlig och kontrollpunkten blir MANUAL_REVIEW."
+    },
+    "quantity": {
+      "applicable": true,
+      "status": "MANUAL_REVIEW",
+      "confidence": 0.38,
+      "certificate_value": "GW in KGS 844,96; NW in KGS 714,30",
+      "invoice_value": "Total Gross Weight 171,55 KG; Total Net Weight 125,20 KG; Number of Packages 4",
+      "rules_applied": [
+        {
+          "rule_id": "8.5.2",
+          "outcome": "MANUAL_REVIEW"
+        }
+      ],
+      "motivation": "Certifikatet anger kvantitet/vikt för faktura RB6604204, medan fakturafilen innehåller RB6604864. Systemet får inte ersätta den saknade refererade fakturan med den synliga fakturan och därmed inte slutligt avgöra kvantitetsfrågan mot fel dokument. Eftersom korrekt faktura saknas i fakturafilen blir kontrollpunkten MANUAL_REVIEW."
+    },
+    "origin": {
+      "applicable": true,
+      "status": "MANUAL_REVIEW",
+      "confidence": 0.41,
+      "certificate_value": "DEU,ESP,ITA,TUR,CHN,TWN",
+      "invoice_value": "Country of Manufacturing: Slovakia, Sweden, Germany, France, India, China, United States",
+      "rules_applied": [
+        {
+          "rule_id": "8.5.2",
+          "outcome": "MANUAL_REVIEW"
+        },
+        {
+          "rule_id": "4.3.7",
+          "outcome": "APPLICABLE_BUT_NOT_DECISIVE_DUE_TO_PAIRING_FAILURE"
+        }
+      ],
+      "motivation": "Certifikatet innehåller flera ursprungsländer och hänvisar samtidigt till en specifik faktura som inte finns i den separata fakturafilen. Eftersom den refererade fakturan saknas får systemet inte slutligt pröva ursprung mot den synliga fakturan som bär ett annat fakturanummer. Därför är korrekt ursprungsverifiering tekniskt omöjlig inom detta dokumentpar och kontrollpunkten sätts till MANUAL_REVIEW."
+    }
+  },
+  "overall_assessment": {
+    "comparison_result": "MANUAL_REVIEW",
+    "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
+    "auto_approval_eligible": false,
+    "confidence": 0.95,
+    "critical_failures": [
+      "Certifikatet refererar uttryckligen till faktura RB6604204 daterad 2023-02-28, men den separata fakturafilen innehåller endast faktura RB6604864 daterad 2023-03-08."
+    ],
+    "manual_review_triggers": [
+      "Den refererade fakturan kan inte återfinnas i den bifogade fakturafilen, vilket gör korrekt dokumentparning tekniskt omöjlig."
+    ],
+    "decision_summary": "Dokumentrollerna kunde klassificeras säkert och consignor kunde identifieras i fakturan, men certifikatet hänvisar till en annan specifik faktura än den som finns i den separata fakturafilen. Enligt parningsregeln får systemet då inte använda den synliga fakturan som ersättning. Slutresultatet blir därför MANUAL_REVIEW.",
+    "human_explanation": "Certifikatet hänvisar till faktura RB6604204 daterad 2023-02-28, men den bifogade fakturafilen innehåller faktura RB6604864 daterad 2023-03-08. Därför går det inte att säkerställa att rätt faktura har bifogats och ärendet måste granskas manuellt."
+  },
+  "_meta": {
+    "tested_at": "2026-04-01T13:04:33.829941+00:00",
+    "prompt_hash": "9b9df42642d8",
+    "model": "gpt-5.4",
+    "tier": 2,
+    "pair": "P063_MISMATCH",
+    "expected": "NOT_IDENTICAL",
+    "actual": "MANUAL_REVIEW",
+    "status": "REVIEW"
+  }
+}

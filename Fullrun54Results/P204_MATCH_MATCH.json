@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-04-01T00:00:00Z",
+    "verification_timestamp": "2026-04-02T00:00:00Z",
     "document_pair_id": null,
     "certificate_issue_date": "2025-05-12",
     "source_documents_received": 2
@@ -34,15 +34,19 @@
     "activated_rules": [
       {
         "rule_id": "8.5.0",
-        "rule_name": "Filbaserad dokumentparning – originalcertifikat från fil 1 och faktura från fil 2"
+        "rule_name": "Filbaserad dokumentparning – använd certifikat från certifikatfilen och faktura från separat fakturafil"
       },
       {
         "rule_id": "8.6",
         "rule_name": "Obligatorisk parningsvalidering"
       },
       {
-        "rule_id": "4.1.0",
-        "rule_name": "Consignor får verifieras genom uttrycklig förekomst var som helst i fakturan"
+        "rule_id": "4.1.2.1",
+        "rule_name": "Landverifiering via indirekta identifierare"
+      },
+      {
+        "rule_id": "4.4.3.0",
+        "rule_name": "Enhetsprefix-normalisering kpcs/pcs"
       }
     ]
   },
@@ -50,143 +54,131 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.89,
+      "confidence": 0.91,
       "certificate_value": "Emballator Tectubes Sweden AB\nTubgatan 2\nBox 103\n54422, Hjo\nSverige",
-      "invoice_value": "Emballator\nTectubes Sweden AB\nBox 103\nSE-544 22 Hjo\nSWEDEN",
+      "invoice_value": "Emballator\nTectubes Sweden AB\nBox 103\nSE-544 22 Hjo\nSWEDEN\nVAT-nr/VAT No: SE556425199801",
       "rules_applied": [
         {
           "rule_id": "8.5.0",
-          "outcome": "Used certificate from file 1 and invoice from file 2 only"
+          "outcome": "MATCHED_PAIR_SELECTED"
         },
         {
           "rule_id": "4.1.0",
-          "outcome": "MATCH"
+          "outcome": "NAME_FOUND_IN_INVOICE_IDENTIFICATION_BLOCK"
         },
         {
           "rule_id": "4.1.2.1",
-          "outcome": "Country corroborated by address and VAT prefix SE"
+          "outcome": "COUNTRY_VERIFIED_VIA_ADDRESS_AND_VAT_PREFIX"
         },
         {
           "rule_id": "4.1.5",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor 'Emballator Tectubes Sweden AB' kan identifieras i den separata fakturafilen genom sammanhängande synlig text i fakturans footer på båda sidor: 'Emballator' följt av 'Tectubes Sweden AB'. Landet verifieras som Sverige genom adressblocket 'SWEDEN' och VAT-prefix 'SE'. Inbäddade fakturasidor i certifikatfilen användes inte för verifieringen."
+      "motivation": "Originalcertifikatet på sida 1 användes och verifiering skedde mot den separata fakturafilen. Certifikatets consignor kan identifieras i fakturans issuer/footer-block som 'Emballator / Tectubes Sweden AB', vilket efter tillåten normalisering av radbrytningar motsvarar 'Emballator Tectubes Sweden AB'. Landet verifieras i fakturan genom adressen 'SWEDEN' och VAT-prefix 'SE'."
     },
     "consignee": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.9,
+      "confidence": 0.93,
       "certificate_value": "The Saudi British Bank\nWestern Province Management Office\nP.O.Box 106\nSA-21411 Jeddah\nSaudi Arabia",
       "invoice_value": "The Saudi British Bank\nWestern Province Management Office\nP.O.Box 109\nSA-21442 JEDDAH\nSaudi Arabia",
       "rules_applied": [
         {
           "rule_id": "4.2.0.2",
-          "outcome": "Primary billing/customer field used"
-        },
-        {
-          "rule_id": "4.2.1",
-          "outcome": "Consignee identified in customer field"
+          "outcome": "PRIMARY_BILL_TO_CUSTOMER_USED"
         },
         {
           "rule_id": "4.2.2.1",
-          "outcome": "Normalization applied for case and formatting"
+          "outcome": "NORMALIZATION_APPLIED"
+        },
+        {
+          "rule_id": "4.2.3",
+          "outcome": "COUNTRY_MATCH"
         },
         {
           "rule_id": "4.2.4",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Fakturans kundfält anger samma mottagarnamn som certifikatet: 'The Saudi British Bank Western Province Management Office'. Landet är 'Saudi Arabia' i båda dokumenten. Skillnader i P.O. Box och postnummer påverkar inte utfallet eftersom namn och land stämmer."
+      "motivation": "Fakturans kund/faktureringspart är 'The Saudi British Bank, Western Province Management Office'. Företagsnamn och land överensstämmer med certifikatet. Skillnader i boxnummer och postkod (P.O.Box 106/109 och SA-21411/SA-21442) utgör inte MISMATCH eftersom kontrollpunkten avgörs av företagsnamn och land."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.92,
+      "confidence": 0.94,
       "certificate_value": "Printed Aluminiumtubes with caps, 20 pallets\nMiragel Oral Gel 40g KSA\nMiragel Oral Gel 40g KSA\nPilocin Cream 30g TP",
-      "invoice_value": "Printed Aluminiumtubes with caps\nPackages: 20 pallets\nMiragel Oral Gel 40g KSA\nMiragel Oral Gel 40g KSA\nPilocin Cream 30g TP",
+      "invoice_value": "Miragel Oral Gel 40g KSA\nMiragel Oral Gel 40g KSA\nPilocin Cream 30g TP\nPrinted Aluminiumtubes with caps\nPackages: 20 pallets",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "No article numbers stated in certificate; moved to controlled text match"
+          "outcome": "NO_CERTIFICATE_ARTICLE_NUMBER_USED"
         },
         {
           "rule_id": "4.3.3",
-          "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.3.4",
-          "outcome": "Non-identity-changing additions accepted"
+          "outcome": "CONTROLLED_TEXT_MATCH"
         },
         {
           "rule_id": "4.3.8",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Samtliga varubeskrivningar i certifikatet kan identifieras uttryckligen i fakturan: 'Miragel Oral Gel 40g KSA' förekommer två gånger, 'Pilocin Cream 30g TP' förekommer en gång, och den gemensamma beskrivningen 'Printed Aluminiumtubes with caps' med '20 pallets' återfinns i fakturans beskrivningsblock. Ingen semantisk tolkning behövdes."
+      "motivation": "Certifikatets varubeskrivningar återfinns uttryckligen i fakturan: två rader 'Miragel Oral Gel 40g KSA', en rad 'Pilocin Cream 30g TP' samt texten 'Printed Aluminiumtubes with caps' och 'Packages: 20 pallets'. Matchningen kan göras utan semantisk omtolkning."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.88,
+      "confidence": 0.89,
       "certificate_value": "200,725pcs\n33,670pcs\n149,370pcs",
       "invoice_value": "200,725 kpcs\n33,670 kpcs\n149,370 kpcs",
       "rules_applied": [
         {
-          "rule_id": "4.4.2",
-          "outcome": "Certificate quantities include numeric value and unit"
-        },
-        {
-          "rule_id": "4.4.3",
-          "outcome": "Numeric values identified in invoice"
-        },
-        {
           "rule_id": "4.4.3.1",
-          "outcome": "All listed quantities verified; at least one required"
+          "outcome": "MULTIPLE_QUANTITIES_VERIFIED"
+        },
+        {
+          "rule_id": "4.4.3.0",
+          "outcome": "KPCS_TO_PCS_NORMALIZATION_APPLIED"
         },
         {
           "rule_id": "4.4.6",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "De tre numeriska kvantiteterna i certifikatet – 200,725; 33,670; 149,370 – återfinns uttryckligen i fakturans respektive varurader. Enligt reglerna avser verifieringen primärt det numeriska värdet; fakturan behöver inte använda exakt samma kvantitetsenhet som certifikatet. Ingen uttrycklig motsägelse finns."
+      "motivation": "Samtliga tre kvantiteter i certifikatet kan identifieras i fakturan efter tillåten enhetsprefix-normalisering. Fakturans '200,725 kpcs', '33,670 kpcs' och '149,370 kpcs' motsvarar certifikatets 200,725 pcs, 33,670 pcs och 149,370 pcs."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.91,
+      "confidence": 0.97,
       "certificate_value": "Sweden",
       "invoice_value": "The origin of the material is Sweden.",
       "rules_applied": [
         {
           "rule_id": "4.5.1",
-          "outcome": "Explicit origin statement identified in invoice"
-        },
-        {
-          "rule_id": "4.5.2",
-          "outcome": "Single common origin accepted"
+          "outcome": "EXPLICIT_ORIGIN_FOUND"
         },
         {
           "rule_id": "4.5.5",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger ursprungsland 'Sweden'. I fakturan finns en uttrycklig ursprungsangivelse: 'The origin of the material is Sweden.' Detta är en positiv och explicit origin-uppgift i fakturan och verifierar certifikatets ursprungsland."
+      "motivation": "Certifikatets ursprungsland 'Sweden' återfinns uttryckligen i fakturan i origin-uttalandet 'The origin of the material is Sweden.'. Ursprunget verifieras därför positivt i fakturatexten."
     }
   },
   "overall_assessment": {
     "comparison_result": "IDENTICAL",
     "workflow_recommendation": "AUTO_APPROVAL_ELIGIBLE",
     "auto_approval_eligible": true,
-    "confidence": 0.9,
+    "confidence": 0.93,
     "critical_failures": [],
     "manual_review_triggers": [],
-    "decision_summary": "Originalcertifikatet i fil 1 verifierades mot den separata fakturan i fil 2 enligt filparningsreglerna. Consignor, consignee, varubeskrivning, kvantiteter och ursprungsland kan alla identifieras i fakturan efter tillåten normalisering. Inga tillämpliga kontrollpunkter gav MISMATCH eller MANUAL_REVIEW och samtliga MATCH-punkter ligger på minst 0.85 i confidence.",
-    "human_explanation": "Certifikatet kan verifieras mot den bifogade fakturan. Avsändare, mottagare, varubeskrivning, mängder och ursprungsland stämmer överens. Ärendet kan därför godkännas automatiskt."
+    "decision_summary": "Dokumentparet passerar parningsvalideringen via både consignor och consignee. Originalcertifikatet i certifikatfilen verifierades mot den separata fakturafilen; inbäddade faktura-/följesedelsidor i certifikatfilen användes inte. Samtliga tillämpliga kontrollpunkter är MATCH med confidence minst 0.85.",
+    "human_explanation": "Certifikatet med avsändare Emballator Tectubes Sweden AB, mottagare The Saudi British Bank och ursprung Sweden kan verifieras mot den bifogade fakturan. Varubeskrivningarna och kvantiteterna 200,725 pcs, 33,670 pcs och 149,370 pcs återfinns i fakturan, där kpcs har normaliserats till motsvarande styckantal. Dokumentparet kan därför godkännas automatiskt."
   },
   "_meta": {
-    "tested_at": "2026-04-01T13:16:28.118664+00:00",
-    "prompt_hash": "9b9df42642d8",
+    "tested_at": "2026-04-02T11:06:44.024995+00:00",
+    "prompt_hash": "f81eb9b0d2ea",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P204_MATCH",

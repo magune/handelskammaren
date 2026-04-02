@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-04-01T00:00:00Z",
+    "verification_timestamp": "2026-04-02T00:00:00Z",
     "document_pair_id": null,
     "certificate_issue_date": "2026-02-11",
     "source_documents_received": 2
@@ -20,7 +20,7 @@
     "document_b": {
       "label": "Document B",
       "assumed_role": "invoice",
-      "document_type": "Commercial Invoice"
+      "document_type": "Invoice"
     }
   },
   "rule_activation": {
@@ -33,28 +33,28 @@
     "eu_origin_normalization_active": false,
     "activated_rules": [
       {
-        "rule_id": "8.5.2",
-        "rule_name": "Certifikatets fakturareferens måste kunna återfinnas i fakturafilen"
+        "rule_id": "8.1.1",
+        "rule_name": "Läsbarhetstest för skannad faktura"
       },
       {
         "rule_id": "8.6",
-        "rule_name": "Parningsvalidering"
+        "rule_name": "Obligatorisk parningsvalidering"
       },
       {
-        "rule_id": "4.1.0",
-        "rule_name": "Consignor får styrkas via förekomst var som helst i fakturan"
+        "rule_id": "4.1.3.6",
+        "rule_name": "Förkortning av juridisk bolagsform / normaliserad företagsnamnsmatchning"
       },
       {
-        "rule_id": "4.3.2",
-        "rule_name": "Varubeskrivning via kontrollerad textmatchning"
+        "rule_id": "4.3.3",
+        "rule_name": "Kontrollerad textmatchning för varubeskrivning"
       },
       {
-        "rule_id": "4.4.3",
-        "rule_name": "Numeriskt värde ska kunna identifieras i fakturan"
+        "rule_id": "4.4.1",
+        "rule_name": "Förekomstkontroll av kvantitet"
       },
       {
         "rule_id": "4.5.1",
-        "rule_name": "Ursprungsland ska framgå explicit i fakturan"
+        "rule_name": "Explicit ursprungsangivelse i faktura"
       }
     ]
   },
@@ -62,7 +62,7 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.94,
+      "confidence": 0.96,
       "certificate_value": "FORPAC INTERNATIONAL AB\nKUNGSPORTEN 4E\nSE-427 50, BILLDAL\nSWEDEN",
       "invoice_value": "Seller\nForpac International AB\nKungsporten 4E\n427 50 Billdal\nSweden",
       "rules_applied": [
@@ -71,15 +71,15 @@
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.1.2.1",
+          "rule_id": "4.1.2",
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.1.5",
+          "rule_id": "4.1.4",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor 'FORPAC INTERNATIONAL AB' kan identifieras uttryckligen i fakturans säljarblock längst ned på sida 1 som 'Forpac International AB'. Landet framgår som 'Sweden' i samma block. Skillnaderna i versaler och postnummerformat är tillåten normalisering."
+      "motivation": "Certifikatets consignor 'FORPAC INTERNATIONAL AB' återfinns uttryckligen i fakturan som säljare 'Forpac International AB'. Adressen 'Kungsporten 4E' och landet 'Sweden' framgår i båda dokumenten. Skillnaderna avser endast versaler/gemener och format."
     },
     "consignee": {
       "applicable": true,
@@ -89,73 +89,61 @@
       "invoice_value": null,
       "rules_applied": [
         {
-          "rule_id": "4.2.1",
-          "outcome": "NOT_FOUND"
+          "rule_id": "8.1.1",
+          "outcome": "MANUAL_REVIEW"
         },
         {
-          "rule_id": "8.5.2",
-          "outcome": "MANUAL_REVIEW"
+          "rule_id": "4.2.1",
+          "outcome": "NOT_FOUND"
         }
       ],
-      "motivation": "Ingen läsbar 'Invoice to', 'Bill to', 'Buyer', 'Ship to' eller annan mottagarpart kunde identifieras på den skannade fakturans enda sida. Fakturafilen saknar dessutom läsbar identifiering av det fakturanummer som certifikatet hänvisar till ('1002990'), vilket gör dokumentparningen tekniskt osäker. Därför lämnas kontrollpunkten till manuell granskning i stället för att fastställa MISMATCH."
+      "motivation": "Fakturan är bildbaserad/skannad och ingen läsbar Bill To, Buyer, Ship To eller Consignee-uppgift för mottagaren kunde extraheras från den tillgängliga fakturasidan. Därför kan certifikatets consignee inte verifieras tekniskt mot fakturan, men någon uttrycklig motsägelse har inte kunnat konstateras."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.91,
-      "certificate_value": "TESTLINER & FLUTING",
-      "invoice_value": "Testliner , 90gsm - non collé\nFluting 90gsm",
+      "certificate_value": "80 REELS\nTESTLINER & FLUTING",
+      "invoice_value": "10 Reel 23,686 MT Testliner , 90gsm - non collé\n2 Reel 4,804 MT Testliner , 90gsm - non collé\n18 Reel 47,142 MT Testliner , 90gsm - non collé\n8 Reel 22,808 MT Testliner , 90gsm - non collé\n16 Reel 39,74 MT Fluting 90gsm\n9 Reel 23,856 MT Fluting 90gsm\n17 Reel 46,838 MT Fluting 90gsm",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "MATCH"
+          "outcome": "ARTICLE_NUMBERS_NOT_USED"
         },
         {
           "rule_id": "4.3.3",
           "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.3.8",
-          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger varorna som 'TESTLINER & FLUTING'. Fakturan visar flera rader med den identitetsbärande huvudbeteckningen 'Testliner' samt flera rader med 'Fluting 90gsm'. Huvudbeteckningarna kan därför identifieras explicit i fakturan utan semantisk omtolkning."
+      "motivation": "Certifikatet anger varorna som 'TESTLINER & FLUTING'. Fakturan listar flera rader med 'Testliner' och 'Fluting 90gsm'. Den identitetsbärande huvudbeteckningen för båda varutyperna kan identifieras explicit i fakturan utan semantisk omtolkning."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.96,
+      "confidence": 0.97,
       "certificate_value": "208,874 MT",
       "invoice_value": "Total qty.\n80 Reel\n208,874 MT",
       "rules_applied": [
         {
-          "rule_id": "4.4.2",
-          "outcome": "MATCH"
+          "rule_id": "4.4.2.1",
+          "outcome": "BOX_7_USED_AS_VERIFICATION_BASIS"
         },
         {
-          "rule_id": "4.4.3",
-          "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.4.6",
+          "rule_id": "4.4.1",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets kvantitetsfält (box 7) anger explicit '208,874 MT'. Fakturan anger i totalraden '80 Reel 208,874 MT'. Det numeriska värdet och enheten kan identifieras exakt i fakturan."
+      "motivation": "Den verifieringsgrundande kvantiteten i certifikatets box 7 är '208,874 MT'. Fakturan innehåller samma numeriska värde och enhet i totalraden 'Total qty. 80 Reel 208,874 MT'. Därmed är kvantiteten explicit identifierad i fakturan."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.95,
+      "confidence": 0.9,
       "certificate_value": "FRANCE",
-      "invoice_value": "Nous certifions que les marchandises faisant lobjet de cette livraison sont d´origine français",
+      "invoice_value": "Nous certifions que les marchandises faisant l’objet de cette livraison sont d´origine français",
       "rules_applied": [
         {
           "rule_id": "4.5.1",
-          "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.5.4",
           "outcome": "MATCH"
         },
         {
@@ -163,25 +151,24 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger ursprungsland 'FRANCE'. Fakturan innehåller ett explicit ursprungsuttalande på franska som säger att varorna i denna leverans är av franskt ursprung. Ursprungslandet kan därför verifieras uttryckligen i fakturan."
+      "motivation": "Certifikatet anger ursprungsland 'FRANCE'. Fakturan innehåller en explicit ursprungsfras på franska som anger att varorna är av franskt ursprung. Ursprungslandet kan därför uttryckligen identifieras i fakturan."
     }
   },
   "overall_assessment": {
     "comparison_result": "MANUAL_REVIEW",
     "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
     "auto_approval_eligible": false,
-    "confidence": 0.68,
+    "confidence": 0.78,
     "critical_failures": [],
     "manual_review_triggers": [
-      "Certifikatet hänvisar till fakturanummer 1002990 men detta nummer kan inte identifieras i den bifogade skannade fakturafilen.",
-      "Mottagarparten SARL IBARAR EMBALLAGE kan inte verifieras eftersom inget läsbart mottagarfält kan identifieras på den enda fakturasidan."
+      "Mottagare/consignee kunde inte verifieras eftersom den bildbaserade fakturan saknar extraherbar och läsbar Bill To/Buyer/Ship To/Consignee-information på tillgänglig sida."
     ],
-    "decision_summary": "Avsändare, varubeskrivning, kvantitet och ursprungsland kan verifieras mot den bifogade fakturan. Den skannade fakturafilen innehåller dock ingen läsbar verifiering av fakturanummer 1002990 och ingen verifierbar mottagarpart. Därför är ett slutligt automatiskt beslut tekniskt omöjligt och ärendet ska hanteras manuellt.",
-    "human_explanation": "Avsändare, varubeskrivning, mängd och ursprungsland stämmer mellan certifikatet och den bifogade fakturan. Däremot kan fakturanumret 1002990 och mottagaren SARL IBARAR EMBALLAGE inte verifieras i den skannade fakturafilen. Därför krävs manuell granskning."
+    "decision_summary": "Consignor, varubeskrivning, kvantitet och ursprungsland kan verifieras mot fakturan. Mottagaren kan däremot inte verifieras tekniskt från den skannade fakturan, vilket kräver manuell handläggning.",
+    "human_explanation": "Avsändare, varor, mängd och ursprungsland stämmer mellan certifikatet och fakturan. Mottagaren kan däremot inte kontrolleras eftersom fakturan saknar en läsbar mottagaruppgift på den tillgängliga sidan. Ärendet behöver därför granskas manuellt."
   },
   "_meta": {
-    "tested_at": "2026-04-01T21:48:56.877270+00:00",
-    "prompt_hash": "9b9df42642d8",
+    "tested_at": "2026-04-02T11:22:43.063599+00:00",
+    "prompt_hash": "f81eb9b0d2ea",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P0101_MATCH",

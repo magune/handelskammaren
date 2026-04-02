@@ -15,12 +15,12 @@
     "document_a": {
       "label": "Document A",
       "assumed_role": "certificate",
-      "document_type": "certificate of origin"
+      "document_type": "Certificate of Origin"
     },
     "document_b": {
       "label": "Document B",
       "assumed_role": "invoice",
-      "document_type": "commercial invoice"
+      "document_type": "Invoice"
     }
   },
   "rule_activation": {
@@ -33,28 +33,20 @@
     "eu_origin_normalization_active": true,
     "activated_rules": [
       {
-        "rule_id": "8.5.0",
-        "rule_name": "Filbaserad dokumentparning"
-      },
-      {
-        "rule_id": "8.6",
-        "rule_name": "Obligatorisk parningsvalidering"
-      },
-      {
-        "rule_id": "4.1.0",
-        "rule_name": "Consignor identifierad i fakturan"
-      },
-      {
         "rule_id": "4.3.5",
         "rule_name": "Generell varubeskrivning med fakturareferens"
       },
       {
-        "rule_id": "4.4.2.1",
-        "rule_name": "Box 7 är verifieringsgrundande för kvantitet"
+        "rule_id": "4.5.3",
+        "rule_name": "Blandade ursprung med tydlig koppling i fakturan"
       },
       {
         "rule_id": "4.5.4.1",
-        "rule_name": "EU-normalisering för ursprungsland"
+        "rule_name": "EU-normalisering"
+      },
+      {
+        "rule_id": "4.5.4.2",
+        "rule_name": "EU-medlemsland som verifiering av EU-ursprung"
       }
     ]
   },
@@ -62,80 +54,76 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.92,
+      "confidence": 0.91,
       "certificate_value": "Boxes & Labels Olsfors AB\nBuagärde 39\n517 95, Olsfors\nSweden",
       "invoice_value": "Shipper Address\nBoxes & Labels Olsfors AB\nBuagärde 39\n517 95 OLSFORS\nSWEDEN",
       "rules_applied": [
         {
-          "rule_id": "8.6",
-          "outcome": "PASS"
+          "rule_id": "4.1.1",
+          "outcome": "Fakturautställaren identifierades i invoice-sidhuvudet som 'Boxes & Labels Olsfors AB'."
         },
         {
-          "rule_id": "4.1.0",
-          "outcome": "MATCH"
+          "rule_id": "4.1.2",
+          "outcome": "Företagsnamn och land kunde verifieras i fakturan."
         },
         {
-          "rule_id": "4.1.2.1",
-          "outcome": "MATCH"
+          "rule_id": "4.1.3.6",
+          "outcome": "Ingen materiell skillnad i bolagsnamn; endast formateringsskillnader normaliserades."
         },
         {
-          "rule_id": "4.1.5",
-          "outcome": "MATCH"
+          "rule_id": "4.1.4",
+          "outcome": "Landet Sweden/SWEDEN överensstämmer."
         }
       ],
-      "motivation": "Certifikatets consignor kan identifieras direkt i fakturans shipper/header-block med samma företagsnamn. Landet Sverige framgår uttryckligen i fakturans adressblock. Ingen motsägande uppgift förekommer."
+      "motivation": "Certifikatets consignor är 'Boxes & Labels Olsfors AB ... Sweden'. På fakturans sida 1 anges i avsändarblocket 'Boxes & Labels Olsfors AB ... SWEDEN'. Namnet är direkt identifierbart och landet överensstämmer efter normalisering av versaler/gemener. Fakturan är bildbaserad men texten är tydligt läsbar i sidhuvudet, så kontrollpunkten kan avgöras tekniskt."
     },
     "consignee": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.91,
-      "certificate_value": "Transalkim Ulus. Nak ve Tic LTD\nYesilbayir Köyü\nDevedüzlüğü Meykil,\nHadimköy\nTR-34555 ISTANBUL\nTürkiye",
+      "confidence": 0.9,
+      "certificate_value": "Transalkim Ulus. Nak ve Tic LTD\nYesilbayir Köyü\nDevedüzlügü Meykil,\nHadimköy\nTR-34555 ISTANBUL\nTürkiye",
       "invoice_value": "Invoicing Address\nTransalkim Ulus.Nak ve Tic LTD\nYesilbayir Köyü\nDevedüzlüğü Meykil, Hadimköy\nTR-34555 ISTANBUL\nTURKEY",
       "rules_applied": [
         {
-          "rule_id": "8.6",
-          "outcome": "PASS"
-        },
-        {
           "rule_id": "4.2.0.2",
-          "outcome": "PRIMARY_BILLING_FIELD_USED"
+          "outcome": "Primärt faktureringsfält användes; 'Invoicing Address' behandlades som auktoritativ mottagarpart."
         },
         {
           "rule_id": "4.2.2",
-          "outcome": "MATCH"
+          "outcome": "Mottagarens företagsnamn kunde identifieras i fakturan."
+        },
+        {
+          "rule_id": "4.2.2.1",
+          "outcome": "Tillåten normalisering av versaler/gemener, radbrytningar och punktnotation användes."
         },
         {
           "rule_id": "4.2.3",
-          "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.2.4",
-          "outcome": "MATCH"
+          "outcome": "Landet Türkiye/TURKEY överensstämmer efter normalisering."
         }
       ],
-      "motivation": "Certifikatets consignee återfinns i fakturans primära faktureringsfält 'Invoicing Address'. Företagsnamnet matchar efter tillåten normalisering av interpunktion och versaler/gemener, och landet Türkiye/TURKEY avser samma land. Ingen annan mottagare med motstridande identitet anges i fakturans faktureringsfält."
+      "motivation": "Certifikatets consignee är 'Transalkim Ulus. Nak ve Tic LTD ... Türkiye'. Fakturan anger i primärt adressfält 'Invoicing Address' mottagaren som 'Transalkim Ulus.Nak ve Tic LTD ... TURKEY'. Skillnaden mellan 'Ulus. Nak' och 'Ulus.Nak' är endast punkt-/mellanslagsformatering, och landet stämmer efter normalisering. Därför är samma mottagare verifierad i fakturan."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.88,
       "certificate_value": "1 pallet 693 kg\nGlue labels\nRibbons\nSee attached invoice 50060 dated 2026-02-20",
-      "invoice_value": "Invoice: 50060\nDate: 2026-02-20\nDescription lines include:\nTracy KP212 glue label ny 2025 85x48 mm\nTracy KP296 glue label 40x25mm\nTracy KP208o308 glue label 35x70 mm\nTracy INTGlue glue label 42x32 mm\nThermal Transfer Ribbon, black 128mmx600m\nThermal Transfer Ribbon, black 89mmx600m",
+      "invoice_value": "Invoice: 50060\nDate: 2026-02-20\nDescription rows include:\n'Tracy KP212 glue label ny 2025'\n'Tracy KP296 glue label'\n'Tracy KP208o308 glue label'\n'Tracy INTGlue glue label'\n'Thermal Transfer Ribbon, black'\n'Thermal Transfer Ribbon, black'",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "NOT_APPLICABLE_NO_ARTICLE_NUMBER_IN_CERTIFICATE"
+          "outcome": "Inga artikelnummer angavs i certifikatet; artikelnummerprioritet var inte tillämplig."
         },
         {
           "rule_id": "4.3.5",
-          "outcome": "MATCH"
+          "outcome": "Certifikatet innehåller uttrycklig fakturahänvisning: 'See attached invoice 50060 dated 2026-02-20'."
         },
         {
-          "rule_id": "4.3.8",
-          "outcome": "MATCH"
+          "rule_id": "4.3.5.2",
+          "outcome": "Fakturans varuinnehåll är förenligt med den generella beskrivningen 'Glue labels' och 'Ribbons'."
         }
       ],
-      "motivation": "Certifikatet använder en generell varubeskrivning men innehåller uttrycklig hänvisning till faktura 50060 daterad 2026-02-20. Fakturan i dokumentparet har exakt samma nummer och datum och innehåller varuposter som är förenliga med certifikatets beskrivning 'Glue labels' och 'Ribbons'. Därmed är varubeskrivningen verifierad enligt regeln för generell beskrivning med fakturareferens."
+      "motivation": "Certifikatet hänvisar uttryckligen till 'invoice 50060 dated 2026-02-20'. Fakturan på sida 1 bär exakt nummer 50060 och datum 2026-02-20. Varuinnehållet i fakturan består av flera rader med glue labels samt två rader med thermal transfer ribbons, vilket är förenligt med certifikatets beskrivning 'Glue labels' och 'Ribbons'. Därmed är varubeskrivningen verifierad via generell varubeskrivning med fakturareferens."
     },
     "quantity": {
       "applicable": true,
@@ -146,48 +134,44 @@
       "rules_applied": [
         {
           "rule_id": "4.4.2.1",
-          "outcome": "BOX_7_SELECTED"
+          "outcome": "Verifieringen utgick från kvantitetsuppgifterna i box 7."
         },
         {
           "rule_id": "4.4.3.1",
-          "outcome": "MATCH"
+          "outcome": "Flera kvantitetsuppgifter förekommer och minst en måste verifieras; här verifieras samtliga tre."
         },
         {
-          "rule_id": "4.4.4",
-          "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.4.6",
-          "outcome": "MATCH"
+          "rule_id": "4.4.3.4",
+          "outcome": "693kg och 693,00 normaliserades som samma numeriska värde trots decimalformat."
         }
       ],
-      "motivation": "Verifieringen utgår från kvantitetsfältet i box 7. Samtliga tre uppgifter i certifikatet kan identifieras i fakturan: 44 boxes motsvaras av 'Box paperlabels: 44', 14 boxes motsvaras av 'Box ribbons: 14', och grossweight 693kg motsvaras av 'Tot. KG/gross: 693,00'. Ingen uttrycklig motsägelse förekommer."
+      "motivation": "I certifikatets box 7 anges '44 boxes', '14 boxes' och 'Grossweight 693kg'. Fakturan anger på sida 1 'Box paperlabels: 44', 'Box ribbons: 14' samt 'Tot. KG/gross: 693,00'. De numeriska värdena 44, 14 och 693 kan identifieras direkt i fakturan, och skillnaden mellan '693kg' och '693,00' är endast format/decimalnotation. Kontrollpunkten är därför matchad."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.89,
       "certificate_value": "European Community",
-      "invoice_value": "CoO column on invoice lines:\nSE\nSE\nSE\nSE\nFR\nFR",
+      "invoice_value": "CoO column on invoice rows shows:\nSE\nSE\nSE\nSE\nFR\nFR",
       "rules_applied": [
         {
           "rule_id": "4.5.1",
-          "outcome": "EXPLICIT_ORIGIN_FIELD_FOUND"
+          "outcome": "Ursprung identifierades uttryckligen i fakturans dedikerade CoO-kolumn."
         },
         {
           "rule_id": "4.5.3",
-          "outcome": "PER_LINE_ORIGIN_CLEAR"
+          "outcome": "Fakturan har blandade ursprung men de är tydligt kopplade per rad via CoO-kolumnen."
         },
         {
           "rule_id": "4.5.4.1",
-          "outcome": "MATCH"
+          "outcome": "Certifikatets 'European Community' normaliserades som EU-samlingsbeteckning."
         },
         {
-          "rule_id": "4.5.5",
-          "outcome": "MATCH"
+          "rule_id": "4.5.4.2",
+          "outcome": "Fakturans specifika EU-medlemsländer SE och FR verifierar certifikatets EU-ursprung."
         }
       ],
-      "motivation": "Certifikatet anger ursprung 'European Community'. Fakturan innehåller ett explicit ursprungsfält i form av CoO-kolumn på radnivå, där varorna är märkta med SE och FR. Sverige och Frankrike är båda EU-medlemsstater, vilket verifierar det kollektiva ursprungsanspråket European Community, och inga icke-EU-ursprung förekommer."
+      "motivation": "Certifikatet anger ursprung 'European Community'. Fakturan har en explicit ursprungskolumn 'CoO' där de fyra label-raderna har 'SE' och de två ribbon-raderna har 'FR'. Både SE (Sweden) och FR (France) är EU-medlemsstater, och fakturan visar ursprung per rad utan motsägande icke-EU-ursprung. Därmed är certifikatets EU-ursprung verifierat."
     }
   },
   "overall_assessment": {
@@ -197,12 +181,12 @@
     "confidence": 0.9,
     "critical_failures": [],
     "manual_review_triggers": [],
-    "decision_summary": "All applicable control points are verified as MATCH. The invoice is image-based and OCR-poor, but the rendered page is sufficiently readable to support a rule-based verification. No applicable rule produced MISMATCH or MANUAL_REVIEW.",
-    "human_explanation": "Alla kontrollpunkter i certifikatet kan verifieras mot fakturan. Fakturanummer 50060 och datum 2026-02-20 stämmer, avsändare och mottagare återfinns i fakturan, kvantiteterna 44 boxes, 14 boxes och grossweight 693 kg finns där, och ursprunget European Community stöds av CoO-koderna SE och FR. Dokumentparet kan därför godkännas automatiskt."
+    "decision_summary": "All five applicable control points are verified against the invoice. The certificate refers to invoice 50060 dated 2026-02-20, and the image-based invoice clearly confirms consignor, consignee, goods, quantities and EU origin via explicit CoO entries SE and FR.",
+    "human_explanation": "Certifikatet och fakturan hänvisar till samma faktura 50060 daterad 2026-02-20. Avsändare, mottagare, varubeskrivning, mängd och ursprung kan verifieras i fakturan; ursprunget anges som SE och FR i fakturan, vilket ligger inom European Community. Dokumentparet kan därför godkännas automatiskt."
   },
   "_meta": {
-    "tested_at": "2026-04-01T12:52:36.777625+00:00",
-    "prompt_hash": "9b9df42642d8",
+    "tested_at": "2026-04-02T11:06:44.035702+00:00",
+    "prompt_hash": "f81eb9b0d2ea",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P226_MATCH",

@@ -34,15 +34,15 @@
     "activated_rules": [
       {
         "rule_id": "8.5.0",
-        "rule_name": "Filbaserad dokumentparning; certifikat från certifikatfilen och faktura från separat fakturafil"
+        "rule_name": "Filbaserad dokumentparning; certifikat från fil 1 och faktura från fil 2"
       },
       {
-        "rule_id": "4.2.0.3",
-        "rule_name": "Ship-To-regel för slutmottagare"
+        "rule_id": "8.6",
+        "rule_name": "Obligatorisk parningsvalidering"
       },
       {
-        "rule_id": "4.3.3.3",
-        "rule_name": "Kortbeteckning för varutyp ger MANUAL_REVIEW"
+        "rule_id": "4.3.3.3.1",
+        "rule_name": "Initialförkortning i varubeskrivning"
       }
     ]
   },
@@ -50,102 +50,102 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.98,
+      "confidence": 0.99,
       "certificate_value": "CENTRAL NATIONAL SWEDEN AB\nSÖDRA LARMGATAN 6\n411 16, GOTHENBURG\nSWEDEN",
       "invoice_value": "Central National Sweden AB\nSödra Larmgatan 6\nGothenburg, 41 116, Sweden\nVAT NO: SE559187836701",
       "rules_applied": [
         {
-          "rule_id": "4.1.0",
-          "outcome": "MATCH"
-        },
-        {
           "rule_id": "4.1.2",
-          "outcome": "MATCH"
+          "outcome": "name_and_country_identified"
         },
         {
-          "rule_id": "4.1.4",
-          "outcome": "MATCH"
+          "rule_id": "4.1.2.1",
+          "outcome": "country_verified_via_address_and_vat_prefix"
         },
         {
           "rule_id": "4.1.5",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor 'CENTRAL NATIONAL SWEDEN AB' återfinns uttryckligen i fakturans issuer-header. Landet Sverige verifieras både via adressblocket och VAT-prefixet 'SE'."
+      "motivation": "Certifikatets consignor 'CENTRAL NATIONAL SWEDEN AB' återfinns uttryckligen som fakturautställare i fakturans sidhuvud. Landet Sweden/SWEDEN framgår i adressblocket och stöds även av VAT-prefix 'SE'. Samma juridiska part och samma land kan verifieras utan otillåten tolkning."
     },
     "consignee": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.9,
+      "confidence": 0.98,
       "certificate_value": "PALMCO SARL\n3116 AV GOODYEAR\nKINSHASA\nDR CONGO",
       "invoice_value": "CONSIGNED TO: Palmco SARL\n3116 Av Goodyear\nKinshasa,\nDR Congo",
       "rules_applied": [
         {
-          "rule_id": "4.2.0.2",
-          "outcome": "PRIMARY_BILL_TO_DIFFERENT_PARTY_FOUND"
+          "rule_id": "4.2.1",
+          "outcome": "explicit_consignee_field_found"
         },
         {
-          "rule_id": "4.2.0.3",
-          "outcome": "MATCH"
+          "rule_id": "4.2.2.1",
+          "outcome": "case_and_format_normalization_applied"
         },
         {
           "rule_id": "4.2.3",
-          "outcome": "MATCH"
+          "outcome": "country_match"
         },
         {
           "rule_id": "4.2.4",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Fakturan har ett Bill-To/Sold-To-fält för 'Panai Sal (Off-Shore)', men certifikatets consignee 'PALMCO SARL' återfinns exakt i fakturans 'CONSIGNED TO'-fält. Detta uppfyller ship-to-undantaget för slutmottagare, och landet DR Congo överensstämmer."
+      "motivation": "Certifikatets mottagare 'PALMCO SARL' återfinns uttryckligen i fakturans separata fält 'CONSIGNED TO'. Adress och land 'DR Congo' överensstämmer efter tillåten normalisering av versaler/gemener. Matchningen baseras på ett explicit consignee-fält, inte på fri tolkning av leveransadress."
     },
     "goods_description": {
       "applicable": true,
-      "status": "MANUAL_REVIEW",
-      "confidence": 0.72,
-      "certificate_value": "22 Reels\nWHITE TOP KRAFT LINER",
-      "invoice_value": "12 Rolls: WTKL ref. Royal White\nSubs 160gsm, RW 1800mm, DIA 1250mm, Core 100mm\n25.914 MT\n10 Rolls: WTKL ref. Royal White\nSubs 160gsm, RW 1750mm, DIA 1250mm, Core 100mm\n23.951 MT",
+      "status": "MATCH",
+      "confidence": 0.88,
+      "certificate_value": "WHITE TOP KRAFT LINER",
+      "invoice_value": "12 Rolls: WTKL ref. Royal White\nSubs 160gsm, RW 1800mm, DIA 1250mm, Core 100mm\n10 Rolls: WTKL ref. Royal White\nSubs 160gsm, RW 1750mm, DIA 1250mm, Core 100mm",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "NO_ARTICLE_NUMBER_IN_CERTIFICATE"
+          "outcome": "article_number_not_present_in_certificate"
         },
         {
           "rule_id": "4.3.3",
-          "outcome": "EXACT_MAIN_DESIGNATION_NOT_IDENTIFIED"
+          "outcome": "controlled_text_match_required"
         },
         {
-          "rule_id": "4.3.3.3",
-          "outcome": "MANUAL_REVIEW"
+          "rule_id": "4.3.3.3.1",
+          "outcome": "invoice_abbreviation_wtkl_accepted_as_initialism_of_white_top_kraft_liner"
+        },
+        {
+          "rule_id": "4.3.8",
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger varubeskrivningen 'WHITE TOP KRAFT LINER'. Fakturan anger i stället 'WTKL ref. Royal White' med tekniska specifikationer. En direkt identisk textmatchning saknas, men fakturans kodform och kontext kan avse samma varugrupp; detta kräver branschmässig tolkning och ska därför hanteras manuellt."
+      "motivation": "Certifikatet anger varan som 'WHITE TOP KRAFT LINER'. Fakturan använder förkortningen 'WTKL', vilket är en exakt initialförkortning av White Top Kraft Liner. Övrig kontext i fakturan, inklusive total vikt 49.865 MT, totalantal 22 Rolls och shipping marks 'CNS / 9462 / Made in Sweden', stöder att det är samma produkt."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.93,
+      "confidence": 0.96,
       "certificate_value": "49.865 Gross MT",
-      "invoice_value": "Total Weight Quantity: 49.865 MT\nTotal Unit Count: 22 Rolls",
+      "invoice_value": "Total Weight Quantity: 49.865 MT",
       "rules_applied": [
         {
           "rule_id": "4.4.2.1",
-          "outcome": "BOX_7_SELECTED_AS_VERIFICATION_BASIS"
+          "outcome": "box_7_selected_as_verification_basis"
         },
         {
-          "rule_id": "4.4.2.2",
-          "outcome": "WEIGHT_CATEGORY_EXPLICIT_IN_CERTIFICATE"
+          "rule_id": "4.4.3",
+          "outcome": "same_numeric_value_identified"
         },
         {
           "rule_id": "4.4.4",
-          "outcome": "MATCH"
+          "outcome": "total_weight_in_invoice_accepted"
         },
         {
           "rule_id": "4.4.6",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Verifieringsgrundande kvantitet är box 7 i certifikatet: '49.865 Gross MT'. Fakturan innehåller en uttrycklig totalvikt '49.865 MT'. Numeriskt värde och enhet överensstämmer, och ingen motstridig viktuppgift finns."
+      "motivation": "Den verifieringsgrundande kvantiteten är box 7 i certifikatet: '49.865 Gross MT'. Fakturan innehåller den uttryckliga totalvikten 'Total Weight Quantity: 49.865 MT'. Numeriskt värde och enhet överensstämmer exakt; skillnaden att fakturan inte upprepar ordet 'Gross' medför inte avvikelse när totalvikten entydigt avser den aktuella försändelsen."
     },
     "origin": {
       "applicable": true,
@@ -156,36 +156,34 @@
       "rules_applied": [
         {
           "rule_id": "4.5.1",
-          "outcome": "EXPLICIT_ORIGIN_FIELD_IDENTIFIED"
+          "outcome": "explicit_origin_field_found"
         },
         {
           "rule_id": "4.5.5",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets ursprungsland 'Sweden' återfinns uttryckligen i fakturans dedikerade ursprungsfält 'Country of Origin: Sweden'."
+      "motivation": "Certifikatets ursprungsland 'Sweden' återfinns uttryckligen i fakturans dedikerade origin-fält 'Country of Origin: Sweden'. Ingen tolkning via adress eller annan indirekt information har behövts."
     }
   },
   "overall_assessment": {
-    "comparison_result": "MANUAL_REVIEW",
-    "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
-    "auto_approval_eligible": false,
-    "confidence": 0.83,
+    "comparison_result": "IDENTICAL",
+    "workflow_recommendation": "AUTO_APPROVAL_ELIGIBLE",
+    "auto_approval_eligible": true,
+    "confidence": 0.94,
     "critical_failures": [],
-    "manual_review_triggers": [
-      "Varubeskrivningen kan inte verifieras automatiskt eftersom certifikatet anger 'WHITE TOP KRAFT LINER' medan fakturan anger 'WTKL ref. Royal White'."
-    ],
-    "decision_summary": "Dokumentparningen är giltig och kontrollpunkterna för consignor, consignee, kvantitet och ursprungsland verifieras mot fakturan. Varubeskrivningen kan däremot inte fastställas till MATCH utan otillåten tolkning, eftersom fakturan använder kod-/kortbeteckningen 'WTKL ref. Royal White' i stället för certifikatets text 'WHITE TOP KRAFT LINER'. Därför ska ärendet skickas till manuell handläggning.",
-    "human_explanation": "Avsändare, mottagare, kvantitet och ursprungsland stämmer mellan certifikatet och fakturan. Varubeskrivningen kan däremot inte verifieras automatiskt eftersom certifikatet anger 'WHITE TOP KRAFT LINER' medan fakturan anger 'WTKL ref. Royal White'. Därför behövs manuell handläggning."
+    "manual_review_triggers": [],
+    "decision_summary": "Det identifierade dokumentparet består av ett Certificate of Origin (original på sida 1 i certifikatfilen) och en separat Commercial Invoice. Samtliga tillämpliga kontrollpunkter kan verifieras mot fakturan: consignor, consignee, goods description, quantity och origin. Ingen MISMATCH eller teknisk blockerare har identifierats.",
+    "human_explanation": "Certifikatet kan verifieras mot fakturan. Avsändaren Central National Sweden AB, mottagaren Palmco SARL, varan WHITE TOP KRAFT LINER/WTKL, mängden 49.865 MT och ursprungslandet Sweden återfinns i fakturan. Dokumentparet kan därför godkännas automatiskt."
   },
   "_meta": {
-    "tested_at": "2026-04-01T17:41:39.924492+00:00",
-    "prompt_hash": "9b9df42642d8",
+    "tested_at": "2026-04-02T11:36:29.823051+00:00",
+    "prompt_hash": "f81eb9b0d2ea",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P067_MATCH",
     "expected": "IDENTICAL",
-    "actual": "MANUAL_REVIEW",
-    "status": "REVIEW"
+    "actual": "IDENTICAL",
+    "status": "PASS"
   }
 }

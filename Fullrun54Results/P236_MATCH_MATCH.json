@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": null,
+    "verification_timestamp": "2026-04-02",
     "document_pair_id": null,
     "certificate_issue_date": "2026-03-11",
     "source_documents_received": 2
@@ -15,12 +15,12 @@
     "document_a": {
       "label": "Document A",
       "assumed_role": "certificate",
-      "document_type": "certificate of origin"
+      "document_type": "certificate_of_origin_with_embedded_invoice_copy"
     },
     "document_b": {
       "label": "Document B",
       "assumed_role": "invoice",
-      "document_type": "commercial invoice"
+      "document_type": "commercial_invoice"
     }
   },
   "rule_activation": {
@@ -34,15 +34,23 @@
     "activated_rules": [
       {
         "rule_id": "8.5.0",
-        "rule_name": "Filbaserad dokumentparning"
+        "rule_name": "Verifiering ska ske mot separat fakturafil, inte mot inbäddad fakturakopia i certifikatfilen"
       },
       {
         "rule_id": "8.6",
-        "rule_name": "Obligatorisk parningsvalidering"
+        "rule_name": "Parningsvalidering passerad genom matchande fakturanummer, consignor och consignee"
       },
       {
         "rule_id": "4.3.5",
-        "rule_name": "Generell varubeskrivning med fakturareferens"
+        "rule_name": "Generell varubeskrivning med fakturareferens och fakturadatum"
+      },
+      {
+        "rule_id": "4.4.3.2",
+        "rule_name": "Försändelsekvantitet i certifikatet kan verifiera kvantitet även utan explicit motsvarighet i fakturan"
+      },
+      {
+        "rule_id": "4.5.4.1",
+        "rule_name": "Enkel asterisk på ursprungskod som annars matchar påverkar inte landskoden"
       }
     ]
   },
@@ -50,16 +58,12 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.98,
+      "confidence": 0.97,
       "certificate_value": "Volvo Car Corporation\nVAK Building\nGunnar Engellaus v 10, 418 78\nSE405 31, GÖTEBORG\nSweden",
-      "invoice_value": "Sending Unit\nVolvo Car Corporation\nPostal address\n405 31 Gothenburg\nSWEDEN\nVAT Reg. No. SE556074308901",
+      "invoice_value": "Volvo Car Corporation\nSending Unit\nVolvo Car Corporation\n405 31 Gothenburg\nSWEDEN\nReg.No. 556074-3089\nSE556074308901",
       "rules_applied": [
         {
           "rule_id": "4.1.0",
-          "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.1.2",
           "outcome": "MATCH"
         },
         {
@@ -67,25 +71,21 @@
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.1.5",
+          "rule_id": "4.1.4",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor 'Volvo Car Corporation' återfinns uttryckligen i fakturan som 'Sending Unit Volvo Car Corporation' och även i header/footer. Landet Sverige verifieras i fakturans adressblock ('405 31 Gothenburg', 'SWEDEN') samt av VAT-prefix 'SE'. Skillnader i fullständig adressrad påverkar inte bedömningen när företagsnamn och land kan identifieras."
+      "motivation": "Certifikatets consignor är \"Volvo Car Corporation ... Sweden\". Samma företagsnamn återfinns uttryckligen i fakturans header/sending unit och landet verifieras av adressen \"405 31 Gothenburg SWEDEN\" samt VAT-prefix \"SE\". Därmed är samma juridiska part och land identifierade i fakturan."
     },
     "consignee": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.99,
+      "confidence": 0.93,
       "certificate_value": "SWEDEN AUTO COMPANY LIMITED\n561A Dien BienPhu,Ward 25,BinhThanh\n21.04,21 Flr, Office Area, PearlPla\n70000 HO CHI MINH CITY\nViet Nam",
       "invoice_value": "Financial Customer\nSWEDEN AUTO COMPANY LIMITED\n561A Dien Bien Phu, Thanh My Tay\n21.04,21 Flr, Office Area, PearlPla\n70000 HO CHI MINH CITY\nVIET NAM",
       "rules_applied": [
         {
           "rule_id": "4.2.0.2",
-          "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.2.1",
           "outcome": "MATCH"
         },
         {
@@ -101,109 +101,85 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignee återfinns i fakturans primära faktureringsfält som 'Financial Customer'. Företagsnamnet är samma efter tillåten normalisering, och landet Viet Nam/VIET NAM överensstämmer. Mindre skillnader i gatutext ('Ward 25,BinhThanh' vs 'Thanh My Tay') medför inte avvikelse eftersom namn och land matchar."
+      "motivation": "Certifikatets consignee \"SWEDEN AUTO COMPANY LIMITED ... Viet Nam\" återfinns i fakturans primära kund-/faktureringsfält som \"Financial Customer\" med samma företagsnamn och samma land \"VIET NAM\". Mindre adressskillnader inom samma mottagare påverkar inte utfallet eftersom företagsnamn och land överensstämmer."
     },
     "goods_description": {
       "applicable": true,
-      "status": "MISMATCH",
-      "confidence": 0.92,
+      "status": "MATCH",
+      "confidence": 0.88,
       "certificate_value": "1 Parcel\nAutoparts\nAccording to the attached invoice number 2624116 dated 260311\nGrossweight referes to Cargospec 5719948",
-      "invoice_value": "Invoice No. 2624116\nInvoice date 20260311\nPart No. 32410516 TYRE\n5719948 FREIGHT\n5719948 PACKING & HANDLING\n5719948 INSURANCE",
+      "invoice_value": "Invoice No. 2624116\nInvoice date 20260311\n32410516 TYRE\n5719948 FREIGHT\n5719948 PACKING & HANDLING\n5719948 INSURANCE",
       "rules_applied": [
         {
-          "rule_id": "4.3.2",
-          "outcome": "NOT_APPLICABLE"
-        },
-        {
-          "rule_id": "4.3.3",
-          "outcome": "NO_EXACT_TEXT_MATCH"
-        },
-        {
           "rule_id": "4.3.5",
-          "outcome": "FAILED"
+          "outcome": "MATCH"
         },
         {
-          "rule_id": "4.3.8",
-          "outcome": "MISMATCH"
+          "rule_id": "4.3.5.2",
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet använder en generell varubeskrivning och hänvisar uttryckligen till faktura 2624116 daterad '260311'. Fakturan i dokumentparfilen har samma fakturanummer men datum '20260311'. Den kompakta datumsträngen '260311' kan inte verifieras mot '20260311' med de uttryckligen tillåtna datumformaten i reglerna. Utan godkänd tillämpning av fakturareferensregeln kan certifikatets huvudbeteckning 'Autoparts' inte identifieras exakt i fakturan, där varuposten är 'TYRE'; en sådan koppling skulle kräva otillåten semantisk tolkning. Därför är varubeskrivningen MISMATCH."
+      "motivation": "Certifikatet använder en generell varubeskrivning, \"Autoparts\", och anger samtidigt uttrycklig fakturahänvisning genom \"invoice number 2624116 dated 260311\". Fakturan i den separata fakturafilen har nummer 2624116 och datum 20260311, vilket är samma datum efter tillåten datumformatnormalisering. Fakturans innehåll med varuraden \"TYRE\" är förenligt med den generella kategorin \"Autoparts\"."
     },
     "quantity": {
       "applicable": true,
-      "status": "MANUAL_REVIEW",
-      "confidence": 0.46,
-      "certificate_value": "Gross Weight\n79,0 Kg\nsamt i varubeskrivningen: 1 Parcel",
-      "invoice_value": "Q.REQ 6 / Q.DEL 5 för TYRE; ingen explicit vikt angiven i fakturan",
+      "status": "MATCH",
+      "confidence": 0.86,
+      "certificate_value": "Box 6: 1 Parcel\nBox 7: Gross Weight 79,0 Kg",
+      "invoice_value": "Invoice No. 2624116\nInvoice date 20260311\n35701 5719948 32410516 TYRE 6 5 ...",
       "rules_applied": [
         {
-          "rule_id": "4.4.2.1",
-          "outcome": "BOX_7_IDENTIFIED"
-        },
-        {
-          "rule_id": "4.4.2.2",
-          "outcome": "WEIGHT_IN_CERTIFICATE"
+          "rule_id": "4.4.3.1",
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.4.3.2",
-          "outcome": "CONSIDERED_NOT_FULLY_ESTABLISHED"
-        },
-        {
-          "rule_id": "4.4.6.1",
-          "outcome": "MANUAL_REVIEW"
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Den verifieringsgrundande kvantiteten i box 7 är 'Gross Weight 79,0 Kg'. Fakturafilen innehåller ingen explicit viktuppgift som kan jämföras med 79,0 kg. Certifikatet innehåller också '1 Parcel' och texten 'Grossweight referes to Cargospec 5719948', vilket talar för en försändelsekvantitet/fallback, men automatisk tillämpning av försändelsekvantitetsregeln förutsätter en fullt verifierbar fakturareferens enligt 4.3.5. Eftersom fakturadatumet i certifikathänvisningen inte kan verifieras exakt enligt tillåtna format kan kvantiteten inte avgöras säkert automatiskt. Avsaknad av explicit vikt i fakturan är inte samma sak som en bevisad motsägelse, därför blir utfallet MANUAL_REVIEW och inte MISMATCH."
+      "motivation": "Certifikatet innehåller två kvantitetsuppgifter: försändelsekvantiteten \"1 Parcel\" i box 6 och vikten \"79,0 Kg\" i box 7. Fakturan visar ingen explicit totalvikt som kan användas för att verifiera 79,0 kg, men enligt reglerna räcker det att minst en kvantitetsuppgift verifieras. Försändelsekvantiteten \"1 Parcel\" accepteras som verifierad eftersom certifikatet tydligt hänvisar till faktura 2624116 med datum och fakturan entydigt identifierar samma försändning."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.88,
+      "confidence": 0.91,
       "certificate_value": "CN",
-      "invoice_value": "Origin: CN *\nPRODUCTS NOT HAVING PREFERENTIAL STATUS ARE CLEARLY MARKED WITH A *",
+      "invoice_value": "Origin: CN *",
       "rules_applied": [
         {
           "rule_id": "4.5.1",
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.5.4",
-          "outcome": "MATCH"
-        },
-        {
           "rule_id": "4.5.4.1",
-          "outcome": "SUFFIX_EXPLAINED_MATCH"
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.5.5",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger ursprungsland 'CN'. Fakturan anger ursprung i en explicit origin-kolumn som 'CN *' för varuraden. Asterisken förklaras i fakturan som att produkter utan preferensstatus markeras med '*', vilket innebär att suffixet är definierat och inte ändrar det underliggande ursprungslandet CN. Därför kan certifikatets ursprungsland verifieras mot fakturan."
+      "motivation": "Certifikatet anger ursprungsland \"CN\". Fakturan har en explicit origin-kolumn där varuraden \"TYRE\" är märkt \"CN *\". En enkel asterisk efter en annars exakt matchande landskod ändrar inte landskoden, därför är certifikatets ursprung verifierat mot fakturan."
     }
   },
   "overall_assessment": {
-    "comparison_result": "NOT_IDENTICAL",
-    "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
-    "auto_approval_eligible": false,
-    "confidence": 0.89,
-    "critical_failures": [
-      "Varubeskrivningen kan inte verifieras: certifikatet hänvisar till faktura 2624116 med datum '260311', medan fakturan visar datum '20260311', och 'Autoparts' kan inte annars identifieras exakt i fakturatexten utan otillåten semantisk tolkning."
-    ],
-    "manual_review_triggers": [
-      "Kvantiteten i box 7 är 79,0 kg men fakturan saknar explicit vikt; försändelsekvantitetsfallback kan inte fastställas säkert automatiskt eftersom fakturadatumet i certifikathänvisningen inte kan verifieras exakt enligt tillåtna datumformat."
-    ],
-    "decision_summary": "Dokumentparet har parats som certifikat från Document A och faktura från Document B; inbäddade fakturasidor i certifikatfilen användes inte för verifieringen. Parningsvalideringen passerar eftersom fakturanummer 2624116, consignor och consignee kan identifieras i fakturafilen. Consignor, consignee och ursprungsland kan verifieras. Varubeskrivningen faller dock på att den generella fakturahänvisningen inte kan verifieras fullt ut på datumet '260311' mot fakturans '20260311', och utan den regeln finns ingen exakt textmatch mellan 'Autoparts' och fakturans 'TYRE'. Minst en tillämplig kontrollpunkt är därför MISMATCH, vilket ger totalresultatet NOT_IDENTICAL.",
-    "human_explanation": "Avsändare, mottagare och ursprungsland stämmer mellan certifikatet och fakturan. Däremot kan varubeskrivningen inte verifieras, eftersom certifikatet hänvisar till faktura 2624116 med datumet 260311 medan fakturan visar 20260311, och texten 'Autoparts' inte finns uttryckligen i fakturan. Dokumentparet kan därför inte godkännas som identiskt."
+    "comparison_result": "IDENTICAL",
+    "workflow_recommendation": "AUTO_APPROVAL_ELIGIBLE",
+    "auto_approval_eligible": true,
+    "confidence": 0.91,
+    "critical_failures": [],
+    "manual_review_triggers": [],
+    "decision_summary": "Certifikatet hämtades från certifikatfilen och verifierades mot den separata fakturafilen enligt filparningsreglerna. Fakturanummer 2624116, consignor Volvo Car Corporation, consignee SWEDEN AUTO COMPANY LIMITED, generell varubeskrivning med fakturareferens, försändelsekvantiteten 1 Parcel och ursprung CN/CN* kan verifieras enligt tillämpliga regler. Samtliga tillämpliga kontrollpunkter är MATCH.",
+    "human_explanation": "Alla tillämpliga uppgifter i certifikatet kan verifieras mot den bifogade fakturan. Fakturanummer 2624116, avsändare, mottagare, varubeskrivning, kvantitet och ursprung stämmer enligt regelverket. Dokumentparet kan därför godkännas automatiskt."
   },
   "_meta": {
-    "tested_at": "2026-04-01T12:52:36.782455+00:00",
-    "prompt_hash": "9b9df42642d8",
+    "tested_at": "2026-04-02T11:06:44.039877+00:00",
+    "prompt_hash": "f81eb9b0d2ea",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P236_MATCH",
     "expected": "IDENTICAL",
-    "actual": "NOT_IDENTICAL",
-    "status": "FAIL"
+    "actual": "IDENTICAL",
+    "status": "PASS"
   }
 }

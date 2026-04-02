@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-04-01T00:00:00Z",
+    "verification_timestamp": "2026-04-02T00:00:00Z",
     "document_pair_id": null,
     "certificate_issue_date": "2023-03-10",
     "source_documents_received": 2
@@ -27,18 +27,22 @@
     "lc_exception_active": false,
     "lc_number_found": null,
     "general_goods_description_with_invoice_reference_active": false,
-    "mixed_origins_rule_active": true,
+    "mixed_origins_rule_active": false,
     "to_order_rule_active": false,
     "quantity_exception_applied": null,
     "eu_origin_normalization_active": false,
     "activated_rules": [
       {
         "rule_id": "8.5.0",
-        "rule_name": "Filbaserad dokumentparning"
+        "rule_name": "Standardregel för dokumentparning: certifikat från fil 1 och faktura från fil 2"
       },
       {
         "rule_id": "8.6",
-        "rule_name": "Obligatorisk parningsvalidering"
+        "rule_name": "Parningsvalidering passerad via matchande fakturanummer, consignor och consignee"
+      },
+      {
+        "rule_id": "4.1.0",
+        "rule_name": "Consignor identifierad någonstans i fakturan"
       },
       {
         "rule_id": "4.3.2",
@@ -46,11 +50,11 @@
       },
       {
         "rule_id": "4.4.3.1",
-        "rule_name": "Minst en kvantitetsuppgift ska verifieras när flera kvantitetsuppgifter finns"
+        "rule_name": "Minst en kvantitetsuppgift ska verifieras"
       },
       {
-        "rule_id": "4.5.3",
-        "rule_name": "Blandade ursprung med artikelkoppling i fakturan"
+        "rule_id": "4.5.5",
+        "rule_name": "Ursprungsland i certifikatet kan uttryckligen identifieras i fakturan"
       }
     ]
   },
@@ -58,16 +62,16 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.99,
+      "confidence": 0.95,
       "certificate_value": "Electrolux Appliances AB\nS:t Göransgatan 143\nSE-105 45 , STOCKHOLM\nSweden",
-      "invoice_value": "Seller\nElectrolux Appliances AB SEJ\nST. GORANSGATAN 143\n105 45 STOCKHOLM\nSweden",
+      "invoice_value": "Seller\nElectrolux Appliances AB SEJ\nST. GORANSGATAN 143\n105 45 STOCKHOLM\nSweden\n\nFooter/header on invoice pages:\nELECTROLUX APPLIANCES AB\nS:T GORANSGATAN 143\nSE-105 45 STOCKHOLM\nSWEDEN",
       "rules_applied": [
         {
           "rule_id": "4.1.0",
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.1.2",
+          "rule_id": "4.1.2.1",
           "outcome": "MATCH"
         },
         {
@@ -75,7 +79,7 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger consignor som Electrolux Appliances AB i Sverige. Fakturan anger säljaren som Electrolux Appliances AB SEJ på ST. GORANSGATAN 143, 105 45 STOCKHOLM, Sweden, och samma företagsnamn återkommer även i sidhuvud/sidfot. Företagskärnan Electrolux Appliances AB kan därmed identifieras i fakturan och land är uttryckligen Sweden."
+      "motivation": "Certifikatets consignor 'Electrolux Appliances AB' kan identifieras uttryckligen i fakturan, både i seller-blocket och tydligt i sidhuvud/sidfot på fakturans sidor. Landet Sweden framgår explicit i fakturan. Skillnaden 'S:t' / 'ST.' är tillåten normalisering och påverkar inte identiteten."
     },
     "consignee": {
       "applicable": true,
@@ -97,14 +101,14 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignee återfinns exakt i fakturans primära faktureringsfält Buyer: DC \"ELECTROLUX LLC\", Stepana Bandery av., 28A, UA-04073 KYIV, Ukraine. Företagsnamn och land överensstämmer direkt utan tolkning."
+      "motivation": "Certifikatets consignee återfinns exakt i fakturans primära faktureringsfält 'Buyer'. Företagsnamn och land överensstämmer utan behov av särskilt undantag."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.98,
+      "confidence": 0.99,
       "certificate_value": "Invoice ref. 30360917\nNo. Product / Position / Model\n1802365678 / 84 / BAKING TRAY,ALUMINIUM,422X370X",
-      "invoice_value": ".084 1802365678 A BAKING TRAY,ALUMINIUM,422X370X 2 1.5200 3.04",
+      "invoice_value": ".084 1802365678 A BAKING TRAY,ALUMINIUM,422X370X 2 1.5200 3.04\nRO SER 1300619046 76151080\nRomania Household articles aluminium",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
@@ -115,21 +119,21 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger artikelnummer 1802365678 och varubeskrivningen BAKING TRAY,ALUMINIUM,422X370X med fakturareferens 30360917. Fakturan innehåller exakt samma artikelnummer 1802365678 på rad .084 med samma identitetsbärande varubeskrivning. Eftersom artikelnummer finns i certifikatet ska verifiering ske primärt via artikelnummer, och den matchningen är exakt."
+      "motivation": "Certifikatet anger artikelnummer 1802365678 och varubeskrivningen 'BAKING TRAY,ALUMINIUM,422X370X'. Samma artikelnummer och samma identitetsbärande varubeskrivning återfinns i fakturan på rad .084. Därmed är varubeskrivningen verifierad enligt prioritet 1 via artikelnummer."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.93,
+      "confidence": 0.98,
       "certificate_value": "PCS / Gross\n2 / 1,720 kg",
-      "invoice_value": "Item .084 1802365678 ... Quantity 2\nNet weight 1.520 KG\nGross weight 1.720 KG",
+      "invoice_value": ".084 1802365678 A BAKING TRAY,ALUMINIUM,422X370X 2 ...\nNet weight 1.520 KG\nGross weight 1.720 KG",
       "rules_applied": [
         {
-          "rule_id": "4.4.2",
+          "rule_id": "4.4.3.1",
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.4.3.1",
+          "rule_id": "4.4.3.4",
           "outcome": "MATCH"
         },
         {
@@ -137,21 +141,21 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger flera kvantitetsuppgifter i samma uppgift: 2 PCS och gross 1,720 kg. Fakturans rad för artikel 1802365678 anger uttryckligen Quantity 2 samt Gross weight 1.720 KG. Minst en kvantitetsuppgift måste verifieras och här verifieras både styckantalet 2 och den angivna bruttovikten för samma artikelrad."
+      "motivation": "Certifikatet anger två kvantitetsuppgifter för samma vara: 2 PCS och gross 1,720 kg. Fakturan för artikel 1802365678 anger Quantity 2 och Gross weight 1.720 KG. Komma i certifikatet och punkt i fakturan är en tillåten formatskillnad för samma numeriska värde. Minst en kvantitetsuppgift verifieras, och här verifieras båda."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.97,
       "certificate_value": "Romania",
-      "invoice_value": "RO SER 1300619046 76151080\nRomania Household articles aluminium",
+      "invoice_value": ".084 1802365678 ...\nRO ...\nRomania",
       "rules_applied": [
         {
           "rule_id": "4.5.1",
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.5.3",
+          "rule_id": "4.5.4",
           "outcome": "MATCH"
         },
         {
@@ -159,22 +163,22 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger ursprungsland Romania. Fakturan innehåller flera ursprungsländer totalt, men för den verifierade artikeln 1802365678 anges ursprung explicit som Romania på rad .084. Ursprungslandet i certifikatet kan därför identifieras uttryckligen i fakturan för rätt vara."
+      "motivation": "Certifikatet anger ursprungsland 'Romania'. Fakturan anger för den verifierade artikelraden 1802365678 landkod 'RO' och texten 'Romania' i kolumnen Country Origin. Ursprungslandet i certifikatet kan därför uttryckligen identifieras i fakturan."
     }
   },
   "overall_assessment": {
     "comparison_result": "IDENTICAL",
     "workflow_recommendation": "AUTO_APPROVAL_ELIGIBLE",
     "auto_approval_eligible": true,
-    "confidence": 0.97,
+    "confidence": 0.98,
     "critical_failures": [],
     "manual_review_triggers": [],
-    "decision_summary": "Dokumentparet är korrekt parat via fakturanummer 30360917 och samtliga tillämpliga kontrollpunkter kan verifieras mot fakturan. Consignor och consignee matchar, artikelnummer 1802365678 med varubeskrivning återfinns exakt i fakturan, kvantiteten 2 PCS och grossvikt 1.720 KG kan identifieras, och ursprungslandet Romania framgår explicit för samma artikelrad. Ingen tillämplig kontrollpunkt ger MISMATCH eller MANUAL_REVIEW.",
-    "human_explanation": "Alla uppgifter i certifikatet kan verifieras i fakturan: avsändare Electrolux Appliances AB, mottagare DC \"ELECTROLUX LLC\", artikel 1802365678 BAKING TRAY,ALUMINIUM,422X370X, kvantitet 2 och ursprung Romania. Dokumentparet kan godkännas automatiskt."
+    "decision_summary": "Dokumentparet är korrekt parat via fakturanummer 30360917. Samtliga tillämpliga kontrollpunkter—consignor, consignee, varubeskrivning, kvantitet och ursprungsland—kan verifieras direkt mot fakturan. Ingen tillämplig kontrollpunkt gav MISMATCH eller MANUAL_REVIEW.",
+    "human_explanation": "Alla uppgifter i ursprungscertifikatet kan återfinnas i fakturan. Avsändare, mottagare, artikel 1802365678 / BAKING TRAY, mängden 2 och bruttovikten 1,720 kg samt ursprungslandet Romania stämmer. Dokumentparet kan därför godkännas automatiskt."
   },
   "_meta": {
-    "tested_at": "2026-04-01T21:48:56.880219+00:00",
-    "prompt_hash": "9b9df42642d8",
+    "tested_at": "2026-04-02T11:22:43.065713+00:00",
+    "prompt_hash": "f81eb9b0d2ea",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P0105_MATCH",

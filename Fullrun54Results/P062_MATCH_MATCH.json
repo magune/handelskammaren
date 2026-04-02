@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-04-01T00:00:00Z",
+    "verification_timestamp": null,
     "document_pair_id": null,
     "certificate_issue_date": "2023-03-06",
     "source_documents_received": 2
@@ -15,12 +15,12 @@
     "document_a": {
       "label": "Document A",
       "assumed_role": "certificate",
-      "document_type": "certificate_of_origin"
+      "document_type": "Certificate of Origin"
     },
     "document_b": {
       "label": "Document B",
       "assumed_role": "invoice",
-      "document_type": "commercial_invoice"
+      "document_type": "Invoice"
     }
   },
   "rule_activation": {
@@ -33,8 +33,16 @@
     "eu_origin_normalization_active": false,
     "activated_rules": [
       {
-        "rule_id": "4.3.7",
-        "rule_name": "Koppling vara–ursprungsland vid flera ursprung"
+        "rule_id": "8.5.0",
+        "rule_name": "Filbaserad dokumentparning"
+      },
+      {
+        "rule_id": "8.6",
+        "rule_name": "Obligatorisk parningsvalidering"
+      },
+      {
+        "rule_id": "4.2.0.2",
+        "rule_name": "Prioritetsordning för consignee-identifiering"
       },
       {
         "rule_id": "4.5.3",
@@ -51,6 +59,10 @@
       "invoice_value": "SKF Eurotrade AB\n415 50 Goteborg, Sweden\nSWEDEN",
       "rules_applied": [
         {
+          "rule_id": "8.6",
+          "outcome": "MATCH"
+        },
+        {
           "rule_id": "4.1.0",
           "outcome": "MATCH"
         },
@@ -59,25 +71,25 @@
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.1.4",
+          "rule_id": "4.1.5",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor 'SKF Eurotrade AB' återfinns uttryckligen i fakturans header och issuer-block på sidan 1 samt i footer/issuer-information på flera sidor. Landet 'Sweden/SWEDEN' framgår explicit i fakturan och stöds även av VAT-prefix 'SE' och IBAN som börjar med 'SE'. Företagsnamn och land kan därför verifieras som samma juridiska part."
+      "motivation": "Certifikatets consignor 'SKF Eurotrade AB' återfinns uttryckligen i fakturans sidhuvud och issuer-block. Landet Sverige verifieras explicit i adressen '415 50 Goteborg, Sweden / SWEDEN'. Samma juridiska part och samma land kan identifieras utan otillåten tolkning."
     },
     "consignee": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.97,
+      "confidence": 0.96,
       "certificate_value": "Technotorg-Don LLC\nHeroiv Ukrainy avenue, 113/1\n54025 Mykolaiv\nUKRAINE",
       "invoice_value": "Bill to\nTechnotorg-Don LLC\nHeroiv Ukrainy avenue, 113/1\n54025 Mykolaiv\nUKRAINE",
       "rules_applied": [
         {
-          "rule_id": "4.2.0.2",
+          "rule_id": "8.6",
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.2.3",
+          "rule_id": "4.2.0.2",
           "outcome": "MATCH"
         },
         {
@@ -85,25 +97,33 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Fakturan innehåller ett primärt faktureringsfält 'Bill to' med exakt mottagare 'Technotorg-Don LLC' och samma adress i Mykolaiv, Ukraine som i certifikatet. Eftersom primärt faktureringsfält finns används detta före 'Ship to' och 'Sold to'. Namn och land överensstämmer därför."
+      "motivation": "Fakturan innehåller ett primärt faktureringsfält 'Bill to' med exakt parten 'Technotorg-Don LLC' på samma adress i Ukraina som i certifikatet. Eftersom faktureringsfält har prioritet används detta fält som auktoritativ consignee. Företagsnamn och land överensstämmer."
     },
     "goods_description": {
       "applicable": true,
-      "status": "MISMATCH",
-      "confidence": 0.93,
-      "certificate_value": "439830965 - 439830972,439831012 - 439831014,\n439835978\n12 CASE(S) OF:\nWATER PUMP,WHEEL BEARING KIT,OTH KIT COMPONENTS,\nSUSPENSION TRACK CONTROL ARM BUSH",
-      "invoice_value": "WATER PUMP\nWHEEL BEARING KIT\nOTH KIT COMPONENTS\nSUSPENSION TRACK CONTROL ARM BUSH\nCountry of Manufacturing: Germany, Spain, Italy, Turkey, China, Taiwan",
+      "status": "MATCH",
+      "confidence": 0.95,
+      "certificate_value": "12 CASE(S) OF:\nWATER PUMP,WHEEL BEARING KIT,OTH KIT COMPONENTS,\nSUSPENSION TRACK CONTROL ARM BUSH",
+      "invoice_value": "WATER PUMP\nWHEEL BEARING KIT\nOTH KIT COMPONENTS\nSUSPENSION TRACK CONTROL ARM BUSH",
       "rules_applied": [
+        {
+          "rule_id": "4.3.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.3.2",
+          "outcome": "ARTICLE_NUMBERS_NOT_USED"
+        },
         {
           "rule_id": "4.3.3",
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.3.7",
-          "outcome": "MISMATCH"
+          "rule_id": "4.3.8",
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "De fyra varubeskrivningarna i certifikatet återfinns uttryckligen i fakturan. Certifikatet anger dock flera ursprungsländer ('DEU,ESP,ITA,TUR,CHN,TWN') samtidigt som flera olika varor listas separat, utan att visa vilket ursprungsland som hör till respektive vara. Certifikatet innehåller inte heller någon uttrycklig fakturahänvisning i själva varubeskrivningen såsom 'according to attached invoice'. Enligt regeln för flera ursprung och separata varor blir kontrollpunkten därför MISMATCH."
+      "motivation": "Varje varubeteckning i certifikatet kan identifieras explicit i fakturan: 'WATER PUMP', 'WHEEL BEARING KIT', 'OTH KIT COMPONENTS' och 'SUSPENSION TRACK CONTROL ARM BUSH'. De numeriska serierna i certifikatets box 6 används här som kolli-/paketnummer, inte som artikelnummer för varuverifiering. Varubeskrivningen är därför verifierad genom kontrollerad textmatchning utan semantisk omtolkning."
     },
     "quantity": {
       "applicable": true,
@@ -114,6 +134,10 @@
       "rules_applied": [
         {
           "rule_id": "4.4.2.1",
+          "outcome": "BOX_7_USED"
+        },
+        {
+          "rule_id": "4.4.3.1",
           "outcome": "MATCH"
         },
         {
@@ -125,12 +149,12 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Verifieringsgrundande kvantitet finns i box 7 i certifikatet: GW 844,96 KGS och NW 714,30 KGS. Fakturan anger på sidan 6 'Total Gross Weight 844,96 KG' och 'Total Net Weight 714,30 KG'. De numeriska värdena och viktenheterna överensstämmer exakt."
+      "motivation": "Certifikatets verifieringsgrundande kvantiteter i box 7 är GW 844,96 KGS och NW 714,30 KGS. Fakturan anger på totalsidan 'Total Gross Weight 844,96 KG' och 'Total Net Weight 714,30 KG', vilket exakt överensstämmer. Det finns ingen uttrycklig motsägelse och kvantiteten är därför verifierad."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.95,
+      "confidence": 0.93,
       "certificate_value": "DEU,ESP,ITA,TUR,CHN,TWN",
       "invoice_value": "Country of Manufacturing: Germany, Spain, Italy, Turkey, China, Taiwan",
       "rules_applied": [
@@ -151,29 +175,27 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger ursprungsländerna DEU, ESP, ITA, TUR, CHN och TWN. Fakturan anger uttryckligen motsvarande ursprung i ett dedikerat origin-fält som 'Country of Manufacturing' på sidorna 1-2: Germany, Spain, Italy, Turkey, China och Taiwan. ISO-koderna i certifikatet kan därför normaliseras till samma länder som i fakturan."
+      "motivation": "Certifikatet anger flera ursprungsländer med ISO-koderna DEU, ESP, ITA, TUR, CHN och TWN. Fakturan anger dessa ursprung explicit i fältet 'Country of Manufacturing' och i radnivåkoderna DE, ES, IT, TR, CN och TW. Samtliga ursprungsländer i certifikatet kan därför identifieras uttryckligen i fakturan efter tillåten landnormalisering."
     }
   },
   "overall_assessment": {
-    "comparison_result": "NOT_IDENTICAL",
-    "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
-    "auto_approval_eligible": false,
-    "confidence": 0.94,
-    "critical_failures": [
-      "Varubeskrivningskontrollpunkten gav MISMATCH eftersom certifikatet listar flera ursprungsländer för flera separata varor utan per-vara-koppling eller uttrycklig fakturahänvisning i varubeskrivningen."
-    ],
+    "comparison_result": "IDENTICAL",
+    "workflow_recommendation": "AUTO_APPROVAL_ELIGIBLE",
+    "auto_approval_eligible": true,
+    "confidence": 0.96,
+    "critical_failures": [],
     "manual_review_triggers": [],
-    "decision_summary": "Dokumentparet är korrekt parat via fakturanummer RB6604204 och matchande consignor/consignee. Consignor, consignee, quantity och origin kan verifieras mot fakturan. Den övergripande bedömningen blir ändå NOT_IDENTICAL eftersom goods_description enligt regel 4.3.7 ger MISMATCH.",
-    "human_explanation": "Certifikatet och fakturan stämmer för avsändare, mottagare, kvantitet och ursprung. Däremot anger certifikatet flera ursprungsländer för flera olika varor utan att visa vilket ursprungsland som hör till respektive vara eller uttryckligen hänvisa till fakturan i varubeskrivningen. Därför är dokumentparet inte identiskt och kräver manuell handläggning."
+    "decision_summary": "Dokumentparet är konsistent. Certifikatets consignor, consignee, varubeskrivning, kvantitet och ursprung kan verifieras mot den bifogade fakturan enligt tillämpliga regler.",
+    "human_explanation": "Alla relevanta uppgifter i certifikatet kan återfinnas i fakturan. Avsändare, mottagare, varor, vikter och ursprungsländer stämmer överens. Dokumentparet kan därför godkännas automatiskt."
   },
   "_meta": {
-    "tested_at": "2026-04-01T13:04:33.829572+00:00",
-    "prompt_hash": "9b9df42642d8",
+    "tested_at": "2026-04-02T11:36:29.820038+00:00",
+    "prompt_hash": "f81eb9b0d2ea",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P062_MATCH",
     "expected": "IDENTICAL",
-    "actual": "NOT_IDENTICAL",
-    "status": "FAIL"
+    "actual": "IDENTICAL",
+    "status": "PASS"
   }
 }

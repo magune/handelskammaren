@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": null,
+    "verification_timestamp": "2026-04-02T00:00:00Z",
     "document_pair_id": null,
     "certificate_issue_date": "2025-11-05",
     "source_documents_received": 2
@@ -15,7 +15,7 @@
     "document_a": {
       "label": "Document A",
       "assumed_role": "certificate",
-      "document_type": "Certificate of Origin file with embedded invoice copy"
+      "document_type": "Certificate of Origin (file contains certificate pages and embedded invoice copy)"
     },
     "document_b": {
       "label": "Document B",
@@ -29,125 +29,176 @@
     "general_goods_description_with_invoice_reference_active": false,
     "mixed_origins_rule_active": false,
     "to_order_rule_active": false,
-    "quantity_exception_applied": null,
+    "quantity_exception_applied": "3B",
     "eu_origin_normalization_active": false,
     "activated_rules": [
       {
         "rule_id": "8.5.0",
-        "rule_name": "Filbaserad dokumentparning – certifikat från fil 1 och faktura från fil 2"
+        "rule_name": "Filbaserad dokumentparning – separat fakturafil ska användas för verifiering"
       },
       {
-        "rule_id": "8.5.2",
-        "rule_name": "Certifikatets fakturareferens måste återfinnas i separata fakturafilen"
+        "rule_id": "8.5.2.1",
+        "rule_name": "Certifikatet refererar ett helt annat fakturanummer än fakturafilen"
       },
       {
         "rule_id": "8.6",
-        "rule_name": "Obligatorisk parningsvalidering – sanity check"
+        "rule_name": "Parningsvalidering"
+      },
+      {
+        "rule_id": "4.1.0",
+        "rule_name": "Consignor identifierad i fakturan"
+      },
+      {
+        "rule_id": "4.2.0.2",
+        "rule_name": "Prioritetsordning för consignee-identifiering"
+      },
+      {
+        "rule_id": "4.3.5",
+        "rule_name": "Generell varubeskrivning med fakturareferens kräver fakturanummer och fakturadatum"
+      },
+      {
+        "rule_id": "4.4.5.3",
+        "rule_name": "Enhetsomräkning MT till KG"
+      },
+      {
+        "rule_id": "4.5.1",
+        "rule_name": "Ursprungsland måste framgå explicit i fakturan"
       }
     ]
   },
   "control_points": {
     "consignor": {
       "applicable": true,
-      "status": "MANUAL_REVIEW",
-      "confidence": 0.4,
+      "status": "MATCH",
+      "confidence": 0.98,
       "certificate_value": "mfiber AB\nDrottninggatan 21\nSE-411 14, Gothenburg\nSweden",
-      "invoice_value": "mFiber AB\nDrottninggatan 21\nSE-411 14 Gothenburg\nSweden",
+      "invoice_value": "mFiber AB\nDrottninggatan 21\nSE-411 14 Gothenburg\nSweden\nVAT no: SE556863963601",
       "rules_applied": [
         {
-          "rule_id": "8.5.2",
-          "outcome": "MANUAL_REVIEW"
+          "rule_id": "4.1.0",
+          "outcome": "MATCH"
         },
         {
-          "rule_id": "4.1.0",
-          "outcome": "FOUND_IN_INVOICE_FILE_BUT_PAIRING_BLOCKED"
+          "rule_id": "4.1.2.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.5",
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Consignor-namnet mFiber AB kan identifieras i den separata fakturafilen, men certifikatet hänvisar uttryckligen till faktura INV-000125 medan fakturafilen innehåller INV-000099. Därför kan consignor inte verifieras mot den refererade fakturan i ett giltigt dokumentpar."
+      "motivation": "Certifikatets consignor 'mfiber AB ... Sweden' kan identifieras uttryckligen i den separata fakturafilen som utställare 'mFiber AB ... Sweden'. Landet Sverige verifieras dessutom genom adress och VAT-prefix 'SE'. Skillnaderna är endast formatering och bolagsnamnets versalisering."
     },
     "consignee": {
       "applicable": true,
-      "status": "MANUAL_REVIEW",
-      "confidence": 0.35,
+      "status": "MISMATCH",
+      "confidence": 0.99,
       "certificate_value": "CENTURY GATE CO. LTD\nP.O. BOX 14368\nC R NO. 1010277465\nRIYADH 7097\nSaudi Arabia",
-      "invoice_value": "Paper Vantage Point Pvt Ltd\n403, 4th Floor, Orion Business Park\nGhodbunder Road, Next to Cinemax Wonder Mall,\nKapurbawdi Sandozbaugh\nThane West\n400607 Maharashtra\nIndia",
+      "invoice_value": "Bill To / Notify\nPaper Vantage Point Pvt Ltd\n403, 4th Floor, Orion Business Park ...\nIndia\n\nShip To / Consignee\nPaper Vantage Point Pvt Ltd\n403, 4th Floor, Orion Business Park ...\nIndia",
       "rules_applied": [
         {
-          "rule_id": "8.5.2",
-          "outcome": "MANUAL_REVIEW"
+          "rule_id": "4.2.0.2",
+          "outcome": "MISMATCH"
+        },
+        {
+          "rule_id": "4.2.1",
+          "outcome": "MISMATCH"
+        },
+        {
+          "rule_id": "4.2.4",
+          "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Mottagarkontrollen kan inte avgöras slutligt eftersom certifikatet refererar till INV-000125 men den separata fakturafilen innehåller en annan faktura, INV-000099. Reglerna förbjuder att ersätta den refererade fakturan med en annan eller med den inbäddade kopian i certifikatfilen."
+      "motivation": "Certifikatet anger mottagaren som 'CENTURY GATE CO. LTD' i Saudi Arabia. Den separata fakturafilen anger både Bill To och Ship To/Consignee som 'Paper Vantage Point Pvt Ltd' i India. Certifikatets consignee kan inte identifieras i fakturan och länderna skiljer sig."
     },
     "goods_description": {
       "applicable": true,
-      "status": "MANUAL_REVIEW",
-      "confidence": 0.35,
-      "certificate_value": "PAPER IN REELS\ngross weight = net weight\nShipped in container(s)\n293 reels of MG Bleached Kraft",
-      "invoice_value": "Kraft Liner Board\nHS Code: 4804 41 00",
+      "status": "MISMATCH",
+      "confidence": 0.98,
+      "certificate_value": "PAPER IN REELS\ngross weight = net weight\nShipped in container(s)\n293 reels of MG Bleached Kraft\nRemarks: Ref no: INV-000125",
+      "invoice_value": "Invoice Number: INV-000099\nDescription of Goods:\nKraft Liner Board\nHS Code: 4804 41 00\n7 Reels 15.2660 MT\nKraft Liner Board\nHS Code: 4804 41 00\n4 Reels 9.4200 MT",
       "rules_applied": [
         {
-          "rule_id": "8.5.2",
-          "outcome": "MANUAL_REVIEW"
+          "rule_id": "8.5.2.1",
+          "outcome": "MISMATCH"
+        },
+        {
+          "rule_id": "4.3.5",
+          "outcome": "MISMATCH"
+        },
+        {
+          "rule_id": "4.3.3",
+          "outcome": "MISMATCH"
+        },
+        {
+          "rule_id": "4.3.8",
+          "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Varubeskrivningen kan inte verifieras mot rätt faktura eftersom certifikatet pekar på INV-000125 och den separata fakturafilen innehåller INV-000099. Inbäddad fakturakopia i certifikatfilen får inte användas som verifieringsunderlag."
+      "motivation": "Certifikatet refererar uttryckligen 'Ref no: INV-000125', men den separata fakturafilen är 'Invoice Number: INV-000099'. Det är ett helt annat fakturanummer och den inbäddade fakturakopian i certifikatfilen får inte användas som verifieringsunderlag. Därutöver är certifikatets varubeskrivning 'MG Bleached Kraft' inte samma som fakturans 'Kraft Liner Board'."
     },
     "quantity": {
       "applicable": true,
-      "status": "MANUAL_REVIEW",
-      "confidence": 0.35,
+      "status": "MISMATCH",
+      "confidence": 0.99,
       "certificate_value": "GW/NW: 150695 kg",
       "invoice_value": "Total MT: 24.6860",
       "rules_applied": [
         {
-          "rule_id": "8.5.2",
-          "outcome": "MANUAL_REVIEW"
+          "rule_id": "4.4.2.1",
+          "outcome": "BOX_7_SELECTED"
+        },
+        {
+          "rule_id": "4.4.5.3",
+          "outcome": "CONVERSION_APPLIED"
+        },
+        {
+          "rule_id": "4.4.6",
+          "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Kvantiteten kan inte verifieras mot den refererade fakturan eftersom certifikatet hänvisar till INV-000125 men fakturafilen innehåller INV-000099. Därför är korrekt kvantitetsjämförelse tekniskt blockerad på parningsnivå."
+      "motivation": "Verifieringsgrundande kvantitet är box 7 i certifikatet: 'GW/NW: 150695 kg'. Den separata fakturafilen anger totalvikten '24.6860 MT'; omräkning enligt MT↔KG ger 24 686 kg. 24 686 kg överensstämmer inte med 150 695 kg och avvikelsen ligger långt utanför tillåten tolerans."
     },
     "origin": {
       "applicable": true,
-      "status": "MANUAL_REVIEW",
-      "confidence": 0.35,
+      "status": "MISMATCH",
+      "confidence": 0.99,
       "certificate_value": "India",
-      "invoice_value": "Portugal",
+      "invoice_value": "Country of Origin\nPortugal",
       "rules_applied": [
         {
-          "rule_id": "8.5.2",
-          "outcome": "MANUAL_REVIEW"
+          "rule_id": "4.5.1",
+          "outcome": "EXPLICIT_ORIGIN_FOUND"
+        },
+        {
+          "rule_id": "4.5.5",
+          "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Ursprungsland kan inte slutligt verifieras mot rätt faktura eftersom den faktura som certifikatet refererar till inte finns i den separata fakturafilen. Den tillgängliga fakturan i fil 2 är inte den refererade fakturan och får därför inte användas som ersättning."
+      "motivation": "Certifikatet anger ursprungsland 'India'. Den separata fakturafilen anger uttryckligen 'Country of Origin: Portugal'. Ursprungsuppgifterna motsäger varandra direkt."
     }
   },
   "overall_assessment": {
-    "comparison_result": "MANUAL_REVIEW",
+    "comparison_result": "NOT_IDENTICAL",
     "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
     "auto_approval_eligible": false,
-    "confidence": 0.98,
+    "confidence": 0.99,
     "critical_failures": [
-      "Certifikatet hänvisar till faktura INV-000125.",
-      "Den separata fakturafilen innehåller faktura INV-000099, inte INV-000125.",
-      "En inbäddad kopia av INV-000125 finns i certifikatfilen men får inte användas som verifieringsfaktura."
+      "Certifikatet refererar faktura INV-000125 medan den separata fakturafilen är INV-000099.",
+      "Consignee, varubeskrivning, kvantitet och ursprungsland matchar inte den separata fakturafilen."
     ],
-    "manual_review_triggers": [
-      "Fel eller felplacerad fakturafil kan ha bifogats.",
-      "Rätt faktura enligt certifikatet kan inte återfinnas i fil 2.",
-      "Oberoende verifiering mot rätt dokumentpar är därför tekniskt omöjlig."
-    ],
-    "decision_summary": "Dokumentrollen kunde klassificeras, men dokumentparningen blockerar verifieringen. Certifikatet refererar uttryckligen till INV-000125, medan den separata fakturafilen innehåller INV-000099. Enligt parningsreglerna måste ärendet därför skickas till manuell handläggning.",
-    "human_explanation": "Certifikatet hänvisar till faktura INV-000125, men den separata fakturafilen innehåller faktura INV-000099. Därför går det inte att verifiera certifikatet mot rätt faktura. Ärendet måste granskas manuellt."
+    "manual_review_triggers": [],
+    "decision_summary": "Dokumentparet är inte identiskt. Enligt filbaserad dokumentparning ska certifikatet verifieras mot den separata fakturafilen, inte mot den inbäddade fakturakopian i certifikatfilen. Certifikatet refererar INV-000125 medan fakturafilen är INV-000099, och flera kontrollpunkter ger därefter tydlig MISMATCH.",
+    "human_explanation": "Certifikatet hänvisar till faktura INV-000125, men den bifogade separata fakturan är INV-000099. Mottagare, varor, mängd och ursprungsland stämmer därför inte mellan dokumenten. Ärendet kräver manuell hantering och kan inte godkännas automatiskt."
   },
   "_meta": {
-    "tested_at": "2026-04-01T12:52:20.257242+00:00",
-    "prompt_hash": "9b9df42642d8",
+    "tested_at": "2026-04-02T11:22:43.071171+00:00",
+    "prompt_hash": "f81eb9b0d2ea",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P0116_MISMATCH",
     "expected": "NOT_IDENTICAL",
-    "actual": "MANUAL_REVIEW",
-    "status": "REVIEW"
+    "actual": "NOT_IDENTICAL",
+    "status": "PASS"
   }
 }

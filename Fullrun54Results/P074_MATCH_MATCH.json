@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-04-01T00:00:00Z",
+    "verification_timestamp": null,
     "document_pair_id": null,
     "certificate_issue_date": "2025-09-25",
     "source_documents_received": 2
@@ -20,7 +20,7 @@
     "document_b": {
       "label": "Document B",
       "assumed_role": "invoice",
-      "document_type": "Commercial Invoice"
+      "document_type": "Invoice"
     }
   },
   "rule_activation": {
@@ -33,12 +33,12 @@
     "eu_origin_normalization_active": true,
     "activated_rules": [
       {
-        "rule_id": "4.4.2.2",
-        "rule_name": "Ett enda viktvärde utan viktkategori i certifikatet kan matcha om fakturan inte innehåller motstridigt alternativt viktvärde"
+        "rule_id": "8.6",
+        "rule_name": "Parningsvalidering godkänd via consignor och consignee i fakturan"
       },
       {
         "rule_id": "4.5.4.2",
-        "rule_name": "EU i certifikatet kan verifieras mot specifikt EU-medlemsland i fakturan"
+        "rule_name": "EU-medlemsland normalisering för ursprungsland"
       }
     ]
   },
@@ -48,14 +48,10 @@
       "status": "MATCH",
       "confidence": 0.97,
       "certificate_value": "SOIC Global Trading AB\nC/O Greencarrier AB\nBox 1076\n413 27, Göteborg\nSweden",
-      "invoice_value": "SOIC Global Trading AB\nForsta Langgatan 28B\nGothenburg 41327 Sweden\nVAT ID: SE559328674201",
+      "invoice_value": "SOIC Global Trading AB\nForsta Langgatan 28B\nGothenburg 41327 Sweden",
       "rules_applied": [
         {
-          "rule_id": "4.1.0",
-          "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.1.2.1",
+          "rule_id": "4.1.3.1",
           "outcome": "MATCH"
         },
         {
@@ -67,14 +63,14 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor-namn 'SOIC Global Trading AB' återfinns uttryckligen i fakturan som utställare på sida 1 och 2. Landet Sverige verifieras genom adressen 'Gothenburg 41327 Sweden' samt VAT-prefix 'SE'. Skillnader i gatuadress påverkar inte bedömningen."
+      "motivation": "Certifikatet anger consignor som \"SOIC Global Trading AB ... Sweden\". Fakturan anger utställaren som \"SOIC Global Trading AB ... Sweden\" i sidhuvudet. Företagsnamnet kan identifieras direkt som samma juridiska part och landet Sweden överensstämmer. Skillnaden i gatuadress påverkar inte utfallet."
     },
     "consignee": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.99,
-      "certificate_value": "Cartones de Guatemala S.A\n2da Calle 24-00, Zona 15, Vista Hermosa II Edificio Domani Sexto\nNivel Oficina 601\nGuatemala 1015\nNIT 592482-0\nGuatemala 1015\nGuatemala",
-      "invoice_value": "INVOICE TO\nCartones de Guatemala S.A.\n2da Calle 24-00, Zona 15, Vista Hermosa II Edificio Domani Sexto\nNivel Oficina 601\nGuatemala 1015\nGuatemala\nNIT 592482-0\n\nCONSIGNEE\nCartones de Guatemala S.A.\n2da Calle 24-00, Zona 15, Vista Hermosa II Edificio Domani Sexto\nNivel Oficina 601\nGuatemala 1015\nGuatemala",
+      "confidence": 0.98,
+      "certificate_value": "Cartones de Guatemala S.A\n2da Calle 24-00, Zona 15, Vista\nHermosa II Edificio Domani Sexto\nNivel Oficina 601\nGuatemala 1015\nNIT 592482-0\nGuatemala 1015\nGuatemala",
+      "invoice_value": "INVOICE TO\nCartones de Guatemala S.A.\n2da Calle 24-00, Zona 15, Vista\nHermosa II Edificio Domani Sexto\nNivel Oficina 601\nGuatemala 1015\nGuatemala\nNIT 592482-0",
       "rules_applied": [
         {
           "rule_id": "4.2.0.2",
@@ -89,18 +85,18 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignee 'Cartones de Guatemala S.A' återfinns uttryckligen i fakturans primära fält 'INVOICE TO' och även i separat fält 'CONSIGNEE'. Landet Guatemala överensstämmer uttryckligen. Ingen motsägelse finns."
+      "motivation": "Fakturan innehåller ett primärt faktureringsfält \"INVOICE TO\" med mottagaren \"Cartones de Guatemala S.A.\" och samma adress i Guatemala som i certifikatet. Certifikatets consignee kan därför verifieras mot fakturans auktoritativa faktureringsfält. Landet Guatemala överensstämmer."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.98,
-      "certificate_value": "SO 25349 ESC_00068266\nTestliner 2 FSC\nNET WEIGHT: 189.048 MT",
-      "invoice_value": "Testliner 2 FSC\nBW 125gsm, RW 2265mm\n...\nTestliner 2 FSC\nBW 170gsm, RW 2415mm",
+      "confidence": 0.96,
+      "certificate_value": "SO 25349 ESC_00068266\nTestliner 2 FSC \nNET WEIGHT: 189.048 MT",
+      "invoice_value": "Testliner 2 FSC",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "NO_ARTICLE_NUMBER_APPLIED"
+          "outcome": "NOT_APPLICABLE"
         },
         {
           "rule_id": "4.3.3",
@@ -111,25 +107,21 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Den identitetsbärande huvudbeteckningen i certifikatet är 'Testliner 2 FSC'. Exakt samma beteckning återfinns upprepade gånger i fakturans varurader. Matchning kan därför göras genom kontrollerad textmatchning utan semantisk tolkning."
+      "motivation": "Den identitetsbärande huvudbeteckningen i certifikatet är \"Testliner 2 FSC\". Samma varubeskrivning förekommer uttryckligen på fakturans artikelrader. Ingen otillåten semantisk tolkning behövs och ingen alternativ produkt med liknande beteckning skapar oklarhet."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.88,
+      "confidence": 0.97,
       "certificate_value": "189.048 MT",
-      "invoice_value": "189.048 MT 66 ROLLS",
+      "invoice_value": "189.048 MT  66 ROLLS  Amount Due USD 89,481.15",
       "rules_applied": [
         {
-          "rule_id": "4.4.2.1",
-          "outcome": "BOX_7_SELECTED"
-        },
-        {
-          "rule_id": "4.4.2.2",
+          "rule_id": "4.4.1",
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.4.3",
+          "rule_id": "4.4.2.2",
           "outcome": "MATCH"
         },
         {
@@ -137,12 +129,12 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Verifieringsgrundande kvantitet är box 7: '189.048 MT'. Samma numeriska värde återfinns uttryckligen i fakturans totalrad '189.048 MT 66 ROLLS'. Certifikatet anger ett enda viktvärde utan uttrycklig GW/NW-kategori i box 7, och fakturan innehåller inget motstridigt alternativt totalviktvärde av annan kategori; därför är värdet verifierat."
+      "motivation": "Certifikatets kvantitetsfält anger ett enda viktvärde: \"189.048 MT\". Fakturan anger samma totalvärde \"189.048 MT\" i totalraden. Certifikatet saknar uttrycklig GW/NW-kategori, men eftersom det finns ett enda viktvärde och fakturan inte innehåller något motstridigt alternativt totalviktvärde är kvantiteten verifierad."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.93,
+      "confidence": 0.9,
       "certificate_value": "EU",
       "invoice_value": "Country of origin: Germany",
       "rules_applied": [
@@ -159,7 +151,7 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger ursprung 'EU'. Fakturan innehåller ett explicit ursprungsfält: 'Country of origin: Germany'. Tyskland är ett EU-medlemsland, vilket verifierar certifikatets EU-ursprung enligt den tillåtna EU-normaliseringen."
+      "motivation": "Certifikatet anger ursprungsland som \"EU\". Fakturan innehåller ett explicit origin-fält i noterna: \"Country of origin: Germany\". Germany är ett specifikt EU-medlemsland och verifierar därför certifikatets EU-angivelse."
     }
   },
   "overall_assessment": {
@@ -169,12 +161,12 @@
     "confidence": 0.95,
     "critical_failures": [],
     "manual_review_triggers": [],
-    "decision_summary": "Samtliga tillämpliga kontrollpunkter kan verifieras mot fakturan. Avsändare och mottagare återfinns uttryckligen i fakturan, varubeskrivningen 'Testliner 2 FSC' matchar, kvantiteten 189.048 MT återfinns i fakturans totalrad och ursprunget 'EU' verifieras genom det explicita ursprungsfältet 'Country of origin: Germany'.",
-    "human_explanation": "Alla uppgifter i certifikatet som ska kontrolleras kan återfinnas i fakturan. Avsändare, mottagare, varubeskrivning och mängden 189.048 MT stämmer, och ursprunget EU verifieras genom att fakturan anger Tyskland som ursprungsland. Dokumentparet kan godkännas automatiskt."
+    "decision_summary": "Dokumentparet är konsekvent verifierat. Consignor, consignee, varubeskrivning, kvantitet och ursprungsland i certifikatet kan identifieras i fakturan enligt tillåtna regler och normaliseringar. Ingen tillämplig kontrollpunkt gav MISMATCH eller MANUAL_REVIEW.",
+    "human_explanation": "Alla relevanta uppgifter i certifikatet kan verifieras mot fakturan. Avsändare, mottagare, varubeskrivning och mängd stämmer, och certifikatets ursprung \"EU\" bekräftas av fakturans ursprung \"Germany\". Dokumentparet kan därför godkännas automatiskt."
   },
   "_meta": {
-    "tested_at": "2026-04-01T17:41:39.927809+00:00",
-    "prompt_hash": "9b9df42642d8",
+    "tested_at": "2026-04-02T11:36:29.832335+00:00",
+    "prompt_hash": "f81eb9b0d2ea",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P074_MATCH",

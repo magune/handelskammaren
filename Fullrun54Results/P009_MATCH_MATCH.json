@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-04-01T00:00:00Z",
+    "verification_timestamp": "2026-04-02T00:00:00Z",
     "document_pair_id": null,
     "certificate_issue_date": "2023-03-07",
     "source_documents_received": 2
@@ -29,16 +29,44 @@
     "general_goods_description_with_invoice_reference_active": false,
     "mixed_origins_rule_active": false,
     "to_order_rule_active": false,
-    "quantity_exception_applied": null,
+    "quantity_exception_applied": "3B",
     "eu_origin_normalization_active": false,
     "activated_rules": [
       {
-        "rule_id": "8.5.0",
-        "rule_name": "Filbaserad dokumentparning"
+        "rule_id": "8",
+        "rule_name": "Dokumentklassificering genomförd"
+      },
+      {
+        "rule_id": "2.2",
+        "rule_name": "LC-kontroll genomförd, ej aktiverad"
       },
       {
         "rule_id": "8.6",
-        "rule_name": "Obligatorisk parningsvalidering"
+        "rule_name": "Parningsvalidering genomförd"
+      },
+      {
+        "rule_id": "4.1.0",
+        "rule_name": "Consignor identifierad i fakturan"
+      },
+      {
+        "rule_id": "4.2.0.2",
+        "rule_name": "Consignee verifierad mot primärt faktureringsfält"
+      },
+      {
+        "rule_id": "4.3.3",
+        "rule_name": "Kontrollerad textmatchning för varubeskrivning"
+      },
+      {
+        "rule_id": "4.4.2.2",
+        "rule_name": "Ett viktvärde utan kategori i certifikatet bedömt mot fakturans viktfält"
+      },
+      {
+        "rule_id": "4.4.5.3",
+        "rule_name": "MT till KG-omräkning använd för att utesluta motsägelse"
+      },
+      {
+        "rule_id": "4.5.1",
+        "rule_name": "Ursprungsland verifierat i explicit origin-fält"
       }
     ]
   },
@@ -46,29 +74,29 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.99,
+      "confidence": 0.98,
       "certificate_value": "Korab International AB\nMårten Krakowgatan 2\nSE411 04, GÖTEBORG\nSweden",
       "invoice_value": "Korab International AB\nMårten Krakowgatan 2\n411 04 Göteborg, Sweden\nVAT NO: SE556564039701",
       "rules_applied": [
         {
-          "rule_id": "4.1.2",
+          "rule_id": "4.1.0",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.2.1",
           "outcome": "MATCH"
         },
         {
           "rule_id": "4.1.4",
           "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.1.5",
-          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets avsändare 'Korab International AB' återfinns uttryckligen som fakturautställare i fakturan. Landet 'Sweden' framgår explicit i adressblocket och stöds även av VAT-prefix 'SE'. Samma juridiska part och land kan därför verifieras direkt."
+      "motivation": "Certifikatets consignor 'Korab International AB' återfinns uttryckligen i fakturans sidhuvud som fakturautställare. Landet Sverige verifieras både genom adressen 'Göteborg, Sweden' och VAT-prefixet 'SE'."
     },
     "consignee": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.99,
+      "confidence": 0.98,
       "certificate_value": "Jamana Printers Limited\nPlot No. 9 Nyerere Road, Pugu Road\nP.O Box 5584\nDar es Salaam\nTanzania",
       "invoice_value": "SOLD TO: Jamana Printers Limited\nPlot No. 9 Nyerere Road, Pugu Road\nP.O Box 5584\nDar es Salaam,\nTanzania",
       "rules_applied": [
@@ -85,18 +113,18 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets mottagare kan identifieras direkt i fakturans primära faktureringsfält 'SOLD TO'. Företagsnamn och land 'Tanzania' överensstämmer uttryckligen."
+      "motivation": "Certifikatets consignee återfinns exakt i fakturans primära faktureringsfält 'SOLD TO'. Företagsnamn och land Tanzania överensstämmer utan att någon specialregel behöver användas."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.96,
       "certificate_value": "756 Reels\nNewsprint",
-      "invoice_value": "756 Reels: Newsprint\nSubstance: 42,5G\n840mm - 398.010 MT\n980mm - 98.606 MT",
+      "invoice_value": "756 Reels: Newsprint",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "No article number in certificate; text matching used"
+          "outcome": "NOT_APPLICABLE"
         },
         {
           "rule_id": "4.3.3",
@@ -107,65 +135,67 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger varubeskrivningen '756 Reels' och 'Newsprint'. Fakturan innehåller exakt motsvarande beskrivning '756 Reels: Newsprint'. De ytterligare specifikationerna i fakturan motsäger inte certifikatets uppgift."
+      "motivation": "Certifikatet anger varubeskrivningen '756 Reels / Newsprint'. Fakturan anger '756 Reels: Newsprint'. Efter tillåten normalisering av radbrytning och interpunktion kan samma identitetsbärande huvudbeteckning identifieras direkt i fakturan."
     },
     "quantity": {
       "applicable": true,
-      "status": "MANUAL_REVIEW",
-      "confidence": 0.79,
+      "status": "MATCH",
+      "confidence": 0.87,
       "certificate_value": "496.616 MT",
       "invoice_value": "TOTAL NET WEIGHT: 496.616 MT\nTOTAL GROSS WEIGHT: 496,616 KG",
       "rules_applied": [
         {
-          "rule_id": "4.4.2",
-          "outcome": "Weight value and unit present in certificate"
+          "rule_id": "4.4.2.2",
+          "outcome": "MATCH"
         },
         {
-          "rule_id": "4.4.2.2",
-          "outcome": "MANUAL_REVIEW"
+          "rule_id": "4.4.3",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.4.5.3",
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger ett enda viktvärde '496.616 MT' utan uttrycklig viktkategori. Fakturan innehåller samma numeriska värde som 'TOTAL NET WEIGHT: 496.616 MT' men anger även en separat annan viktkategori som 'TOTAL GROSS WEIGHT: 496,616 KG'. När certifikatet har ett enda viktvärde utan kategori och fakturan också anger ett annat viktvärde av annan kategori ska kvantitetskontrollen sättas till MANUAL_REVIEW eftersom det inte entydigt går att fastställa vilken kategori certifikatet avser."
+      "motivation": "Certifikatet innehåller ett enda viktvärde utan uttrycklig GW/NW-kategori: '496.616 MT'. Fakturan innehåller 'TOTAL NET WEIGHT: 496.616 MT', vilket är en direkt numerisk träff, och dessutom 'TOTAL GROSS WEIGHT: 496,616 KG', vilket efter tillåten MT↔KG-omräkning motsvarar samma massa. Därmed finns ingen uttrycklig motsägelse i fakturan och kvantiteten kan verifieras."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.99,
       "certificate_value": "Norway",
-      "invoice_value": "COUNTRY OF ORIGIN: Norway\nWe hereby certify that this invoice is true and correct and that these goods are of Norwegian origin.",
+      "invoice_value": "COUNTRY OF ORIGIN: Norway\nWe hereby certify that these goods are of Norwegian origin.",
       "rules_applied": [
         {
           "rule_id": "4.5.1",
-          "outcome": "Explicit origin field found"
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.5.5",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger ursprungsland 'Norway'. Fakturan anger uttryckligen 'COUNTRY OF ORIGIN: Norway' och innehåller dessutom en bekräftande formulering om norsk ursprung. Ursprungslandet är därför positivt verifierat."
+      "motivation": "Certifikatets ursprungsland 'Norway' framgår uttryckligen i fakturans dedikerade origin-fält 'COUNTRY OF ORIGIN: Norway'. Fakturan innehåller även ett ytterligare explicit ursprungsuttalande om norsk ursprung, vilket stärker verifieringen."
     }
   },
   "overall_assessment": {
-    "comparison_result": "MANUAL_REVIEW",
-    "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
-    "auto_approval_eligible": false,
-    "confidence": 0.88,
+    "comparison_result": "IDENTICAL",
+    "workflow_recommendation": "AUTO_APPROVAL_ELIGIBLE",
+    "auto_approval_eligible": true,
+    "confidence": 0.93,
     "critical_failures": [],
-    "manual_review_triggers": [
-      "Kvantiteten kan inte verifieras entydigt eftersom certifikatet endast anger '496.616 MT' utan viktkategori medan fakturan anger både 'TOTAL NET WEIGHT: 496.616 MT' och 'TOTAL GROSS WEIGHT: 496,616 KG'."
-    ],
-    "decision_summary": "Dokumentparet är korrekt parat via fakturanummer 51572 och samstämmiga parter. Avsändare, mottagare, varubeskrivning och ursprungsland matchar uttryckligen mellan certifikat och faktura. Kvantitetskontrollen kräver dock manuell granskning eftersom certifikatet saknar viktkategori medan fakturan innehåller både netto- och bruttovikt.",
-    "human_explanation": "Certifikatet och fakturan stämmer överens för avsändare, mottagare, varubeskrivning och ursprungsland. Kvantiteten kan däremot inte verifieras entydigt eftersom certifikatet bara anger 496.616 MT medan fakturan anger både total nettovikt 496.616 MT och total bruttovikt 496,616 KG. Ärendet behöver därför granskas manuellt."
+    "manual_review_triggers": [],
+    "decision_summary": "Alla fem tillämpliga kontrollpunkter kan verifieras mot fakturan. Fakturanummer 51572 och ordernummer 28750 stödjer korrekt dokumentparning, och inga motsägelser har identifierats.",
+    "human_explanation": "Certifikatet och fakturan stämmer överens. Avsändare, mottagare, varubeskrivning, kvantitet 496.616 MT och ursprungsland Norge kan identifieras i fakturan. Dokumentparet kan därför godkännas automatiskt."
   },
   "_meta": {
-    "tested_at": "2026-04-01T21:48:56.875591+00:00",
-    "prompt_hash": "9b9df42642d8",
+    "tested_at": "2026-04-02T11:22:43.063016+00:00",
+    "prompt_hash": "f81eb9b0d2ea",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P009_MATCH",
     "expected": "IDENTICAL",
-    "actual": "MANUAL_REVIEW",
-    "status": "REVIEW"
+    "actual": "IDENTICAL",
+    "status": "PASS"
   }
 }

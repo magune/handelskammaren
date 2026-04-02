@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-04-01T00:00:00Z",
+    "verification_timestamp": null,
     "document_pair_id": null,
     "certificate_issue_date": "2025-09-22",
     "source_documents_received": 2
@@ -20,7 +20,7 @@
     "document_b": {
       "label": "Document B",
       "assumed_role": "invoice",
-      "document_type": "Commercial invoice (image-based PDF, 2 pages)"
+      "document_type": "Invoice"
     }
   },
   "rule_activation": {
@@ -33,20 +33,24 @@
     "eu_origin_normalization_active": true,
     "activated_rules": [
       {
-        "rule_id": "8.5.0",
-        "rule_name": "Filbaserad dokumentparning"
-      },
-      {
-        "rule_id": "8.6",
-        "rule_name": "Obligatorisk parningsvalidering"
-      },
-      {
         "rule_id": "4.1.0",
-        "rule_name": "Koncernstruktur / sökning av consignor i hela fakturan"
+        "rule_name": "Consignor searched across all invoice pages/files"
+      },
+      {
+        "rule_id": "4.5.4.1",
+        "rule_name": "EU normalization"
       },
       {
         "rule_id": "4.5.4.2",
-        "rule_name": "EU-medlemsland normalisering"
+        "rule_name": "EU member state ↔ EU equivalence"
+      },
+      {
+        "rule_id": "8.5.0",
+        "rule_name": "File-based document pairing"
+      },
+      {
+        "rule_id": "8.6",
+        "rule_name": "Mandatory pairing validation"
       }
     ]
   },
@@ -54,12 +58,16 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.9,
+      "confidence": 0.93,
       "certificate_value": "Talurit AB\nAmalia Jönssons Gata 29\n42131, Västra Frölunda\nSweden",
       "invoice_value": "Talurit AB\nAmalia Jönssons Gata 29\nSE-421 31 Västra Frölunda\nSweden",
       "rules_applied": [
         {
           "rule_id": "4.1.0",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.2",
           "outcome": "MATCH"
         },
         {
@@ -71,21 +79,25 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor 'Talurit AB' återfinns uttryckligen i fakturan, särskilt i sidfot på fakturans båda sidor, tillsammans med adress i Västra Frölunda, Sweden. Landet verifieras explicit i adressblocket och stöds även av SE-prefix i VAT/IBAN. Fakturan är bildbaserad men texten är tillräckligt läsbar för säker identifiering."
+      "motivation": "Certifikatets consignor 'Talurit AB' återfinns uttryckligen i fakturans footer på båda sidorna. Fakturan visar även svensk adress för Talurit AB ('Amalia Jönssons Gata 29', 'SE-421 31 Västra Frölunda', 'Sweden'), vilket verifierar både juridisk part och land."
     },
     "consignee": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.93,
+      "confidence": 0.96,
       "certificate_value": "Certspmc Services Limited\nSalyan Highway 28/30 km\nBAKU AZ 1083\nAZERBAJDZJAN",
       "invoice_value": "Certspmc Services Limited\nSalyan Highway 28/30 km\nBAKU AZ 1083\nAZERBAJDZJAN",
       "rules_applied": [
         {
-          "rule_id": "4.2.0",
+          "rule_id": "4.2.0.2",
           "outcome": "MATCH"
         },
         {
           "rule_id": "4.2.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.2.2",
           "outcome": "MATCH"
         },
         {
@@ -97,18 +109,18 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets mottagare kan identifieras i fakturans kundblock och även i leveransadressblocket med samma företagsnamn, gata, stad och land. Ingen motstridig mottagare förekommer. Uppgiften är därför verifierad direkt mot fakturan."
+      "motivation": "Certifikatets consignee matchar fakturans primära kund-/bill-to-block exakt: 'Certspmc Services Limited, Salyan Highway 28/30 km, BAKU AZ 1083, AZERBAJDZJAN'. Samma part återfinns även i leveransadressen, så mottagaren och landet kan verifieras utan undantag eller tolkning."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.91,
+      "confidence": 0.92,
       "certificate_value": "\"PO 5192\" - 1 PALLET\nDIES, STRAIGHT CYL",
-      "invoice_value": "Dies, straight cyl.\n...\n\"PO 5192\" - 1 PALLET",
+      "invoice_value": "Dies, straight cyl.\n\"PO 5192\" - 1 PALLET",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "ARTICLE_NUMBER_NOT_USED"
+          "outcome": "NOT_APPLICABLE"
         },
         {
           "rule_id": "4.3.3",
@@ -123,25 +135,29 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Ingen artikelnummerverifiering krävs eftersom certifikatet inte anger artikelnummer som verifieringsgrund. Den identitetsbärande huvudbeteckningen 'DIES, STRAIGHT CYL' återfinns explicit i fakturans varurader som 'Dies, straight cyl.'. Tillägget '\"PO 5192\" - 1 PALLET' stöds också av fakturans text längst ned på sida 1."
+      "motivation": "Certifikatet anger varubeskrivningen 'DIES, STRAIGHT CYL' och referensen 'PO 5192 - 1 PALLET'. I fakturan förekommer den exakta varubeskrivningen 'Dies, straight cyl.' på artikelraderna och samma PO-/pallreferens längst ned i specifikationen. Artikelnummer finns inte i certifikatet, därför verifierades varubeskrivningen via kontrollerad textmatchning."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.95,
+      "confidence": 0.97,
       "certificate_value": "50,28 kg NET",
       "invoice_value": "Net weight 50,28 kg",
       "rules_applied": [
         {
-          "rule_id": "4.4.2.1",
-          "outcome": "BOX_7_SELECTED"
+          "rule_id": "4.4.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.4.2",
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.4.2.2",
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.4.3",
+          "rule_id": "4.4.4",
           "outcome": "MATCH"
         },
         {
@@ -149,17 +165,21 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Verifieringsgrundande kvantitet är värdet i box 7: '50,28 kg NET'. Fakturan anger uttryckligen 'Net weight 50,28 kg' på sida 1. Numeriskt värde, viktenhet och viktkategori överensstämmer utan behov av undantag eller beräkning."
+      "motivation": "Certifikatets box 7 anger uttryckligen '50,28 kg NET'. Fakturan anger uttryckligen 'Net weight 50,28 kg'. Numeriskt värde, enhet och viktkategori överensstämmer exakt."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.88,
+      "confidence": 0.91,
       "certificate_value": "EU - SWEDEN",
       "invoice_value": "Tariff code: 82073010 Origin: SE",
       "rules_applied": [
         {
           "rule_id": "4.5.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.5.4",
           "outcome": "MATCH"
         },
         {
@@ -175,22 +195,22 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger ursprung 'EU - SWEDEN'. Fakturan innehåller explicit ursprungsfält på varuraderna: 'Origin: SE'. 'SE' verifierar Sweden via ISO-landkod, och Sweden som EU-medlemsstat verifierar samtidigt EU-ursprung enligt EU-normaliseringsregeln. Ingen motstridig ursprungsuppgift identifierades i fakturan."
+      "motivation": "Certifikatet anger ursprung 'EU - SWEDEN'. Fakturan anger explicit ursprung i artikelraderna som 'Origin: SE'. 'SE' verifierar 'Sweden', och eftersom Sverige är en EU-medlemsstat verifierar samma uppgift även EU-delen enligt EU-normaliseringsreglerna. Inga motstridiga ursprungsländer identifierades i fakturan."
     }
   },
   "overall_assessment": {
     "comparison_result": "IDENTICAL",
     "workflow_recommendation": "AUTO_APPROVAL_ELIGIBLE",
     "auto_approval_eligible": true,
-    "confidence": 0.91,
+    "confidence": 0.94,
     "critical_failures": [],
     "manual_review_triggers": [],
-    "decision_summary": "Dokumentrollen kan klassificeras säkert: Document A är Certificate of Origin och Document B är faktura. Parningsvalideringen passerar eftersom certifikatet refererar till faktura 1213536 och samma nummer finns på fakturan; dessutom återfinns både consignor och consignee i fakturan. Samtliga tillämpliga kontrollpunkter är MATCH med confidence över auto-approval-golvet.",
-    "human_explanation": "Avsändare Talurit AB, mottagare Certspmc Services Limited, varubeskrivningen 'DIES, STRAIGHT CYL', nettovikten 50,28 kg och fakturanummer 1213536 kan verifieras mot fakturan. Ursprunget 'EU - SWEDEN' bekräftas av explicit ursprungsangivelse 'Origin: SE' på fakturaraderna. Alla tillämpliga kontrollpunkter stämmer och dokumentparet kan godkännas automatiskt."
+    "decision_summary": "Dokumentparet är korrekt parat via fakturanummer 1213536. Consignor, consignee, varubeskrivning, nettovikt och ursprungsland kan alla verifieras direkt mot den bifogade fakturan. Inga tillämpliga kontrollpunkter gav MISMATCH eller MANUAL_REVIEW, och samtliga MATCH-utfall ligger på minst 0.85 i confidence.",
+    "human_explanation": "Certifikatet och fakturan avser samma sändning. Avsändare, mottagare, varubeskrivning, nettovikt 50,28 kg och ursprung Sverige/EU kan återfinnas i fakturan. Dokumentparet kan därför godkännas automatiskt."
   },
   "_meta": {
-    "tested_at": "2026-04-01T12:52:36.778665+00:00",
-    "prompt_hash": "9b9df42642d8",
+    "tested_at": "2026-04-02T11:06:44.036331+00:00",
+    "prompt_hash": "f81eb9b0d2ea",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P228_MATCH",

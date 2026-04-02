@@ -1,0 +1,202 @@
+{
+  "schema_version": "3.0",
+  "metadata": {
+    "verification_timestamp": "2026-04-01T00:00:00Z",
+    "document_pair_id": null,
+    "certificate_issue_date": "2023-03-03",
+    "source_documents_received": 2
+  },
+  "task": {
+    "task_type": "customs_document_pair_verification",
+    "comparison_mode": "certificate_vs_invoice",
+    "strictness": "conservative"
+  },
+  "documents": {
+    "document_a": {
+      "label": "Document A",
+      "assumed_role": "certificate",
+      "document_type": "Certificate of Origin (page 1) with embedded invoice copy on page 2"
+    },
+    "document_b": {
+      "label": "Document B",
+      "assumed_role": "invoice",
+      "document_type": "Commercial Invoice"
+    }
+  },
+  "rule_activation": {
+    "lc_exception_active": false,
+    "lc_number_found": null,
+    "general_goods_description_with_invoice_reference_active": false,
+    "mixed_origins_rule_active": false,
+    "to_order_rule_active": false,
+    "quantity_exception_applied": null,
+    "eu_origin_normalization_active": false,
+    "activated_rules": [
+      {
+        "rule_id": "8.5.0",
+        "rule_name": "Filbaserad dokumentparning; certifikat hämtat från certifikatfilen och faktura från separat fakturafil"
+      },
+      {
+        "rule_id": "8.6",
+        "rule_name": "Obligatorisk parningsvalidering passerad via consignor- och consignee-identifiering i fakturan"
+      },
+      {
+        "rule_id": "4.1.3.8",
+        "rule_name": "Enstaka teckenavvikelse i företagsnamn med bekräftande identifierare prövad för consignee"
+      },
+      {
+        "rule_id": "4.4.2.1",
+        "rule_name": "Box 7 är verifieringsgrundande kvantitetsfält"
+      }
+    ]
+  },
+  "control_points": {
+    "consignor": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.98,
+      "certificate_value": "Nordic Leather Group AB\nKärranäsvägen 24\nSE-451 76, UDDEVALLA\nSweden",
+      "invoice_value": "Supplier:\nNORDIC LEATHER GROUP AB\nKARRANASVAGEN 24\n451 76 UDDEVALLA Vaestra Goetaland C.\nSweden\nTAX ID:SE5566881693",
+      "rules_applied": [
+        {
+          "rule_id": "4.1.2",
+          "outcome": "match"
+        },
+        {
+          "rule_id": "4.1.4",
+          "outcome": "match"
+        },
+        {
+          "rule_id": "4.1.5",
+          "outcome": "match"
+        }
+      ],
+      "motivation": "Certifikatets consignor kan identifieras direkt i fakturans Supplier-block. Företagsnamnet är samma efter tillåten normalisering av versaler och diakritik, och landet Sweden framgår uttryckligen i båda dokumenten. Ingen motsägelse finns."
+    },
+    "consignee": {
+      "applicable": true,
+      "status": "MANUAL_REVIEW",
+      "confidence": 0.78,
+      "certificate_value": "H&M Hennes&Mauritz Teksil Ltd. Sti\nAbdi Ipecki Cad o. 19/1 Kat 5\nTR-Nisantasi-Sisli-Istanbul\nTurkiet",
+      "invoice_value": "Consignee:\nH&M Hennes & Mauritz Tekstil Ltd. Sti. TIN 454 051\n1083-Beyoglu V.D. c/o APL Logistics & Netlog,\nAkcaburgaz Mah. 1567. Sok. No:2 (Esenyurt 1\nWarehouse), Esenyurt Istanbul 34522, Turkey",
+      "rules_applied": [
+        {
+          "rule_id": "4.2.0.2",
+          "outcome": "primary consignee field used"
+        },
+        {
+          "rule_id": "4.2.1",
+          "outcome": "explicit consignee field found"
+        },
+        {
+          "rule_id": "4.1.3.8",
+          "outcome": "manual_review"
+        },
+        {
+          "rule_id": "4.2.3",
+          "outcome": "land_match"
+        }
+      ],
+      "motivation": "Fakturan innehåller ett explicit Consignee-fält som är rätt kontrollfält. Certifikatet anger 'Teksil' medan fakturan anger 'Tekstil', vilket är en enstaka teckenavvikelse i företagsnamnet. Landet Turkiet/Turkey överensstämmer, men någon exakt gemensam bekräftande företagsidentifierare mellan certifikat och faktura finns inte, så MATCH kan inte ges enligt regeln för enstaka teckenavvikelse."
+    },
+    "goods_description": {
+      "applicable": true,
+      "status": "MISMATCH",
+      "confidence": 0.93,
+      "certificate_value": "Order no: 506470-3509\nAustin Leather Belt\nComposition: 100% cow leather. Scientific name: Bos Taurus\n1 carton",
+      "invoice_value": "Warehouse ID No of Pkgs Description of Goods Quantity Price Amount\nTRW191 1 Cartons Belt Women Leather Pieces EUR EUR\n100%COW SPLIT\nLEATHER\n10 3.30 33.00\n...\nDescription Composition HS Code Quantity Price\nBelt Woman\nLeather\n100% COW\nLEATHER",
+      "rules_applied": [
+        {
+          "rule_id": "4.3.2",
+          "outcome": "priority_2_text_matching_used"
+        },
+        {
+          "rule_id": "4.3.3",
+          "outcome": "mismatch"
+        },
+        {
+          "rule_id": "4.3.5",
+          "outcome": "not_applicable"
+        },
+        {
+          "rule_id": "4.3.8",
+          "outcome": "mismatch"
+        }
+      ],
+      "motivation": "Certifikatet anger varubeskrivningen 'Austin Leather Belt'. Fakturan anger 'Belt Women Leather' och 'Belt Woman Leather' samt materialtext, men ordet 'Austin' eller den fulla identitetsbärande huvudbeteckningen från certifikatet kan inte identifieras i fakturan. Certifikatet innehåller inte heller en uttrycklig fakturahänvisning med fakturanummer och fakturadatum som skulle aktivera regeln om generell varubeskrivning. En MATCH skulle kräva otillåten semantisk tolkning."
+    },
+    "quantity": {
+      "applicable": true,
+      "status": "MANUAL_REVIEW",
+      "confidence": 0.76,
+      "certificate_value": "Net: 0,90\nGross: 1,25",
+      "invoice_value": "Net Weight: 0.90 KG\nGross Weight: 1.25 KG",
+      "rules_applied": [
+        {
+          "rule_id": "4.4.2.1",
+          "outcome": "box_7_used_as_governing_quantity"
+        },
+        {
+          "rule_id": "4.4.4",
+          "outcome": "manual_review"
+        },
+        {
+          "rule_id": "4.4.6",
+          "outcome": "manual_review"
+        }
+      ],
+      "motivation": "Den verifieringsgrundande kvantiteten står i box 7 och består av 'Net: 0,90' och 'Gross: 1,25'. Fakturan bekräftar samma numeriska värden som '0.90 KG' och '1.25 KG', men certifikatet saknar uttrycklig viktenhet i samma fält. Enligt regeln ska detta ge MANUAL_REVIEW, inte MATCH. Uppgiften '1 carton' i box 6 kan inte ersätta box 7-värdet."
+    },
+    "origin": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.99,
+      "certificate_value": "SWEDEN",
+      "invoice_value": "Country of Origin of Goods:\nSweden\n...\nCountry of Manufacture:\nSweden",
+      "rules_applied": [
+        {
+          "rule_id": "4.5.1",
+          "outcome": "explicit_origin_field_found"
+        },
+        {
+          "rule_id": "4.5.2",
+          "outcome": "single_origin_match"
+        },
+        {
+          "rule_id": "4.5.4",
+          "outcome": "normalized_match"
+        },
+        {
+          "rule_id": "4.5.5",
+          "outcome": "match"
+        }
+      ],
+      "motivation": "Certifikatet anger ursprungsland SWEDEN. Fakturan innehåller explicit ursprungsangivelse i dedikerat origin-fält: 'Country of Origin of Goods: Sweden', och dessutom 'Country of Manufacture: Sweden'. Ursprungslandet kan därför verifieras uttryckligen."
+    }
+  },
+  "overall_assessment": {
+    "comparison_result": "NOT_IDENTICAL",
+    "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
+    "auto_approval_eligible": false,
+    "confidence": 0.91,
+    "critical_failures": [
+      "Varubeskrivningen i certifikatet ('Austin Leather Belt') kan inte identifieras explicit i fakturan, som i stället anger 'Belt Women Leather'/'Belt Woman Leather'."
+    ],
+    "manual_review_triggers": [
+      "Mottagarnamnet skiljer sig med ett tecken ('Teksil' vs 'Tekstil') utan gemensam bekräftande företagsidentifierare i båda dokumenten.",
+      "Kvantitetsfältet i certifikatet saknar explicit viktenhet trots att fakturan bekräftar motsvarande värden i KG."
+    ],
+    "decision_summary": "Dokumentparet har parats enligt filregeln med certifikatet från certifikatfilen och fakturan från den separata fakturafilen. Avsändare och ursprungsland verifieras som MATCH. Mottagaren kräver manuell granskning på grund av en enstaka teckenavvikelse i företagsnamnet utan gemensam bekräftande identifierare, och kvantiteten kräver manuell granskning eftersom box 7 saknar viktenhet. Varubeskrivningen kan inte verifieras utan otillåten tolkning och ger därför MISMATCH. Eftersom minst en tillämplig kontrollpunkt är MISMATCH är totalresultatet NOT_IDENTICAL.",
+    "human_explanation": "Certifikatet anger varan som 'Austin Leather Belt' medan fakturan beskriver varan som 'Belt Women Leather/Belt Woman Leather', vilket inte kan verifieras som samma uppgift. Mottagarnamnet skiljer dessutom som 'Teksil' i certifikatet mot 'Tekstil' i fakturan, och vikten i certifikatet saknar enhet. Dokumentparet kan därför inte godkännas automatiskt."
+  },
+  "_meta": {
+    "tested_at": "2026-04-01T14:31:51.293087+00:00",
+    "prompt_hash": "9b9df42642d8",
+    "model": "gpt-5.4",
+    "tier": 2,
+    "pair": "P0143_MISMATCH",
+    "expected": "NOT_IDENTICAL",
+    "actual": "NOT_IDENTICAL",
+    "status": "PASS"
+  }
+}

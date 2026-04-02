@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-04-01T00:00:00Z",
+    "verification_timestamp": "2026-04-02T00:00:00Z",
     "document_pair_id": null,
     "certificate_issue_date": "2025-10-15",
     "source_documents_received": 2
@@ -20,7 +20,7 @@
     "document_b": {
       "label": "Document B",
       "assumed_role": "invoice",
-      "document_type": "Invoice with supporting export documents"
+      "document_type": "Invoice with supporting export accompanying document"
     }
   },
   "rule_activation": {
@@ -34,11 +34,15 @@
     "activated_rules": [
       {
         "rule_id": "8.5.0",
-        "rule_name": "Filbaserad dokumentparning"
+        "rule_name": "Filbaserad dokumentparning: certifikat från fil 1 och verifiering mot separat fakturafil"
       },
       {
         "rule_id": "8.6",
         "rule_name": "Obligatorisk parningsvalidering"
+      },
+      {
+        "rule_id": "4.2.0.2",
+        "rule_name": "Prioritetsordning för consignee-identifiering: Bill to/Sold to prioriteras"
       }
     ]
   },
@@ -48,108 +52,108 @@
       "status": "MATCH",
       "confidence": 0.96,
       "certificate_value": "SKF Sverige AB\nKvibergs Broväg 8\nSE-415 05, GÖTEBORG\nSweden",
-      "invoice_value": "Issued by:\nSKF Sverige AB \nvon Utfallsgatan 4 \n415 50 Göteborg\nSweden",
+      "invoice_value": "Issued by:\nSKF Sverige AB\nvon Utfallsgatan 4\n415 50 Göteborg\nSweden\nVAT no: SE556240830101",
       "rules_applied": [
         {
-          "rule_id": "4.1.1",
-          "outcome": "Issuer identified in invoice"
+          "rule_id": "8.6",
+          "outcome": "pairing_validation_passed_via_consignor_and_consignee_found"
         },
         {
-          "rule_id": "4.1.2",
-          "outcome": "Company name and country verified"
+          "rule_id": "4.1.0",
+          "outcome": "consignor_name_found_in_invoice_file"
         },
         {
           "rule_id": "4.1.3.1",
-          "outcome": "Same legal entity identified directly"
+          "outcome": "same_legal_name_identified"
         },
         {
           "rule_id": "4.1.4",
-          "outcome": "Country match"
+          "outcome": "country_match"
         },
         {
           "rule_id": "4.1.5",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger consignor som \"SKF Sverige AB ... Sweden\". Fakturan anger utställaren som \"SKF Sverige AB ... Sweden\" på fakturasidorna. Företagsnamnet är direkt identifierbart som samma juridiska part och land är uttryckligen Sverige. Skillnader i gatuadress påverkar inte bedömningen."
+      "motivation": "Certifikatets avsändare är 'SKF Sverige AB' i Sverige. Samma juridiska företagsnamn återfinns uttryckligen i fakturans issuer/Issued by-block och på flera fakturasidor. Landet Sverige framgår explicit i fakturan. Skillnad i gatuadress (Kvibergs Broväg 8 vs von Utfallsgatan 4) medför inte avvikelse enligt reglerna eftersom företagsnamn och land matchar."
     },
     "consignee": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.96,
-      "certificate_value": "SKF Vietnam CO Ltd \n105 Ton Dat Tien,Tan Phu Ward \n700000 Ho Chi Minh\nViet Nam",
-      "invoice_value": "Bill to \nSKF Vietnam CO Ltd \nR2, F4 Crescent Plaza Bldg, 105 Ton Dat Tien Street, Tan \nMy Ward \nHo Chi Minh 700000 \nVietnam",
+      "confidence": 0.94,
+      "certificate_value": "SKF Vietnam CO Ltd\n105 Ton Dat Tien,Tan Phu Ward\n700000 Ho Chi Minh\nViet Nam",
+      "invoice_value": "Bill to\nSKF Vietnam CO Ltd\nR2, F4 Crescent Plaza Bldg, 105 Ton Dat Tien Street, Tan My Ward\nHo Chi Minh 700000\nVietnam",
       "rules_applied": [
         {
-          "rule_id": "4.2.0.2",
-          "outcome": "Primary billing field used"
+          "rule_id": "8.6",
+          "outcome": "pairing_validation_passed_via_consignee_found"
         },
         {
-          "rule_id": "4.2.1",
-          "outcome": "Consignee identified in invoice"
+          "rule_id": "4.2.0.2",
+          "outcome": "bill_to_selected_as_authoritative_consignee"
         },
         {
           "rule_id": "4.2.2",
-          "outcome": "Company name verified"
+          "outcome": "company_name_identified_in_invoice"
         },
         {
           "rule_id": "4.2.3",
-          "outcome": "Country match"
+          "outcome": "country_match"
         },
         {
           "rule_id": "4.2.4",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger mottagaren som \"SKF Vietnam CO Ltd ... Viet Nam\". Fakturan har ett primärt faktureringsfält \"Bill to\" med samma företagsnamn och samma land, Vietnam. Adressdetaljerna är mer utförliga i fakturan men motsäger inte certifikatet."
+      "motivation": "Certifikatets mottagare 'SKF Vietnam CO Ltd' återfinns i fakturans primära faktureringsfält 'Bill to' och även i 'Sold to'. Landet Vietnam/Viet Nam överensstämmer efter normalisering. Adressdetaljerna skiljer sig delvis, men det är tillåtet eftersom samma företagsnamn och land kan identifieras tydligt i fakturan."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.98,
+      "confidence": 0.97,
       "certificate_value": "1 COLLIE, 1 PCS SPHERICAL ROLLER BRG\nSPHERICAL ROLLER BRG",
       "invoice_value": "SPHERICAL ROLLER BRG",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "No article number in certificate used for verification"
+          "outcome": "no_article_number_in_certificate_for_primary_matching"
         },
         {
           "rule_id": "4.3.3",
-          "outcome": "Controlled text match on identity-bearing description"
+          "outcome": "controlled_text_match_passed"
         },
         {
           "rule_id": "4.3.8",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Den identitetsbärande huvudbeteckningen i certifikatet är \"SPHERICAL ROLLER BRG\". Samma ordsekvens återfinns uttryckligen i fakturan. Ingen semantisk tolkning behövs och ingen motstridig varubeskrivning har identifierats."
+      "motivation": "Den identitetsbärande huvudbeteckningen i certifikatet är 'SPHERICAL ROLLER BRG'. Exakt samma varubeskrivning återfinns i fakturans varurad. Ingen otillåten semantisk tolkning behövs och ingen annan liknande produkt skapar oklarhet."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.97,
+      "confidence": 0.96,
       "certificate_value": "1 pcs",
-      "invoice_value": "Quantity 1",
+      "invoice_value": "Quantity 1\nUoM PC",
       "rules_applied": [
         {
-          "rule_id": "4.4.2",
-          "outcome": "Certificate quantity has numeric value and unit"
+          "rule_id": "4.4.1",
+          "outcome": "numeric_value_identified_in_invoice"
         },
         {
-          "rule_id": "4.4.2.1",
-          "outcome": "Box 7 quantity used as verification basis"
+          "rule_id": "4.4.2",
+          "outcome": "certificate_contains_numeric_value_and_unit"
         },
         {
           "rule_id": "4.4.3",
-          "outcome": "Numeric value identified in invoice"
+          "outcome": "invoice_quantity_confirms_value"
         },
         {
           "rule_id": "4.4.6",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Verifieringsgrundande kvantitet i certifikatet är box 7: \"1 pcs\". Fakturan anger kvantitet \"1\" för varuraden och total \"1\". Det numeriska värdet kan identifieras direkt i fakturan och ingen uppgift motsäger denna kvantitet."
+      "motivation": "Certifikatets kvantitet i box 7 är '1 pcs'. Fakturan anger kvantitet '1' för samma varurad och UoM 'PC'. Det numeriska värdet 1 kan identifieras direkt i fakturan för motsvarande vara, vilket uppfyller verifieringskravet."
     },
     "origin": {
       "applicable": true,
@@ -160,33 +164,29 @@
       "rules_applied": [
         {
           "rule_id": "4.5.1",
-          "outcome": "Explicit origin field identified in invoice"
-        },
-        {
-          "rule_id": "4.5.4",
-          "outcome": "Normalisation of case and country naming applied"
+          "outcome": "explicit_origin_field_found_in_invoice"
         },
         {
           "rule_id": "4.5.5",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger ursprungsland som \"SWEDEN\". Fakturan anger uttryckligen \"Country of origin\" med värdet \"Sweden\" på fakturasidan. Ursprungslandet kan därför verifieras direkt i ett explicit origin-fält."
+      "motivation": "Certifikatet anger ursprungsland 'SWEDEN'. Fakturan innehåller ett explicit origin-fält med 'Country of origin' och värdet 'Sweden'. Ursprungslandet kan därför verifieras direkt utan tolkning."
     }
   },
   "overall_assessment": {
     "comparison_result": "IDENTICAL",
     "workflow_recommendation": "AUTO_APPROVAL_ELIGIBLE",
     "auto_approval_eligible": true,
-    "confidence": 0.97,
+    "confidence": 0.96,
     "critical_failures": [],
     "manual_review_triggers": [],
-    "decision_summary": "Alla fem tillämpliga kontrollpunkter är verifierade som MATCH mot fakturafilen. Dokumentparet är konsistent och uppfyller kraven för IDENTICAL.",
-    "human_explanation": "Certifikatet och fakturan avser samma avsändare (SKF Sverige AB), samma mottagare (SKF Vietnam CO Ltd), samma vara (SPHERICAL ROLLER BRG), samma kvantitet (1 pc) och samma ursprung (Sweden). Uppgifterna kan verifieras direkt i fakturafilen och dokumentparet kan godkännas automatiskt."
+    "decision_summary": "Dokumentparet är konsekvent verifierat. Certifikatet kan styrkas mot den separata fakturafilen avseende avsändare, mottagare, varubeskrivning, kvantitet och ursprungsland.",
+    "human_explanation": "Certifikatet och fakturan visar samma avsändare (SKF Sverige AB), samma mottagare (SKF Vietnam CO Ltd), samma vara (SPHERICAL ROLLER BRG), samma kvantitet (1 st) och samma ursprung (Sweden). Uppgifterna kan verifieras direkt i fakturan och dokumentparet kan därför godkännas automatiskt."
   },
   "_meta": {
-    "tested_at": "2026-04-01T14:07:23.248373+00:00",
-    "prompt_hash": "9b9df42642d8",
+    "tested_at": "2026-04-02T11:36:29.851975+00:00",
+    "prompt_hash": "f81eb9b0d2ea",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P099_MATCH",

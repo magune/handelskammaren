@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": null,
+    "verification_timestamp": "2026-04-02T00:00:00Z",
     "document_pair_id": null,
     "certificate_issue_date": "2026-03-02",
     "source_documents_received": 2
@@ -33,24 +33,16 @@
     "eu_origin_normalization_active": false,
     "activated_rules": [
       {
-        "rule_id": "8.6",
-        "rule_name": "Parningsvalidering passerad via consignor och consignee i fakturan"
-      },
-      {
         "rule_id": "4.2.2.1.1",
-        "rule_name": "Layoutavkortning av mottagarnamn i certifikatet"
+        "rule_name": "Layoutavkortning i certifikatet för consignee-namn"
       },
       {
-        "rule_id": "4.3.2",
-        "rule_name": "Varubeskrivning verifierad primärt via artikelnummer"
+        "rule_id": "4.3.7",
+        "rule_name": "Flera ursprung med koppling vara–ursprungsland i certifikatet"
       },
       {
         "rule_id": "4.4.5.5",
-        "rule_name": "Summering av flera rader inom samma faktura för splittrade artikelkvantiteter"
-      },
-      {
-        "rule_id": "4.5.3",
-        "rule_name": "Blandade ursprung med tydlig koppling per artikel i fakturan"
+        "rule_name": "Summering av flera rader inom samma faktura"
       }
     ]
   },
@@ -58,124 +50,128 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.98,
+      "confidence": 0.99,
       "certificate_value": "Rosemount Tank Radar AB\nBox 150\n43523, Mölnlycke",
-      "invoice_value": "Rosemount Tank Radar AB\nKonstruktionsvagen 2\n435 33 MÖLNLYCKE\nSWEDEN",
+      "invoice_value": "Rosemount Tank Radar AB\nKonstruktionsvagen 2\n435 33 MÖLNLYCKE\nSWEDEN\n\nAddress: Rosemount Tank Radar AB, P.O. Box 150 SE-435 23, Molnlycke, Sweden\nVAT No: SE556043512401",
       "rules_applied": [
         {
+          "rule_id": "4.1.1",
+          "outcome": "issuer identified in invoice"
+        },
+        {
           "rule_id": "4.1.2",
-          "outcome": "MATCH"
+          "outcome": "company name and country verified"
         },
         {
           "rule_id": "4.1.4",
-          "outcome": "MATCH"
+          "outcome": "country Sweden matches"
         },
         {
           "rule_id": "4.1.5",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor 'Rosemount Tank Radar AB' kan identifieras direkt i fakturan som fakturautställare/Ship From. Landet Sverige framgår uttryckligen i fakturans säljaradress. Skillnad i gatuadress påverkar inte bedömningen eftersom företagsnamn och land överensstämmer."
+      "motivation": "Certifikatet anger consignor som \"Rosemount Tank Radar AB\" i Sverige. Fakturan är utställd av samma företag och innehåller både säljaradress i Sverige samt footer/adressrad med \"P.O. Box 150\" och svensk VAT-kod \"SE556043512401\". Företagsnamn och land kan därför identifieras explicit i fakturan utan otillåten tolkning."
     },
     "consignee": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.9,
+      "confidence": 0.92,
       "certificate_value": "EMERSON ASIA PACIFIC PRIVATE LIMITE\nC/O CEVA LOGISTICS SOLUTIONS\nSINGAPORE P 40 PENJURU LANE\n#03-11\n609216 SINGAPORE\nSINGAPORE",
-      "invoice_value": "EMERSON ASIA PACIFIC PRIVATE LIMITED\n1 PANDAN CRESCENT\n128461 SINGAPORE\nSINGAPORE",
+      "invoice_value": "Sold To / Invoice To:\nEMERSON ASIA PACIFIC PRIVATE LIMITED\n1 PANDAN CRESCENT\n128461 SINGAPORE\nSINGAPORE\n\nShip To:\nEMERSON ASIA PACIFIC PRIVATE LIMITED\nC/O CEVA LOGISTICS SOLUTIONS SINGAPORE P\n40 PENJURU LANE\n#03-11\n609216 SINGAPORE\nSINGAPORE",
       "rules_applied": [
         {
           "rule_id": "4.2.0.2",
-          "outcome": "MATCH"
+          "outcome": "billing party checked first and matches same legal entity"
+        },
+        {
+          "rule_id": "4.2.0.1",
+          "outcome": "consignee also explicitly found in ship-to field"
         },
         {
           "rule_id": "4.2.2.1.1",
-          "outcome": "MATCH"
+          "outcome": "certificate name treated as layout truncation of LIMITED"
         },
         {
           "rule_id": "4.2.3",
-          "outcome": "MATCH"
+          "outcome": "country Singapore matches"
         },
         {
           "rule_id": "4.2.4",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Fakturans primära mottagarfält Invoice To/Sold To anger 'EMERSON ASIA PACIFIC PRIVATE LIMITED' i Singapore. Certifikatets namn '...LIMITE' är en exakt prefix-avkortning av '...LIMITED' och land är Singapore. Att certifikatet använder C/O- och leveransadress medan fakturan har faktureringsadress ändrar inte att samma mottagarföretag kan identifieras."
+      "motivation": "Certifikatet anger mottagaren som \"EMERSON ASIA PACIFIC PRIVATE LIMITE\", vilket är en avkortad prefixform av fakturans \"EMERSON ASIA PACIFIC PRIVATE LIMITED\". Samma juridiska part finns i fakturans Sold To/Invoice To-fält och hela certifikatets adressblock med \"C/O CEVA LOGISTICS SOLUTIONS ... 609216 SINGAPORE\" återfinns dessutom i Ship To-fältet. Landet Singapore överensstämmer."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.98,
-      "certificate_value": "0565M23230AC406P1100Q1AC, Multiple Spot Temperature Sensor\n775TGXD21I7WA3WK9TJQ1, Wireless 775 THUM Adapter Assembly - Tank Gauging\n5408A1SUA2NA1GBZZPAS8M5Q4, Radar Level Transmitter\n2410MFRW001PSNA0A2PQ1, Tank Hub\n2240SP0840FNA0A2MQ4Q1, Multi-input Temperature Transmitter",
-      "invoice_value": "5408A1SUA2NA1GBZZPAS8M5Q4 Radar Level Transmitter; 2410MFRW001PSNA0A2PQ1 Tank Hub; 2240SP0840FNA0A2MQ4Q1 Multi-input Temperature Transmitter; 0565M23230AC406P1100Q1AC Multiple Spot Temperature Sensor; 775TGXD21I7WA3WK9TJQ1 Wireless 775 THUM Adapter Assembly Tank Gauging",
+      "certificate_value": "0565M23230AC406P1100Q1AC, Multiple Spot Temperature Sensor COO DK\n775TGXD21I7WA3WK9TJQ1, Wireless 775 THUM Adapter Assembly -\n- Tank Gauging COO: SG\n5408A1SUA2NA1GBZZPAS8M5Q4, Radar Level Transmitter COO: SE\n2410MFRW001PSNA0A2PQ1, Tank Hub COO: SE\n2240SP0840FNA0A2MQ4Q1, Multi-input Temperature Transmitter COO SE",
+      "invoice_value": "5408A1SUA2NA1GBZZPAS8M5Q4\nRadar Level Transmitter\n2410MFRW001PSNA0A2PQ1\nTank Hub\n2240SP0840FNA0A2MQ4Q1\nMulti-input Temperature Transmitter\n0565M23230AC406P1100Q1AC\nMultiple Spot Temperature Sensor\n775TGXD21I7WA3WK9TJQ1\nWireless 775 THUM Adapter Assembly Tank Gauging",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "MATCH"
+          "outcome": "article-number-first verification applied"
         },
         {
-          "rule_id": "4.3.6",
-          "outcome": "MATCH"
+          "rule_id": "4.3.7",
+          "outcome": "multiple origins are linked per item in certificate"
         },
         {
           "rule_id": "4.3.8",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet innehåller artikelnummer för samtliga varor. Varje artikelnummer kan identifieras exakt i fakturan, och tillhörande beskrivningar är förenliga. Den extra fakturaraden 'RTR-CERT-COMP-Q1 CERTIFICATE OF COMPLIANCE Charge' motsäger inte certifikatets uppgifter eftersom verifieringen är ensidig."
+      "motivation": "Certifikatet innehåller exakta artikelnummer för samtliga fem varor. Samma artikelnummer återfinns i fakturan tillsammans med motsvarande produktnamn: 0565M23230AC406P1100Q1AC / Multiple Spot Temperature Sensor, 775TGXD21I7WA3WK9TJQ1 / Wireless 775 THUM Adapter Assembly Tank Gauging, 5408A1SUA2NA1GBZZPAS8M5Q4 / Radar Level Transmitter, 2410MFRW001PSNA0A2PQ1 / Tank Hub och 2240SP0840FNA0A2MQ4Q1 / Multi-input Temperature Transmitter. För 775-raden är bindestrecks-/radbrytningsskillnaden endast formatering och påverkar inte den exakta identifieringen via artikelnummer."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.9,
+      "confidence": 0.93,
       "certificate_value": "7 PCS\n3 PCS\n7 PCS\n3 PCS\n7 PCS",
-      "invoice_value": "5408A1SUA2NA1GBZZPAS8M5Q4: 5 EA + 2 EA; 2410MFRW001PSNA0A2PQ1: 3 EA; 2240SP0840FNA0A2MQ4Q1: 5 EA + 2 EA; 0565M23230AC406P1100Q1AC: 5 EA + 2 EA; 775TGXD21I7WA3WK9TJQ1: 3 EA",
+      "invoice_value": "5408A1SUA2NA1GBZZPAS8M5Q4: 5 EA + 2 EA\n2410MFRW001PSNA0A2PQ1: 3 EA\n2240SP0840FNA0A2MQ4Q1: 5 EA + 2 EA\n0565M23230AC406P1100Q1AC: 5 EA + 2 EA\n775TGXD21I7WA3WK9TJQ1: 3 EA",
       "rules_applied": [
         {
-          "rule_id": "4.4.2",
-          "outcome": "MATCH"
+          "rule_id": "4.4.2.1",
+          "outcome": "box 7 quantities used as verification basis"
         },
         {
           "rule_id": "4.4.3.1",
-          "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.4.5.1",
-          "outcome": "MATCH"
+          "outcome": "multiple certificate quantities assessed"
         },
         {
           "rule_id": "4.4.5.5",
-          "outcome": "MATCH"
+          "outcome": "split invoice rows for same article summed within same invoice"
         },
         {
           "rule_id": "4.4.6",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger fem uttryckliga styckkvantiteter med enhet PCS. I fakturan återfinns 2410 och 775 direkt som 3 EA, medan 5408, 2240 och 0565 är uppdelade på två rader vardera och kan verifieras genom summering inom samma faktura: 5+2=7 EA. Ingen fakturarad motsäger certifikatets kvantiteter för motsvarande artiklar."
+      "motivation": "Certifikatets box 7 innehåller fem styckantal med enhet PCS. Fakturan bekräftar 2410MFRW001PSNA0A2PQ1 som 3 EA och 775TGXD21I7WA3WK9TJQ1 som 3 EA direkt. För 5408A1SUA2NA1GBZZPAS8M5Q4, 2240SP0840FNA0A2MQ4Q1 och 0565M23230AC406P1100Q1AC är respektive artikel uppdelad på två fakturarader men summerar inom samma faktura till 7 EA per artikel (5+2), vilket är tillåtet enligt undantag 3D."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.97,
+      "confidence": 0.98,
       "certificate_value": "Denmark, Sweden, Singapore",
-      "invoice_value": "Country of Origin SWEDEN; Country of Origin DENMARK; Country of Origin SINGAPORE",
+      "invoice_value": "Country of Origin\nSWEDEN\nSWEDEN\nSWEDEN\nDENMARK\nSINGAPORE",
       "rules_applied": [
         {
           "rule_id": "4.5.1",
-          "outcome": "MATCH"
+          "outcome": "explicit origin fields identified in invoice"
         },
         {
           "rule_id": "4.5.3",
-          "outcome": "MATCH"
+          "outcome": "mixed origins linked per invoice line"
         },
         {
           "rule_id": "4.5.5",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger tre ursprungsländer: Denmark, Sweden och Singapore. Fakturan anger explicit 'Country of Origin' per relevant artikel, och dessa tre länder kan identifieras tydligt. Det finns därmed positiv verifiering av varje ursprungsland i certifikatet."
+      "motivation": "Certifikatet anger tre ursprungsländer: Denmark, Sweden och Singapore. Fakturan anger uttryckligen \"Country of Origin\" per artikelrad och visar Sweden för 5408/2410/2240, Denmark för 0565 och Singapore för 775. Varje ursprungsland i certifikatet kan därför identifieras explicit i fakturan."
     }
   },
   "overall_assessment": {
@@ -185,12 +181,12 @@
     "confidence": 0.95,
     "critical_failures": [],
     "manual_review_triggers": [],
-    "decision_summary": "Samtliga tillämpliga kontrollpunkter är verifierade som MATCH. Dokumentparet är konsistent: consignor och consignee kan identifieras i fakturan, alla certifikatets artikelnummer återfinns i fakturan, kvantiteterna verifieras direkt eller genom tillåten summering inom samma faktura, och ursprungsländerna Denmark, Sweden och Singapore framgår explicit i fakturan.",
-    "human_explanation": "Alla uppgifter i ursprungscertifikatet kan verifieras mot den bifogade fakturan. Avsändare, mottagare, artikelnummer/varubeskrivning, kvantiteter och ursprungsländerna Danmark, Sverige och Singapore återfinns i fakturan. Dokumentparet kan därför godkännas automatiskt."
+    "decision_summary": "Document A is a Certificate of Origin and Document B is a Commercial Invoice. No LC exception applies. Consignor, consignee, goods description, quantity and origin can all be verified from the invoice; quantity verification required same-invoice summation for split article rows, and consignee verification required acceptance of a certificate-side layout truncation of \"LIMITED\".",
+    "human_explanation": "Alla tillämpliga kontrollpunkter stämmer mellan ursprungscertifikatet och fakturan. Avsändare, mottagare, artiklar, antal och ursprungsländer kan verifieras i fakturan. Dokumentparet kan därför godkännas automatiskt."
   },
   "_meta": {
-    "tested_at": "2026-04-01T17:41:39.929161+00:00",
-    "prompt_hash": "9b9df42642d8",
+    "tested_at": "2026-04-02T11:36:29.833785+00:00",
+    "prompt_hash": "f81eb9b0d2ea",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P077_MATCH",

@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-04-01T00:00:00Z",
+    "verification_timestamp": null,
     "document_pair_id": null,
     "certificate_issue_date": "2026-02-27",
     "source_documents_received": 2
@@ -20,7 +20,7 @@
     "document_b": {
       "label": "Document B",
       "assumed_role": "invoice",
-      "document_type": "Commercial Invoice"
+      "document_type": "Invoice"
     }
   },
   "rule_activation": {
@@ -41,8 +41,24 @@
         "rule_name": "Obligatorisk parningsvalidering"
       },
       {
-        "rule_id": "4.1.0",
-        "rule_name": "Consignor återfinns uttryckligen i fakturan"
+        "rule_id": "4.1.2.1",
+        "rule_name": "Landverifiering via adress/VAT för consignor"
+      },
+      {
+        "rule_id": "4.2.0.2",
+        "rule_name": "Prioritetsordning för consignee-identifiering"
+      },
+      {
+        "rule_id": "4.3.3",
+        "rule_name": "Kontrollerad textmatchning av varubeskrivning"
+      },
+      {
+        "rule_id": "4.4.1",
+        "rule_name": "Förekomstkontroll av kvantitet"
+      },
+      {
+        "rule_id": "4.5.1",
+        "rule_name": "Explicit ursprungsfält i fakturan"
       }
     ]
   },
@@ -52,18 +68,14 @@
       "status": "MATCH",
       "confidence": 0.98,
       "certificate_value": "Elof Hansson Trade AB\nFörsta Långgatan 17\n41380, Göteborg\nSweden",
-      "invoice_value": "Elof Hansson Trade AB\nFörsta Långgatan 17\nSE-413 80 Göteborg,Sweden",
+      "invoice_value": "Elof Hansson Trade AB\nFörsta Långgatan 17\nSE-413 80 Göteborg,Sweden\nRegistered Office in Göteborg\nVAT No. SE556088563301",
       "rules_applied": [
-        {
-          "rule_id": "8.6",
-          "outcome": "MATCH"
-        },
         {
           "rule_id": "4.1.0",
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.1.4",
+          "rule_id": "4.1.2.1",
           "outcome": "MATCH"
         },
         {
@@ -71,25 +83,17 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor 'Elof Hansson Trade AB' återfinns uttryckligen i fakturans issuer/header. Landet verifieras explicit i adressblocket som 'Sweden' och stöds även av VAT-prefix 'SE'. Skillnader i postnummerformat påverkar inte bedömningen."
+      "motivation": "Certifikatet anger consignor som \"Elof Hansson Trade AB\" i Sverige. Fakturan är utställd av \"Elof Hansson Trade AB\" och innehåller samma adress i Göteborg samt svensk VAT-kod \"SE556088563301\", vilket verifierar landet Sverige. Samma juridiska part kan därför identifieras uttryckligen i fakturan."
     },
     "consignee": {
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.99,
       "certificate_value": "Wattens (Vietnam) Co., Ltd.\nNo. 8, Dan Chu Street, Singapore\nIndustrial Park II, Binh Duong ward\nHo Chi Minh City Vietnam\nViet Nam",
-      "invoice_value": "Wattens (Vietnam) Co., Ltd.\nNo. 8, Dan Chu Street, Singapore Industrial\nPark II, Binh Duong ward\nHo Chi Minh City\nVietnam",
+      "invoice_value": "BUYER\nWattens (Vietnam) Co., Ltd.\nNo. 8, Dan Chu Street, Singapore Industrial\nPark II, Binh Duong ward\nHo Chi Minh City\nVietnam",
       "rules_applied": [
         {
-          "rule_id": "8.6",
-          "outcome": "MATCH"
-        },
-        {
           "rule_id": "4.2.0.2",
-          "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.2.2",
           "outcome": "MATCH"
         },
         {
@@ -101,18 +105,18 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignee kan identifieras exakt i fakturans primära faktureringsfält 'BUYER'. Företagsnamnet matchar och landet 'Viet Nam'/'Vietnam' överensstämmer efter tillåten normalisering. Smärre radbrytningsskillnader i adressen utgör inte avvikelse."
+      "motivation": "Certifikatets consignee \"Wattens (Vietnam) Co., Ltd.\" återfinns uttryckligen i fakturans primära faktureringsfält \"BUYER\". Landet är Vietnam/Viet Nam i båda dokumenten. Mindre radbrytningsskillnader i adressen påverkar inte bedömningen."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.96,
+      "confidence": 0.97,
       "certificate_value": "NBSK Sodra Blue Z\nBleached softwood kraft pulp\nContract No. 00000031_26",
       "invoice_value": "NBSK Sodra Blue Z\nHS Code: 47032100, FSC CONTROLLED WOOD SAI-CW-010913, 100 % PEFC CERTIFIED ICSE-PEFC–COC-1701435\nBleached softwood kraft pulp\nContract No. 00000031_26",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "TEXT_MATCH_PATH_USED"
+          "outcome": "ARTICLE_NUMBER_NOT_USED"
         },
         {
           "rule_id": "4.3.3",
@@ -127,12 +131,12 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Ingen artikelnummersmatchning behövde användas. Den identitetsbärande huvudbeteckningen 'NBSK Sodra Blue Z' återfinns exakt i fakturan, liksom den kompletterande beskrivningen 'Bleached softwood kraft pulp' och referensen 'Contract No. 00000031_26'. Ytterligare text i fakturan, såsom HS-kod och certifieringsuppgifter, motsäger inte certifikatet."
+      "motivation": "Den identitetsbärande huvudbeteckningen \"NBSK Sodra Blue Z\" och beskrivningen \"Bleached softwood kraft pulp\" förekommer uttryckligen i både certifikat och faktura. Fakturan innehåller ytterligare specifikationer som HS-kod och certifieringsuppgifter, men dessa motsäger inte certifikatets uppgift. Varubeskrivningen kan därför verifieras utan semantisk tolkning."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.95,
+      "confidence": 0.96,
       "certificate_value": "104,000 admt",
       "invoice_value": "Net/Airdry weight: 104,000 admt",
       "rules_applied": [
@@ -141,7 +145,7 @@
           "outcome": "BOX_7_SELECTED"
         },
         {
-          "rule_id": "4.4.3",
+          "rule_id": "4.4.1",
           "outcome": "MATCH"
         },
         {
@@ -149,7 +153,7 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Verifieringsgrundande kvantitet är värdet i certifikatets box 7: '104,000 admt'. Detta numeriska värde med enhet kan identifieras exakt i fakturan som 'Net/Airdry weight: 104,000 admt'. Att fakturan dessutom innehåller 'Total qty 104 ADMT' ändrar inte bedömningen eftersom box 7-värdet redan är explicit verifierat i fakturatexten."
+      "motivation": "Certifikatets verifieringsgrundande kvantitet i box 7 är \"104,000 admt\". Samma numeriska värde och enhet återfinns uttryckligen i fakturan som \"Net/Airdry weight: 104,000 admt\". Kvantiteten är därför direkt identifierbar i fakturan utan att något undantag behöver tillämpas."
     },
     "origin": {
       "applicable": true,
@@ -167,22 +171,22 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets ursprungsland 'Sweden' återfinns uttryckligen i ett dedikerat origin-fält i fakturan: 'COUNTRY OF ORIGIN Sweden'. Ingen tolkning eller indirekt härledning behövs."
+      "motivation": "Certifikatet anger ursprungsland som \"Sweden\". Fakturan innehåller ett explicit ursprungsfält \"COUNTRY OF ORIGIN\" med värdet \"Sweden\". Ursprungslandet kan därför verifieras uttryckligen i fakturan."
     }
   },
   "overall_assessment": {
     "comparison_result": "IDENTICAL",
     "workflow_recommendation": "AUTO_APPROVAL_ELIGIBLE",
     "auto_approval_eligible": true,
-    "confidence": 0.97,
+    "confidence": 0.98,
     "critical_failures": [],
     "manual_review_triggers": [],
-    "decision_summary": "Dokument A klassificeras som Certificate of Origin och Dokument B som faktura. Originalcertifikatet i certifikatfilen används för verifiering; uppgifterna om consignor, consignee, varubeskrivning, kvantitet och ursprungsland kan alla identifieras i fakturafilen. Parningssignalerna är starka genom matchande consignor, consignee, kontraktsnummer 00000031_26 och referenskombinationen SI0071552/CA0050927 i dokumentparet.",
-    "human_explanation": "Certifikatet och fakturan avser samma avsändare, mottagare, varubeskrivning, mängd och ursprungsland. Uppgifterna 'Elof Hansson Trade AB', 'Wattens (Vietnam) Co., Ltd.', 'NBSK Sodra Blue Z / Bleached softwood kraft pulp', '104,000 admt' och 'Sweden' kan verifieras i fakturan. Dokumentparet kan därför godkännas automatiskt."
+    "decision_summary": "Dokumentparet kunde paras via certifikatets referens \"SI0071552/CA0050927-3\" och fakturans \"INVOICE NO. SI0071552\". Consignor, consignee, varubeskrivning, kvantitet och ursprungsland kan alla verifieras uttryckligen mot fakturan enligt tillåtna regler. Ingen tillämplig kontrollpunkt gav MISMATCH eller MANUAL_REVIEW, och samtliga MATCH-bedömningar ligger över confidence-golvet för automatiskt godkännande.",
+    "human_explanation": "Alla kontrollerade uppgifter i ursprungscertifikatet kan verifieras mot fakturan. Avsändare, mottagare, varubeskrivning, mängd och ursprungsland stämmer överens. Dokumentparet är därför lämpligt för automatiskt godkännande."
   },
   "_meta": {
-    "tested_at": "2026-04-01T21:48:56.869845+00:00",
-    "prompt_hash": "9b9df42642d8",
+    "tested_at": "2026-04-02T11:22:43.060799+00:00",
+    "prompt_hash": "f81eb9b0d2ea",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P004_MATCH",

@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": null,
+    "verification_timestamp": "2026-04-02T00:00:00Z",
     "document_pair_id": null,
     "certificate_issue_date": "2023-03-15",
     "source_documents_received": 2
@@ -20,7 +20,7 @@
     "document_b": {
       "label": "Document B",
       "assumed_role": "invoice",
-      "document_type": "Commercial Invoice"
+      "document_type": "Invoice"
     }
   },
   "rule_activation": {
@@ -34,19 +34,27 @@
     "activated_rules": [
       {
         "rule_id": "4.1.0",
-        "rule_name": "Consignor found explicitly in invoice documentation"
+        "rule_name": "Consignor may be verified anywhere in the invoice documentation"
       },
       {
-        "rule_id": "4.3.2",
-        "rule_name": "Goods description verified primarily by article/product identifier"
+        "rule_id": "4.2.0.2",
+        "rule_name": "Consignee identification using primary invoice party fields"
+      },
+      {
+        "rule_id": "4.3.3",
+        "rule_name": "Controlled text match using identity-bearing goods designation"
+      },
+      {
+        "rule_id": "4.3.4",
+        "rule_name": "Additional non-identity-changing wording does not create mismatch"
+      },
+      {
+        "rule_id": "4.5.4.1",
+        "rule_name": "EU/European Community normalization"
       },
       {
         "rule_id": "4.5.4.2",
-        "rule_name": "EU/member-state origin normalization"
-      },
-      {
-        "rule_id": "8.6",
-        "rule_name": "Mandatory pairing validation passed"
+        "rule_name": "EU member state and EU collective term equivalence"
       }
     ]
   },
@@ -60,18 +68,18 @@
       "rules_applied": [
         {
           "rule_id": "4.1.0",
-          "outcome": "MATCH"
+          "outcome": "APPLIED_MATCH"
         },
         {
           "rule_id": "4.1.2.1",
-          "outcome": "MATCH"
+          "outcome": "APPLIED_MATCH"
         },
         {
-          "rule_id": "4.1.4",
+          "rule_id": "4.1.5",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor kan identifieras uttryckligen i fakturan genom exportörsblocket på sida 2 där både 'Borealis AG' och 'c/o Borealis AB' framgår. Landet verifieras som Sverige genom adressen 'SE - 444 86 STENUNGSUND, SWEDEN' och stöds även av SE-prefix i VAT-numret. Därmed är consignor verifierad mot fakturan."
+      "motivation": "Certifikatets avsändare återfinns uttryckligen i fakturans exporter-block på sida 2 som \"Borealis AG ... c/o Borealis AB ... STENUNGSUND, SWEDEN\". Detta verifierar samma juridiska namnstruktur och samma land som i certifikatet. Att fakturans issuer-block även innehåller Wien-adress ändrar inte bedömningen eftersom certifikatets consignor uttryckligen kan identifieras i fakturadokumentet enligt koncernstrukturregeln och med svensk adress/land."
     },
     "consignee": {
       "applicable": true,
@@ -82,40 +90,44 @@
       "rules_applied": [
         {
           "rule_id": "4.2.0.2",
-          "outcome": "MATCH"
+          "outcome": "APPLIED_MATCH"
         },
         {
           "rule_id": "4.2.3",
-          "outcome": "MATCH"
+          "outcome": "APPLIED_MATCH"
         },
         {
           "rule_id": "4.2.4",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Mottagaren i certifikatet återfinns exakt i fakturans primära kund-/faktureringsfält. Företagsnamn och land överensstämmer utan behov av otillåten tolkning. Därmed är consignee verifierad."
+      "motivation": "Certifikatets mottagare kan identifieras exakt i fakturans primära kund-/faktureringsfält på sida 1. Företagsnamn, adress och land överensstämmer utan behov av fri tolkning. Samma part återkommer dessutom även som customer name/address och delivery address."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.96,
+      "confidence": 0.9,
       "certificate_value": "36 PAL = 1980 BAG (25 kg net / bag)\nFT3200",
-      "invoice_value": "FT3200 Bag LD Polyethylene\n...\nTotal number of packages 36 PAL\n(=1980 BAG)",
+      "invoice_value": "FT3200 Bag LD Polyethylene\nTotal number of packages 36 PAL\n(=1980 BAG)",
       "rules_applied": [
         {
-          "rule_id": "4.3.2",
-          "outcome": "MATCH"
+          "rule_id": "4.3.1",
+          "outcome": "IDENTIFIED"
+        },
+        {
+          "rule_id": "4.3.3",
+          "outcome": "APPLIED_MATCH"
         },
         {
           "rule_id": "4.3.4",
-          "outcome": "MATCH"
+          "outcome": "APPLIED_MATCH"
         },
         {
           "rule_id": "4.3.8",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet innehåller produktidentifieraren 'FT3200', som kan identifieras exakt i fakturans varurader som 'FT3200 Bag LD Polyethylene'. Certifikatets kompletterande uppgift om emballage '36 PAL = 1980 BAG' återfinns också i fakturans totalrad för kollin. Varubeskrivningen är därför verifierad."
+      "motivation": "Den identitetsbärande huvudbeteckningen \"FT3200\" i certifikatet återfinns uttryckligen i fakturan som \"FT3200 Bag LD Polyethylene\" på båda artikelraderna. Certifikatets uppgift om emballage/antal \"36 PAL = 1980 BAG\" återfinns också uttryckligen i fakturans total package-rad. De extra orden \"Bag LD Polyethylene\" i fakturan är kompletterande beskrivning och motsäger inte certifikatets varubeskrivning."
     },
     "quantity": {
       "applicable": true,
@@ -126,40 +138,44 @@
       "rules_applied": [
         {
           "rule_id": "4.4.2.1",
-          "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.4.3",
-          "outcome": "MATCH"
+          "outcome": "BOX_7_SELECTED"
         },
         {
           "rule_id": "4.4.4",
+          "outcome": "APPLIED_MATCH"
+        },
+        {
+          "rule_id": "4.4.6",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Verifieringsgrundande kvantitet i certifikatets box 7 är 'Gross 50.688,00 kg'. Samma numeriska värde och enhet återfinns uttryckligen i fakturan som 'Total gross weight 50.688,00 KG'. Kvantiteten är därmed verifierad utan beräkning eller undantag."
+      "motivation": "Den verifieringsgrundande kvantiteten i certifikatets box 7 är \"Gross 50.688,00 kg\". Fakturan anger på sida 2 uttryckligen \"Total gross weight 50.688,00 KG\". Numeriskt värde, viktkategori och enhet överensstämmer exakt efter normalisering av versaler/gemener."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.89,
+      "confidence": 0.88,
       "certificate_value": "European Community; Sweden",
-      "invoice_value": "Country of origin\nSweden",
+      "invoice_value": "Country of origin Sweden",
       "rules_applied": [
         {
           "rule_id": "4.5.1",
-          "outcome": "MATCH"
+          "outcome": "IDENTIFIED"
         },
         {
           "rule_id": "4.5.4.1",
-          "outcome": "MATCH"
+          "outcome": "APPLIED_MATCH"
         },
         {
           "rule_id": "4.5.4.2",
+          "outcome": "APPLIED_MATCH"
+        },
+        {
+          "rule_id": "4.5.5",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Fakturan anger uttryckligen ursprung som 'Sweden' i fältet 'Country of origin' för varuraderna. Certifikatets specifika land 'Sweden' är därmed direkt verifierat, och certifikatets samlingsbeteckning 'European Community' verifieras genom att Sweden är en EU-medlemsstat. Inga motstridiga icke-EU-ursprung förekommer i fakturan."
+      "motivation": "Certifikatet anger ursprung \"European Community; Sweden\". Fakturan anger uttryckligen \"Country of origin Sweden\" för båda raderna. \"Sweden\" verifierar den specifikt namngivna medlemsstaten direkt, och samma uppgift verifierar även den kollektiva EU-angivelsen genom EU-normalisering eftersom Sverige är EU-medlemsstat vid utfärdandedatumet. Inga motstridiga icke-EU-ursprung förekommer i fakturan."
     }
   },
   "overall_assessment": {
@@ -169,12 +185,12 @@
     "confidence": 0.94,
     "critical_failures": [],
     "manual_review_triggers": [],
-    "decision_summary": "Det identifierade dokumentparet är ett Certificate of Origin och en kommersiell faktura. Samtliga tillämpliga kontrollpunkter — consignor, consignee, varubeskrivning, kvantitet och ursprungsland — kan verifieras mot fakturan enligt regelverket. Ingen tillämplig kontrollpunkt gav MISMATCH eller MANUAL_REVIEW, och samtliga MATCH-punkter ligger på eller över confidence-golvet för automatiskt godkännande.",
-    "human_explanation": "Alla kontrollpunkter stämmer mellan ursprungscertifikatet och fakturan. Avsändare, mottagare, varubeskrivning, kvantitet och ursprungsland kan verifieras i fakturan. Dokumentparet kan därför godkännas automatiskt."
+    "decision_summary": "Dokumentparet kan verifieras som identiskt enligt tillämpliga regler. Certifikatets consignor, consignee, varubeskrivning, kvantitet och ursprungsland återfinns i den bifogade fakturan. Parningsstödet förstärks av att certifikatets referenser 2800206064 samt 86711669/86711670 också förekommer i fakturan.",
+    "human_explanation": "Alla relevanta uppgifter i ursprungscertifikatet kan verifieras mot fakturan. Avsändare, mottagare, varubeskrivning, bruttovikt 50.688,00 kg och ursprung Sweden stämmer överens. Dokumentparet kan därför godkännas automatiskt."
   },
   "_meta": {
-    "tested_at": "2026-04-01T17:41:39.925708+00:00",
-    "prompt_hash": "9b9df42642d8",
+    "tested_at": "2026-04-02T11:36:29.825729+00:00",
+    "prompt_hash": "f81eb9b0d2ea",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P069_MATCH",

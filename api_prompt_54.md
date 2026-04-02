@@ -1357,13 +1357,17 @@ Exempel: 1599 MM i certifikatet får identifieras i fakturan som 1.599 MM eller 
 
 Normalisering får ENDAST användas när det är entydigt att avskiljaren fungerar som tusentalsavskiljare och INTE som decimaltecken.
 
-#### 4.4.3.4 Normalisering av blandade decimalseparatorer
+#### 4.4.3.4 Normalisering av blandade decimalseparatorer (ENBART formatskillnader)
+Denna regel hanterar ENBART skillnader i FORMATERING av samma numeriska värde — INTE skillnader i de faktiska siffrorna.
 Vid kvantitets- och viktverifiering kan certifikatet och fakturan använda OLIKA konventioner för decimaltecken och tusentalsavskiljare. Systemet ska normalisera numeriska värden till samma format innan jämförelse NÄR:
 1. Det ena dokumentet använder punkt som decimaltecken (t.ex. "7801.920") och det andra använder komma som decimaltecken med punkt som tusentalsavskiljare (t.ex. "7.801,920").
-2. De normaliserade värdena är numeriskt identiska.
+2. De normaliserade värdena är **numeriskt identiska** — d.v.s. EXAKT samma siffror i samma ordning, bara med annorlunda formatering.
 3. Tolkningen av tusentalsavskiljare respektive decimaltecken är entydig utifrån siffergruppering (t.ex. "7.801,920" = punkt efter 1 siffra + komma följt av 3 siffror → punkt är tusentalsavskiljare, komma är decimaltecken → 7801.920).
 
-Exempel: Certifikat "7801.920 G.W." och faktura "Gross Weight 7.801,920 KG" → normaliserat 7801.920 = 7801.920 → MATCH.
+**KRITISK BEGRÄNSNING:** Om de underliggande numeriska värdena SKILJER sig (t.ex. 7801 vs 7802, eller 635 vs 625) ska detta ALLTID bedömas som MISMATCH oavsett formatering. Denna regel tillåter ALDRIG att en faktisk sifferskillnad ignoreras — den hanterar ENBART notation/formatering (punkt vs komma, tusentalsavskiljare vs decimaltecken).
+
+Exempel MATCH: Certifikat "7801.920 G.W." och faktura "Gross Weight 7.801,920 KG" → normaliserat 7801.920 = 7801.920 → MATCH (samma siffror, bara annorlunda formatering).
+Exempel MISMATCH: Certifikat "635 pcs" och faktura "625 pcs" → 635 ≠ 625 → MISMATCH (faktisk sifferskillnad, inte formatskillnad).
 
 ### 4.4.4 Total vikt i faktura
 När certifikatet anger vikt för hela försändelsen (t.ex. Gross Weight eller Net Weight) får denna uppgift verifieras mot en total vikt som anges i fakturan, exempelvis:

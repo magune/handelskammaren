@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-04-01T00:00:00Z",
+    "verification_timestamp": null,
     "document_pair_id": null,
     "certificate_issue_date": "2026-02-27",
     "source_documents_received": 2
@@ -15,7 +15,7 @@
     "document_a": {
       "label": "Document A",
       "assumed_role": "certificate",
-      "document_type": "Certificate of Origin"
+      "document_type": "Certificate of Origin PDF with embedded invoice copy"
     },
     "document_b": {
       "label": "Document B",
@@ -34,7 +34,7 @@
     "activated_rules": [
       {
         "rule_id": "8.5.0",
-        "rule_name": "Filbaserad dokumentparning – certifikat hämtat från certifikatfilen och faktura från separat fakturafil"
+        "rule_name": "Filbaserad dokumentparning – certifikat från certifikatfil, verifiering mot separat fakturafil"
       },
       {
         "rule_id": "8.6",
@@ -46,7 +46,7 @@
       },
       {
         "rule_id": "4.5.4.2",
-        "rule_name": "EU-medlemsland och EU-samlingsbegrepp får verifiera varandra"
+        "rule_name": "EU-medlemsland och EU som utbytbara ursprungsangivelser"
       }
     ]
   },
@@ -59,138 +59,118 @@
       "invoice_value": "Seller\nGösta Jacobsson & Co AB\nStora Åvägen 21\nSE 436 34 Askim\nSweden",
       "rules_applied": [
         {
-          "rule_id": "4.1.1",
-          "outcome": "Seller-fält identifierat i fakturan"
+          "rule_id": "4.1.0",
+          "outcome": "name found explicitly in invoice"
         },
         {
           "rule_id": "4.1.2",
-          "outcome": "Företagsnamn och land verifierade mot fakturan"
+          "outcome": "company name and country verified"
         },
         {
-          "rule_id": "4.1.5",
-          "outcome": "MATCH"
+          "rule_id": "4.1.4",
+          "outcome": "country matches exactly"
         }
       ],
-      "motivation": "Certifikatets consignor 'Gösta Jacobsson & Co AB' kan identifieras direkt i fakturans Seller-fält med samma företagsnamn och samma land 'Sweden'. Endast mindre formateringsskillnader förekommer i adressen ('SE436 34, ASKIM' vs 'SE 436 34 Askim'), vilket inte påverkar bedömningen."
+      "motivation": "Certifikatet anger consignor som \"Gösta Jacobsson & Co AB ... Sweden\". Den separata fakturan i Document B anger seller som \"Gösta Jacobsson & Co AB, Stora Åvägen 21, SE 436 34 Askim, Sweden\". Företagsnamn och land kan identifieras direkt i fakturan utan otillåten tolkning, därför MATCH."
     },
     "consignee": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.98,
+      "confidence": 0.99,
       "certificate_value": "Ashdod Timber Trade Ltd\n45 Hamada St.\nNorthern Industry Zone\nP.O.B 4056\n77140 Ashdod\nIsrael",
       "invoice_value": "Buyer\nAshdod Timber Trade Ltd\nCompany number: 511061566\n45 Hamada Street, Northern Industrial Zone\nAshdod 7752853\nIsrael",
       "rules_applied": [
         {
           "rule_id": "4.2.0.2",
-          "outcome": "Primärt faktureringsfält prioriterat; Buyer-fältet användes"
-        },
-        {
-          "rule_id": "4.2.1",
-          "outcome": "Mottagaren identifierad i relevant fakturafält"
+          "outcome": "matched against primary billing field Buyer"
         },
         {
           "rule_id": "4.2.2",
-          "outcome": "Företagsnamn verifierat efter tillåten normalisering"
+          "outcome": "company name identified in invoice"
         },
         {
           "rule_id": "4.2.3",
-          "outcome": "Land verifierat som Israel"
-        },
-        {
-          "rule_id": "4.2.4",
-          "outcome": "MATCH"
+          "outcome": "country matches"
         }
       ],
-      "motivation": "Certifikatets consignee 'Ashdod Timber Trade Ltd' återfinns direkt i fakturans primära faktureringsfält 'Buyer'. Företagsnamn och land överensstämmer, och skillnaderna 'Hamada St.'/'Hamada Street' samt mindre adressformatsskillnader är tillåtna och utgör inte motsägelse."
+      "motivation": "Certifikatet anger consignee som \"Ashdod Timber Trade Ltd ... Israel\". Fakturan anger primärt faktureringsfält \"Buyer\" med samma företag och land: \"Ashdod Timber Trade Ltd ... Israel\". Skillnaden \"Hamada St.\" jämfört med \"Hamada Street\" och mindre adressskillnader påverkar inte bedömningen, därför MATCH."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.91,
       "certificate_value": "74 packages\nSwedish Whitewood, KD 18%, LP",
-      "invoice_value": "Description of goods\nWhitewood, KD18%, LP",
+      "invoice_value": "Description of goods\nWhitewood, KD18%, LP\n...\nPackages (nos): 74",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "Inga artikelnummer angivna i certifikatet; textmatchning använd"
+          "outcome": "no article-number based verification used"
         },
         {
           "rule_id": "4.3.3",
-          "outcome": "Identitetsbärande huvudbeteckning identifierad som Whitewood / KD 18% / LP"
+          "outcome": "controlled text match applied"
         },
         {
           "rule_id": "4.3.4",
-          "outcome": "Geografiskt prefix 'Swedish' behandlat som tillägg som inte ändrar produktidentiteten"
-        },
-        {
-          "rule_id": "4.3.8",
-          "outcome": "MATCH"
+          "outcome": "geographical prefix Swedish ignored because origin Sweden is separately confirmed"
         }
       ],
-      "motivation": "Certifikatets identitetsbärande varubeskrivning 'Whitewood, KD 18%, LP' kan identifieras i fakturans 'Whitewood, KD18%, LP' efter tillåten normalisering av mellanslag. Ordet 'Swedish' i certifikatet är ett geografiskt prefix som motsvarar certifikatets ursprungsland och dess frånvaro i fakturans varubeskrivning ändrar inte produktidentiteten."
+      "motivation": "Certifikatet beskriver varan som \"Swedish Whitewood, KD 18%, LP\" och anger dessutom \"74 packages\". Fakturan anger \"Whitewood, KD18%, LP\" samt separat \"Packages (nos): 74\". Den identitetsbärande huvudbeteckningen \"Whitewood, KD18%, LP\" återfinns i fakturan, och prefixet \"Swedish\" ändrar inte produktidentiteten eftersom ursprunget verifieras separat. Därför MATCH."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.98,
+      "confidence": 0.99,
       "certificate_value": "273,233 m3",
-      "invoice_value": "Total M3: 273,233",
+      "invoice_value": "Total M3: 273,233\nTotal m3: 273,233",
       "rules_applied": [
         {
-          "rule_id": "4.4.2.1",
-          "outcome": "Box 7-värdet användes som verifieringsgrundande kvantitet"
+          "rule_id": "4.4.1",
+          "outcome": "numeric value identified in invoice"
         },
         {
           "rule_id": "4.4.3",
-          "outcome": "Det numeriska värdet 273,233 identifierades explicit i fakturan"
-        },
-        {
-          "rule_id": "4.4.6",
-          "outcome": "MATCH"
+          "outcome": "same numeric value found for corresponding shipment"
         }
       ],
-      "motivation": "Den verifieringsgrundande kvantiteten i certifikatets box 7 är '273,233 m3'. Samma numeriska värde återfinns explicit i fakturan som 'Total M3: 273,233', vilket uppfyller kravet på förekomstkontroll. Den separata uppgiften '74 packages' i certifikatets varubeskrivning behövde inte användas eftersom box 7 redan verifieras direkt."
+      "motivation": "Certifikatets box 7 anger kvantiteten \"273,233 m3\". Den separata fakturan anger samma totalvolym två gånger: \"Total M3: 273,233\" och \"Total m3: 273,233\". Det numeriska värdet kan identifieras direkt i fakturan för samma försändning, därför MATCH."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.93,
+      "confidence": 0.96,
       "certificate_value": "European Union\nSweden",
-      "invoice_value": "Country of origin\nSweden\n\nthese products are of European Community preferential origin.",
+      "invoice_value": "Country of origin\nSweden\n...\nthese products are of European Community preferential origin.",
       "rules_applied": [
         {
           "rule_id": "4.5.1",
-          "outcome": "Explicit ursprungsfält identifierat i fakturan"
-        },
-        {
-          "rule_id": "4.5.4.1",
-          "outcome": "EU-samlingsbegreppet verifierat via explicit European Community-uttalande"
+          "outcome": "explicit origin fields identified in invoice"
         },
         {
           "rule_id": "4.5.4.2",
-          "outcome": "Sverige som EU-medlemsland och explicit Sweden i fakturan verifierar certifikatets ursprungsangivelse"
+          "outcome": "EU and specific EU member state both verified"
         },
         {
           "rule_id": "4.5.5",
-          "outcome": "MATCH"
+          "outcome": "each origin stated in certificate identified explicitly in invoice"
         }
       ],
-      "motivation": "Certifikatet anger ursprung 'European Union' och 'Sweden'. Fakturan innehåller både ett explicit ursprungsfält 'Country of origin Sweden' och en separat ursprungsdeklaration att produkterna är av 'European Community preferential origin'. Därmed kan varje ursprungsangivelse i certifikatet identifieras uttryckligen i fakturan."
+      "motivation": "Certifikatet anger ursprung som både \"European Union\" och \"Sweden\". Fakturan innehåller ett explicit origin-fält \"Country of origin: Sweden\" och dessutom den uttryckliga ursprungsförklaringen \"these products are of European Community preferential origin\". Därmed kan både Sverige och EU/European Community identifieras explicit i fakturan, därför MATCH."
     }
   },
   "overall_assessment": {
     "comparison_result": "IDENTICAL",
     "workflow_recommendation": "AUTO_APPROVAL_ELIGIBLE",
     "auto_approval_eligible": true,
-    "confidence": 0.96,
+    "confidence": 0.97,
     "critical_failures": [],
     "manual_review_triggers": [],
-    "decision_summary": "Dokument A klassificerades som certifikat och Document B som separat faktura. Den inbäddade fakturasidan i certifikatfilen användes inte för verifieringen; verifieringen utfördes mot den separata fakturafilen. Parningsvalideringen passerades eftersom både consignor och consignee från certifikatet återfinns i fakturan. Samtliga tillämpliga kontrollpunkter verifierades som MATCH med confidence minst 0.85.",
-    "human_explanation": "Certifikatet och fakturan stämmer överens för avsändare, mottagare, varubeskrivning, mängd och ursprungsland. Den separata fakturan bekräftar uppgifterna i certifikatet. Dokumentparet kan därför godkännas automatiskt."
+    "decision_summary": "Dokumentparningen valideras genom att certifikatet hämtas från Document A och verifieringen görs mot den separata fakturan i Document B. LC-undantaget är inte tillämpligt. Samtliga tillämpliga kontrollpunkter—consignor, consignee, varubeskrivning, kvantitet och ursprungsland—kan verifieras som MATCH enligt reglerna, utan kvarstående tekniska hinder eller motsägelser.",
+    "human_explanation": "Alla relevanta uppgifter i certifikatet kan verifieras mot den bifogade fakturan. Avsändare, mottagare, varubeskrivning, kvantitet 273,233 m3 och ursprung (Sverige/EU) stämmer överens. Dokumentparet kan därför godkännas automatiskt."
   },
   "_meta": {
-    "tested_at": "2026-04-01T14:31:51.289146+00:00",
-    "prompt_hash": "9b9df42642d8",
+    "tested_at": "2026-04-02T11:21:38.812331+00:00",
+    "prompt_hash": "f81eb9b0d2ea",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P0138_MATCH",

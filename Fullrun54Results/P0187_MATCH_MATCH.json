@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-04-01T00:00:00Z",
+    "verification_timestamp": "2026-04-02",
     "document_pair_id": null,
     "certificate_issue_date": "2025-12-02",
     "source_documents_received": 2
@@ -15,12 +15,12 @@
     "document_a": {
       "label": "Document A",
       "assumed_role": "certificate",
-      "document_type": "Certificate of Origin"
+      "document_type": "certificate of origin"
     },
     "document_b": {
       "label": "Document B",
       "assumed_role": "invoice",
-      "document_type": "Commercial Invoice"
+      "document_type": "invoice"
     }
   },
   "rule_activation": {
@@ -34,23 +34,31 @@
     "activated_rules": [
       {
         "rule_id": "8.5.0",
-        "rule_name": "Filbaserad dokumentparning"
+        "rule_name": "Certifikat hämtat från certifikatfilen och faktura från separat fakturafil"
       },
       {
         "rule_id": "8.6",
-        "rule_name": "Obligatorisk parningsvalidering"
+        "rule_name": "Parningsvalidering passerad genom consignoridentifiering i fakturan"
       },
       {
         "rule_id": "4.1.0",
-        "rule_name": "Särskild regel – Koncernstruktur / sökning av consignor i hela fakturan"
+        "rule_name": "Consignor får verifieras om företagsnamnet uttryckligen förekommer någonstans i fakturan"
       },
       {
-        "rule_id": "4.4.5.5",
-        "rule_name": "Undantag 3D – Summering av flera rader inom samma faktura"
+        "rule_id": "4.3.3",
+        "rule_name": "Kontrollerad textmatchning av identitetsbärande huvudbeteckning"
+      },
+      {
+        "rule_id": "4.3.4",
+        "rule_name": "Ytterligare tillägg som inte ändrar produktidentitet medför inte mismatch"
       },
       {
         "rule_id": "4.4.5.5.1",
-        "rule_name": "Generell/samlande varubeskrivning i certifikatet"
+        "rule_name": "Summering av flera rader inom samma faktura för generell/samlande varubeskrivning"
+      },
+      {
+        "rule_id": "4.5.1",
+        "rule_name": "Ursprungsland ska framgå explicit i fakturan"
       }
     ]
   },
@@ -58,20 +66,16 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.87,
+      "confidence": 0.9,
       "certificate_value": "Derome Timber AB behalf of\nEagle Timber Oy Ltd\nMikonkatu 22B23\nVAT: FI16497381\n00100, Helsinki\nFinland",
-      "invoice_value": "Invoice Address\nEAGLE TIMBER OY LTD\nMikonkatu 22 B 23\n00100 HELSINKI\nFINLAND",
+      "invoice_value": "Invoice Address\nEAGLE TIMBER OY LTD\nMikonkatu 22 B 23\n00100 HELSINKI\nFINLAND\nTax Identity\nFI16497381",
       "rules_applied": [
         {
           "rule_id": "4.1.0",
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.1.2",
-          "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.1.4",
+          "rule_id": "4.1.2.1",
           "outcome": "MATCH"
         },
         {
@@ -79,14 +83,14 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor-fält innehåller texten \"Derome Timber AB behalf of Eagle Timber Oy Ltd\" och anger adress/VAT/land för Eagle Timber Oy Ltd i Finland. Fakturan innehåller uttryckligen \"EAGLE TIMBER OY LTD\" med adress \"Mikonkatu 22 B 23, 00100 HELSINKI, FINLAND\" samt även \"Derome Timber AB\" i sidhuvud/sidfot. Consignor-uppgiften kan därför identifieras i fakturan och land Finland överensstämmer."
+      "motivation": "Certifikatets consignorfält innehåller uttrycklig referens till Eagle Timber Oy Ltd med finsk adress och VAT FI16497381. Samma företag, adressland och VAT-nummer återfinns uttryckligen i fakturan under Invoice Address/Tax Identity. Därmed kan certifikatets consignor verifieras mot fakturan trots att fakturautställaren i sidhuvudet är Derome Timber AB."
     },
     "consignee": {
       "applicable": true,
       "status": "MISMATCH",
       "confidence": 0.98,
       "certificate_value": "Mounzer Hazem Sammakieh EST\n31 Al Islam Street, Al Hamra, Jedda\nContact name: Mounzer Sammakieh\nContact number: +966565562780\nmounzersammakieh@gmail.com\nVAT: 312959310700003\nCR/LICENSE: 7049800498\nSaudi Arabia",
-      "invoice_value": "Invoice Address\nEAGLE TIMBER OY LTD\nMikonkatu 22 B 23\n00100 HELSINKI\nFINLAND\n\nDelivery Address\nC5\nKinnared Stuffning (ej moms)\nMarknadsvägen\n314 05 Kinnared\nSWEDEN",
+      "invoice_value": "Invoice Address: EAGLE TIMBER OY LTD, Finland; Delivery Address: C5 Kinnared Stuffning (ej moms), Marknadsvägen, 314 05 Kinnared, SWEDEN",
       "rules_applied": [
         {
           "rule_id": "4.2.0.2",
@@ -97,31 +101,19 @@
           "outcome": "MISMATCH"
         },
         {
-          "rule_id": "4.2.2",
-          "outcome": "MISMATCH"
-        },
-        {
-          "rule_id": "4.2.3",
-          "outcome": "MISMATCH"
-        },
-        {
           "rule_id": "4.2.4",
           "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Certifikatet anger mottagaren som \"Mounzer Hazem Sammakieh EST\" i Saudiarabien. Fakturan innehåller inte detta företagsnamn i något faktureringsfält, leveransfält eller annat mottagarfält; i stället anges \"EAGLE TIMBER OY LTD\" i Finland som invoice address och en delivery address i Sverige. Certifikatets consignee kan därför inte identifieras i fakturan och landuppgiften Saudiarabien kan inte verifieras."
+      "motivation": "Certifikatets consignee är Mounzer Hazem Sammakieh EST i Saudiarabien. Fakturan innehåller i stället Invoice Address för EAGLE TIMBER OY LTD i Finland och Delivery Address i Sverige. Namnet Mounzer Hazem Sammakieh EST eller någon saudisk mottagare kan inte identifieras i något relevant fakturafält, varför mottagaren inte kan verifieras."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.86,
+      "confidence": 0.87,
       "certificate_value": "Whitewood 74 Packages\nWhitewood",
       "invoice_value": "Whitewood Sawn board\nVI+ 25x100 3,0 m\nWhitewood Sawn board\nVI+ 25x100 3,3 m\nWhitewood Sawn board\nVI+ 25x100 3,6 m\nWhitewood Sawn board\nVI+ 25x100 3,9 m\nWhitewood Sawn board\nVI+ 25x100 4,5 m",
       "rules_applied": [
-        {
-          "rule_id": "4.3.2",
-          "outcome": "NOT_APPLICABLE"
-        },
         {
           "rule_id": "4.3.3",
           "outcome": "MATCH"
@@ -135,26 +127,22 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet innehåller ingen artikelnummerreferens, så textmatchning används. Den identitetsbärande huvudbeteckningen \"Whitewood\" kan identifieras uttryckligen i fakturans varurader som \"Whitewood Sawn board\". Fakturans tillägg \"Sawn board\" och dimensionsuppgifter lägger till specifikation men motsäger inte certifikatets huvudbeteckning."
+      "motivation": "Den identitetsbärande huvudbeteckningen i certifikatet är \"Whitewood\". Ordet \"Whitewood\" förekommer uttryckligen i samtliga relevanta varurader i fakturan. Tilläggen \"Sawn board\" samt dimensionsangivelser i fakturan är ytterligare specifikationer och motsäger inte certifikatets generella varubeskrivning."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.88,
+      "confidence": 0.83,
       "certificate_value": "282,262m3",
-      "invoice_value": "57.8025 nm3; 28.38 nm3; 92.223 nm3; 16.77 nm3; 87.08625 nm3",
+      "invoice_value": "57.8025 nm3 + 28.38 nm3 + 92.223 nm3 + 16.77 nm3 + 87.08625 nm3 = 282.26175 nm3",
       "rules_applied": [
         {
-          "rule_id": "4.4.2",
-          "outcome": "MATCH"
+          "rule_id": "4.4.2.1",
+          "outcome": "BOX_7_USED"
         },
         {
           "rule_id": "4.4.5.1",
-          "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.4.5.5",
-          "outcome": "MATCH"
+          "outcome": "3D_PRÖVAD"
         },
         {
           "rule_id": "4.4.5.5.1",
@@ -165,7 +153,7 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger en uttrycklig numerisk kvantitet med enhet: 282,262 m3. Fakturan saknar totalrad för denna volym men innehåller fem rader för samma produktfamilj Whitewood med volymerna 57.8025, 28.38, 92.223, 16.77 och 87.08625 nm3. Summering enligt undantag 3D för samlande varubeskrivning ger 282.26175 nm3, vilket överensstämmer med certifikatets 282,262 m3 inom tillåten tolerans."
+      "motivation": "Certifikatets verifieringsgrundande kvantitet i box 7 är 282,262 m3. Fakturan delar samma generella vara i flera variantrader, vars kvantiteter får summeras inom samma faktura för en samlande varubeskrivning. Summan 282.26175 motsvarar certifikatets 282,262 inom tillåten tolerans, varför kvantiteten verifieras."
     },
     "origin": {
       "applicable": true,
@@ -179,36 +167,28 @@
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.5.2",
-          "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.5.4",
-          "outcome": "MATCH"
-        },
-        {
           "rule_id": "4.5.5",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger ursprungsland \"SWEDEN\". Fakturan anger uttryckligen i ett dedikerat origin-fält på sida 2: \"Country of origin: Sweden\". Ursprungslandet kan därför verifieras direkt utan tolkning."
+      "motivation": "Certifikatet anger ursprungsland SWEDEN. Fakturan anger uttryckligen \"Country of origin: Sweden\" på sida 2. Ursprungslandet kan därför verifieras explicit i fakturan."
     }
   },
   "overall_assessment": {
     "comparison_result": "NOT_IDENTICAL",
     "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
     "auto_approval_eligible": false,
-    "confidence": 0.93,
+    "confidence": 0.96,
     "critical_failures": [
-      "Consignee mismatch: certifikatet anger \"Mounzer Hazem Sammakieh EST\" i Saudiarabien men denna mottagare kan inte identifieras i den bifogade fakturan."
+      "Consignee mismatch: certifikatet anger Mounzer Hazem Sammakieh EST, Saudi Arabia, men denna part kan inte identifieras i fakturan."
     ],
     "manual_review_triggers": [],
-    "decision_summary": "Dokumentparet kunde paras korrekt genom att certifikatet identifierades i fil 1 och fakturan i fil 2, och consignor kunde återfinnas i fakturan. Avsändare, varubeskrivning, kvantitet och ursprungsland kan verifieras mot fakturan. Mottagaren i certifikatet kan däremot inte identifieras i fakturan, vilket medför att dokumentparet inte är identiskt.",
-    "human_explanation": "Certifikatet anger mottagaren som Mounzer Hazem Sammakieh EST i Saudiarabien, men den mottagaren finns inte i fakturan. Fakturan är i stället ställd till Eagle Timber Oy Ltd i Finland och visar en leveransadress i Sverige. Övriga uppgifter kan verifieras, men mottagaren stämmer inte."
+    "decision_summary": "Dokumentparet är inte identiskt eftersom mottagaren i certifikatet inte kan verifieras mot fakturan. Consignor, varubeskrivning, kvantitet och ursprungsland kan däremot verifieras.",
+    "human_explanation": "Certifikatet anger mottagaren som Mounzer Hazem Sammakieh EST i Saudiarabien, men denna part finns inte i fakturan. Fakturan visar i stället Eagle Timber Oy Ltd i Finland och en leveransadress i Sverige. Därför är dokumenten inte identiska och kräver manuell hantering."
   },
   "_meta": {
-    "tested_at": "2026-04-01T21:54:35.801398+00:00",
-    "prompt_hash": "9b9df42642d8",
+    "tested_at": "2026-04-02T11:23:49.156379+00:00",
+    "prompt_hash": "f81eb9b0d2ea",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P0187_MATCH",

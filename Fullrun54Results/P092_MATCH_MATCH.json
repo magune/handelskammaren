@@ -1,8 +1,8 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-04-01T00:00:00Z",
-    "document_pair_id": null,
+    "verification_timestamp": "2026-04-02T00:00:00Z",
+    "document_pair_id": "P092_MATCH",
     "certificate_issue_date": "2026-02-19",
     "source_documents_received": 2
   },
@@ -15,12 +15,12 @@
     "document_a": {
       "label": "Document A",
       "assumed_role": "certificate",
-      "document_type": "Certificate of Origin"
+      "document_type": "certificate_of_origin"
     },
     "document_b": {
       "label": "Document B",
       "assumed_role": "invoice",
-      "document_type": "Commercial invoice file containing two invoices (SEC9001241 and SEC9001242), image-based/scanned"
+      "document_type": "commercial_invoice_pdf_with_two_invoices"
     }
   },
   "rule_activation": {
@@ -37,16 +37,12 @@
         "rule_name": "Filbaserad dokumentparning"
       },
       {
-        "rule_id": "8.5.2",
-        "rule_name": "Fakturareferens i certifikatet vs fakturafilen"
+        "rule_id": "8.5.1",
+        "rule_name": "Flera fakturor i samma fakturafil"
       },
       {
         "rule_id": "8.6",
         "rule_name": "Obligatorisk parningsvalidering"
-      },
-      {
-        "rule_id": "4.1.0",
-        "rule_name": "Koncernstruktur / consignor identifierad någonstans i fakturan"
       },
       {
         "rule_id": "4.3.5",
@@ -55,6 +51,10 @@
       {
         "rule_id": "4.4.5.2",
         "rule_name": "Undantag 3A – summering av flera fakturor"
+      },
+      {
+        "rule_id": "4.2.0.3.1",
+        "rule_name": "Ship-To-regeln ger MANUAL_REVIEW vid oberoende Bill-To-part"
       }
     ]
   },
@@ -62,9 +62,9 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.93,
+      "confidence": 0.98,
       "certificate_value": "Volvo Bus Corporation\nBussgatan 1\nSE-50464, Borås\nSweden",
-      "invoice_value": "VOLVO BUS CORPORATION\nVAT No. SE556197382601\n...\nVolvo Bus Corporation\nSE-405 08 Göteborg\nSweden",
+      "invoice_value": "VOLVO BUS CORPORATION\nVAT No. SE556197382601\nVolvo Bus Corporation\nSE-405 08 Göteborg\nSweden\nRegistered Office Goteborg, Sweden",
       "rules_applied": [
         {
           "rule_id": "4.1.0",
@@ -79,99 +79,121 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor 'Volvo Bus Corporation' återfinns uttryckligen i fakturafilen som fakturautställare/branding och i sidfoten. Landet verifieras som Sverige genom footer-texten 'Sweden' samt VAT-prefix 'SE'. Därmed är företagsnamn och land styrkta mot fakturan."
+      "motivation": "Certifikatets consignor 'Volvo Bus Corporation ... Sweden' identifieras uttryckligen i fakturornas issuer/header och footer. Svenskt land styrks dessutom av VAT-prefix 'SE' och footeradress i Sweden. Samma juridiska part och land kan verifieras i fakturaunderlaget."
     },
     "consignee": {
       "applicable": true,
-      "status": "MATCH",
-      "confidence": 0.86,
+      "status": "MANUAL_REVIEW",
+      "confidence": 0.78,
       "certificate_value": "MANUFACTURING COMMERCIAL VEHICLES M\nMCV\nKm 24 Cairo Ismailia Desert Road\nEl-Obour City\nCairo\nEgypt",
-      "invoice_value": "Consignee:\nManufacturing Commercial Vehicles\nKM 24, Cairo-Ismailia Road,\n00000 CAIRO\nEgypt",
+      "invoice_value": "Consignee:\nManufacturing Commercial Vehicles\nKM 24, Cairo-Ismailia Road,\n00000 CAIRO\nEgypt\n\nBuyer invoice SEC9001241:\nVolvo Bussar AB ... Sweden\n\nBuyer invoice SEC9001242:\nVolvo Bus Corporation ... Belgium",
       "rules_applied": [
         {
           "rule_id": "4.2.0.2",
-          "outcome": "MATCH"
+          "outcome": "Buyer/Bill-To field present"
         },
         {
-          "rule_id": "4.2.1",
-          "outcome": "MATCH"
+          "rule_id": "4.2.0.2.1",
+          "outcome": "Separate consignee field treated as delivery/ship-to in presence of buyer field"
         },
         {
-          "rule_id": "4.2.4",
-          "outcome": "MATCH"
+          "rule_id": "4.2.0.3",
+          "outcome": "Ship-To scenario identified"
+        },
+        {
+          "rule_id": "4.2.0.3.1",
+          "outcome": "MANUAL_REVIEW"
         }
       ],
-      "motivation": "Fakturan innehåller ett explicit 'Consignee'-fält, vilket har prioritet. Den verifieringsgrundande företagsnamnsdelen i certifikatet är 'MANUFACTURING COMMERCIAL VEHICLES', och samma namn återfinns i fakturans consignee-block. Landet Egypten överensstämmer. Den extra raden 'MCV' i certifikatet bedöms inte motsäga den identifierade mottagaren."
+      "motivation": "Certifikatets consignee kan identifieras i båda fakturorna i ett separat fält märkt 'Consignee'. Samtidigt har fakturorna tydliga Buyer-fält med andra juridiska parter: 'Volvo Bussar AB' respektive 'Volvo Bus Corporation, Belgium'. Eftersom certifikatets consignee därmed bara stöds som ship-to/slutmottagare medan bill-to/buyer är oberoende juridiska parter utan styrkt koppling, ska utfallet vara MANUAL_REVIEW."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.88,
+      "confidence": 0.89,
       "certificate_value": "EG52\n8x40FLATRACK, 6x40HC, 1x40 REEFER\nMEDUUX802256\nVolvo CKD Chassis (B0E) BERLA79\nSee attached invoice SEC9001242 and SEC9001241 dated 20260219",
-      "invoice_value": "SEC9001241 / 2026-02-19 and SEC9001242 / 2026-02-19\nMaterial: CHASSIS(B0E)BERLA79\nCustomer Reference: CKD Batch EG52",
+      "invoice_value": "Invoice SEC9001241 dated 2026-02-19: Customer Reference CKD Batch EG52; Material CHASSIS(BOE)BERLA79\nInvoice SEC9001242 dated 2026-02-19: Customer Reference CKD Batch EG52; Material CHASSIS(BOE)BERL79",
       "rules_applied": [
+        {
+          "rule_id": "4.3.2",
+          "outcome": "No exact article-number comparison used"
+        },
         {
           "rule_id": "4.3.5",
           "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.3.5.2",
+          "outcome": "Compatible invoice content confirmed"
         }
       ],
-      "motivation": "Certifikatet innehåller en uttrycklig fakturahänvisning: 'See attached invoice SEC9001242 and SEC9001241 dated 20260219'. Båda fakturanumren återfinns i fakturafilen med samma datum 2026-02-19. Fakturainnehållet är förenligt med certifikatets beskrivning genom materialrader för chassis och referensen 'CKD Batch EG52'. Varubeskrivningen är därför verifierad enligt regeln för generell varubeskrivning med fakturareferens."
+      "motivation": "Certifikatet innehåller uttrycklig hänvisning till två fakturor ('SEC9001242' och 'SEC9001241') samt fakturadatum '20260219' direkt i varubeskrivningen. Båda fakturorna finns i fakturafilen och avser samma CKD-batch EG52 med chassis-material. Fakturainnehållet är förenligt med certifikatets beskrivning av Volvo CKD chassis och därför verifieras varubeskrivningen via fakturareferensregeln."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.9,
+      "confidence": 0.96,
       "certificate_value": "84825 KG GW",
-      "invoice_value": "SEC9001241: Total weight [KG]: 74221 / Additional information: Gross: 74221\nSEC9001242: Total weight [KG]: 10604 / Additional information: Gross: 10604",
+      "invoice_value": "Invoice SEC9001241: Gross 74221\nInvoice SEC9001242: Gross 10604\nSummed gross weight: 84825 KG",
       "rules_applied": [
         {
+          "rule_id": "4.4.2.2",
+          "outcome": "GW and KG explicitly stated in certificate"
+        },
+        {
           "rule_id": "4.4.5.1",
-          "outcome": "3A prövad"
+          "outcome": "Sequential exception review performed"
         },
         {
           "rule_id": "4.4.5.2",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger uttryckligen bruttovikt 84825 KG GW och hänvisar till två fakturor. Fakturafilen innehåller båda fakturorna. Deras uttryckliga totala bruttovikter är 74221 kg och 10604 kg. Summering enligt undantag 3A ger 84825 kg, vilket exakt matchar certifikatets värde."
+      "motivation": "Certifikatet anger uttryckligen total kvantitet som vikt: '84825 KG GW'. Certifikatet refererar till två bifogade fakturor, och respektive faktura anger uttrycklig grossvikt: 74221 och 10604. Summering enligt undantag 3A ger exakt 84825 KG, vilket verifierar certifikatets grossvikt utan avvikelse."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.93,
+      "confidence": 0.98,
       "certificate_value": "SWEDEN",
       "invoice_value": "Country of origin: SE",
       "rules_applied": [
         {
           "rule_id": "4.5.1",
-          "outcome": "MATCH"
+          "outcome": "Explicit origin field identified in invoices"
         },
         {
           "rule_id": "4.5.4",
+          "outcome": "Country name and ISO code normalized"
+        },
+        {
+          "rule_id": "4.5.5",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger ursprungsland 'SWEDEN'. Fakturorna anger uttryckligen 'Country of origin: SE'. Sweden och SE är tillåten landnormalisering av samma ursprungsland. Ursprungslandet är därför explicit verifierat i fakturan."
+      "motivation": "Certifikatet anger ursprungsland 'SWEDEN'. Båda fakturorna anger uttryckligt origin-fält 'Country of origin: SE'. Efter normalisering av landsnamn och ISO-kod är ursprungslandet verifierat."
     }
   },
   "overall_assessment": {
-    "comparison_result": "IDENTICAL",
-    "workflow_recommendation": "AUTO_APPROVAL_ELIGIBLE",
-    "auto_approval_eligible": true,
-    "confidence": 0.9,
+    "comparison_result": "MANUAL_REVIEW",
+    "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
+    "auto_approval_eligible": false,
+    "confidence": 0.85,
     "critical_failures": [],
-    "manual_review_triggers": [],
-    "decision_summary": "Samtliga tillämpliga kontrollpunkter kan verifieras mot fakturafilen. Certifikatet refererar uttryckligen till fakturorna SEC9001241 och SEC9001242, vilka återfinns i fakturafilen. Consignor, consignee, varubeskrivning, kvantitet och ursprungsland är verifierade enligt tillämpliga regler.",
-    "human_explanation": "Certifikatet hänvisar till fakturorna SEC9001241 och SEC9001242, och avsändare, mottagare, varubeskrivning, kvantitet och ursprungsland kan verifieras i fakturafilen. De två fakturornas totalvikter 74 221 kg och 10 604 kg summerar till certifikatets 84 825 kg. Dokumentparet kan därför godkännas automatiskt."
+    "manual_review_triggers": [
+      "Consignee in certificate matches invoice ship-to/consignee field, but invoices contain separate Buyer/Bill-To parties that are independent legal entities."
+    ],
+    "decision_summary": "Dokumentparet är i huvudsak verifierat för consignor, varubeskrivning, kvantitet och ursprung. Consignee-frågan kräver manuell bedömning eftersom certifikatet avser slutmottagaren medan fakturorna är utställda till andra buyer-parter.",
+    "human_explanation": "Certifikatet anger mottagaren som Manufacturing Commercial Vehicles MCV i Egypten. Fakturorna visar samma part som consignee, men fakturornas köpare är andra bolag i Sverige respektive Belgien och därför krävs manuell bedömning av mottagarrollen. Övriga uppgifter som avsändare, ursprung, varubeskrivning och totalvikt stämmer mot de bifogade fakturorna."
   },
   "_meta": {
-    "tested_at": "2026-04-01T14:07:23.241957+00:00",
-    "prompt_hash": "9b9df42642d8",
+    "tested_at": "2026-04-02T11:36:29.844087+00:00",
+    "prompt_hash": "f81eb9b0d2ea",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P092_MATCH",
     "expected": "IDENTICAL",
-    "actual": "IDENTICAL",
-    "status": "PASS"
+    "actual": "MANUAL_REVIEW",
+    "status": "REVIEW"
   }
 }

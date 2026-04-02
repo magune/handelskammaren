@@ -1,0 +1,213 @@
+{
+  "schema_version": "3.0",
+  "metadata": {
+    "verification_timestamp": "2026-04-01T00:00:00Z",
+    "document_pair_id": null,
+    "certificate_issue_date": "2026-02-24",
+    "source_documents_received": 2
+  },
+  "task": {
+    "task_type": "customs_document_pair_verification",
+    "comparison_mode": "certificate_vs_invoice",
+    "strictness": "conservative"
+  },
+  "documents": {
+    "document_a": {
+      "label": "Document A",
+      "assumed_role": "certificate",
+      "document_type": "Certificate of Origin (certificate file with embedded supporting pages)"
+    },
+    "document_b": {
+      "label": "Document B",
+      "assumed_role": "invoice",
+      "document_type": "Commercial Invoice"
+    }
+  },
+  "rule_activation": {
+    "lc_exception_active": false,
+    "lc_number_found": null,
+    "general_goods_description_with_invoice_reference_active": true,
+    "mixed_origins_rule_active": true,
+    "to_order_rule_active": false,
+    "quantity_exception_applied": null,
+    "eu_origin_normalization_active": false,
+    "activated_rules": [
+      {
+        "rule_id": "8.5.0",
+        "rule_name": "Filbaserad dokumentparning - certifikat från fil 1 och faktura från separat fakturafil"
+      },
+      {
+        "rule_id": "8.6",
+        "rule_name": "Obligatorisk parningsvalidering"
+      },
+      {
+        "rule_id": "4.3.5",
+        "rule_name": "Generell varubeskrivning med fakturareferens"
+      },
+      {
+        "rule_id": "4.3.7",
+        "rule_name": "Koppling vara-ursprungsland vid flera ursprung"
+      },
+      {
+        "rule_id": "4.4.3.2",
+        "rule_name": "Försändelsekvantitet"
+      },
+      {
+        "rule_id": "4.5.3",
+        "rule_name": "Blandade ursprung"
+      }
+    ]
+  },
+  "control_points": {
+    "consignor": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.98,
+      "certificate_value": "Volvo Car Corporation\nRB building\nSE-405 31, GÖTEBORG\nSWEDEN",
+      "invoice_value": "Volvo Car Corporation\nPostal address\n405 31 Gothenburg\nSWEDEN\nReg.No. 556074-3089\nSE556074308901",
+      "rules_applied": [
+        {
+          "rule_id": "8.6",
+          "outcome": "paired_by_invoice_number_and_party_consistency"
+        },
+        {
+          "rule_id": "4.1.0",
+          "outcome": "consignor_name_found_explicitly_in_invoice_file"
+        },
+        {
+          "rule_id": "4.1.2.1",
+          "outcome": "country_verified_via_postal_address_and_vat_prefix"
+        },
+        {
+          "rule_id": "4.1.5",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatets consignor är \"Volvo Car Corporation\" i Sverige. Samma företagsnamn förekommer uttryckligen i den separata fakturafilen som utställare/sending unit, och Sverige verifieras både genom postadressen \"405 31 Gothenburg SWEDEN\" och VAT-numret \"SE556074308901\". Ingen motstridighet finns."
+    },
+    "consignee": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.95,
+      "certificate_value": "WINNER IMPORTS UKRAINE, LTD\nWII-WIU-2020-V\n5A DACHNA STREET \n08112 \nKAPITANIVKA VILLAGE, KYIV\nUKRAINE",
+      "invoice_value": "WINNER IMPORTS UKRAINE LTD.\n5-A, DACHNA STR., KAPITANIVKA KYIV\n08112 KYIV\nUKRAINE",
+      "rules_applied": [
+        {
+          "rule_id": "8.6",
+          "outcome": "pairing_validation_passed_via_consignee_and_invoice_number"
+        },
+        {
+          "rule_id": "4.2.0.2",
+          "outcome": "primary_billing_field_used"
+        },
+        {
+          "rule_id": "4.2.2.1",
+          "outcome": "normalization_applied_for_punctuation_spacing_and_address_format"
+        },
+        {
+          "rule_id": "4.2.4",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatets consignee kan identifieras i fakturans primära kund-/faktureringsfält som \"WINNER IMPORTS UKRAINE LTD.\". Skillnaderna består av skiljetecken och adressformatering (\"5A\" vs \"5-A\", \"DACHNA STREET\" vs \"DACHNA STR.\") och påverkar inte företagsnamnet; landet Ukraina överensstämmer. Därför är mottagaren verifierad."
+    },
+    "goods_description": {
+      "applicable": true,
+      "status": "MISMATCH",
+      "confidence": 0.93,
+      "certificate_value": "CASES 13\nAutoparts,See attached inv: 2602763\ndated 20260223 Grossweight refers to CMR and cargospec",
+      "invoice_value": "Invoice date 20260219\nInvoice No. 2602763\nDetailed part list across invoice pages 1-5",
+      "rules_applied": [
+        {
+          "rule_id": "4.3.2",
+          "outcome": "no_article_numbers_in_certificate_so_article_number_priority_not_used"
+        },
+        {
+          "rule_id": "4.3.5",
+          "outcome": "general_goods_description_with_invoice_reference_activated"
+        },
+        {
+          "rule_id": "4.3.5.1",
+          "outcome": "certificate_invoice_date_differs_from_invoice_date_by_more_than_one_day"
+        },
+        {
+          "rule_id": "4.3.8",
+          "outcome": "MISMATCH"
+        }
+      ],
+      "motivation": "Certifikatet använder en generell varubeskrivning och hänvisar uttryckligen till faktura 2602763: \"Autoparts, See attached inv: 2602763 dated 20260223\". Den separata fakturafilen innehåller faktura nr 2602763, men fakturadatumet där är 20260219, inte 20260223. Eftersom den aktiverade fakturahänvisningsregeln kräver att referens och datum överensstämmer, och datumavvikelsen är större än ett dygn, blir resultatet MISMATCH."
+    },
+    "quantity": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.86,
+      "certificate_value": "399,2 Gross KG\nCASES 13",
+      "invoice_value": "Invoice No. 2602763\nDetailed goods specification in the separate invoice file",
+      "rules_applied": [
+        {
+          "rule_id": "4.4.2.1",
+          "outcome": "box_7_contains_gross_weight_but_certificate_also_contains_package_quantity_in_box_6"
+        },
+        {
+          "rule_id": "4.4.3.2",
+          "outcome": "shipment_quantity_rule_applied_using_CASES_13"
+        },
+        {
+          "rule_id": "4.4.3.1",
+          "outcome": "at_least_one_quantity_statement_verified"
+        },
+        {
+          "rule_id": "4.4.6",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatet innehåller både vikt i box 7 (\"399,2 Gross KG\") och en försändelsekvantitet i box 6 (\"CASES 13\"). Den separata fakturafilen visar inte total gross weight, men certifikatet hänvisar samtidigt till faktura 2602763 och anger att gross weight avser CMR/cargospec. Enligt regeln om försändelsekvantitet räcker det då att verifiera minst en kvantitetsuppgift; \"CASES 13\" accepteras som verifierad försändelsekvantitet mot den refererade och identifierade fakturan."
+    },
+    "origin": {
+      "applicable": true,
+      "status": "MANUAL_REVIEW",
+      "confidence": 0.49,
+      "certificate_value": "CN MX SE DE FR CA HU CZ US SK PL GB JP MA IT MK ES NO NL KR",
+      "invoice_value": "Origin column in invoice contains: CN *, MX *, SE, DE, FR *, CA *, HU, CZ, US *, SK, PL, GB *, JP *, MA *, IT *, MK *, ES, NO *, NL *, KR *",
+      "rules_applied": [
+        {
+          "rule_id": "4.5.1",
+          "outcome": "explicit_origin_field_found_in_invoice"
+        },
+        {
+          "rule_id": "4.5.3",
+          "outcome": "mixed_origins_present_and_origin_column_used_per_line"
+        },
+        {
+          "rule_id": "4.5.4.1",
+          "outcome": "manual_review_due_to_unexplained_asterisk_suffix_on_multiple_origin_codes"
+        }
+      ],
+      "motivation": "Certifikatet anger många ursprungsländer och motsvarande länder kan i huvudsak återfinnas i fakturans explicita kolumn \"Origin\". Flera av fakturans ursprungskoder har dock ett oförklarat suffix med asterisk, exempelvis \"CN *\", \"MX *\", \"FR *\" och flera andra, utan legend eller förklaring i fakturafilen. Enligt reglerna får dessa suffix inte tolkas automatiskt, ולכן ursprungsverifieringen kräver MANUAL_REVIEW."
+    }
+  },
+  "overall_assessment": {
+    "comparison_result": "NOT_IDENTICAL",
+    "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
+    "auto_approval_eligible": false,
+    "confidence": 0.88,
+    "critical_failures": [
+      "Varubeskrivningen kan inte verifieras enligt certifikatets egen fakturahänvisning eftersom certifikatet anger faktura 2602763 daterad 20260223 medan den separata fakturafilen innehåller faktura 2602763 daterad 20260219."
+    ],
+    "manual_review_triggers": [
+      "Ursprungsangivelserna i fakturan innehåller flera oförklarade asterisk-suffix i origin-kolumnen, vilket kräver manuell tolkning."
+    ],
+    "decision_summary": "Dokumentparningen genomfördes enligt filregeln: certifikatet hämtades från certifikatfilen och verifieringsfakturan från den separata fakturafilen; inbäddade supportsidor i certifikatfilen användes inte som primär faktura. Parningsvalideringen passerade eftersom certifikatet hänvisar till faktura 2602763 och den separata fakturafilen bär samma nummer, samtidigt som både consignor och consignee kan identifieras i fakturan. Consignor och consignee matchar. Kvantitet godtas via försändelsekvantiteten \"CASES 13\" tillsammans med den verifierade fakturareferensen. Däremot blir varubeskrivningen MISMATCH eftersom certifikatet uttryckligen hänvisar till faktura 2602763 daterad 20260223 medan den separata fakturan 2602763 är daterad 20260219. Ursprungsverifieringen kan inte slutföras automatiskt eftersom flera origin-koder i fakturan har oförklarad asteriskmarkering. Minst en tillämplig kontrollpunkt är därför MISMATCH, vilket tvingar totalresultatet till NOT_IDENTICAL.",
+    "human_explanation": "Certifikatet hänvisar till faktura 2602763 med datum 20260223, men den bifogade fakturan 2602763 är daterad 20260219. Därför kan varubeskrivningen inte verifieras enligt certifikatets egen hänvisning och dokumentparet kan inte godkännas automatiskt. Ursprungsangivelserna i fakturan har dessutom oförklarade stjärnmarkeringar som behöver manuell tolkning."
+  },
+  "_meta": {
+    "tested_at": "2026-04-01T13:04:33.822517+00:00",
+    "prompt_hash": "9b9df42642d8",
+    "model": "gpt-5.4",
+    "tier": 2,
+    "pair": "P047_MISMATCH",
+    "expected": "NOT_IDENTICAL",
+    "actual": "NOT_IDENTICAL",
+    "status": "PASS"
+  }
+}

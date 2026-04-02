@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-04-01T00:00:00Z",
+    "verification_timestamp": null,
     "document_pair_id": null,
     "certificate_issue_date": "2023-08-09",
     "source_documents_received": 2
@@ -33,8 +33,16 @@
     "eu_origin_normalization_active": true,
     "activated_rules": [
       {
+        "rule_id": "8.1.2",
+        "rule_name": "Proforma invoice accepted as verification document"
+      },
+      {
+        "rule_id": "4.4.5.7",
+        "rule_name": "Numeric quantity in certificate box 7 without unit may match invoice row quantity with unit"
+      },
+      {
         "rule_id": "4.5.4.2",
-        "rule_name": "EU-medlemsland kan verifiera EU och omvänt"
+        "rule_name": "EU member state and EU origin normalization"
       }
     ]
   },
@@ -44,23 +52,27 @@
       "status": "MATCH",
       "confidence": 0.98,
       "certificate_value": "LIMAB AB\nBox 24102\nSE-400 22, Göteborg\nSweden",
-      "invoice_value": "LIMAB AB\nBox 24102\nSE-400 22 Gothenburg, Sweden\nVAT No. SE556070027901",
+      "invoice_value": "LIMAB AB\nBox 24102\nSE-400 22 Gothenburg, Sweden\nVAT No. SE556070027901\nIBAN SE69 6000 0000 0000 5401 4719",
       "rules_applied": [
         {
-          "rule_id": "4.1.3.1",
+          "rule_id": "4.1.0",
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.1.4",
+          "rule_id": "4.1.2.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.5",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets avsändare 'LIMAB AB' kan identifieras direkt i fakturans utställaruppgifter och sidfot. Landet Sverige framgår uttryckligen i fakturan."
+      "motivation": "Certifikatets consignor 'LIMAB AB' återfinns uttryckligen i fakturans header/footer och issuer-uppgifter. Landet Sverige verifieras i fakturans adressblock samt indirekt via VAT-prefix 'SE' och IBAN-prefix 'SE'."
     },
     "consignee": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.98,
+      "confidence": 0.95,
       "certificate_value": "JSW Steel Limited Salem\nSalem Works\nPottaneri, Mecheri\nSalem 636453\nTamil Nadu\nINDIA",
       "invoice_value": "JSW Steel Limited Salem\nSalem Works\nPottaneri, Mecheri\nSalem 636453\nTamil Nadu\nIndia",
       "rules_applied": [
@@ -69,56 +81,68 @@
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.2.3",
+          "rule_id": "4.2.2.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.2.4",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets mottagare kan identifieras direkt i fakturans kund-/faktureringsblock med samma företagsnamn och land Indien."
+      "motivation": "Certifikatets mottagare kan identifieras direkt i fakturans kund-/bill-to-block. Landet India/INDIA överensstämmer efter normalisering. Den separata delivery address bekräftar samma mottagare."
     },
     "goods_description": {
       "applicable": true,
       "status": "MISMATCH",
-      "confidence": 0.95,
-      "certificate_value": "1 Wooden box\nLIMAB HotProfiler Measurement System",
-      "invoice_value": "Part No. N\nSpecification: Hotprofiler\nRepair Service of Hotprofiler",
+      "confidence": 0.91,
+      "certificate_value": "1 wooden box\nLIMAB HotProfiler Measurement System",
+      "invoice_value": "Part No. N\nSpecification Hotprofiler\nQuantity 1 pc(s)\nRepair Service of Hotprofiler\nNO CHARGE, REPAIR SERVICE. VALUE ONLY FOR CUSTOMS PURPOSES",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "NOT_APPLICABLE"
+          "outcome": "NO_ARTICLE_NUMBER_IN_CERTIFICATE"
         },
         {
           "rule_id": "4.3.3",
           "outcome": "MISMATCH"
         },
         {
-          "rule_id": "4.3.5",
-          "outcome": "NOT_APPLICABLE"
+          "rule_id": "4.3.3.4",
+          "outcome": "MISMATCH"
+        },
+        {
+          "rule_id": "4.3.8",
+          "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Certifikatet anger varan som 'LIMAB HotProfiler Measurement System'. Fakturan innehåller 'Hotprofiler' och 'Repair Service of Hotprofiler', men inte den identitetsbärande huvudbeteckningen 'HotProfiler Measurement System'. Ingen uttrycklig fakturahänvisning med fakturanummer och datum finns i certifikatet som aktiverar regeln för generell varubeskrivning."
+      "motivation": "Certifikatet anger varan som 'LIMAB HotProfiler Measurement System'. Fakturan anger 'Hotprofiler' men specificerar samtidigt 'Repair Service of Hotprofiler' och 'NO CHARGE, REPAIR SERVICE', vilket beskriver en tjänst/reparation och inte uttryckligen samma vara som ett mätssystem. Att behandla reparationstjänsten som identisk med det certifierade godset skulle kräva otillåten semantisk tolkning."
     },
     "quantity": {
       "applicable": true,
-      "status": "MISMATCH",
-      "confidence": 0.99,
+      "status": "MATCH",
+      "confidence": 0.9,
       "certificate_value": "1",
       "invoice_value": "Quantity 1 pc(s)",
       "rules_applied": [
         {
-          "rule_id": "4.4.2",
-          "outcome": "MISMATCH"
+          "rule_id": "4.4.2.1",
+          "outcome": "BOX_7_USED_AS_VERIFICATION_BASIS"
         },
         {
-          "rule_id": "4.4.2.1",
-          "outcome": "APPLIED"
+          "rule_id": "4.4.5.7",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.4.6",
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Kvantitytsfältet i certifikatet (box 7) innehåller endast det numeriska värdet '1' utan uttrycklig enhet. Enligt reglerna krävs både numeriskt värde och enhet i samma uppgift. Det är inte tillåtet att byta verifieringsgrund till texten '1 Wooden box' i box 6 när box 7 redan innehåller ett explicit värde."
+      "motivation": "Den verifieringsgrundande kvantiteten i certifikatets box 7 är '1'. Fakturan innehåller en entydig radkvantitet '1 pc(s)'. Regeln för box 7 med enbart numeriskt styckantal utan enhet är tillämplig eftersom samma numeriska värde kan kopplas entydigt till den enda fakturaraden."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.91,
+      "confidence": 0.88,
       "certificate_value": "European Union - Sweden",
       "invoice_value": "Country of origin: Sweden",
       "rules_applied": [
@@ -131,25 +155,24 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Fakturan anger uttryckligen ursprungslandet 'Sweden'. Detta verifierar både den specifika landsangivelsen 'Sweden' i certifikatet och EU-ursprung genom regeln om EU-medlemsland."
+      "motivation": "Fakturan innehåller ett explicit origin-fält: 'Country of origin: Sweden'. Certifikatets ursprung 'European Union - Sweden' kan verifieras eftersom Sweden uttryckligen anges och Sweden är ett EU-medlemsland, vilket uppfyller EU-medlemslandsnormaliseringen."
     }
   },
   "overall_assessment": {
     "comparison_result": "NOT_IDENTICAL",
     "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
     "auto_approval_eligible": false,
-    "confidence": 0.96,
+    "confidence": 0.93,
     "critical_failures": [
-      "Varubeskrivningen i certifikatet kan inte verifieras mot fakturans varubeskrivning.",
-      "Certifikatets kvantitetsfält saknar uttrycklig enhet."
+      "Goods description mismatch: certificate states 'LIMAB HotProfiler Measurement System' while invoice states 'Repair Service of Hotprofiler'."
     ],
     "manual_review_triggers": [],
-    "decision_summary": "Avsändare, mottagare och ursprungsland matchar. Varubeskrivning och kvantitet uppfyller inte verifieringsreglerna. Minst en tillämplig kontrollpunkt är MISMATCH, därför är totalresultatet NOT_IDENTICAL.",
-    "human_explanation": "Avsändare, mottagare och ursprungsland kan verifieras mot fakturan. Varubeskrivningen stämmer inte eftersom certifikatet anger 'LIMAB HotProfiler Measurement System' medan fakturan anger 'Hotprofiler' och 'Repair Service of Hotprofiler'. Kvantitetsfältet i certifikatet anger bara '1' utan enhet."
+    "decision_summary": "Document pairing is valid and consignor, consignee, quantity, and origin can be verified against the proforma invoice. However, the goods description cannot be verified because the certificate describes a HotProfiler measurement system while the invoice describes repair service of a Hotprofiler. At least one applicable control point is MISMATCH, so the overall result is NOT_IDENTICAL.",
+    "human_explanation": "Certifikatet anger varan som \"LIMAB HotProfiler Measurement System\" medan fakturan anger \"Repair Service of Hotprofiler\". Avsändare, mottagare, mängd och ursprung kan verifieras, men varubeskrivningen stämmer inte. Därför kan dokumentparet inte godkännas automatiskt."
   },
   "_meta": {
-    "tested_at": "2026-04-01T13:16:28.129695+00:00",
-    "prompt_hash": "9b9df42642d8",
+    "tested_at": "2026-04-02T11:06:44.031856+00:00",
+    "prompt_hash": "f81eb9b0d2ea",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P218_MISMATCH",

@@ -15,7 +15,7 @@
     "document_a": {
       "label": "Document A",
       "assumed_role": "certificate",
-      "document_type": "Certificate of Origin PDF containing Original, Copy, and an embedded invoice page"
+      "document_type": "Certificate of Origin"
     },
     "document_b": {
       "label": "Document B",
@@ -34,15 +34,11 @@
     "activated_rules": [
       {
         "rule_id": "8.5.0",
-        "rule_name": "Filbaserad dokumentparning: certifikat från fil 1 och faktura från fil 2"
+        "rule_name": "Filbaserad dokumentparning – certifikat hämtat från certifikatfilen och verifiering gjord mot separat fakturafil"
       },
       {
         "rule_id": "8.6",
         "rule_name": "Parningsvalidering passerad via identifierbar consignee i fakturan"
-      },
-      {
-        "rule_id": "4.1.0",
-        "rule_name": "Obligatorisk sökning efter consignor i hela fakturafilen"
       }
     ]
   },
@@ -50,126 +46,151 @@
     "consignor": {
       "applicable": true,
       "status": "MISMATCH",
-      "confidence": 0.95,
-      "certificate_value": "DHL Global Forwarding AB\nBoplatsgatan 4\nON BEHALF OF JS InterTrade\n213 76 , malmö\nSverige",
+      "confidence": 0.91,
+      "certificate_value": "DHL Global Forwarding AB \nBoplatsgatan 4\nON BEHALF OF JS InterTrade\n213 76 , malmö \nSverige",
       "invoice_value": "Jonas Scherp InterTrade Skeppargatan 46 114 58 Stockholm Sweden",
       "rules_applied": [
         {
+          "rule_id": "8.5.0",
+          "outcome": "applied"
+        },
+        {
           "rule_id": "4.1.0",
-          "outcome": "NO_MATCH_FOUND_IN_INVOICE"
+          "outcome": "no_explicit_identification_of_certificate_consignor_in_invoice"
         },
         {
           "rule_id": "4.1.3.1",
-          "outcome": "DIFFERENT_LEGAL_NAME"
+          "outcome": "different_legal_party"
+        },
+        {
+          "rule_id": "4.1.3.5",
+          "outcome": "not_applicable_difference_is_not_only_generic_organizational_words"
+        },
+        {
+          "rule_id": "4.1.3.7",
+          "outcome": "not_applicable_missing_or_added_words_are_identity_bearing"
+        },
+        {
+          "rule_id": "4.1.4",
+          "outcome": "country_matches_sweden"
         },
         {
           "rule_id": "4.1.5",
-          "outcome": "MISMATCH"
+          "outcome": "mismatch"
         }
       ],
-      "motivation": "Certifikatets avsändarfält innehåller \"DHL Global Forwarding AB\" och tillägget \"ON BEHALF OF JS InterTrade\". I den separata fakturafilen identifieras avsändaren/shipper som \"Jonas Scherp InterTrade Skeppargatan 46 114 58 Stockholm Sweden\". Obligatorisk sökning enligt 4.1.0 i hela fakturafilen gav ingen träff på \"DHL Global Forwarding\" och inte heller på den exakta strängen \"JS InterTrade\". Skillnaden mellan \"JS InterTrade\" och \"Jonas Scherp InterTrade\" kan inte godtas utan uttryckligt regelstöd, eftersom det kräver antagande om att \"JS\" står för \"Jonas Scherp\". Samma juridiska part kan därför inte verifieras i fakturan."
+      "motivation": "Det separata verifieringsunderlaget är fakturafilen, inte den inbäddade fakturasidan i certifikatfilen. I certifikatet anges avsändaren som \"DHL Global Forwarding AB ... ON BEHALF OF JS InterTrade ... Sverige\". I fakturafilen kan istället endast \"Jonas Scherp InterTrade ... Sweden\" identifieras som shipper/exporter. Varken \"DHL Global Forwarding AB\" eller den fullständiga certifikatangivelsen kan identifieras uttryckligen någonstans i fakturans extraherade text. Skillnaden är inte enbart juridisk bolagsform eller generiskt organisationsord, utan avser annan juridisk part. Landet Sverige överensstämmer, men företagsnamnet kan inte verifieras som samma juridiska part, vilket ger MISMATCH."
     },
     "consignee": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.99,
+      "confidence": 0.98,
       "certificate_value": "Shenzhen Gofly Limited\n4B201 Yingxin Garden\nXinwei Community, Xili, Nanshan\n518055 Shenzhen\nChina",
       "invoice_value": "Shenzhen Gofly Limited 4B201 Yingxin Garden Xinwei Community, Xili, Nanshan 518055 Shenzhen China",
       "rules_applied": [
         {
-          "rule_id": "4.2.1",
-          "outcome": "IDENTIFIED_IN_INVOICE"
+          "rule_id": "4.2.0.2",
+          "outcome": "relevant_party_identified"
+        },
+        {
+          "rule_id": "4.2.2",
+          "outcome": "name_match"
         },
         {
           "rule_id": "4.2.3",
-          "outcome": "COUNTRY_MATCH"
+          "outcome": "country_match"
         },
         {
           "rule_id": "4.2.4",
-          "outcome": "MATCH"
+          "outcome": "match"
         }
       ],
-      "motivation": "Mottagaren i certifikatet kan identifieras uttryckligen i fakturans consignee-fält med samma företagsnamn och samma land, China. Skillnaderna är endast radbrytning och formatering. Uppgiften är därför verifierad."
+      "motivation": "Mottagaren i certifikatet kan identifieras explicit i fakturan som \"Shenzhen Gofly Limited 4B201 Yingxin Garden Xinwei Community, Xili, Nanshan 518055 Shenzhen China\". Företagsnamn och land överensstämmer efter tillåten normalisering av radbrytningar och versaler/gemener. Därför är consignee verifierad som MATCH."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.95,
-      "certificate_value": "001\nCRISP BREAD",
+      "confidence": 0.97,
+      "certificate_value": "CRISP BREAD",
       "invoice_value": "Crisp bread",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "PRIORITY_2_TEXT_MATCH_USED"
+          "outcome": "no_article_number_used_for_primary_matching"
         },
         {
           "rule_id": "4.3.3",
-          "outcome": "IDENTITY_BEARING_DESCRIPTION_MATCH"
+          "outcome": "controlled_text_match"
         },
         {
           "rule_id": "4.3.8",
-          "outcome": "MATCH"
+          "outcome": "match"
         }
       ],
-      "motivation": "Certifikatet anger varubeskrivningen \"CRISP BREAD\". Fakturan anger varubeskrivningen \"Crisp bread\". Efter tillåten normalisering av versaler/gemener är den identitetsbärande huvudbeteckningen identisk. \"001\" behandlas här som löpnummer i certifikatet, inte som ett verifieringsgrundande artikelnummer."
+      "motivation": "Certifikatet anger varubeskrivningen \"CRISP BREAD\" och fakturan anger \"Crisp bread\". Skillnaden består endast av versaler/gemener, vilket är tillåten normalisering. Den identitetsbärande huvudbeteckningen är därmed direkt verifierbar i fakturan, vilket ger MATCH."
     },
     "quantity": {
       "applicable": true,
-      "status": "MISMATCH",
-      "confidence": 0.99,
+      "status": "MANUAL_REVIEW",
+      "confidence": 0.66,
       "certificate_value": "300",
       "invoice_value": "300",
       "rules_applied": [
         {
           "rule_id": "4.4.2",
-          "outcome": "CERTIFICATE_UNIT_MISSING"
+          "outcome": "certificate_quantity_has_numeric_value_without_explicit_unit"
+        },
+        {
+          "rule_id": "4.4.1",
+          "outcome": "numeric_value_found_in_invoice"
         },
         {
           "rule_id": "4.4.6",
-          "outcome": "MISMATCH"
+          "outcome": "manual_review"
         }
       ],
-      "motivation": "Certifikatets kvantitetsfält (box 7) innehåller endast det numeriska värdet \"300\" och saknar uttrycklig enhet. Enligt 4.4.2 krävs att både numeriskt värde och kvantitetsenhet framgår uttryckligen i samma uppgift. Att fakturan också innehåller \"300\" läker inte bristen i certifikatet. Kontrollpunkten ska därför bedömas som MISMATCH."
+      "motivation": "Certifikatets kvantitetsfält innehåller endast det numeriska värdet \"300\" utan uttrycklig enhet. Samma numeriska värde \"300\" kan identifieras i fakturan för motsvarande vara, men den formella enheten framgår inte uttryckligen i certifikatets kvantitetsuppgift. Enligt reglerna ska detta därför inte bedömas som MISMATCH när värdet återfinns, utan som MANUAL_REVIEW."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.99,
+      "confidence": 0.98,
       "certificate_value": "sweden",
       "invoice_value": "Sweden",
       "rules_applied": [
         {
           "rule_id": "4.5.1",
-          "outcome": "EXPLICIT_ORIGIN_FIELD_FOUND"
+          "outcome": "explicit_origin_field_identified_in_invoice"
         },
         {
           "rule_id": "4.5.4",
-          "outcome": "CASE_NORMALIZATION_APPLIED"
+          "outcome": "case_normalization_applied"
         },
         {
           "rule_id": "4.5.5",
-          "outcome": "MATCH"
+          "outcome": "match"
         }
       ],
-      "motivation": "Certifikatet anger ursprungsland \"sweden\". Fakturan innehåller ett explicit origin-fält med värdet \"Sweden\". Efter tillåten normalisering av versaler/gemener är ursprungslandet verifierat."
+      "motivation": "Certifikatet anger ursprungsland \"sweden\" och fakturan innehåller ett explicit origin-värde \"Sweden\". Skillnaden är endast versal/gemen. Ursprungslandet kan därför uttryckligen identifieras i fakturan och kontrollpunkten är MATCH."
     }
   },
   "overall_assessment": {
     "comparison_result": "NOT_IDENTICAL",
     "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
     "auto_approval_eligible": false,
-    "confidence": 0.97,
+    "confidence": 0.84,
     "critical_failures": [
-      "Consignor i certifikatet kan inte identifieras som samma juridiska part i den bifogade fakturan.",
-      "Certifikatets kvantitet anges som \"300\" utan uttrycklig enhet."
+      "Consignor i certifikatet (\"DHL Global Forwarding AB ... ON BEHALF OF JS InterTrade\") kan inte verifieras som samma juridiska part som fakturans shipper/exporter (\"Jonas Scherp InterTrade\")."
     ],
-    "manual_review_triggers": [],
-    "decision_summary": "Dokumentparet kunde paras via separat fakturafil och matchande consignee, men verifieringen faller på två kontrollpunkter: avsändaren i certifikatet kan inte styrkas mot fakturans avsändare, och certifikatets kvantitetsuppgift saknar obligatorisk enhet. Övriga kontroller för consignee, varubeskrivning och ursprungsland matchar.",
-    "human_explanation": "Certifikatet anger avsändaren som \"DHL Global Forwarding AB ... ON BEHALF OF JS InterTrade\", men den bifogade fakturan är utställd av \"Jonas Scherp InterTrade\" och certifikatets avsändare kan inte identifieras som samma juridiska part i fakturan. Dessutom anger certifikatet kvantiteten endast som \"300\" utan en uttrycklig enhet. Därför kan dokumentparet inte godkännas automatiskt."
+    "manual_review_triggers": [
+      "Kvantiteten 300 återfinns i fakturan men certifikatets kvantitetsfält saknar uttrycklig enhet."
+    ],
+    "decision_summary": "Dokumentparet kunde paras via separat fakturafil och matchande consignee, men consignor-kontrollpunkten ger MISMATCH eftersom certifikatets avsändare inte kan identifieras som samma juridiska part i fakturan. Consignee, varubeskrivning och ursprungsland matchar. Kvantiteten ger MANUAL_REVIEW eftersom värdet 300 finns i båda dokumenten men certifikatet saknar uttrycklig enhet. Eftersom minst en tillämplig kontrollpunkt är MISMATCH är totalresultatet NOT_IDENTICAL.",
+    "human_explanation": "Certifikatet anger avsändaren som \"DHL Global Forwarding AB ON BEHALF OF JS InterTrade\", medan fakturan anger exportören som \"Jonas Scherp InterTrade\". Mottagare, varubeskrivning och ursprungsland stämmer, men avsändaren kan inte verifieras som samma juridiska part. Kvantiteten 300 finns i båda dokumenten men enhet saknas i certifikatet och kräver därför manuell hantering."
   },
   "_meta": {
-    "tested_at": "2026-04-01T14:31:51.285972+00:00",
-    "prompt_hash": "9b9df42642d8",
+    "tested_at": "2026-04-02T11:22:43.078228+00:00",
+    "prompt_hash": "f81eb9b0d2ea",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P0134_MISMATCH",

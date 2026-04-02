@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-04-01T00:00:00Z",
+    "verification_timestamp": "2026-04-02T00:00:00Z",
     "document_pair_id": null,
     "certificate_issue_date": "2025-11-25",
     "source_documents_received": 2
@@ -33,16 +33,16 @@
     "eu_origin_normalization_active": false,
     "activated_rules": [
       {
+        "rule_id": "8.5.0",
+        "rule_name": "Filbaserad dokumentparning: certifikat från fil 1 och faktura från fil 2"
+      },
+      {
         "rule_id": "8.6",
-        "rule_name": "Parningsvalidering passerad via fakturanummer, consignor och consignee"
+        "rule_name": "Obligatorisk parningsvalidering"
       },
       {
-        "rule_id": "4.1.0",
-        "rule_name": "Consignor återfinns uttryckligen i fakturan"
-      },
-      {
-        "rule_id": "4.3.2",
-        "rule_name": "Artikelnummer i certifikatet styr varubeskrivningsverifieringen"
+        "rule_id": "4.3.2.3",
+        "rule_name": "Artikelnummer saknas i fakturan men produktnamn matchar exakt och kvantitet överensstämmer"
       }
     ]
   },
@@ -52,22 +52,22 @@
       "status": "MATCH",
       "confidence": 0.97,
       "certificate_value": "Bohus BioTech AB\nTrädgårdsgatan 4\nSE-452 31, STRÖMSTAD\nSweden",
-      "invoice_value": "Bohus Biotech AB\nTrädgårdsgatan 4\n45231 Strömstad\nSWEDEN\nVAT reg. no.:SE556500070901",
+      "invoice_value": "Bohus Biotech AB\nTrädgårdsgatan 4\n45231 Strömstad\nSWEDEN",
       "rules_applied": [
         {
-          "rule_id": "4.1.0",
-          "outcome": "MATCH"
+          "rule_id": "4.1.2",
+          "outcome": "Företagsnamn och land identifierade i fakturan"
         },
         {
-          "rule_id": "4.1.2.1",
-          "outcome": "MATCH"
+          "rule_id": "4.1.3.1",
+          "outcome": "Samma juridiska part efter tillåten normalisering av versaler/gemener"
         },
         {
           "rule_id": "4.1.4",
-          "outcome": "MATCH"
+          "outcome": "Land Sweden/SWEDEN överensstämmer"
         }
       ],
-      "motivation": "Certifikatets consignor 'Bohus BioTech AB' kan identifieras uttryckligen i fakturan som 'Bohus Biotech AB' i adress-/företagsblocket. Skillnaden i versalisering är tillåten normalisering. Landet Sverige verifieras uttryckligen i adressblocket och stöds även av VAT-prefix 'SE'."
+      "motivation": "Certifikatet anger consignor som \"Bohus BioTech AB ... Sweden\". Fakturan identifierar utställaren som \"Bohus Biotech AB ... SWEDEN\" i företags- och adressblock. Skillnaden är endast versaler/gemener; företagsnamn och land kan verifieras som samma juridiska part."
     },
     "consignee": {
       "applicable": true,
@@ -78,94 +78,100 @@
       "rules_applied": [
         {
           "rule_id": "4.2.0.2",
-          "outcome": "MATCH"
+          "outcome": "Primärt faktureringsfält används som auktoritativ consignee"
         },
         {
           "rule_id": "4.2.2",
-          "outcome": "MATCH"
+          "outcome": "Mottagarens företagsnamn identifierat i fakturan"
         },
         {
           "rule_id": "4.2.3",
-          "outcome": "MATCH"
+          "outcome": "Land Viet Nam/VIETNAM överensstämmer"
         }
       ],
-      "motivation": "Fakturan innehåller ett primärt faktureringsfält 'Invoice address' för 'NT Solutions Co LTD', vilket har prioritet för consignee-verifiering. Företagsnamnet och landet Vietnam/Viet Nam överensstämmer efter tillåten normalisering. Skillnader i radbrytning och adressformat påverkar inte bedömningen."
+      "motivation": "Certifikatet anger consignee som \"NT Solutions Co LTD ... Viet Nam\". Fakturan har ett tydligt primärt faktureringsfält \"Invoice address\" med samma företag och samma land. Företagsnamn och land överensstämmer efter normalisering av formatering."
     },
     "goods_description": {
       "applicable": true,
-      "status": "MISMATCH",
-      "confidence": 0.91,
+      "status": "MATCH",
+      "confidence": 0.88,
       "certificate_value": "Medical devices Total Net weight 3 boxes: 24,75kg\nMinivisc Plus; MPFY24100B, 750pcs",
-      "invoice_value": "10 1184 Minivisc Plus 14mg/ml 30049000 24,75kg 2025-11-24 750,00 pcs 9,00 6 750,00",
+      "invoice_value": "10 1184 Minivisc Plus 14mg/ml 30049000 24,75kg 2025-11-24 750,00 pcs",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "MISMATCH"
+          "outcome": "Artikelnummer i certifikatet kunde inte identifieras exakt i fakturan"
         },
         {
-          "rule_id": "4.3.6",
-          "outcome": "MISMATCH"
+          "rule_id": "4.3.2.3",
+          "outcome": "Produktnamn matchar och kvantiteten överensstämmer; MATCH"
+        },
+        {
+          "rule_id": "4.3.8",
+          "outcome": "Varubeskrivningen verifierad"
         }
       ],
-      "motivation": "Certifikatet innehåller den specifika produkt-/artikelbeteckningen 'MPFY24100B' tillsammans med varan 'Minivisc Plus'. När artikelnummer eller motsvarande identifierare anges i certifikatet ska verifiering ske primärt via exakt identifiering i fakturan. Fakturan visar 'Part no. 1184' och texten 'Minivisc Plus 14mg/ml', men ingen exakt förekomst av 'MPFY24100B'. Därför är varubeskrivningen inte verifierad enligt reglernas prioritet för artikelnummer."
+      "motivation": "Certifikatet innehåller både produktnamnet \"Minivisc Plus\" och artikelbeteckningen \"MPFY24100B\". Fakturan visar inte artikelbeteckningen MPFY24100B, men den visar produkten \"Minivisc Plus 14mg/ml\" och kvantiteten 750,00 pcs. Eftersom produktnamnet kan identifieras tydligt och kvantiteten överensstämmer tillämpas regeln för artikelnummer som saknas i fakturan men där produktnamn och kvantitet verifierar samma vara."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.99,
+      "confidence": 0.98,
       "certificate_value": "Net weight 24,75kg",
-      "invoice_value": "Net weight 24,75kg\nTotal by CN code\n30049000 750,00 pcs 24,75 kg",
+      "invoice_value": "CN code Quantity Net weight Amount\n30049000 750,00 pcs 24,75 kg 6 750,00",
       "rules_applied": [
         {
-          "rule_id": "4.4.2.2",
-          "outcome": "MATCH"
+          "rule_id": "4.4.2.1",
+          "outcome": "Box 7-värdet används som verifieringsgrundande kvantitet"
         },
         {
           "rule_id": "4.4.3",
+          "outcome": "Det numeriska värdet 24,75 identifieras i fakturan"
+        },
+        {
+          "rule_id": "4.4.6",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets verifieringsgrundande kvantitet i box 7 är 'Net weight 24,75kg'. Samma numeriska värde och viktenhet kan identifieras uttryckligen i fakturan, både på varuraden och i sammanställningen 'Total by CN code'. Ingen motsägande viktuppgift förekommer för den aktuella varan."
+      "motivation": "Certifikatets verifieringsgrundande kvantitet i box 7 är \"Net weight 24,75kg\". Fakturan anger uttryckligen \"Net weight 24,75 kg\" i totalraden per CN-kod. Det numeriska värdet och viktenheten överensstämmer direkt."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.98,
+      "confidence": 0.99,
       "certificate_value": "Sweden",
       "invoice_value": "Country of Origin:Sweden",
       "rules_applied": [
         {
           "rule_id": "4.5.1",
-          "outcome": "MATCH"
+          "outcome": "Ursprungsland identifierat i explicit origin-fält i fakturan"
         },
         {
           "rule_id": "4.5.5",
-          "outcome": "MATCH"
+          "outcome": "Varje ursprungsland i certifikatet kan uttryckligen identifieras i fakturan"
         }
       ],
-      "motivation": "Certifikatet anger ursprungsland 'Sweden'. Fakturan innehåller ett explicit ursprungsfält 'Country of Origin:Sweden', vilket uppfyller kravet på positiv verifiering. Den ytterligare texten om 'European Community preferential origin' motsäger inte den uttryckliga angivelsen Sverige."
+      "motivation": "Certifikatet anger ursprungsland \"Sweden\". Fakturan innehåller ett explicit ursprungsfält: \"Country of Origin:Sweden\". Ursprungslandet kan därför verifieras direkt utan tolkning."
     }
   },
   "overall_assessment": {
-    "comparison_result": "NOT_IDENTICAL",
-    "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
-    "auto_approval_eligible": false,
+    "comparison_result": "IDENTICAL",
+    "workflow_recommendation": "AUTO_APPROVAL_ELIGIBLE",
+    "auto_approval_eligible": true,
     "confidence": 0.94,
-    "critical_failures": [
-      "Varubeskrivningen kan inte verifieras fullt ut eftersom certifikatets produkt-/artikelbeteckning 'MPFY24100B' inte kan identifieras i fakturan."
-    ],
+    "critical_failures": [],
     "manual_review_triggers": [],
-    "decision_summary": "Dokumentparet är korrekt parat genom fakturanummer 240 samt matchande consignor och consignee. Consignor, consignee, kvantitet och ursprungsland verifieras mot fakturan. Varubeskrivningen faller dock på att certifikatet innehåller identifieraren 'MPFY24100B' som inte återfinns i fakturan, vilket enligt prioriteringsregeln för artikelnummer ger MISMATCH. Därför är totalresultatet NOT_IDENTICAL.",
-    "human_explanation": "Certifikatet och fakturan stämmer för avsändare, mottagare, mängd och ursprungsland. Däremot anger certifikatet varan som 'Minivisc Plus; MPFY24100B, 750pcs' medan fakturan inte innehåller beteckningen 'MPFY24100B'. Därför kan dokumenten inte godkännas som identiska."
+    "decision_summary": "Dokumentparet är konsekvent parat via fakturareferensen 240 och datum 2025-11-24. Consignor, consignee, kvantitet och ursprungsland verifieras direkt mot fakturan. Varubeskrivningen verifieras via produktnamnet \"Minivisc Plus\" och matchande kvantitet 750 pcs trots att certifikatets artikelbeteckning MPFY24100B inte återfinns i fakturan.",
+    "human_explanation": "Certifikatet och fakturan stämmer överens i alla verifierade kontrollpunkter. Avsändare, mottagare, mängd och ursprungsland matchar direkt, och varan \"Minivisc Plus\" kan verifieras mot fakturan med samma kvantitet. Dokumentparet kan därför godkännas automatiskt."
   },
   "_meta": {
-    "tested_at": "2026-04-01T13:16:28.116174+00:00",
-    "prompt_hash": "9b9df42642d8",
+    "tested_at": "2026-04-02T11:06:44.020056+00:00",
+    "prompt_hash": "f81eb9b0d2ea",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P201_MATCH",
     "expected": "IDENTICAL",
-    "actual": "NOT_IDENTICAL",
-    "status": "FAIL"
+    "actual": "IDENTICAL",
+    "status": "PASS"
   }
 }

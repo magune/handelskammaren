@@ -1,8 +1,11 @@
 """
-fullrun_54.py — Run all 242 pairs through gpt-5.4 (reasoning_effort=medium) via Batch API.
+fullrun_54.py — Run document pairs through gpt-5.4 (reasoning_effort=medium) via Batch API.
 
-Uses api_prompt_54.md — tuned for decisive final verdicts.
-Est. cost: ~$25 based on observed 36k input / 4.4k output tokens per pair.
+Modes:
+  FAIL_FAST = False  →  Full run of all 241 pairs (~$24)
+  FAIL_FAST = True   →  Regression guard, stops on first FAIL (~$2-3)
+
+Set ONLY_PAIRS to a list of pair IDs to run a subset, or None for all pairs.
 
 Results saved to: Fullrun54Results/
 State file:       fullrun_54_state.json  (resume-safe)
@@ -22,6 +25,7 @@ load_dotenv()
 BASE_DIR        = Path(__file__).parent
 TESTSYSTEM_DIR  = BASE_DIR / "Testdata" / "Testsystem företag"
 RESULTS_DIR     = BASE_DIR / "Fullrun54Results"
+BASELINE_DIR    = BASE_DIR / "Fullrun54Results"   # compare against own previous results
 PROMPT_FILE     = BASE_DIR / "api_prompt_54.md"
 SCHEMA_FILE     = BASE_DIR / "schema_slim_strict.json"
 STATE_FILE      = BASE_DIR / "fullrun_54_state.json"
@@ -33,8 +37,26 @@ REASONING_EFFORT = "medium"
 INPUT_PRICE      = 1.875  # $/1M tokens (Batch API = 50% off 3.75)
 OUTPUT_PRICE     = 7.50   # $/1M tokens (Batch API = 50% off 15.0)
 COST_LIMIT_USD   = 60.0
-CHUNK_SIZE       = 20
 POLL_INTERVAL    = 30
+
+# ---------------------------------------------------------------------------
+# Mode settings
+# ---------------------------------------------------------------------------
+# FAIL_FAST: stop at first FAIL result (regression guard mode)
+FAIL_FAST        = False
+
+# Chunk size: smaller = faster FAIL_FAST reaction, larger = fewer API calls
+# Recommended: 2 for FAIL_FAST, 20-50 for full runs
+CHUNK_SIZE       = 50
+
+# Filter to specific pairs, or None for all.
+# Example: ["P001", "P003", "P031"]
+ONLY_PAIRS       = None
+
+# Max retries per pair when LLM returns unparseable/garbage JSON
+MAX_GARBAGE_RETRIES = 2
+
+# ---------------------------------------------------------------------------
 
 client        = OpenAI()
 system_prompt = PROMPT_FILE.read_text(encoding="utf-8")
@@ -76,7 +98,65 @@ def load_state():
 
 
 # ---------------------------------------------------------------------------
-# Pair discovery — all 242 pairs
+# Baseline comparison
+# ---------------------------------------------------------------------------
+
+def load_baseline() -> dict[str, dict]:
+    """Load previous results as baseline for regression detection."""
+    baseline = {}
+    if not BASELINE_DIR.exists():
+        return baseline
+    for f in BASELINE_DIR.glob("*.json"):
+        try:
+            data = json.loads(f.read_text(encoding="utf-8"))
+            meta = data.get("_meta", {})
+            pair_name = meta.get("pair", "")
+            if pair_name:
+                baseline[pair_name] = {
+                    "status": meta.get("status", ""),
+                    "actual": meta.get("actual", ""),
+                    "prompt_hash": meta.get("prompt_hash", ""),
+                }
+        except Exception:
+            pass
+    return baseline
+
+
+def check_regression(pair_name: str, new_status: str, _new_actual: str, baseline: dict) -> str:
+    """Compare against baseline. Returns label string or empty."""
+    prev = baseline.get(pair_name)
+    if not prev or prev.get("prompt_hash") == prompt_hash:
+        return ""  # no baseline or same prompt
+    prev_status = prev.get("status", "")
+    if prev_status == new_status:
+        return "(unchanged)"
+    if prev_status == "PASS" and new_status in ("FAIL", "REVIEW"):
+        return f"⚠️REGRESSION (was {prev.get('actual', '?')})"
+    if prev_status in ("FAIL", "REVIEW") and new_status == "PASS":
+        return f"✨IMPROVED (was {prev.get('actual', '?')})"
+    return f"(changed: {prev_status}→{new_status})"
+
+
+# ---------------------------------------------------------------------------
+# Garbage detection
+# ---------------------------------------------------------------------------
+
+def is_garbage(result: dict) -> bool:
+    """Check if LLM response is garbage/unparseable."""
+    overall = result.get("overall_assessment")
+    if not overall:
+        return True
+    comparison = overall.get("comparison_result", "")
+    if comparison not in ("IDENTICAL", "NOT_IDENTICAL", "MANUAL_REVIEW"):
+        return True
+    confidence = overall.get("confidence")
+    if confidence is not None and (confidence < 0 or confidence > 1):
+        return True
+    return False
+
+
+# ---------------------------------------------------------------------------
+# Pair discovery
 # ---------------------------------------------------------------------------
 
 def discover_pairs() -> list[dict]:
@@ -167,7 +247,7 @@ def submit_chunk(chunk: list[dict], chunk_idx: int) -> dict:
 
     lines = [json.dumps(build_request(p, file_ids), ensure_ascii=False) for p in chunk]
     jsonl_bytes = "\n".join(lines).encode("utf-8")
-    print(f"  [chunk {chunk_idx+1}] Submitting batch ({len(jsonl_bytes)/1024:.1f} KB)...", flush=True)
+    print(f"  [chunk {chunk_idx+1}] Submitting batch ({len(jsonl_bytes)/1024:.1f} KB, {len(chunk)} pairs)...", flush=True)
 
     uploaded = api_call(
         client.files.create,
@@ -194,13 +274,16 @@ def submit_chunk(chunk: list[dict], chunk_idx: int) -> dict:
 # Result collection
 # ---------------------------------------------------------------------------
 
-def collect_chunk(batch_obj, chunk_state: dict, pair_by_name: dict) -> list[dict]:
+def collect_chunk(batch_obj, chunk_state: dict, pair_by_name: dict, baseline: dict) -> tuple[list[dict], list[dict]]:
+    """Collect results. Returns (results, garbage_pairs) where garbage_pairs need retry."""
     if not getattr(batch_obj, "output_file_id", None):
         print(f"  [chunk {chunk_state['chunk_idx']+1}] No output — batch failed.", flush=True)
-        return []
+        return [], []
 
     output_text = api_call(client.files.content, batch_obj.output_file_id).text
     results = []
+    garbage_pairs = []
+
     for line in output_text.strip().splitlines():
         entry     = json.loads(line)
         custom_id = entry["custom_id"]
@@ -217,8 +300,15 @@ def collect_chunk(batch_obj, chunk_state: dict, pair_by_name: dict) -> list[dict
             result = json.loads(message["content"])
         except json.JSONDecodeError as e:
             print(f"  [json error] {custom_id}: {e}", flush=True)
-            results.append({"name": custom_id, "error": f"JSONDecodeError: {e}"})
+            garbage_pairs.append(pair)
             continue
+
+        # Check for garbage response
+        if is_garbage(result):
+            print(f"  [garbage] {custom_id}: invalid response structure", flush=True)
+            garbage_pairs.append(pair)
+            continue
+
         usage   = body.get("usage", {})
         tok_in  = usage.get("prompt_tokens", 0)
         tok_out = usage.get("completion_tokens", 0)
@@ -230,8 +320,11 @@ def collect_chunk(batch_obj, chunk_state: dict, pair_by_name: dict) -> list[dict
         status            = "PASS" if is_pass else ("REVIEW" if is_review else "FAIL")
         conf              = overall.get("confidence", "?")
 
+        # Baseline comparison
+        reg_label = check_regression(custom_id, status, comparison_result, baseline)
+
         status_icon = "✓" if status == "PASS" else ("?" if status == "REVIEW" else "✗")
-        print(f"    {status_icon} {custom_id:35s} {status:6s}  got={str(comparison_result):14s}  conf={conf}", flush=True)
+        print(f"    {status_icon} {custom_id:35s} {status:6s}  got={str(comparison_result):14s}  conf={conf}  {reg_label}", flush=True)
 
         results.append({
             "name":          custom_id,
@@ -257,7 +350,7 @@ def collect_chunk(batch_obj, chunk_state: dict, pair_by_name: dict) -> list[dict
         out_path = RESULTS_DIR / f"{custom_id}_{pair['category']}.json"
         out_path.write_text(json.dumps(result, indent=2, ensure_ascii=False), encoding="utf-8")
 
-    return results
+    return results, garbage_pairs
 
 
 # ---------------------------------------------------------------------------
@@ -266,42 +359,85 @@ def collect_chunk(batch_obj, chunk_state: dict, pair_by_name: dict) -> list[dict
 
 def print_progress(all_results: list[dict], total: int, cumulative_cost: float):
     done    = len(all_results)
+    if done == 0:
+        return
     correct = sum(1 for r in all_results if r.get("status") == "PASS")
     review  = sum(1 for r in all_results if r.get("status") == "REVIEW")
     fail    = sum(1 for r in all_results if r.get("status") == "FAIL" or "error" in r)
     print(f"\n  ┌─ PROGRESS ({'='*38})")
     print(f"  │  Done:    {done}/{total}  ({done/total*100:.0f}%)")
-    print(f"  │  PASS:    {correct}  ({correct/done*100:.1f}%)" if done else "  │  PASS:    0")
-    print(f"  │  REVIEW:  {review}  ({review/done*100:.1f}%)" if done else "  │  REVIEW:  0")
-    print(f"  │  FAIL:    {fail}  ({fail/done*100:.1f}%)" if done else "  │  FAIL:    0")
+    print(f"  │  PASS:    {correct}  ({correct/done*100:.1f}%)")
+    print(f"  │  REVIEW:  {review}  ({review/done*100:.1f}%)")
+    print(f"  │  FAIL:    {fail}  ({fail/done*100:.1f}%)")
     print(f"  │  Cost so far: ${cumulative_cost:.4f} USD  (limit: ${COST_LIMIT_USD})")
     print(f"  └{'─'*48}", flush=True)
 
 
-def print_summary(all_results: list[dict], cumulative_cost: float):
+def print_summary(all_results: list[dict], cumulative_cost: float, baseline: dict):
     total   = len(all_results)
+    if total == 0:
+        print("No results.")
+        return
     correct = sum(1 for r in all_results if r.get("status") == "PASS")
     review  = sum(1 for r in all_results if r.get("status") == "REVIEW")
     fail    = sum(1 for r in all_results if r.get("status") == "FAIL" or "error" in r)
-    print(f"\n{'='*60}")
+
+    # Count regressions and improvements
+    regressions = []
+    improvements = []
+    for r in all_results:
+        prev = baseline.get(r["name"])
+        if not prev or prev.get("prompt_hash") == prompt_hash:
+            continue
+        prev_status = prev.get("status", "")
+        if prev_status == "PASS" and r.get("status") in ("FAIL", "REVIEW"):
+            regressions.append(r)
+        elif prev_status in ("FAIL", "REVIEW") and r.get("status") == "PASS":
+            improvements.append(r)
+
+    total_in  = sum(r.get("input_tokens", 0) for r in all_results)
+    total_out = sum(r.get("output_tokens", 0) for r in all_results)
+
+    print(f"\n{'='*70}")
     print(f"  FINAL RESULTS — {MODEL} — {total} pairs")
-    print(f"  {'─'*56}")
-    print(f"  PASS:   {correct:4d}  ({correct/total*100:.1f}%)" if total else "  PASS:   0")
-    print(f"  REVIEW: {review:4d}  ({review/total*100:.1f}%)" if total else "  REVIEW: 0")
-    print(f"  FAIL:   {fail:4d}  ({fail/total*100:.1f}%)" if total else "  FAIL:   0")
-    print(f"  {'─'*56}")
-    print(f"  Total cost: ${cumulative_cost:.4f} USD")
+    print(f"  Prompt hash: {prompt_hash}")
+    print(f"  {'─'*66}")
+    print(f"  PASS:   {correct:4d}  ({correct/total*100:.1f}%)")
+    print(f"  REVIEW: {review:4d}  ({review/total*100:.1f}%)")
+    print(f"  FAIL:   {fail:4d}  ({fail/total*100:.1f}%)")
+    print(f"  {'─'*66}")
+
+    if regressions:
+        print(f"\n  ⚠️  REGRESSIONS: {len(regressions)}")
+        for r in regressions:
+            prev = baseline[r["name"]]
+            print(f"    ⚠️  {r['name']:30s}  {prev['status']}→{r['status']}  (was {prev.get('actual','?')} → {r.get('actual','?')})")
+
+    if improvements:
+        print(f"\n  ✨ IMPROVEMENTS: {len(improvements)}")
+        for r in improvements:
+            prev = baseline[r["name"]]
+            print(f"    ✨ {r['name']:30s}  {prev['status']}→{r['status']}  (was {prev.get('actual','?')} → {r.get('actual','?')})")
+
     if fail > 0:
         print(f"\n  FAILURES:")
         for r in all_results:
             if r.get("status") == "FAIL":
-                print(f"    FAIL  {r['name']:30s}  expected={r['expected']:16s}  got={r['actual']:16s}  conf={r.get('confidence','?')}")
+                print(f"    FAIL  {r['name']:30s}  expected={r['expected']:16s}  got={r.get('actual','?'):16s}  conf={r.get('confidence','?')}")
+
     if review > 0:
         print(f"\n  MANUAL REVIEW:")
         for r in all_results:
             if r.get("status") == "REVIEW":
                 print(f"    REVIEW  {r['name']:30s}  expected={r['expected']}")
-    print(f"{'='*60}")
+
+    print(f"\n  TOKENS & COST:")
+    print(f"    Input tokens:       {total_in:,}")
+    print(f"    Output tokens:      {total_out:,}")
+    print(f"    Total cost:         ${cumulative_cost:.4f}")
+    if total > 0:
+        print(f"    Avg cost per pair:  ${cumulative_cost/total:.4f}")
+    print(f"{'='*70}")
 
 
 # ---------------------------------------------------------------------------
@@ -314,18 +450,42 @@ def main():
         print("No pairs found.")
         return
 
-    pair_by_name = {p["name"]: p for p in pairs}
-    chunks = [pairs[i:i+CHUNK_SIZE] for i in range(0, len(pairs), CHUNK_SIZE)]
+    # Filter pairs if ONLY_PAIRS is set
+    if ONLY_PAIRS is not None:
+        pairs = [p for p in pairs if p["name"].split("_")[0] in ONLY_PAIRS]
+        if not pairs:
+            print(f"No pairs matched filter: {ONLY_PAIRS}")
+            return
 
-    print(f"fullrun_54 — model={MODEL}  effort={REASONING_EFFORT}  prompt={PROMPT_FILE.name}  hash={prompt_hash}")
-    print(f"{len(pairs)} pairs in {len(chunks)} chunks of {CHUNK_SIZE}")
-    print(f"Cost limit: ${COST_LIMIT_USD}  (est. ~${cost_usd(len(pairs)*36000, len(pairs)*4400):.2f} based on observed 36k/4.4k tok/pair)")
+    pair_by_name = {p["name"]: p for p in pairs}
+
+    # Load baseline for regression detection and back up if prompt changed
+    baseline = load_baseline()
+    baseline_count = sum(1 for b in baseline.values() if b.get("prompt_hash") != prompt_hash)
+
+    if baseline_count > 0:
+        backup_dir = BASE_DIR / "Fullrun54Results_baseline"
+        if not backup_dir.exists():
+            import shutil
+            shutil.copytree(RESULTS_DIR, backup_dir)
+            print(f"  Baseline backed up to {backup_dir.name}/ ({baseline_count} results)")
+
+    mode_label = "FAIL_FAST regression guard" if FAIL_FAST else "full run"
+    print(f"fullrun_54 — {mode_label}")
+    print(f"  model={MODEL}  effort={REASONING_EFFORT}  prompt={PROMPT_FILE.name}  hash={prompt_hash}")
+    print(f"  {len(pairs)} pairs in chunks of {CHUNK_SIZE}")
+    print(f"  Cost limit: ${COST_LIMIT_USD}  (est. ~${cost_usd(len(pairs)*36000, len(pairs)*4400):.2f})")
+    if baseline_count > 0:
+        print(f"  Baseline: {baseline_count} pairs from previous run (regression detection active)")
+    if FAIL_FAST:
+        print(f"  FAIL_FAST=True — will stop on first FAIL/REGRESSION")
+    print(f"  Results → {RESULTS_DIR.name}/")
+    print()
 
     state = load_state()
     if state and state.get("prompt_hash") != prompt_hash:
-        # Prompt changed but batches already submitted with old prompt — resume collection
-        print(f"Prompt changed (old={state['prompt_hash']}, new={prompt_hash}) — resuming collection of existing batches anyway.")
-        # Don't reset — the batches are already running with the old prompt
+        print(f"Prompt changed (old={state['prompt_hash']}, new={prompt_hash}) — starting fresh.")
+        state = None
 
     all_results: list[dict] = []
     cumulative_cost = 0.0
@@ -361,64 +521,165 @@ def main():
     if state is None:
         state = {"prompt_hash": prompt_hash, "chunks": [], "cumulative_cost": 0.0}
 
+    chunks = [pairs[i:i+CHUNK_SIZE] for i in range(0, len(pairs), CHUNK_SIZE)]
+
+    # Submit chunks — in FAIL_FAST mode, submit one at a time
     pending: list[dict] = []
-    for chunk_idx, chunk in enumerate(chunks):
-        if chunk_idx in completed_chunks:
-            continue
-        existing = next((c for c in state["chunks"] if c["chunk_idx"] == chunk_idx and not c["done"]), None)
-        if existing:
-            print(f"  [chunk {chunk_idx+1}] Resuming batch {existing['batch_id']}", flush=True)
-            pending.append(existing)
-        else:
-            print(f"\n--- Submitting chunk {chunk_idx+1}/{len(chunks)} ---", flush=True)
-            chunk_state = submit_chunk(chunk, chunk_idx)
-            state["chunks"] = [c for c in state["chunks"] if c["chunk_idx"] != chunk_idx]
-            state["chunks"].append(chunk_state)
-            save_state(state)
-            pending.append(chunk_state)
+    chunk_queue = [(i, c) for i, c in enumerate(chunks) if i not in completed_chunks]
 
-    print(f"\nAll {len(pending)} chunks submitted — polling until done...\n", flush=True)
-
-    while pending:
-        time.sleep(POLL_INTERVAL)
-        still_pending = []
-        for chunk_state in pending:
-            chunk_idx = chunk_state["chunk_idx"]
-            batch_obj = api_call(client.batches.retrieve, chunk_state["batch_id"])
-            counts = batch_obj.request_counts
-            print(f"  [chunk {chunk_idx+1}] {batch_obj.status}  {counts.completed if counts else '?'}/{counts.total if counts else '?'}", flush=True)
-
-            if batch_obj.status in ("completed", "failed", "expired", "cancelled"):
-                results = collect_chunk(batch_obj, chunk_state, pair_by_name)
-                delete_files(chunk_state["file_ids"])
-
-                chunk_cost = sum(cost_usd(r.get("input_tokens", 0), r.get("output_tokens", 0)) for r in results)
-                cumulative_cost += chunk_cost
-                all_results.extend(results)
-
-                chunk_state["done"] = True
-                state["cumulative_cost"] = cumulative_cost
+    if FAIL_FAST:
+        # Submit and poll one chunk at a time
+        for chunk_idx, chunk in chunk_queue:
+            existing = next((c for c in state["chunks"] if c["chunk_idx"] == chunk_idx and not c["done"]), None)
+            if existing:
+                print(f"  [chunk {chunk_idx+1}] Resuming batch {existing['batch_id']}", flush=True)
+                cs = existing
+            else:
+                cs = submit_chunk(chunk, chunk_idx)
+                state["chunks"] = [c for c in state["chunks"] if c["chunk_idx"] != chunk_idx]
+                state["chunks"].append(cs)
                 save_state(state)
 
-                print(f"  [chunk {chunk_idx+1}] Done. Cost: ${chunk_cost:.4f}  cumulative: ${cumulative_cost:.4f}", flush=True)
-                print_progress(all_results, len(pairs), cumulative_cost)
+            # Poll this single chunk
+            while True:
+                time.sleep(POLL_INTERVAL)
+                batch_obj = api_call(client.batches.retrieve, cs["batch_id"])
+                counts = batch_obj.request_counts
+                print(f"  [chunk {chunk_idx+1}] {batch_obj.status}  {counts.completed if counts else '?'}/{counts.total if counts else '?'}", flush=True)
 
-                if cumulative_cost >= COST_LIMIT_USD:
-                    print(f"\n  COST LIMIT REACHED: ${cumulative_cost:.4f} >= ${COST_LIMIT_USD}. Stopping.")
-                    print_summary(all_results, cumulative_cost)
-                    return
+                if batch_obj.status in ("completed", "failed", "expired", "cancelled"):
+                    results, garbage = collect_chunk(batch_obj, cs, pair_by_name, baseline)
+                    delete_files(cs["file_ids"])
+
+                    # Retry garbage pairs
+                    retry_round = 0
+                    while garbage and retry_round < MAX_GARBAGE_RETRIES:
+                        retry_round += 1
+                        print(f"\n  Retrying {len(garbage)} garbage responses (attempt {retry_round}/{MAX_GARBAGE_RETRIES})...", flush=True)
+                        retry_state = submit_chunk(garbage, chunk_idx * 100 + retry_round)
+                        state["chunks"].append(retry_state)
+                        save_state(state)
+                        while True:
+                            time.sleep(POLL_INTERVAL)
+                            retry_obj = api_call(client.batches.retrieve, retry_state["batch_id"])
+                            if retry_obj.status in ("completed", "failed", "expired", "cancelled"):
+                                retry_results, garbage = collect_chunk(retry_obj, retry_state, pair_by_name, baseline)
+                                delete_files(retry_state["file_ids"])
+                                results.extend(retry_results)
+                                retry_state["done"] = True
+                                save_state(state)
+                                break
+
+                    chunk_cost = sum(cost_usd(r.get("input_tokens", 0), r.get("output_tokens", 0)) for r in results)
+                    cumulative_cost += chunk_cost
+                    all_results.extend(results)
+
+                    cs["done"] = True
+                    state["cumulative_cost"] = cumulative_cost
+                    save_state(state)
+
+                    print_progress(all_results, len(pairs), cumulative_cost)
+
+                    # FAIL_FAST: only stop on TRUE regressions (PASS → FAIL/REVIEW)
+                    # Par that were already FAIL/REVIEW in baseline are not regressions
+                    new_regressions = []
+                    for r in results:
+                        prev = baseline.get(r["name"])
+                        if prev and prev.get("prompt_hash") != prompt_hash:
+                            if prev.get("status") == "PASS" and r.get("status") in ("FAIL", "REVIEW"):
+                                new_regressions.append(r)
+
+                    if new_regressions:
+                        print(f"\n{'!'*60}")
+                        print(f"  FAIL_FAST triggered — {len(new_regressions)} regression(s) detected.")
+                        for r in new_regressions:
+                            prev = baseline[r["name"]]
+                            print(f"  ⚠️REGRESSION  {r['name']:30s}  was={prev.get('actual','?')}  now={r.get('actual','?')}")
+                        print(f"  State saved — fix prompt and re-run.")
+                        print(f"{'!'*60}")
+                        print_summary(all_results, cumulative_cost, baseline)
+                        return
+
+                    if cumulative_cost >= COST_LIMIT_USD:
+                        print(f"\n  COST LIMIT REACHED: ${cumulative_cost:.4f} >= ${COST_LIMIT_USD}. Stopping.")
+                        print_summary(all_results, cumulative_cost, baseline)
+                        return
+
+                    break  # chunk done, move to next
+    else:
+        # Normal mode: submit all chunks, then poll
+        for chunk_idx, chunk in chunk_queue:
+            existing = next((c for c in state["chunks"] if c["chunk_idx"] == chunk_idx and not c["done"]), None)
+            if existing:
+                print(f"  [chunk {chunk_idx+1}] Resuming batch {existing['batch_id']}", flush=True)
+                pending.append(existing)
             else:
-                still_pending.append(chunk_state)
+                cs = submit_chunk(chunk, chunk_idx)
+                state["chunks"] = [c for c in state["chunks"] if c["chunk_idx"] != chunk_idx]
+                state["chunks"].append(cs)
+                save_state(state)
+                pending.append(cs)
 
-        if still_pending:
-            pending = still_pending
-            done_count = len(all_results)
-            print(f"  {len(still_pending)} chunks still running — {done_count}/{len(pairs)} pairs done so far...\n", flush=True)
-        else:
-            pending = []
+        print(f"\nAll {len(pending)} chunks submitted — polling until done...\n", flush=True)
 
-    print_progress(all_results, len(pairs), cumulative_cost)
-    print_summary(all_results, cumulative_cost)
+        while pending:
+            time.sleep(POLL_INTERVAL)
+            still_pending = []
+            for cs in pending:
+                chunk_idx = cs["chunk_idx"]
+                batch_obj = api_call(client.batches.retrieve, cs["batch_id"])
+                counts = batch_obj.request_counts
+                print(f"  [chunk {chunk_idx+1}] {batch_obj.status}  {counts.completed if counts else '?'}/{counts.total if counts else '?'}", flush=True)
+
+                if batch_obj.status in ("completed", "failed", "expired", "cancelled"):
+                    results, garbage = collect_chunk(batch_obj, cs, pair_by_name, baseline)
+                    delete_files(cs["file_ids"])
+
+                    # Retry garbage pairs
+                    retry_round = 0
+                    while garbage and retry_round < MAX_GARBAGE_RETRIES:
+                        retry_round += 1
+                        print(f"\n  Retrying {len(garbage)} garbage responses (attempt {retry_round}/{MAX_GARBAGE_RETRIES})...", flush=True)
+                        retry_state = submit_chunk(garbage, chunk_idx * 100 + retry_round)
+                        state["chunks"].append(retry_state)
+                        save_state(state)
+                        while True:
+                            time.sleep(POLL_INTERVAL)
+                            retry_obj = api_call(client.batches.retrieve, retry_state["batch_id"])
+                            if retry_obj.status in ("completed", "failed", "expired", "cancelled"):
+                                retry_results, garbage = collect_chunk(retry_obj, retry_state, pair_by_name, baseline)
+                                delete_files(retry_state["file_ids"])
+                                results.extend(retry_results)
+                                retry_state["done"] = True
+                                save_state(state)
+                                break
+
+                    chunk_cost = sum(cost_usd(r.get("input_tokens", 0), r.get("output_tokens", 0)) for r in results)
+                    cumulative_cost += chunk_cost
+                    all_results.extend(results)
+
+                    cs["done"] = True
+                    state["cumulative_cost"] = cumulative_cost
+                    save_state(state)
+
+                    print(f"  [chunk {chunk_idx+1}] Done. Cost: ${chunk_cost:.4f}  cumulative: ${cumulative_cost:.4f}", flush=True)
+                    print_progress(all_results, len(pairs), cumulative_cost)
+
+                    if cumulative_cost >= COST_LIMIT_USD:
+                        print(f"\n  COST LIMIT REACHED: ${cumulative_cost:.4f} >= ${COST_LIMIT_USD}. Stopping.")
+                        print_summary(all_results, cumulative_cost, baseline)
+                        return
+                else:
+                    still_pending.append(cs)
+
+            if still_pending:
+                pending = still_pending
+                done_count = len(all_results)
+                print(f"  {len(still_pending)} chunks still running — {done_count}/{len(pairs)} pairs done so far...\n", flush=True)
+            else:
+                pending = []
+
+    print_summary(all_results, cumulative_cost, baseline)
 
 
 if __name__ == "__main__":

@@ -1,0 +1,172 @@
+{
+  "schema_version": "3.0",
+  "metadata": {
+    "verification_timestamp": null,
+    "document_pair_id": null,
+    "certificate_issue_date": "2023-03-08",
+    "source_documents_received": 2
+  },
+  "task": {
+    "task_type": "customs_document_pair_verification",
+    "comparison_mode": "certificate_vs_invoice",
+    "strictness": "conservative"
+  },
+  "documents": {
+    "document_a": {
+      "label": "Document A",
+      "assumed_role": "certificate",
+      "document_type": "Certificate of Origin"
+    },
+    "document_b": {
+      "label": "Document B",
+      "assumed_role": "invoice",
+      "document_type": "Commercial Invoice"
+    }
+  },
+  "rule_activation": {
+    "lc_exception_active": false,
+    "lc_number_found": null,
+    "general_goods_description_with_invoice_reference_active": false,
+    "mixed_origins_rule_active": false,
+    "to_order_rule_active": false,
+    "quantity_exception_applied": null,
+    "eu_origin_normalization_active": false,
+    "activated_rules": [
+      {
+        "rule_id": "8.5.2",
+        "rule_name": "Certifikatet hänvisar till specifikt fakturanummer som inte finns i fakturafilen"
+      },
+      {
+        "rule_id": "8.6",
+        "rule_name": "Parningsvalidering passerad via matchande consignor och consignee"
+      },
+      {
+        "rule_id": "4.1.0",
+        "rule_name": "Consignor identifierad uttryckligen i fakturans header/branding"
+      }
+    ]
+  },
+  "control_points": {
+    "consignor": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.98,
+      "certificate_value": "Forest Papper AB\nÅsgatan 4\n41463, GÖTEBORG\nSWEDEN",
+      "invoice_value": "FOREST PAPPER AB\nÅsgatan 4, 414 63 GÖTEBORG\nVAT no: SE556878121401",
+      "rules_applied": [
+        {
+          "rule_id": "4.1.0",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.2.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.5",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatets consignor 'Forest Papper AB' återfinns uttryckligen i fakturans sidhuvud/logo som 'FOREST PAPPER AB'. Landet Sverige stöds både av adressen 'Åsgatan 4, 414 63 GÖTEBORG' och VAT-prefixet 'SE' i 'SE556878121401'."
+    },
+    "consignee": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.99,
+      "certificate_value": "VIVA KAGIT VE AMBALAJ A.S.\nPANCAR ORGANIZE SANAYI BOLGESI\nMUZAFFER SEKBAN CAD NO:8\nTORBALI IZMIR\nTURKEY",
+      "invoice_value": "Buyer\nVIVA KAGIT VE AMBALAJ A.S.\nPancar Organize Sanayi Bölgesi\nMuzaffer Sekban cad. No:8 Torbali\nIZMIR\nTURKEY",
+      "rules_applied": [
+        {
+          "rule_id": "4.2.0.2",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.2.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.2.4",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatets consignee kan identifieras direkt i fakturans primära mottagarfält 'Buyer'. Företagsnamn och land överensstämmer efter tillåten normalisering av versaler/gemener och mindre formateringsskillnader i adressen."
+    },
+    "goods_description": {
+      "applicable": true,
+      "status": "MANUAL_REVIEW",
+      "confidence": 0.44,
+      "certificate_value": "48 Packages Fluting- Testliner\nInvoice No: 108759",
+      "invoice_value": "Description of Goods Testliner\nInvoice no 108760",
+      "rules_applied": [
+        {
+          "rule_id": "8.5.2",
+          "outcome": "MANUAL_REVIEW"
+        },
+        {
+          "rule_id": "4.3.5",
+          "outcome": "NOT_FULFILLED"
+        }
+      ],
+      "motivation": "Certifikatet hänvisar uttryckligen till faktura '108759', men den separata fakturafilen innehåller faktura '108760'. Eftersom den refererade fakturan inte finns i fakturafilen kan varubeskrivningen inte verifieras mot det avsedda oberoende underlaget. Regeln om generell varubeskrivning med fakturareferens kan inte användas här."
+    },
+    "quantity": {
+      "applicable": true,
+      "status": "MANUAL_REVIEW",
+      "confidence": 0.43,
+      "certificate_value": "46740kgs",
+      "invoice_value": "Total Quantity 23,425\nInvoice no 108760",
+      "rules_applied": [
+        {
+          "rule_id": "8.5.2",
+          "outcome": "MANUAL_REVIEW"
+        },
+        {
+          "rule_id": "4.4.1",
+          "outcome": "NOT_DECIDABLE_ON_INTENDED_INVOICE"
+        }
+      ],
+      "motivation": "Kvantiteten i certifikatet ska verifieras mot den faktura som certifikatet avser. Certifikatet refererar till faktura 108759, men den bifogade fakturan är 108760. Därför är det tekniskt inte möjligt att avgöra kvantiteten mot rätt faktura i detta dokumentpar."
+    },
+    "origin": {
+      "applicable": true,
+      "status": "MANUAL_REVIEW",
+      "confidence": 0.46,
+      "certificate_value": "United Kingdom",
+      "invoice_value": "Goods origin United Kingdom\nInvoice no 108760",
+      "rules_applied": [
+        {
+          "rule_id": "8.5.2",
+          "outcome": "MANUAL_REVIEW"
+        },
+        {
+          "rule_id": "4.5.1",
+          "outcome": "PRESENT_ON_SUPPLIED_INVOICE_BUT_NOT_ON_REFERENCED_INVOICE"
+        }
+      ],
+      "motivation": "Den bifogade fakturan 108760 innehåller visserligen texten 'Goods origin United Kingdom', men certifikatet hänvisar till faktura 108759. Eftersom den refererade fakturan inte kan återfinnas i fakturafilen går det inte att verifiera ursprungslandet mot rätt faktura enligt parningsreglerna."
+    }
+  },
+  "overall_assessment": {
+    "comparison_result": "MANUAL_REVIEW",
+    "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
+    "auto_approval_eligible": false,
+    "confidence": 0.95,
+    "critical_failures": [],
+    "manual_review_triggers": [
+      "Certifikatet hänvisar till faktura 108759, men den bifogade fakturafilen innehåller endast faktura 108760.",
+      "Den refererade fakturan kan därför inte återfinnas i den separata fakturafilen, vilket blockerar oberoende verifiering av varubeskrivning, mängd och ursprung."
+    ],
+    "decision_summary": "Dokumentparningen passerar sanity check eftersom både consignor och consignee kan identifieras i den bifogade fakturan. Certifikatet refererar dock uttryckligen till faktura 108759 medan fakturafilen innehåller faktura 108760. Enligt parningsreglerna kräver detta manuell handläggning eftersom den avsedda fakturan inte finns i den separata fakturafilen.",
+    "human_explanation": "Certifikatet hänvisar till faktura 108759, men den bifogade fakturan är nummer 108760. Avsändare och mottagare stämmer, men den faktura som certifikatet faktiskt hänvisar till saknas. Ärendet behöver därför manuell granskning."
+  },
+  "_meta": {
+    "tested_at": "2026-04-01T12:52:20.254380+00:00",
+    "prompt_hash": "9b9df42642d8",
+    "model": "gpt-5.4",
+    "tier": 2,
+    "pair": "P0110_MISMATCH",
+    "expected": "NOT_IDENTICAL",
+    "actual": "MANUAL_REVIEW",
+    "status": "REVIEW"
+  }
+}

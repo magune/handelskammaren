@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-04-01T00:00:00Z",
+    "verification_timestamp": "2026-04-02T00:00:00Z",
     "document_pair_id": null,
     "certificate_issue_date": "2023-03-28",
     "source_documents_received": 2
@@ -27,22 +27,22 @@
     "lc_exception_active": false,
     "lc_number_found": null,
     "general_goods_description_with_invoice_reference_active": false,
-    "mixed_origins_rule_active": true,
+    "mixed_origins_rule_active": false,
     "to_order_rule_active": true,
     "quantity_exception_applied": null,
     "eu_origin_normalization_active": false,
     "activated_rules": [
       {
         "rule_id": "4.2.2.2",
-        "rule_name": "Särskilt undantag – To order"
-      },
-      {
-        "rule_id": "4.5.3",
-        "rule_name": "Blandade ursprung"
+        "rule_name": "To order-undantag aktiverat; endast land för consignee verifieras"
       },
       {
         "rule_id": "4.4.2.1",
-        "rule_name": "Box 7 är verifieringsgrundande kvantitet"
+        "rule_name": "Box 7 i certifikatet är verifieringsgrundande kvantitet"
+      },
+      {
+        "rule_id": "4.4.6.1",
+        "rule_name": "Fakturan saknar uttrycklig viktuppgift för certifikatets angivna gross weight"
       }
     ]
   },
@@ -50,9 +50,9 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.99,
+      "confidence": 0.98,
       "certificate_value": "New Wave Mode AB\nÅkarevägen 18\nSE-455 83, DINGLE\nSweden",
-      "invoice_value": "New Wave Mode AB\nÅkarevägen 18\n455 83 Dingle\nS-455 83 DINGLE",
+      "invoice_value": "New Wave Mode AB\nÅkarevägen 18\n455 83 Dingle\n...\nVat No SE556312577101",
       "rules_applied": [
         {
           "rule_id": "4.1.0",
@@ -63,18 +63,22 @@
           "outcome": "MATCH"
         },
         {
+          "rule_id": "4.1.4",
+          "outcome": "MATCH"
+        },
+        {
           "rule_id": "4.1.5",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor 'New Wave Mode AB' kan identifieras uttryckligen i fakturan som utställare och i sidhuvud/footer. Landet Sverige verifieras i fakturan genom adressen 'Dingle' med svensk adress samt VAT-nummer med prefix 'SE'."
+      "motivation": "Certifikatets consignor 'New Wave Mode AB' återfinns uttryckligen i fakturan i utställar-/headerdelen och i företagsuppgifterna. Landet Sverige verifieras genom adressen '455 83 Dingle' tillsammans med 'S-455 83 DINGLE' samt VAT-prefix 'SE' i 'SE556312577101'. Samma juridiska part kan därför identifieras i fakturan."
     },
     "consignee": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.95,
+      "confidence": 0.94,
       "certificate_value": "To order\nSwitzerland",
-      "invoice_value": "Invoice address / Delivery address:\nNew Wave Group SA\nChemin des Polonais 3\n2016 Cortaillod\nSwitzerland",
+      "invoice_value": "Invoice address\nNew Wave Group SA\nChemin des Polonais 3\n2016 Cortaillod\nSwitzerland",
       "rules_applied": [
         {
           "rule_id": "4.2.2.2",
@@ -89,14 +93,14 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger mottagaren som 'To order'. Enligt regeln ska då inget företagsnamn verifieras; endast landet ska kunna identifieras i fakturan. Fakturan anger Schweiz i både invoice address och delivery address, vilket verifierar landuppgiften."
+      "motivation": "Certifikatet anger consignee som 'To order', vilket innebär att något företagsnamn inte behöver verifieras. Endast landet ska verifieras, och 'Switzerland' framgår uttryckligen i fakturans invoice address och delivery address. Därmed är kontrollpunkten uppfylld."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.99,
       "certificate_value": "020955-580-4 Bomber Jacket Dark Navy S",
-      "invoice_value": "020955-580-4 Bomber Jacket Dark Navy S",
+      "invoice_value": "020955-580-4 Bomber Jacket Dark Navy S 21-03-23 70 135,00 9.450,00",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
@@ -107,47 +111,43 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet innehåller artikelnummer '020955-580-4'. Enligt prioritetsordningen ska varumatchning då ske primärt via artikelnummer. Samma artikelnummer och samma varubeskrivning återfinns uttryckligen i fakturan."
+      "motivation": "Certifikatet anger artikelnummer '020955-580-4' och produktbeskrivning 'Bomber Jacket Dark Navy S'. Samma artikelnummer och samma identitetsbärande varubeskrivning återfinns exakt i fakturans artikelrad. Matchning sker därför enligt prioritet 1 via artikelnummer."
     },
     "quantity": {
       "applicable": true,
       "status": "MANUAL_REVIEW",
-      "confidence": 0.48,
+      "confidence": 0.44,
       "certificate_value": "Gr weight 56 kg",
-      "invoice_value": null,
+      "invoice_value": "020955-580-4 Bomber Jacket Dark Navy S 21-03-23 70 135,00 9.450,00",
       "rules_applied": [
         {
           "rule_id": "4.4.2.1",
           "outcome": "APPLIED"
         },
         {
-          "rule_id": "4.4.2.2",
-          "outcome": "CERTIFICATE_WEIGHT_IDENTIFIED"
+          "rule_id": "4.4.1",
+          "outcome": "NO_MATCH_FOUND"
         },
         {
           "rule_id": "4.4.5.1",
-          "outcome": "NO_EXCEPTION_APPLIED"
+          "outcome": "NO_EXCEPTION_APPLICABLE"
         },
         {
           "rule_id": "4.4.6.1",
           "outcome": "MANUAL_REVIEW"
         }
       ],
-      "motivation": "Den verifieringsgrundande kvantiteten i certifikatet finns i box 7 och är 'Gr weight 56 kg'. Fakturan innehåller ingen uttrycklig viktuppgift, ingen totalvikt och inga radvikter som kan användas enligt undantagen 3A–3E. Eftersom relevant viktuppgift helt saknas i fakturan kan kvantiteten inte verifieras tekniskt, vilket ska leda till MANUAL_REVIEW och inte MISMATCH."
+      "motivation": "Den verifieringsgrundande kvantiteten finns i certifikatets box 7 och är 'Gr weight 56 kg'. Fakturan visar artikelkvantitet '70' för den matchade raden men innehåller ingen uttrycklig gross/net/total weight som kan jämföras med certifikatets viktuppgift. Eftersom fakturan saknar motsvarande viktuppgift och inget undantag 3A-3E är tillämpligt blir resultatet MANUAL_REVIEW, inte MISMATCH."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.96,
+      "confidence": 0.97,
       "certificate_value": "Item pos. 1: P.R. China",
       "invoice_value": "Country of origin: CN",
       "rules_applied": [
         {
           "rule_id": "4.5.1",
-          "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.5.3",
           "outcome": "MATCH"
         },
         {
@@ -159,7 +159,7 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger ursprung för den verifierade varan som 'P.R. China'. Fakturan anger för artikelraden '020955-580-4 Bomber Jacket Dark Navy S' det explicita ursprungsfältet 'Country of origin: CN'. Detta är en uttrycklig ursprungsangivelse och landuppgiften matchar efter tillåten normalisering."
+      "motivation": "Certifikatet anger ursprung för artikelposition 1 som 'P.R. China'. Den matchade fakturaraden för artikel '020955-580-4' anger uttryckligen 'Country of origin: CN'. 'P.R. China' och 'CN' är ekvivalenta landsbeteckningar efter tillåten landnormalisering."
     }
   },
   "overall_assessment": {
@@ -169,14 +169,14 @@
     "confidence": 0.78,
     "critical_failures": [],
     "manual_review_triggers": [
-      "Kvantiteten i certifikatet är angiven som 'Gr weight 56 kg' i box 7, men fakturan saknar helt verifierbar viktuppgift."
+      "Kvantitet kan inte verifieras automatiskt eftersom certifikatet anger 'Gr weight 56 kg' men fakturan saknar uttrycklig viktuppgift."
     ],
-    "decision_summary": "Consignor, consignee (via 'To order'-undantaget), varubeskrivning och ursprungsland kan verifieras mot fakturan. Kvantitetskontrollpunkten kan däremot inte avgöras tekniskt eftersom certifikatet anger gross weight 56 kg medan fakturan saknar viktuppgift. Därför blir totalresultatet MANUAL_REVIEW.",
-    "human_explanation": "Avsändare, mottagarland, varubeskrivning och ursprungsland stämmer mot fakturan. Certifikatet anger dock mängden som 'Gr weight 56 kg', men fakturan innehåller ingen viktuppgift att jämföra med. Därför krävs manuell granskning."
+    "decision_summary": "Consignor, consignee, varubeskrivning och ursprungsland kan verifieras mot fakturan. Kvantitetskontrollpunkten kan inte avgöras automatiskt eftersom certifikatet anger gross weight 56 kg medan fakturan saknar motsvarande viktuppgift.",
+    "human_explanation": "Avsändare, mottagare, varubeskrivning och ursprungsland stämmer mellan dokumenten. Certifikatet anger dock kvantiteten som 'Gr weight 56 kg', medan fakturan saknar en uttrycklig viktuppgift att jämföra med. Därför krävs manuell granskning."
   },
   "_meta": {
-    "tested_at": "2026-04-01T12:52:36.776994+00:00",
-    "prompt_hash": "9b9df42642d8",
+    "tested_at": "2026-04-02T11:06:44.035396+00:00",
+    "prompt_hash": "f81eb9b0d2ea",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P225_MATCH",

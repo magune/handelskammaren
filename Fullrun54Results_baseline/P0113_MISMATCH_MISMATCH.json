@@ -1,0 +1,159 @@
+{
+  "schema_version": "3.0",
+  "metadata": {
+    "verification_timestamp": "2026-04-01T00:00:00Z",
+    "document_pair_id": null,
+    "certificate_issue_date": "2025-08-14",
+    "source_documents_received": 2
+  },
+  "task": {
+    "task_type": "customs_document_pair_verification",
+    "comparison_mode": "certificate_vs_invoice",
+    "strictness": "conservative"
+  },
+  "documents": {
+    "document_a": {
+      "label": "Document A",
+      "assumed_role": "certificate",
+      "document_type": "Certificate of Origin"
+    },
+    "document_b": {
+      "label": "Document B",
+      "assumed_role": "invoice",
+      "document_type": "Commercial Invoice"
+    }
+  },
+  "rule_activation": {
+    "lc_exception_active": false,
+    "lc_number_found": null,
+    "general_goods_description_with_invoice_reference_active": false,
+    "mixed_origins_rule_active": false,
+    "to_order_rule_active": false,
+    "quantity_exception_applied": null,
+    "eu_origin_normalization_active": false,
+    "activated_rules": [
+      {
+        "rule_id": "8.5.2",
+        "rule_name": "Refererad faktura i certifikatet måste återfinnas i separat fakturafil"
+      },
+      {
+        "rule_id": "8.6",
+        "rule_name": "Obligatorisk parningsvalidering"
+      }
+    ]
+  },
+  "control_points": {
+    "consignor": {
+      "applicable": true,
+      "status": "MANUAL_REVIEW",
+      "confidence": 0.94,
+      "certificate_value": "Volvo Merchandise AB\nBror Nilssons gata 5\nSE-40508, GÖTEBORG\nSweden",
+      "invoice_value": "Volvo Merchandise AB\nBror Nilssons gata 5\n40508 GÖTEBORG\nSweden",
+      "rules_applied": [
+        {
+          "rule_id": "4.1.0",
+          "outcome": "Name and country can be identified in invoice footer/address block"
+        },
+        {
+          "rule_id": "8.5.2",
+          "outcome": "Referenced invoice 776069 not found in invoice file; final automatic verification blocked"
+        }
+      ],
+      "motivation": "Certifikatets consignor kan identifieras i fakturafilen genom texten \"Volvo Merchandise AB ... Sweden\". Certifikatet hänvisar dock uttryckligen i ruta 5 till \"Invoice 776069\", medan den separata fakturafilen är \"Invoice 775696\". Eftersom den refererade fakturan inte återfinns i fakturafilen får consignor-verifieringen inte slutligt avgöras mot den bifogade men icke-refererade fakturan."
+    },
+    "consignee": {
+      "applicable": true,
+      "status": "MANUAL_REVIEW",
+      "confidence": 0.95,
+      "certificate_value": "Volvo Group Korea Ltd\nVolvo Bldg., 5th fl.,\n726-173 Hannam-dong,\nYongsan-gu 140-210 Seoul\n140-210\nKorea, Republic of",
+      "invoice_value": "Invoicing address\nVolvo Trucks Korea Co., Ltd\n64-106, Dongtangiheung-Ro, GYEONGGI-DO\n18488 HWASEONG-SI\nKorea\n\nDelivery address\nVolvo Trucks Korea Co., Ltd\n64-106, Dongtangiheung-Ro, GYEONGGI-DO\n18488 HWASEONG-SI\nKorea",
+      "rules_applied": [
+        {
+          "rule_id": "4.2.0.2",
+          "outcome": "Invoice shows a named billing/delivery party"
+        },
+        {
+          "rule_id": "8.5.2",
+          "outcome": "Referenced invoice 776069 not found in invoice file; observed consignee on invoice 775696 cannot be used for definitive mismatch"
+        }
+      ],
+      "motivation": "Den bifogade fakturafilen anger mottagaren som \"Volvo Trucks Korea Co., Ltd\", medan certifikatet anger \"Volvo Group Korea Ltd\". Detta skulle normalt kräva bedömning mot den faktura som certifikatet faktiskt hänvisar till, men certifikatet refererar till \"Invoice 776069\" och denna faktura finns inte i separat fakturafil. Därför kan consignee-kontrollen inte avgöras slutligt automatiskt."
+    },
+    "goods_description": {
+      "applicable": true,
+      "status": "MANUAL_REVIEW",
+      "confidence": 0.95,
+      "certificate_value": "7 pcs - 113066 Short Winter Jacket, CLR 99, Size M, CN\n4 pcs - 113066 Short Winter Jacket, CLR 99, Size L, CN\n13 pcs - 113470 Iron Mark Pin (10 pack), CN",
+      "invoice_value": "113871 Passport Holder\n113834 Travel Neck Pillow",
+      "rules_applied": [
+        {
+          "rule_id": "4.3.2",
+          "outcome": "Certificate contains article numbers 113066 and 113470 that are not present in invoice 775696"
+        },
+        {
+          "rule_id": "8.5.2",
+          "outcome": "Referenced invoice 776069 not found in invoice file; apparent goods mismatch cannot be finalized against wrong attached invoice"
+        }
+      ],
+      "motivation": "Certifikatet beskriver artiklarna 113066 och 113470 med varorna \"Short Winter Jacket\" och \"Iron Mark Pin (10 pack)\". Den bifogade fakturafilen innehåller i stället artiklarna 113871 \"Passport Holder\" och 113834 \"Travel Neck Pillow\". Eftersom certifikatet uttryckligen hänvisar till \"Invoice 776069\" men fakturafilen endast innehåller \"Invoice 775696\" kan denna avvikelse inte slutligt bedömas som verklig varuavvikelse eller felbifogad faktura utan manuell kontroll."
+    },
+    "quantity": {
+      "applicable": true,
+      "status": "MANUAL_REVIEW",
+      "confidence": 0.94,
+      "certificate_value": "14,69 KG NET\n7 pcs\n4 pcs\n13 pcs",
+      "invoice_value": "Qty 180 / Kg 18.00\nQty 180 / Kg 63.00",
+      "rules_applied": [
+        {
+          "rule_id": "4.4.2.1",
+          "outcome": "Verification-grounding quantity in box 7 is 14,69 KG NET"
+        },
+        {
+          "rule_id": "8.5.2",
+          "outcome": "Referenced invoice 776069 not found in invoice file; quantity comparison against invoice 775696 cannot be finalized"
+        }
+      ],
+      "motivation": "Certifikatets verifieringsgrundande kvantitet i ruta 7 är \"14,69 KG NET\", och varubeskrivningen innehåller dessutom 7 pcs, 4 pcs och 13 pcs. Den bifogade fakturafilen visar andra kvantiteter och vikter för andra artiklar. Eftersom den faktura som certifikatet hänvisar till (776069) inte finns i separat fakturafil kan kvantitetskontrollen inte avgöras slutligt automatiskt."
+    },
+    "origin": {
+      "applicable": true,
+      "status": "MANUAL_REVIEW",
+      "confidence": 0.95,
+      "certificate_value": "CN",
+      "invoice_value": "CoO\nIN\nCN",
+      "rules_applied": [
+        {
+          "rule_id": "4.5.1",
+          "outcome": "Invoice file contains explicit origin values"
+        },
+        {
+          "rule_id": "8.5.2",
+          "outcome": "Referenced invoice 776069 not found in invoice file; origin comparison against invoice 775696 cannot be finalized"
+        }
+      ],
+      "motivation": "Certifikatet anger ursprungsland \"CN\". Den bifogade fakturafilen innehåller uttryckliga ursprungsangivelser \"IN\" och \"CN\" för sina artiklar, men certifikatet hänvisar till en annan faktura: \"Invoice 776069\". Eftersom den refererade fakturan saknas i den separata fakturafilen kan ursprungskontrollen inte slutligt avgöras mot den bifogade men icke-refererade fakturan."
+    }
+  },
+  "overall_assessment": {
+    "comparison_result": "MANUAL_REVIEW",
+    "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
+    "auto_approval_eligible": false,
+    "confidence": 0.96,
+    "critical_failures": [],
+    "manual_review_triggers": [
+      "Certifikatet hänvisar uttryckligen till Invoice 776069 i ruta 5, men den separata fakturafilen innehåller endast Invoice 775696. Den refererade fakturan kan därför inte återfinnas i bifogad fakturafil."
+    ],
+    "decision_summary": "Dokumentrollen kunde identifieras, och certifikatets consignor förekommer i fakturafilen. Certifikatet refererar dock till ett specifikt fakturanummer, 776069, som inte finns i den separata fakturafilen där endast 775696 förekommer. Enligt parningsregeln måste ärendet därför gå till manuell handläggning i stället för att avgöras som identiskt eller avvikande mot fel faktura.",
+    "human_explanation": "Certifikatet hänvisar till faktura 776069, men den bifogade fakturafilen innehåller faktura 775696. Därför går det inte att säkerställa att rätt faktura har använts för verifieringen. Ärendet måste hanteras manuellt."
+  },
+  "_meta": {
+    "tested_at": "2026-04-01T12:52:20.255973+00:00",
+    "prompt_hash": "9b9df42642d8",
+    "model": "gpt-5.4",
+    "tier": 2,
+    "pair": "P0113_MISMATCH",
+    "expected": "NOT_IDENTICAL",
+    "actual": "MANUAL_REVIEW",
+    "status": "REVIEW"
+  }
+}

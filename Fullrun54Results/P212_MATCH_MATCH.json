@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-04-01T00:00:00Z",
+    "verification_timestamp": "2026-04-02T00:00:00Z",
     "document_pair_id": null,
     "certificate_issue_date": "2025-03-05",
     "source_documents_received": 2
@@ -34,15 +34,15 @@
     "activated_rules": [
       {
         "rule_id": "8.5.0",
-        "rule_name": "Filbaserad dokumentparning"
+        "rule_name": "Standardregel för dokumentparning mellan certifikatfil och separat fakturafil"
       },
       {
         "rule_id": "8.6",
         "rule_name": "Obligatorisk parningsvalidering"
       },
       {
-        "rule_id": "4.2.0.3",
-        "rule_name": "Ship-To-regel för slutmottagare"
+        "rule_id": "4.2.0.3.1",
+        "rule_name": "Ship-To-regeln ger MANUAL_REVIEW vid oberoende Bill-To-part"
       }
     ]
   },
@@ -50,7 +50,7 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.96,
+      "confidence": 0.99,
       "certificate_value": "4Intelligence AB\nMarieholmsgatan 10 B\n41502 , Gothenburg\nSweden",
       "invoice_value": "4Intelligence AB\nMarieholmgatan 10 B\n41502 Gothenburg\nSweden\nVAT no: SE559172351401",
       "rules_applied": [
@@ -67,41 +67,41 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor \"4Intelligence AB\" återfinns uttryckligen i fakturans utställaruppgifter i sidhuvud/sidfot. Landet \"Sweden\" verifieras explicit i adressen och stöds även av VAT-prefix \"SE\". Företagsnamn och land kan därför verifieras utan otillåten tolkning."
+      "motivation": "Certifikatets consignor '4Intelligence AB' återfinns uttryckligen i fakturan som utställare i sidhuvud/sidfot. Landet 'Sweden' framgår också explicit i fakturans adressblock. Företagsnamn och land kan därför verifieras som samma juridiska part."
     },
     "consignee": {
       "applicable": true,
-      "status": "MATCH",
-      "confidence": 0.89,
+      "status": "MANUAL_REVIEW",
+      "confidence": 0.47,
       "certificate_value": "GOLDEN DRAGON IMPORT-EXPORT\nTECHNOLOGY COMPANY LIMITED\nNo. 14A, Lane 169\nQuang Tien Street\nResidential Group 2, Dai Mo Ward\nNam Tu Liem District\nHà Nội\nViet Nam",
-      "invoice_value": "SHIP TO\nGOLDEN DRAGON IMPORT-EXPORT\nTECHNOLOGY COMPANY LIMITED\nNo. 14A, Lane 169, Quang Tien Street\nResidential Group 2, Dai Mo Ward\nNam Tu Liem District, Hanoi\nVIETNAM",
+      "invoice_value": "TO\nSECUSYS SOLUTIONS LIMITED\nMr. Alan Liu\nUnit 1411, 14/Floor, Cosco Tower\n183 Queen’s Road Central\nSheung Wan, Hong Kong\n\nSHIP TO\nGOLDEN DRAGON IMPORT-EXPORT\nTECHNOLOGY COMPANY LIMITED\nNo. 14A, Lane 169, Quang Tien Street\nResidential Group 2, Dai Mo Ward\nNam Tu Liem District, Hanoi\nVIETNAM",
       "rules_applied": [
         {
           "rule_id": "4.2.0.2",
-          "outcome": "PRIMARY_BILL_TO_DIFFERENT"
+          "outcome": "BILL_TO_HAS_PRIORITY"
         },
         {
           "rule_id": "4.2.0.3",
-          "outcome": "MATCH"
+          "outcome": "SHIP_TO_MATCH_IDENTIFIED"
+        },
+        {
+          "rule_id": "4.2.0.3.1",
+          "outcome": "MANUAL_REVIEW"
         },
         {
           "rule_id": "4.2.3",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Fakturan har ett primärt faktureringsfält \"TO SECUSYS SOLUTIONS LIMITED\", vilket avviker från certifikatets consignee. Certifikatets consignee återfinns dock exakt i fakturans \"SHIP TO\"-fält och båda parter förekommer i samma faktura utan motsägelse, vilket aktiverar slutmottagarundantaget. Landet Viet Nam/VIETNAM överensstämmer efter normalisering."
+      "motivation": "Certifikatets consignee 'GOLDEN DRAGON IMPORT-EXPORT TECHNOLOGY COMPANY LIMITED' i Vietnam återfinns exakt i fakturans 'SHIP TO'-fält. Fakturans primära faktureringsfält 'TO' anger dock en annan juridisk part: 'SECUSYS SOLUTIONS LIMITED' i Hong Kong. Eftersom Bill-To/To-parten är en separat och oberoende juridisk entitet utan uttrycklig koppling till certifikatets consignee ska Ship-To-scenariot enligt reglerna leda till MANUAL_REVIEW, inte MATCH."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.91,
+      "confidence": 0.93,
       "certificate_value": "Model: INT-V005-A-MAXIMUM\nSecret Video Recorder, serial no: 986519\nManufacturer: 4Intelligence AB\nYear of manufacture: 2025",
-      "invoice_value": "VIDEO RECORDER\nModel: INT-V005-A-MAXIMUM\nIncluding accessories according to contract no 1212-IN-SEC/2024\nManufacturer: 4Intelligence AB\nOrigin: Sweden\nSerial no: 986519\nHS code: 8919810090 - Y901",
+      "invoice_value": "VIDEO RECORDER\nModel: INT-V005-A-MAXIMUM\nIncluding accessories according to contract no 1212-IN-SEC/2024\nManufacturer: 4Intelligence AB\nOrigin: Sweden\nSerial no: 986519",
       "rules_applied": [
-        {
-          "rule_id": "4.3.2",
-          "outcome": "PRIORITY_1_NOT_USED"
-        },
         {
           "rule_id": "4.3.3",
           "outcome": "MATCH"
@@ -111,17 +111,17 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Något separat artikelnummer som måste verifieras enligt prioritet 1 identifierades inte i certifikatet. Den identitetsbärande varuuppgiften kan verifieras genom exakt modell \"INT-V005-A-MAXIMUM\", exakt serienummer \"986519\" och samma tillverkare \"4Intelligence AB\" i båda dokumenten. Fakturans ytterligare text om accessories, origin och HS code motsäger inte certifikatet."
+      "motivation": "Den identitetsbärande varuuppgiften kan verifieras genom exakt modell 'INT-V005-A-MAXIMUM' och exakt serienummer '986519' i båda dokumenten. Tillverkaren '4Intelligence AB' återfinns också i båda dokumenten. Skillnaden mellan 'Secret Video Recorder' i certifikatet och 'VIDEO RECORDER' i fakturan ändrar inte identifieringen när modell och serienummer matchar entydigt och ingen annan liknande vara förekommer i fakturan."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.94,
+      "confidence": 0.95,
       "certificate_value": "01 Set",
-      "invoice_value": "QTY 1",
+      "invoice_value": "QTY\n1",
       "rules_applied": [
         {
-          "rule_id": "4.4.2",
+          "rule_id": "4.4.1",
           "outcome": "MATCH"
         },
         {
@@ -129,7 +129,7 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger uttrycklig numerisk kvantitet och enhet: \"01 Set\". Fakturan anger numeriskt värde \"1\" för samma vara. Ledande nolla påverkar inte identifieringen och fakturan behöver inte använda samma enhet enligt huvudregeln för verifiering av numeriskt värde."
+      "motivation": "Certifikatet anger kvantiteten '01 Set'. Fakturan anger kvantiteten '1' för den matchade varuraden. Enligt huvudregeln för kvantitetsverifiering räcker det att det numeriska värdet kan identifieras i fakturan; samma enhetsbeteckning behöver inte stå i båda dokumenten."
     },
     "origin": {
       "applicable": true,
@@ -147,27 +147,29 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger ursprungsland \"Sweden\". Fakturan innehåller ett explicit ursprungsfält på varuraden: \"Origin: Sweden\". Positiv verifiering av ursprungsland föreligger."
+      "motivation": "Certifikatet anger ursprungsland 'Sweden'. Fakturan innehåller ett explicit ursprungsfält i varuraden: 'Origin: Sweden'. Ursprungslandet kan därför verifieras uttryckligen utan tolkning."
     }
   },
   "overall_assessment": {
-    "comparison_result": "IDENTICAL",
-    "workflow_recommendation": "AUTO_APPROVAL_ELIGIBLE",
-    "auto_approval_eligible": true,
-    "confidence": 0.93,
+    "comparison_result": "MANUAL_REVIEW",
+    "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
+    "auto_approval_eligible": false,
+    "confidence": 0.48,
     "critical_failures": [],
-    "manual_review_triggers": [],
-    "decision_summary": "Dokumentparet är ett giltigt certifikat-faktura-par. Samtliga tillämpliga kontrollpunkter kan verifieras mot fakturan, inklusive consignee via fakturans Ship-To-fält.",
-    "human_explanation": "Avsändare, mottagare, varubeskrivning, kvantitet och ursprungsland kan verifieras mot fakturan. Certifikatets mottagare GOLDEN DRAGON IMPORT-EXPORT TECHNOLOGY COMPANY LIMITED återfinns som Ship To i fakturan och övriga uppgifter, inklusive modell INT-V005-A-MAXIMUM, serienummer 986519, kvantitet 01 Set/1 och ursprung Sweden, stämmer. Dokumentparet kan godkännas automatiskt."
+    "manual_review_triggers": [
+      "Certifikatets consignee matchar endast fakturans SHIP TO-fält medan fakturans TO/Bill-To-part är en annan juridisk entitet (SECUSYS SOLUTIONS LIMITED, Hong Kong)."
+    ],
+    "decision_summary": "Dokumentparet är korrekt klassificerat som Certificate of Origin respektive Invoice, och parningsvalideringen passeras eftersom consignor och consignee kan identifieras i fakturan. Consignor, goods description, quantity och origin verifieras som MATCH. Consignee kan inte godkännas automatiskt eftersom certifikatets mottagare endast återfinns som Ship-To medan fakturans fakturerade part är en annan oberoende juridisk entitet; därför blir totalresultatet MANUAL_REVIEW.",
+    "human_explanation": "Certifikatet anger mottagaren som GOLDEN DRAGON IMPORT-EXPORT TECHNOLOGY COMPANY LIMITED i Vietnam, medan fakturan är ställd till SECUSYS SOLUTIONS LIMITED i Hongkong och visar GOLDEN DRAGON endast som leveransadress. Avsändare, vara, mängd och ursprungsland stämmer i övrigt. Därför behövs manuell granskning av mottagarrollen."
   },
   "_meta": {
-    "tested_at": "2026-04-01T13:16:28.125469+00:00",
-    "prompt_hash": "9b9df42642d8",
+    "tested_at": "2026-04-02T11:06:44.028934+00:00",
+    "prompt_hash": "f81eb9b0d2ea",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P212_MATCH",
     "expected": "IDENTICAL",
-    "actual": "IDENTICAL",
-    "status": "PASS"
+    "actual": "MANUAL_REVIEW",
+    "status": "REVIEW"
   }
 }

@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": null,
+    "verification_timestamp": "2026-04-02T00:00:00Z",
     "document_pair_id": null,
     "certificate_issue_date": "2026-01-07",
     "source_documents_received": 2
@@ -33,20 +33,20 @@
     "eu_origin_normalization_active": false,
     "activated_rules": [
       {
-        "rule_id": "8.5.0",
-        "rule_name": "Filbaserad dokumentparning"
+        "rule_id": "8.6",
+        "rule_name": "Parningsvalidering passerad via fakturanummer, consignor och consignee"
       },
       {
-        "rule_id": "8.6",
-        "rule_name": "Obligatorisk parningsvalidering"
+        "rule_id": "4.1.0",
+        "rule_name": "Consignor identifierad uttryckligen i fakturan"
       },
       {
         "rule_id": "4.4.3.1",
-        "rule_name": "Flera kvantitetsuppgifter i certifikatet"
+        "rule_name": "Minst en av flera kvantitetsuppgifter verifierad"
       },
       {
-        "rule_id": "4.4.3.2",
-        "rule_name": "Försändelsekvantitet i varubeskrivningsfältet"
+        "rule_id": "4.4.3.4",
+        "rule_name": "Normalisering av decimaltecken mellan punkt och komma"
       }
     ]
   },
@@ -56,96 +56,108 @@
       "status": "MATCH",
       "confidence": 0.97,
       "certificate_value": "ESS-ENN TIMBER AB\nSKRUVBYVAGEN 2A\n365 94, SKRUV\nSweden",
-      "invoice_value": "ESS-ENN Timber AB - Skruvbyvägen 2 A - S-365 94 Skruv\nVAT-no SE556381721101",
+      "invoice_value": "ESS-ENN Timber AB - Skruvbyvägen 2 A - S-365 94 Skruv\n...\nEss -Enn Timber AB, Skruvbyvägen 2, 365 94 SKRUV. ID: 556381-7211, VAT: SE556381721101",
       "rules_applied": [
         {
-          "rule_id": "4.1.1",
-          "outcome": "issuer identified in invoice"
+          "rule_id": "8.6",
+          "outcome": "PASS"
+        },
+        {
+          "rule_id": "4.1.0",
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.1.2.1",
-          "outcome": "country verified via VAT prefix SE"
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.1.5",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor 'ESS-ENN TIMBER AB' kan identifieras direkt i fakturan som utställare 'ESS-ENN Timber AB'. Namnskillnaden är endast versaler/gemener och tillåten formateringsnormalisering. Landet Sverige verifieras via fakturans VAT-nummer med prefix 'SE', vilket är en tillåten indirekt landidentifierare."
+      "motivation": "Certifikatets consignor 'ESS-ENN TIMBER AB' återfinns uttryckligen i fakturans header och footer som 'ESS-ENN Timber AB / Ess -Enn Timber AB'. Landet verifieras som Sverige genom adressen 'Skruv' samt VAT-prefix 'SE556381721101'. Skillnader i versaler och mindre formatering normaliseras utan att ändra juridisk part."
     },
     "consignee": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.92,
+      "confidence": 0.95,
       "certificate_value": "K.R. INDUSTRIES\nNO.29. KOSAPUR VILLAGE,\nPuzhal Panchayat Union,\nAmbattur Taluk, Madhavaram,\nChennai, India\nIEC:AATFK6824H,GST:33AATFK6824H1Z0\n600060\nIndia",
-      "invoice_value": "Invoice address:\nK.R.INDUSTRIES\nNO 29, Kosapur Village\nPuzhal Panchayat Union, Madhavaram\n600060 CHENNAI\nIndien\nYour VAT-no 33AATFK6824H1Z0",
+      "invoice_value": "Invoice address:\nK.R.INDUSTRIES\nNO 29, Kosapur Village\nPuzhal Panchayat Union, Madhavaram\n600060 CHENNAI\nIndien",
       "rules_applied": [
         {
+          "rule_id": "8.6",
+          "outcome": "PASS"
+        },
+        {
           "rule_id": "4.2.0.2",
-          "outcome": "primary billing field used"
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.2.2.1",
-          "outcome": "name normalization applied"
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.2.3",
-          "outcome": "country matched"
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.2.4",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignee 'K.R. INDUSTRIES' återfinns i fakturans primära mottagarfält som 'K.R.INDUSTRIES'. Adressuppgifterna pekar på samma part i Chennai med samma GST/VAT-identifierare 33AATFK6824H1Z0. Landet anges som 'India' i certifikatet och 'Indien' i fakturan; detta är en språklig variant och inte en motsägelse."
+      "motivation": "Certifikatets consignee 'K.R. INDUSTRIES' identifieras i fakturans primära faktureringsfält 'Invoice address' som 'K.R.INDUSTRIES'. Adressens ort/postnummer '600060 CHENNAI' överensstämmer och landet anges som 'India' i certifikatet och 'Indien' i fakturan; detta är samma land trots språkvariation. Skillnader i punktuation och radbrytning påverkar inte matchningen."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.88,
-      "certificate_value": "Pinus sylvestris\nPine sawn timber",
-      "invoice_value": "DIV Pine sawn timber 19x89, 157 packages\n10 containers, 157 packages",
+      "confidence": 0.9,
+      "certificate_value": "10 containers, 157 packages\nPinus sylvestris\nPine sawn timber",
+      "invoice_value": "DIV Pine sawn timber 19x89, 157 packages 468,149 M3\n10 containers, 157 packages",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "priority 1 not applicable; no certificate article number"
+          "outcome": "ARTICLE_NUMBER_NOT_USED"
         },
         {
           "rule_id": "4.3.3",
-          "outcome": "identity-bearing text matched"
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.3.4",
-          "outcome": "additional non-identity-changing details accepted"
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.3.8",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet saknar artikelnummer som styr verifieringen, så kontrollen sker via textmatchning. Den identitetsbärande huvudbeteckningen 'Pine sawn timber' förekommer uttryckligen i fakturan. Fakturans tillägg '19x89, 157 packages' och den separata raden '10 containers, 157 packages' motsäger inte certifikatets varubeskrivning utan utgör kompletterande specifikationer."
+      "motivation": "Ingen artikelnummerstyrd matchning behövs eftersom certifikatet inte anger artikelnummer. Den identitetsbärande huvudbeteckningen 'Pine sawn timber' återfinns uttryckligen i fakturan. Tillägget '19x89' i fakturan samt certifikatets ytterligare rad 'Pinus sylvestris' motsäger inte den verifierade huvudbeteckningen, och samma kolliuppgifter '10 containers, 157 packages' förekommer i båda dokumenten."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.94,
-      "certificate_value": "10 containers, 157 packages",
-      "invoice_value": "10 containers, 157 packages",
+      "confidence": 0.86,
+      "certificate_value": "468.149 CBM\n214920.000KGSgross",
+      "invoice_value": "Quantity 468,149\nUnit M3",
       "rules_applied": [
         {
-          "rule_id": "4.4.3.1",
-          "outcome": "multiple quantity statements; at least one may be verified"
+          "rule_id": "4.4.2.1",
+          "outcome": "BOX_7_USED"
         },
         {
-          "rule_id": "4.4.3.2",
-          "outcome": "shipment quantity in box 6 accepted"
+          "rule_id": "4.4.3.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.4.3.4",
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.4.6",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet innehåller flera kvantitetsuppgifter, bland annat försändelsekvantiteten '10 containers, 157 packages'. Fakturan innehåller exakt samma försändelsekvantitet. Eftersom minst en av certifikatets kvantitetsuppgifter kan verifieras och fakturan inte uttryckligen motsäger övriga certifikatuppgifter, är kontrollpunkten MATCH."
+      "motivation": "Certifikatets box 7 innehåller två kvantitetsuppgifter: '468.149 CBM' och '214920.000KGSgross'. Fakturan verifierar den första uppgiften genom 'Quantity 468,149' med enheten 'M3'; punkt/komma-normalisering ger samma numeriska värde 468.149. Fakturan innehåller ingen uttrycklig bruttovikt som motsäger certifikatets gross weight, och enligt regeln för flera kvantitetsuppgifter räcker det att minst en uppgift verifieras när övrig uppgift inte motsägs."
     },
     "origin": {
       "applicable": true,
@@ -156,14 +168,14 @@
       "rules_applied": [
         {
           "rule_id": "4.5.1",
-          "outcome": "explicit origin field identified in invoice"
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.5.5",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger ursprungsland 'Sweden'. Fakturan innehåller ett explicit ursprungsfält med texten 'Country of origin: Sweden'. Ursprungslandet kan därför verifieras direkt utan normalisering utöver versaler/gemener."
+      "motivation": "Certifikatets ursprungsland anges som 'Sweden' och fakturan innehåller ett explicit ursprungsfält: 'Country of origin: Sweden'. Detta är en direkt och fullständig matchning utan behov av vidare tolkning."
     }
   },
   "overall_assessment": {
@@ -173,12 +185,12 @@
     "confidence": 0.94,
     "critical_failures": [],
     "manual_review_triggers": [],
-    "decision_summary": "Dokumentparet har kunnat paras via fakturanummer 10148245 och samstämmiga parter. Samtliga fem tillämpliga kontrollpunkter har verifierats som MATCH utan teknisk blockerare eller regelutlöst manuell granskning.",
-    "human_explanation": "Certifikatet och fakturan avser samma affär med samma avsändare, mottagare, varubeskrivning, kvantitet och ursprungsland. Uppgifterna i certifikatet kan verifieras mot fakturan. Dokumentparet kan därför godkännas automatiskt."
+    "decision_summary": "Alla fem tillämpliga kontrollpunkter kan verifieras mot fakturan. Dokumentparet passerar parningsvalideringen via fakturanummer 10148245 samt tydlig matchning av consignor, consignee, varubeskrivning, kvantitet och ursprungsland.",
+    "human_explanation": "Certifikatet kan verifieras mot fakturan. Avsändare, mottagare, varubeskrivning, kvantiteten 468.149/468,149 och ursprungslandet Sweden stämmer överens. Dokumentparet kan därför hanteras med automatiskt godkännande."
   },
   "_meta": {
-    "tested_at": "2026-04-01T20:23:52.690098+00:00",
-    "prompt_hash": "9b9df42642d8",
+    "tested_at": "2026-04-02T11:21:38.819480+00:00",
+    "prompt_hash": "f81eb9b0d2ea",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P0149_MATCH",

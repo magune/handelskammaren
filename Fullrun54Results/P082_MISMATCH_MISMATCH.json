@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-04-01T00:00:00Z",
+    "verification_timestamp": "2026-04-02T00:00:00Z",
     "document_pair_id": null,
     "certificate_issue_date": "2023-03-08",
     "source_documents_received": 2
@@ -15,12 +15,12 @@
     "document_a": {
       "label": "Document A",
       "assumed_role": "certificate",
-      "document_type": "certificate of origin"
+      "document_type": "Certificate of Origin (page 1) with embedded invoice copy on page 2"
     },
     "document_b": {
       "label": "Document B",
       "assumed_role": "invoice",
-      "document_type": "invoice"
+      "document_type": "Commercial invoice"
     }
   },
   "rule_activation": {
@@ -34,27 +34,31 @@
     "activated_rules": [
       {
         "rule_id": "8.5.0",
-        "rule_name": "Filbaserad dokumentparning – certifikat från fil 1 och faktura från fil 2"
-      },
-      {
-        "rule_id": "8.5.2",
-        "rule_name": "Fakturareferens i certifikatet matchad mot fakturafilen"
+        "rule_name": "Filbaserad dokumentparning; använd separat fakturafil för verifiering"
       },
       {
         "rule_id": "8.6",
         "rule_name": "Obligatorisk parningsvalidering"
       },
       {
-        "rule_id": "4.2.0.3",
-        "rule_name": "Ship-To-undantag för slutmottagare"
+        "rule_id": "4.1.0",
+        "rule_name": "Consignor får verifieras om företagsnamnet förekommer någonstans i fakturan"
       },
       {
-        "rule_id": "4.4.3.1",
-        "rule_name": "Minst en kvantitetsuppgift ska verifieras"
+        "rule_id": "4.2.0.2",
+        "rule_name": "Bill-to/Buyer har prioritet framför leveransadress vid consignee-verifiering"
       },
       {
-        "rule_id": "4.4.3.2",
-        "rule_name": "Försändelsekvantitet"
+        "rule_id": "4.2.0.3.1",
+        "rule_name": "Ship-To-regeln ger MANUAL_REVIEW vid oberoende Bill-To-part"
+      },
+      {
+        "rule_id": "4.4.2.2",
+        "rule_name": "Ett enda viktvärde utan kategori kan matcha bruttovikt i fakturan"
+      },
+      {
+        "rule_id": "4.5.4",
+        "rule_name": "Landnormalisering inklusive ISO-kod"
       }
     ]
   },
@@ -67,139 +71,161 @@
       "invoice_value": "Bulten Sweden AB\nBox 512\nSE-734 27 Hallstahammar\nSweden\nOrg nr/VAT No: SE556078364801",
       "rules_applied": [
         {
+          "rule_id": "8.5.0",
+          "outcome": "paired_certificate_from_document_a_and_invoice_from_document_b"
+        },
+        {
+          "rule_id": "8.6",
+          "outcome": "pass_invoice_number_and_consignor_identified"
+        },
+        {
           "rule_id": "4.1.0",
-          "outcome": "MATCH"
+          "outcome": "match_consignor_name_found_in_invoice_text"
         },
         {
           "rule_id": "4.1.2.1",
-          "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.1.4",
-          "outcome": "MATCH"
+          "outcome": "match_country_verified_by_address_and_vat_prefix"
         },
         {
           "rule_id": "4.1.5",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor är \"Bulten Sweden AB\" i Sverige. Samma företagsnamn förekommer uttryckligen i fakturan och Sverige verifieras både genom adressen \"SE-734 27 Hallstahammar, Sweden\" och VAT-prefixet \"SE\". Avsändaren kan därför identifieras som samma juridiska part i fakturan."
+      "motivation": "Certifikatets consignor är \"Bulten Sweden AB ... Sweden\". I den separata fakturafilen återfinns samma juridiska namn uttryckligen i sidfot/adressblock som \"Bulten Sweden AB, Box 512, SE-734 27 Hallstahammar, Sweden\" samt med svensk VAT-kod \"SE556078364801\". Namn och land kan därmed verifieras mot fakturan."
     },
     "consignee": {
       "applicable": true,
-      "status": "MATCH",
-      "confidence": 0.88,
+      "status": "MANUAL_REVIEW",
+      "confidence": 0.79,
       "certificate_value": "ZJK Volvo Car Engine Mfg. Co., Ltd\nNo. 1 ZhongRui Street\nNanshan Industrial Cluster District\nZhang Jiakou City,\nHebei Province 076150\nCHINA",
-      "invoice_value": "Delivery address\nZJK Volvo Car Engine Mfg. Co., Ltd\nNo.1 ZhongRui Street, (CHN08_137)\nNanshan Industry Cluster District\n076150 Zhangjiakou City,\nHebei Province P.R. China",
+      "invoice_value": "Payer: ZJK Aurobay Powertrain Mfg Co., Ltd.\nNo.1 ZhongRui Street, Nanshan Industry Cluster District\nZhangjiakou City, Hebei Province\nP.R. China\n\nDelivery address: ZJK Volvo Car Engine Mfg. Co., Ltd\nNo.1 ZhongRui Street, (CHN08_137)\nNanshan Industry Cluster District\n076150 Zhangjiakou City,\nHebei Province P.R. China",
       "rules_applied": [
         {
+          "rule_id": "8.6",
+          "outcome": "pass_consignee_identified_in_invoice_delivery_address"
+        },
+        {
           "rule_id": "4.2.0.2",
-          "outcome": "PRIMARY_BILL_TO_DIFFERS"
+          "outcome": "bill_to_payer_has_priority_over_delivery_address"
+        },
+        {
+          "rule_id": "4.2.0.2.1",
+          "outcome": "delivery_field_treated_as_ship_to_not_authoritative_consignee"
         },
         {
           "rule_id": "4.2.0.3",
-          "outcome": "MATCH"
+          "outcome": "ship_to_exception_considered"
         },
         {
-          "rule_id": "4.2.3",
-          "outcome": "MATCH"
+          "rule_id": "4.2.0.3.1",
+          "outcome": "MANUAL_REVIEW_independent_bill_to_party"
         },
         {
-          "rule_id": "4.2.4",
-          "outcome": "MATCH"
+          "rule_id": "4.2.0.3.2",
+          "outcome": "address_similarity_not_sufficient_to_override_independent_bill_to"
         }
       ],
-      "motivation": "Fakturans primära faktureringspart är \"ZJK Aurobay Powertrain Mfg Co., Ltd.\", men certifikatets consignee \"ZJK Volvo Car Engine Mfg. Co., Ltd\" återfinns exakt i fakturans leveransadress i Kina. Eftersom både Bill-To och Ship-To finns i samma faktura och inget motsäger att certifikatets part är slutmottagaren, tillämpas Ship-To-undantaget och mottagaren verifieras som MATCH."
+      "motivation": "Certifikatets consignee \"ZJK Volvo Car Engine Mfg. Co., Ltd\" kan identifieras exakt i fakturans leveransadress. Den auktoritativa faktureringsparten i fakturan är dock \"ZJK Aurobay Powertrain Mfg Co., Ltd.\", som är en annan juridisk entitet än certifikatets consignee. Eftersom certifikatets mottagare bara stöds via Ship-To/Delivery-fält medan Bill-To/Payer anger en separat kommersiell part utan uttrycklig koppling i fakturan, ska kontrollpunkten skickas till manuell granskning."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.9,
-      "certificate_value": "1 pallet fasteners",
-      "invoice_value": "M12x12 PLUGG 5.8 ZN/NIC+PATC\nOther fasteners, threaded, steel",
+      "confidence": 0.88,
+      "certificate_value": "ZJK Volvo Car Engine Mfg. Co., Ltd\n1 pallet fasteners",
+      "invoice_value": "Description:\nM12x12 PLUGG 5.8 ZN/NIC+PATC\nOther fasteners, threaded, steel",
       "rules_applied": [
         {
+          "rule_id": "4.3.1",
+          "outcome": "goods_text_identified_in_invoice"
+        },
+        {
           "rule_id": "4.3.2",
-          "outcome": "NO_ARTICLE_NUMBER_IN_CERTIFICATE"
+          "outcome": "no_article_number_in_certificate_goods_text_priority_2_used"
         },
         {
           "rule_id": "4.3.3",
-          "outcome": "MATCH"
+          "outcome": "identity_bearing_term_fasteners_found"
         },
         {
           "rule_id": "4.3.4",
-          "outcome": "MATCH"
+          "outcome": "invoice_contains_additional_non-conflicting_qualifiers"
         },
         {
           "rule_id": "4.3.8",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger varubeskrivningen \"fasteners\" med tillägget \"1 pallet\". I fakturan finns den identitetsbärande huvudbeteckningen uttryckligen som \"Other fasteners, threaded, steel\". Tillägget om pall påverkar inte produktidentiteten, och varubeskrivningen kan därför verifieras utan semantisk omtolkning."
+      "motivation": "Certifikatet anger varubeskrivningen \"1 pallet fasteners\". Fakturan innehåller varubeskrivningen \"Other fasteners, threaded, steel\" samt en detaljerad produktbeskrivning för samma rad. Den identitetsbärande huvudbeteckningen \"fasteners\" återfinns uttryckligen i fakturan, och de extra orden \"threaded, steel\" motsäger inte certifikatets bredare beskrivning."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.86,
-      "certificate_value": "1 pallet",
-      "invoice_value": "No of pallets 1",
+      "confidence": 0.95,
+      "certificate_value": "167kg",
+      "invoice_value": "Gross weight (kg) 167\nNet weight (kg) 149\nNo of pallets 1",
       "rules_applied": [
         {
-          "rule_id": "4.4.3.1",
-          "outcome": "MATCH"
+          "rule_id": "4.4.2.1",
+          "outcome": "box_7_value_used_as_verification_basis"
         },
         {
-          "rule_id": "4.4.3.2",
-          "outcome": "MATCH"
+          "rule_id": "4.4.2.2",
+          "outcome": "single_weight_without_category_matches_invoice_gross_weight"
+        },
+        {
+          "rule_id": "4.4.3",
+          "outcome": "numeric_value_identified_in_invoice"
         },
         {
           "rule_id": "4.4.6",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet innehåller både \"167kg\" i box 7 och en försändelsekvantitet \"1 pallet\" i box 6. Enligt reglerna räcker det att minst en kvantitetsuppgift verifieras när flera kvantitetsuppgifter förekommer, och försändelsekvantiteten får användas. Fakturan anger uttryckligen \"No of pallets 1\", vilket verifierar certifikatets \"1 pallet\". Därmed är kontrollpunkten MATCH."
+      "motivation": "Certifikatets kvantitetsfält (box 7) anger uttryckligen \"167kg\". Fakturan anger både \"Gross weight (kg) 167\" och \"Net weight (kg) 149\". Eftersom certifikatet har ett enda viktvärde utan kategori och detta exakt matchar fakturans bruttovikt, är kvantiteten verifierad."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.96,
       "certificate_value": "Sweden",
-      "invoice_value": "Origin\nSE",
+      "invoice_value": "Origin: SE",
       "rules_applied": [
         {
           "rule_id": "4.5.1",
-          "outcome": "MATCH"
+          "outcome": "explicit_origin_field_found_in_invoice"
         },
         {
           "rule_id": "4.5.4",
-          "outcome": "MATCH"
+          "outcome": "country_name_matches_iso_code"
         },
         {
           "rule_id": "4.5.5",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger ursprungsland \"Sweden\". Fakturan innehåller ett explicit ursprungsfält, \"Origin\", med värdet \"SE\", vilket är en tillåten ISO-landkod för Sverige. Ursprungslandet är därför uttryckligen verifierat i fakturan."
+      "motivation": "Certifikatet anger ursprungsland \"Sweden\". Fakturans produktrad innehåller ett explicit origin-fält med värdet \"SE\". ISO-koden SE är en tillåten normalisering av Sweden, vilket ger verifierad matchning."
     }
   },
   "overall_assessment": {
-    "comparison_result": "IDENTICAL",
-    "workflow_recommendation": "AUTO_APPROVAL_ELIGIBLE",
-    "auto_approval_eligible": true,
-    "confidence": 0.91,
+    "comparison_result": "MANUAL_REVIEW",
+    "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
+    "auto_approval_eligible": false,
+    "confidence": 0.82,
     "critical_failures": [],
-    "manual_review_triggers": [],
-    "decision_summary": "Dokumentparet kunde paras via fakturanummer 754129 i den separata fakturafilen. Samtliga tillämpliga kontrollpunkter verifieras som MATCH: consignor, consignee, varubeskrivning, kvantitet och ursprungsland.",
-    "human_explanation": "Alla kontrollpunkter stämmer mellan certifikatet och den bifogade fakturan. Certifikatet hänvisar till faktura 754129 och uppgifterna om avsändare, mottagare, varor, kvantitet och ursprung kan verifieras. Dokumentparet kan därför godkännas automatiskt."
+    "manual_review_triggers": [
+      "Consignee can only be matched via delivery address while invoice payer/bill-to is a different legal entity: ZJK Aurobay Powertrain Mfg Co., Ltd. vs certificate consignee ZJK Volvo Car Engine Mfg. Co., Ltd."
+    ],
+    "decision_summary": "Dokumentparningen är giltig eftersom certifikatets fakturanummer 754129 matchar den separata fakturafilens fakturanummer 754129, och consignor kan identifieras i fakturan. Consignor, goods description, quantity och origin kan verifieras mot fakturan. Consignee kräver dock MANUAL_REVIEW eftersom fakturans auktoritativa Bill-To/Payer-part är ZJK Aurobay Powertrain Mfg Co., Ltd., medan certifikatets consignee ZJK Volvo Car Engine Mfg. Co., Ltd. endast återfinns i leveransadressfältet.",
+    "human_explanation": "Avsändare, varubeskrivning, kvantitet och ursprungsland kan verifieras mot fakturan. Certifikatet anger mottagaren som ZJK Volvo Car Engine Mfg. Co., Ltd, medan fakturans betalningspart är ZJK Aurobay Powertrain Mfg Co., Ltd och Volvo-bolaget bara framgår som leveransadress. Därför krävs manuell granskning av mottagaruppgiften."
   },
   "_meta": {
-    "tested_at": "2026-04-01T17:41:39.932409+00:00",
-    "prompt_hash": "9b9df42642d8",
+    "tested_at": "2026-04-02T11:36:29.836857+00:00",
+    "prompt_hash": "f81eb9b0d2ea",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P082_MISMATCH",
     "expected": "NOT_IDENTICAL",
-    "actual": "IDENTICAL",
-    "status": "FAIL"
+    "actual": "MANUAL_REVIEW",
+    "status": "REVIEW"
   }
 }

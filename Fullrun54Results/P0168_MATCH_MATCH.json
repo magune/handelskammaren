@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-04-01T00:00:00Z",
+    "verification_timestamp": "2026-04-02T00:00:00Z",
     "document_pair_id": null,
     "certificate_issue_date": "2026-02-26",
     "source_documents_received": 2
@@ -30,7 +30,7 @@
     "mixed_origins_rule_active": false,
     "to_order_rule_active": false,
     "quantity_exception_applied": null,
-    "eu_origin_normalization_active": true,
+    "eu_origin_normalization_active": false,
     "activated_rules": [
       {
         "rule_id": "8.5.0",
@@ -41,16 +41,28 @@
         "rule_name": "Obligatorisk parningsvalidering"
       },
       {
+        "rule_id": "4.1.0",
+        "rule_name": "Consignor identifierad uttryckligen i fakturan"
+      },
+      {
+        "rule_id": "4.2.0.2",
+        "rule_name": "Prioritetsordning för consignee-identifiering"
+      },
+      {
+        "rule_id": "4.2.2.1.3",
+        "rule_name": "Certifikatets namn som strikt delmängd av fakturans namn"
+      },
+      {
         "rule_id": "4.3.5",
         "rule_name": "Generell varubeskrivning med fakturareferens"
       },
       {
-        "rule_id": "4.5.4.1",
-        "rule_name": "EU-normalisering"
+        "rule_id": "4.4.1",
+        "rule_name": "Förekomstkontroll för kvantitet"
       },
       {
-        "rule_id": "4.1.3.7",
-        "rule_name": "Saknat bolagsformsord eller verksamhetsord i certifikatet – MANUAL_REVIEW"
+        "rule_id": "4.5.1",
+        "rule_name": "Explicit ursprungsangivelse i fakturan"
       }
     ]
   },
@@ -58,9 +70,9 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.97,
+      "confidence": 0.96,
       "certificate_value": "NOREX International AB\nKungsportsplatsen 2\n411 10, Gothenburg\nSweden",
-      "invoice_value": "Norex International AB\nBox 53082\n400 14 Gothenburg\nSweden\nwww.norexsteel.com\n556430-4425\nSE17 1200 0000 0121 7013 1817\nSE556430442501",
+      "invoice_value": "Norex International AB\nBox 53082\n400 14 Gothenburg\nSweden\nOur VAT no SE556430442501",
       "rules_applied": [
         {
           "rule_id": "4.1.0",
@@ -71,75 +83,59 @@
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.1.4",
-          "outcome": "MATCH"
-        },
-        {
           "rule_id": "4.1.5",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor 'NOREX International AB' kan identifieras uttryckligen i fakturan som utställare/identifierad part ('Norex International AB'). Landet Sverige framgår i fakturans adressblock och stöds även av VAT-prefix 'SE556430442501' samt IBAN-prefix 'SE'. Skillnader i gatuadress (Kungsportsplatsen 2 vs Box 53082) påverkar inte bedömningen enligt reglerna."
+      "motivation": "Certifikatets consignor 'NOREX International AB' kan identifieras uttryckligen i fakturan som 'Norex International AB' i fakturans företagsuppgifter/footer. Landet Sverige verifieras i fakturan via adressen 'Sweden' och stöds även av VAT-prefix 'SE'. Skillnader i gatuadress (Kungsportsplatsen 2 vs Box 53082) medför inte avvikelse eftersom företagsnamn och land överensstämmer."
     },
     "consignee": {
       "applicable": true,
-      "status": "MANUAL_REVIEW",
-      "confidence": 0.74,
+      "status": "MATCH",
+      "confidence": 0.89,
       "certificate_value": "MASCO GLOBAL ITH IHR LTD STI\nSAHINTEPE MAH 133394 MOLU CD\nZEUGMA SITESI B BLOK 19\nGAZIANTEP\nTURKEY",
-      "invoice_value": "Delivery Address / Invoice Address:\nMASCO GLOBAL ITH IHR TIC LTD STI\nSAHINTEPE MAH 133394 NOLU CD ZEUGMA SITESI B BLOK 19\nGAZIANTEP\nTurkey",
+      "invoice_value": "Invoice Address\nMASCO GLOBAL ITH IHR TIC LTD STI\nSAHINTEPE MAH 133394 NOLU CD ZEUGMA SITESI B\nBLOK 19\nGAZIANTEP\nTurkey",
       "rules_applied": [
         {
           "rule_id": "4.2.0.2",
-          "outcome": "PRIMARY_BILLING_PARTY_IDENTIFIED"
+          "outcome": "MATCH"
         },
         {
-          "rule_id": "4.2.1",
-          "outcome": "FOUND"
-        },
-        {
-          "rule_id": "4.1.3.1",
-          "outcome": "NO_EXACT_LEGAL_NAME_MATCH"
-        },
-        {
-          "rule_id": "4.1.3.7",
-          "outcome": "MANUAL_REVIEW"
+          "rule_id": "4.2.2.1.3",
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.2.3",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Mottagaren kan identifieras i fakturans Invoice Address/Delivery Address, men företagsnamnet är inte exakt samma juridiska namn: certifikatet anger 'MASCO GLOBAL ITH IHR LTD STI' medan fakturan anger 'MASCO GLOBAL ITH IHR TIC LTD STI'. Certifikatets namn är en exakt delmängd av fakturans namn i samma ordning, med ett extra ord 'TIC' i fakturan som framstår som verksamhets-/bolagsord. Landet Turkey/TURKEY överensstämmer. Enligt den särskilda regeln för saknat verksamhetsord i certifikatet ger detta MANUAL_REVIEW, inte MATCH."
+      "motivation": "Fakturans auktoritativa mottagarfält är 'Invoice Address'. Certifikatets företagsnamn 'MASCO GLOBAL ITH IHR LTD STI' är en strikt delmängd av fakturans 'MASCO GLOBAL ITH IHR TIC LTD STI'; det extra ordet 'TIC' är ett affärs-/verksamhetstillägg och certifikatets ord förekommer i samma ordning. Landet Turkiet överensstämmer. Adressvariationerna 'MOLU/NOLU' påverkar inte bedömningen eftersom företagsnamn och land kan verifieras."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.96,
-      "certificate_value": "21 Packages, Fully addressed\nGALVANIZED AND PREPAINTED STEEL COILS\n.\nAS PER ATTACHED INVOICE NO 8019796 DATED 2026-02-14",
-      "invoice_value": "Description of goods and services:\nGALVANIZED AND PREPAINTED STEEL COILS.\nTHE TOTAL GROSS WEIGHT IS 52660 KGS\nCOUNTRY OF ORIGIN: EUROPEAN UNION\nInvoice Number 8019796\nDate 2026-02-14",
+      "confidence": 0.97,
+      "certificate_value": "GALVANIZED AND PREPAINTED STEEL COILS\nAS PER ATTACHED INVOICE NO 8019796 DATED 2026-02-14",
+      "invoice_value": "GALVANIZED AND PREPAINTED STEEL COILS.\nTHE TOTAL GROSS WEIGHT IS 52660 KGS\nCOUNTRY OF ORIGIN: EUROPEAN UNION\nInvoice Number 8019796\nDate 2026-02-14",
       "rules_applied": [
         {
           "rule_id": "4.3.5",
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.3.8",
+          "rule_id": "4.3.5.2",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet innehåller generell varubeskrivning med uttrycklig fakturahänvisning: 'AS PER ATTACHED INVOICE NO 8019796 DATED 2026-02-14'. Fakturan i dokumentparet har exakt nummer 8019796 och datum 2026-02-14. Fakturans varuinnehåll 'GALVANIZED AND PREPAINTED STEEL COILS' är förenligt med certifikatets beskrivning. Därför är varubeskrivningen verifierad enligt fakturareferensregeln."
+      "motivation": "Certifikatet innehåller uttrycklig fakturahänvisning med fakturanummer 8019796 och datum 2026-02-14. Den bifogade fakturan har samma nummer och datum. Varuinnehållet i fakturan är förenligt och uttryckligen beskrivet som 'GALVANIZED AND PREPAINTED STEEL COILS', vilket överensstämmer med certifikatets varubeskrivning."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.98,
+      "confidence": 0.99,
       "certificate_value": "Gross Weight\n52660 KGS",
-      "invoice_value": "THE TOTAL GROSS WEIGHT IS 52660 KGS\nGross Weight(MT) 52.660",
+      "invoice_value": "THE TOTAL GROSS WEIGHT IS 52660 KGS\nGross Weight(MT) 52.660\nProduct quantity 21",
       "rules_applied": [
-        {
-          "rule_id": "4.4.2.1",
-          "outcome": "BOX_7_SELECTED"
-        },
         {
           "rule_id": "4.4.2.2",
           "outcome": "MATCH"
@@ -153,7 +149,7 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Den verifieringsgrundande kvantiteten i box 7 är 'Gross Weight 52660 KGS'. Fakturan anger uttryckligen 'THE TOTAL GROSS WEIGHT IS 52660 KGS', vilket är en exakt numerisk och enhetsmässig matchning för samma viktkategori. Fakturans tabell med 'Gross Weight(MT) 52.660' är också konsistent men behövs inte för beslutet."
+      "motivation": "Verifieringsgrundande kvantitet i certifikatets box 7 är 'Gross Weight 52660 KGS'. Fakturan innehåller samma uttryckliga totalvikt: 'THE TOTAL GROSS WEIGHT IS 52660 KGS'. Detta är en direkt numerisk och enhetsmässig matchning för bruttovikt. Den ytterligare uppgiften 'Gross Weight(MT) 52.660' är också förenlig men behövs inte för beslutet."
     },
     "origin": {
       "applicable": true,
@@ -164,10 +160,6 @@
       "rules_applied": [
         {
           "rule_id": "4.5.1",
-          "outcome": "FOUND_IN_EXPLICIT_ORIGIN_FIELD"
-        },
-        {
-          "rule_id": "4.5.4.1",
           "outcome": "MATCH"
         },
         {
@@ -175,29 +167,27 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Ursprungslandet i certifikatet är 'EUROPEAN UNION' och samma ursprungsangivelse återfinns uttryckligen i fakturans dedikerade origin-fält som 'COUNTRY OF ORIGIN: EUROPEAN UNION'. Detta uppfyller kravet på positiv och explicit verifiering."
+      "motivation": "Certifikatet anger ursprungsland 'EUROPEAN UNION'. Fakturan anger uttryckligen i dedikerat ursprungsfält 'COUNTRY OF ORIGIN: EUROPEAN UNION'. Ursprungsuppgiften kan därför verifieras direkt utan ytterligare tolkning."
     }
   },
   "overall_assessment": {
-    "comparison_result": "MANUAL_REVIEW",
-    "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
-    "auto_approval_eligible": false,
-    "confidence": 0.81,
+    "comparison_result": "IDENTICAL",
+    "workflow_recommendation": "AUTO_APPROVAL_ELIGIBLE",
+    "auto_approval_eligible": true,
+    "confidence": 0.96,
     "critical_failures": [],
-    "manual_review_triggers": [
-      "Consignee-namnet i certifikatet saknar ordet 'TIC' som finns i fakturans mottagarnamn, vilket enligt reglerna ska hanteras manuellt när övriga ord och land överensstämmer."
-    ],
-    "decision_summary": "Avsändare, varubeskrivning, mängd och ursprungsland är verifierade mot fakturan. Mottagaren återfinns i fakturan men företagsnamnet skiljer sig genom ett extra verksamhetsord i fakturan ('TIC'), vilket enligt regelverket ger MANUAL_REVIEW. Ingen kontrollpunkt har MISMATCH.",
-    "human_explanation": "Avsändare, varubeskrivning, mängd och ursprungsland stämmer mellan certifikatet och fakturan. Mottagaren anges dock som 'MASCO GLOBAL ITH IHR LTD STI' i certifikatet medan fakturan anger 'MASCO GLOBAL ITH IHR TIC LTD STI'. Skillnaden behöver därför granskas manuellt innan ärendet kan godkännas."
+    "manual_review_triggers": [],
+    "decision_summary": "Samtliga fem tillämpliga kontrollpunkter kan verifieras mot den bifogade fakturan. Certifikatet refererar uttryckligen till faktura 8019796 daterad 2026-02-14, och consignor, consignee, varubeskrivning, kvantitet och ursprung kan identifieras i fakturan enligt tillåtna regler.",
+    "human_explanation": "Certifikatet och fakturan avser samma avsändare, mottagare, varubeskrivning, kvantitet och ursprung. Certifikatet hänvisar till faktura 8019796 daterad 2026-02-14, och dessa uppgifter stämmer mot den bifogade fakturan. Dokumentparet kan därför godkännas automatiskt."
   },
   "_meta": {
-    "tested_at": "2026-04-01T21:51:47.286257+00:00",
-    "prompt_hash": "9b9df42642d8",
+    "tested_at": "2026-04-02T11:21:38.829771+00:00",
+    "prompt_hash": "f81eb9b0d2ea",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P0168_MATCH",
     "expected": "IDENTICAL",
-    "actual": "MANUAL_REVIEW",
-    "status": "REVIEW"
+    "actual": "IDENTICAL",
+    "status": "PASS"
   }
 }

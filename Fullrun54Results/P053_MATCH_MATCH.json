@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-04-01T00:00:00Z",
+    "verification_timestamp": "2026-04-02T00:00:00Z",
     "document_pair_id": null,
     "certificate_issue_date": "2026-01-21",
     "source_documents_received": 2
@@ -15,12 +15,12 @@
     "document_a": {
       "label": "Document A",
       "assumed_role": "certificate",
-      "document_type": "certificate_of_origin_pdf_with_embedded_invoice_copy"
+      "document_type": "Certificate of Origin"
     },
     "document_b": {
       "label": "Document B",
       "assumed_role": "invoice",
-      "document_type": "commercial_invoice"
+      "document_type": "Commercial Invoice"
     }
   },
   "rule_activation": {
@@ -34,15 +34,11 @@
     "activated_rules": [
       {
         "rule_id": "8.5.0",
-        "rule_name": "Filbaserad dokumentparning – certifikatet hämtades från dokument A och verifieringen gjordes mot den separata fakturan i dokument B; inbäddad fakturakopia i certifikatfilen användes inte"
+        "rule_name": "Filbaserad dokumentparning – separat fakturafil användes som verifieringsunderlag"
       },
       {
         "rule_id": "8.6",
-        "rule_name": "Obligatorisk parningsvalidering – giltigt dokumentpar fastställt via matchande consignor och consignee"
-      },
-      {
-        "rule_id": "4.4.2.1",
-        "rule_name": "Box 7 är verifieringsgrundande för kvantitet"
+        "rule_name": "Parningsvalidering passerad via consignor, consignee och dokumentuppgifter"
       }
     ]
   },
@@ -59,20 +55,24 @@
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.1.2",
+          "rule_id": "4.1.2.1",
           "outcome": "MATCH"
         },
         {
           "rule_id": "4.1.4",
           "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.5",
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor 'ARA Timber AB' återfinns uttryckligen i den separata fakturan i dokument B, både som utställare i footer/säljaruppgifter och i kontaktblocket. Landet Sverige verifieras explicit i adressblocket ('Sweden') och stöds även av VAT-prefix 'SE'. Skillnader i svensk/engelsk ortstavning påverkar inte bedömningen."
+      "motivation": "Certifikatets consignor 'ARA Timber AB' återfinns uttryckligen i fakturan som utställare. Landet verifieras i fakturans adressblock som 'Sweden' och stöds även av VAT-prefix 'SE'. Skillnaden 'GOTHENBURG' vs 'GÖTEBORG' påverkar inte bedömningen eftersom företagsnamn och land är tydligt identifierbara och ingen motstridighet finns."
     },
     "consignee": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.97,
+      "confidence": 0.98,
       "certificate_value": "Gulf Timber Co\nPO Box 019433\nPort of Jeddah\nSaudi Arabia",
       "invoice_value": "Customer\nGulf Timber Co\nPO Box 019433\nPort of Jeddah\nJeddah\nSAUDI ARABIA",
       "rules_applied": [
@@ -87,20 +87,24 @@
         {
           "rule_id": "4.2.3",
           "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.2.4",
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Fakturan innehåller ett primärt kund-/faktureringsfält ('Customer') med exakt samma mottagarnamn som i certifikatet: 'Gulf Timber Co'. PO Box 019433, Port of Jeddah och landet Saudi Arabia/SAUDI ARABIA överensstämmer. Den extra ortsraden 'Jeddah' i fakturan är ytterligare information och motsäger inte certifikatet."
+      "motivation": "Fakturan har ett primärt kund/faktureringsfält 'Customer' med parten 'Gulf Timber Co', vilket är den auktoritativa consignee-parten. Namn, postbox, platsangivelsen 'Port of Jeddah' och landet 'SAUDI ARABIA' överensstämmer med certifikatet efter tillåten normalisering av versaler/gemener."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.96,
+      "confidence": 0.95,
       "certificate_value": "Lot 4B\n1x40´HC Containers\n9 packages\nGross weight: 24 600 kgs\nREDWOOD",
-      "invoice_value": "REDWOOD\nKD, L/P\nV 50x200 21,87 CBM\nVI 50x250 5,67 CBM\nVI 38x225 16,644 CBM\n.\nLot 4B\n1x40'HC Containers\n9 packages / 44,184 cbm\nGross weight: 24 600 kgs",
+      "invoice_value": "REDWOOD\nKD, L/P\nV 50x200\nVI 50x250\nVI 38x225\nLot 4B\n1x40'HC Containers\n9 packages / 44,184 cbm\nGross weight: 24 600 kgs",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "NO_ARTICLE_NUMBERS_IN_CERTIFICATE"
+          "outcome": "NO_ARTICLE_NUMBER_IN_CERTIFICATE"
         },
         {
           "rule_id": "4.3.3",
@@ -109,68 +113,72 @@
         {
           "rule_id": "4.3.4",
           "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.3.8",
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet innehåller ingen artikelnummerstyrd verifiering, så kontrollen sker via textmatchning. Den identitetsbärande huvudbeteckningen 'REDWOOD' återfinns exakt i fakturan, och även de logistiska uppgifterna 'Lot 4B', '1x40'HC Containers' och 'Gross weight: 24 600 kgs' återfinns i fakturan. Fakturans ytterligare specifikationer ('KD, L/P' och dimensionsrader) är kompletterande information och motsäger inte certifikatet."
+      "motivation": "Certifikatet saknar artikelnummer, så verifieringen sker via kontrollerad textmatchning. Den identitetsbärande huvudbeteckningen 'REDWOOD' återfinns exakt i fakturan, och övriga uppgifter i certifikatet ('Lot 4B', '1x40´HC Containers', '9 packages', 'Gross weight: 24 600 kgs') är förenliga med fakturans varubeskrivning. Fakturans ytterligare dimensionsrader är extra information och motsäger inte certifikatets beskrivning."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.98,
+      "confidence": 0.97,
       "certificate_value": "44,184 CBM",
       "invoice_value": "9 packages / 44,184 cbm",
       "rules_applied": [
         {
           "rule_id": "4.4.2.1",
-          "outcome": "BOX_7_SELECTED_AS_GOVERNING_QUANTITY"
-        },
-        {
-          "rule_id": "4.4.1",
-          "outcome": "MATCH"
+          "outcome": "BOX_7_SELECTED"
         },
         {
           "rule_id": "4.4.3",
           "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.4.6",
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Den verifieringsgrundande kvantiteten i certifikatet är box 7: '44,184 CBM'. Samma numeriska värde återfinns uttryckligen i fakturan som '44,184 cbm'. Att certifikatet också nämner 'Gross weight: 24 600 kgs' i box 6 påverkar inte kvantitetskontrollen eftersom box 7 enligt reglerna är styrande."
+      "motivation": "Enligt regeln ska verifieringen utgå från kvantitetsfältet i box 7. Certifikatet anger där '44,184 CBM', och samma numeriska värde och enhet återfinns uttryckligen i fakturan som '9 packages / 44,184 cbm'. Övriga kvantitetsuppgifter i box 6 användes inte som verifieringsgrundande eftersom box 7 innehåller ett explicit värde."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.99,
       "certificate_value": "SWEDEN",
-      "invoice_value": "Country of origin\nSweden",
+      "invoice_value": "Country of origin\nSweden\nMADE IN SWEDEN",
       "rules_applied": [
         {
           "rule_id": "4.5.1",
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.5.2",
+          "rule_id": "4.5.4",
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.5.4",
+          "rule_id": "4.5.5",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger ursprungsland 'SWEDEN'. Fakturan innehåller ett explicit ursprungsfält 'Country of origin' med värdet 'Sweden'. Detta är en direkt och entydig verifiering av samma ursprungsland."
+      "motivation": "Certifikatet anger ursprungsland 'SWEDEN'. Fakturan innehåller ett explicit origin-fält 'Country of origin Sweden' och dessutom texten 'MADE IN SWEDEN'. Ursprungslandet kan därför uttryckligen identifieras i fakturan utan tolkning."
     }
   },
   "overall_assessment": {
     "comparison_result": "IDENTICAL",
     "workflow_recommendation": "AUTO_APPROVAL_ELIGIBLE",
     "auto_approval_eligible": true,
-    "confidence": 0.98,
+    "confidence": 0.97,
     "critical_failures": [],
     "manual_review_triggers": [],
-    "decision_summary": "Dokument A klassificerades som certifikatfil och dokument B som separat fakturafil. Sida 2 i certifikatfilen innehåller en inbäddad fakturakopia, men enligt filbaserad dokumentparning användes endast den separata fakturan i dokument B för verifieringen. Parningsvalideringen passerades genom att både consignor och consignee från certifikatet återfinns i fakturan, och samtliga fem kontrollpunkter verifierades som MATCH.",
-    "human_explanation": "Certifikatet och den separata fakturan avser samma avsändare, samma mottagare, samma vara, samma mängd och samma ursprungsland. Verifieringen gjordes mot den separata fakturafilen och inte mot den inbäddade fakturakopian i certifikatfilen. Dokumentparet kan godkännas automatiskt."
+    "decision_summary": "Dokumentparet har verifierats som certifikat mot separat fakturafil. Certifikatfilen innehåller även en inbäddad fakturakopia, men verifieringen har enligt parningsregeln utförts mot den separata fakturafilen, som bär samma fakturanummer 921007398 och bekräftar consignor, consignee, varubeskrivning, kvantitet och ursprungsland. Samtliga tillämpliga kontrollpunkter är MATCH med confidence över godkännandegolvet.",
+    "human_explanation": "Alla relevanta uppgifter i ursprungscertifikatet kan återfinnas i fakturan. Avsändare, mottagare, varubeskrivning, mängd och ursprungsland stämmer överens. Dokumentparet kan därför godkännas automatiskt."
   },
   "_meta": {
-    "tested_at": "2026-04-01T13:04:33.825623+00:00",
-    "prompt_hash": "9b9df42642d8",
+    "tested_at": "2026-04-02T11:23:49.173996+00:00",
+    "prompt_hash": "f81eb9b0d2ea",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P053_MATCH",

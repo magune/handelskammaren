@@ -1,0 +1,177 @@
+{
+  "schema_version": "3.0",
+  "metadata": {
+    "verification_timestamp": "2026-04-01T00:00:00Z",
+    "document_pair_id": null,
+    "certificate_issue_date": "2026-02-02",
+    "source_documents_received": 2
+  },
+  "task": {
+    "task_type": "customs_document_pair_verification",
+    "comparison_mode": "certificate_vs_invoice",
+    "strictness": "conservative"
+  },
+  "documents": {
+    "document_a": {
+      "label": "Document A",
+      "assumed_role": "certificate",
+      "document_type": "Certificate of Origin"
+    },
+    "document_b": {
+      "label": "Document B",
+      "assumed_role": "invoice",
+      "document_type": "Commercial Invoice"
+    }
+  },
+  "rule_activation": {
+    "lc_exception_active": false,
+    "lc_number_found": null,
+    "general_goods_description_with_invoice_reference_active": false,
+    "mixed_origins_rule_active": false,
+    "to_order_rule_active": false,
+    "quantity_exception_applied": null,
+    "eu_origin_normalization_active": true,
+    "activated_rules": [
+      {
+        "rule_id": "8.5.0",
+        "rule_name": "Filbaserad dokumentparning"
+      },
+      {
+        "rule_id": "8.6",
+        "rule_name": "Obligatorisk parningsvalidering"
+      },
+      {
+        "rule_id": "4.1.3.6",
+        "rule_name": "Förkortning av juridisk bolagsform"
+      },
+      {
+        "rule_id": "4.5.4.2",
+        "rule_name": "EU-medlemsland"
+      }
+    ]
+  },
+  "control_points": {
+    "consignor": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.92,
+      "certificate_value": "SKF Eurotrade\n415 50, GÖTEBORG\nSweden",
+      "invoice_value": "Issued by:\nSKF Eurotrade AB\n.\n415 50 Goteborg\nSweden\nVAT no: SE556206761001",
+      "rules_applied": [
+        {
+          "rule_id": "4.1.0",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.3.6",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.4",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatet anger consignor som \"SKF Eurotrade\" i Sverige. Fakturan anger utställaren som \"SKF Eurotrade AB\" i Sverige och namnet förekommer tydligt i fakturans header/issuer-block. Skillnaden består endast av juridisk bolagsform (AB), vilket är tillåten normalisering, och land Sverige verifieras explicit i adressen samt stöds av VAT-prefix SE."
+    },
+    "consignee": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.99,
+      "certificate_value": "EGYPTIAN ENGINEERING CO.\nB4 Piece 23-Industrial City\n7064518 10th of Ramadan city\nEgypt",
+      "invoice_value": "Bill to\nEGYPTIAN ENGINEERING CO.\nB4 Piece 23-Industrial City\n7064518 10th of Ramadan city\nEgypt",
+      "rules_applied": [
+        {
+          "rule_id": "4.2.0.2",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.2.3",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatets mottagare återfinns exakt i fakturans primära faktureringsfält \"Bill to\". Samma företagsnamn och samma land Egypt framgår även i \"Sold to\" och \"Ship to\". Ingen motsägelse finns."
+    },
+    "goods_description": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.91,
+      "certificate_value": "1 package of:\nHOUSING INCL BRG(SE)",
+      "invoice_value": "HOUSING INCL BRG",
+      "rules_applied": [
+        {
+          "rule_id": "4.3.2",
+          "outcome": "NO_ARTICLE_NUMBER_IN_CERTIFICATE"
+        },
+        {
+          "rule_id": "4.3.3",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.3.4",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Ingen artikelnummerstyrd verifiering behövde användas eftersom certifikatet inte anger något separat artikelnummer. Den identitetsbärande huvudbeteckningen \"HOUSING INCL BRG\" kan identifieras exakt i fakturan. Suffixet \"(SE)\" i certifikatet påverkar inte produktidentiteten och medför därför inte avvikelse."
+    },
+    "quantity": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.99,
+      "certificate_value": "Gross Weight:\n131,600 KG\nNet Weight:\n123,300 KG",
+      "invoice_value": "Total Gross Weight 131,600 KG\nTotal Net Weight 123,300 KG",
+      "rules_applied": [
+        {
+          "rule_id": "4.4.2.1",
+          "outcome": "BOX_7_VALUES_SELECTED"
+        },
+        {
+          "rule_id": "4.4.3.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.4.4",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatet innehåller två verifieringsgrundande viktuppgifter i kvantitetsfältet: 131,600 KG och 123,300 KG, motsvarande Gross Weight respektive Net Weight. Fakturan anger exakt samma totalvikter som \"Total Gross Weight 131,600 KG\" och \"Total Net Weight 123,300 KG\". Ingen toleransbedömning behövdes eftersom värdena överensstämmer exakt."
+    },
+    "origin": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.9,
+      "certificate_value": "Sweden",
+      "invoice_value": "Country of manufacturing\nSweden\nand\nthese products are of EU preferential origin",
+      "rules_applied": [
+        {
+          "rule_id": "4.5.4.2",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.5.5",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatet anger ursprungsland Sweden. Fakturan innehåller dels \"Country of manufacturing Sweden\", dels ett uttryckligt ursprungsuttalande på sida 4: \"these products are of EU preferential origin\". Eftersom Sweden är ett specifikt EU-medlemsland och fakturan uttryckligen anger EU-ursprung är ursprunget verifierat."
+    }
+  },
+  "overall_assessment": {
+    "comparison_result": "IDENTICAL",
+    "workflow_recommendation": "AUTO_APPROVAL_ELIGIBLE",
+    "auto_approval_eligible": true,
+    "confidence": 0.96,
+    "critical_failures": [],
+    "manual_review_triggers": [],
+    "decision_summary": "Dokumentrollen kunde klassificeras tydligt som ursprungscertifikat respektive faktura. Parningsvalideringen passerar eftersom certifikatet och fakturan delar fakturanummer 8500028201 samt samma consignor och consignee. Samtliga tillämpliga kontrollpunkter är MATCH och varje matchning har confidence minst 0.85.",
+    "human_explanation": "Alla kontrollerbara uppgifter i ursprungscertifikatet kan återfinnas i fakturan. Avsändare, mottagare, varubeskrivning, vikter 131,600 KG och 123,300 KG samt ursprung Sweden/EU stämmer överens. Dokumentparet kan därför godkännas automatiskt."
+  },
+  "_meta": {
+    "tested_at": "2026-04-01T14:13:26.612917+00:00",
+    "prompt_hash": "9b9df42642d8",
+    "model": "gpt-5.4",
+    "tier": 2,
+    "pair": "P036_MATCH",
+    "expected": "IDENTICAL",
+    "actual": "IDENTICAL",
+    "status": "PASS"
+  }
+}

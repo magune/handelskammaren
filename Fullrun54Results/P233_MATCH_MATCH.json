@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-04-01T00:00:00Z",
+    "verification_timestamp": "2026-04-02T00:00:00Z",
     "document_pair_id": null,
     "certificate_issue_date": "2026-03-11",
     "source_documents_received": 2
@@ -15,12 +15,12 @@
     "document_a": {
       "label": "Document A",
       "assumed_role": "certificate",
-      "document_type": "certificate of origin"
+      "document_type": "Certificate of Origin"
     },
     "document_b": {
       "label": "Document B",
       "assumed_role": "invoice",
-      "document_type": "commercial invoice"
+      "document_type": "Invoice"
     }
   },
   "rule_activation": {
@@ -34,7 +34,7 @@
     "activated_rules": [
       {
         "rule_id": "8.5.0",
-        "rule_name": "Filbaserad dokumentparning"
+        "rule_name": "Filbaserad dokumentparning - certifikat från fil 1 och faktura från fil 2"
       },
       {
         "rule_id": "8.6",
@@ -42,11 +42,11 @@
       },
       {
         "rule_id": "4.1.0",
-        "rule_name": "Sökning efter consignor i alla fakturasidor"
+        "rule_name": "Koncernstruktur/sökning av consignor i all fakturatext"
       },
       {
         "rule_id": "4.5.4.2",
-        "rule_name": "EU-medlemsland och EU-samlingsbegrepp är verifierbara i båda riktningar"
+        "rule_name": "EU-medlemsland normalisering i båda riktningar"
       }
     ]
   },
@@ -54,84 +54,80 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.97,
+      "confidence": 0.96,
       "certificate_value": "VOLVO TRUCK CORPORATION\n405 08, GÖTEBORG\nSweden",
-      "invoice_value": "Postal address\nVolvo Truck Corporation\nS-405 08 Göteborg\nSweden",
+      "invoice_value": "Postal address \nVolvo Truck Corporation\nS-405 08 Göteborg\nSweden",
       "rules_applied": [
         {
+          "rule_id": "8.6",
+          "outcome": "PASS - minst ett parningskriterium uppfyllt via consignor och consignee"
+        },
+        {
           "rule_id": "4.1.0",
-          "outcome": "matched_consignor_name_found_in_invoice_text"
+          "outcome": "MATCH - certifikatets consignor återfinns uttryckligen i fakturans text"
         },
         {
           "rule_id": "4.1.2",
-          "outcome": "name_and_country_verified"
+          "outcome": "MATCH - företagsnamn och land verifierade i fakturan"
         },
         {
           "rule_id": "4.1.4",
-          "outcome": "country_match"
-        },
-        {
-          "rule_id": "4.1.5",
-          "outcome": "MATCH"
+          "outcome": "MATCH - Sweden/Sweden överensstämmer"
         }
       ],
-      "motivation": "Certifikatets consignor 'VOLVO TRUCK CORPORATION' kan identifieras uttryckligen i fakturan i säljar-/adressblocket på sida 1 och 2 som 'Volvo Truck Corporation'. Landet 'Sweden' framgår explicit i samma block. Ingen motstridig avsändaruppgift identifierades."
+      "motivation": "Certifikatet anger consignor som \"VOLVO TRUCK CORPORATION ... Sweden\". Samma företagsnamn återfinns uttryckligen i fakturan i adressblocket \"Postal address Volvo Truck Corporation S-405 08 Göteborg Sweden\". Landet Sverige framgår explicit i fakturan. Därmed kan certifikatets avsändare verifieras mot fakturan utan fri tolkning."
     },
     "consignee": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.93,
+      "confidence": 0.94,
       "certificate_value": "MARUBENI DAGITIM VE SERVIS A.S\nKUCUKBAKKALKOY MAH\nKAYISDAGI CAD ALLIANZ PLAZA BLOK N1\n34750 ISTANBUL\nTürkiye",
       "invoice_value": "Customer:\nMarubeni Dagitim Ve Servis A.S\nKucukbakkalkoy Mah.\nKayisdagi Cad. Allianz Plaza Blok N\n34750 ISTANBUL\nTurkey",
       "rules_applied": [
         {
           "rule_id": "4.2.0.2",
-          "outcome": "primary_billing_field_used"
-        },
-        {
-          "rule_id": "4.2.1",
-          "outcome": "customer_block_selected_as_primary_field"
+          "outcome": "MATCH - primärt faktureringsfält Customer används som auktoritativ mottagare"
         },
         {
           "rule_id": "4.2.2",
-          "outcome": "name_verified"
+          "outcome": "MATCH - mottagarens företagsnamn kan identifieras i fakturan"
         },
         {
           "rule_id": "4.2.3",
-          "outcome": "country_match_after_normalization"
+          "outcome": "MATCH - Türkiye/Turkey behandlas som samma land efter landnormalisering"
         },
         {
           "rule_id": "4.2.4",
-          "outcome": "MATCH"
+          "outcome": "MATCH - namn och land överensstämmer"
         }
       ],
-      "motivation": "Certifikatets mottagare återfinns i fakturans primära kund-/faktureringsfält som 'Marubeni Dagitim Ve Servis A.S'. Adressraderna motsvarar samma part och landet anges som 'Turkey', vilket verifierar certifikatets 'Türkiye' efter tillåten landnormalisering. Ingen annan fakturerad part motsäger denna identifiering."
+      "motivation": "Certifikatet anger mottagaren som \"MARUBENI DAGITIM VE SERVIS A.S ... 34750 ISTANBUL Türkiye\". Fakturans primära kund-/faktureringsfält anger \"Marubeni Dagitim Ve Servis A.S ... 34750 ISTANBUL Turkey\". Företagsnamnet är samma och landet överensstämmer efter normalisering av Türkiye/Turkey. Skillnaden att fakturan visar \"Blok N\" medan certifikatet visar \"Blok N1\" förändrar inte bedömningen eftersom gatuadress inte är avgörande när namn och land matchar."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.96,
       "certificate_value": "1 VOLVO FM42R RIGID TRUCK\nVOLVO TRUCK CHASSIS NO:\n551193",
-      "invoice_value": "EURO 6 STANDARDS\nVOLVO FM42R RIGID TRUCK\nVOLVO TYPE : VTC3R MODEL YEAR :2026\nFM-TRUCK 551193 /YV2XTW0A6TB551193",
+      "invoice_value": "EURO 6 STANDARDS\nVOLVO FM42R RIGID TRUCK\nVOLVO TYPE : VTC3R MODEL YEAR :2026\nFM-TRUCK 551193 / YV2XTW0A6TB551193",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "no_article_number_in_certificate_primary_text_match_used"
+          "outcome": "NO ARTICLE NUMBER PATH - inget separat artikelnummer i certifikatet användes som primär verifiering"
         },
         {
           "rule_id": "4.3.3",
-          "outcome": "identity_bearing_main_designation_matched"
+          "outcome": "MATCH - identitetsbärande huvudbeteckning identifierad i fakturan"
         },
         {
           "rule_id": "4.3.4",
-          "outcome": "additional_invoice_text_does_not_change_identity"
+          "outcome": "MATCH - extra tillägg i fakturan ändrar inte produktidentiteten"
         },
         {
           "rule_id": "4.3.8",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Den identitetsbärande huvudbeteckningen i certifikatet är 'VOLVO FM42R RIGID TRUCK', och denna text återfinns exakt i fakturans varubeskrivning. Certifikatets chassinummer '551193' kan också identifieras i fakturaraden 'FM-TRUCK 551193 /YV2XTW0A6TB551193'. Ytterligare text i fakturan, såsom 'EURO 6 STANDARDS' och modellår, motsäger inte varans identitet."
+      "motivation": "Den identitetsbärande huvudbeteckningen i certifikatet är \"VOLVO FM42R RIGID TRUCK\" och denna återfinns uttryckligen i fakturan. Certifikatet anger dessutom \"VOLVO TRUCK CHASSIS NO: 551193\" och fakturan innehåller motsvarande chassi/VIN-rad med \"FM-TRUCK 551193 / YV2XTW0A6TB551193\". Fakturans ytterligare uppgifter som \"EURO 6 STANDARDS\" och modellår 2026 är kompletterande information och motsäger inte certifikatets varubeskrivning."
     },
     "quantity": {
       "applicable": true,
@@ -141,45 +137,45 @@
       "invoice_value": "WEIGHT: 7147 KG",
       "rules_applied": [
         {
-          "rule_id": "4.4.2.1",
-          "outcome": "box_7_quantity_selected"
+          "rule_id": "4.4.2.2",
+          "outcome": "PASS - certifikatet anger ett enda viktvärde med kategori och enhet"
         },
         {
           "rule_id": "4.4.3",
-          "outcome": "numeric_value_identified_in_invoice"
+          "outcome": "MATCH - numeriskt värde 7147 identifierat i fakturan"
         },
         {
           "rule_id": "4.4.4",
-          "outcome": "weight_verified_against_total_weight_despite_label_difference"
+          "outcome": "MATCH - total vikt i fakturan får användas trots annan benämning än GW"
         },
         {
           "rule_id": "4.4.6",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets verifieringsgrundande kvantitet i box 7 är 'GW/7147 KG'. Fakturan innehåller den uttryckliga totalvikten 'WEIGHT: 7147 KG'. Numeriskt värde och viktenhet överensstämmer, och skillnaden mellan 'GW' i certifikatet och den generella etiketten 'WEIGHT' i fakturan medför inte i sig MISMATCH när samma totalvikt och enhet kan identifieras."
+      "motivation": "Certifikatet anger kvantiteten som \"GW/7147 KG\". Fakturan anger uttryckligen \"WEIGHT: 7147 KG\" för samma sändning. Det numeriska värdet och viktenheten överensstämmer exakt. Att fakturan använder den generella benämningen \"WEIGHT\" i stället för \"GW\" medför inte avvikelse när värdet entydigt avser den aktuella fakturan och försändelsen."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.92,
+      "confidence": 0.95,
       "certificate_value": "The European Community, Belgium",
-      "invoice_value": "COUNTRY OF ORIGIN: BELGIUM\nWE HEREBY CERTIFY THAT ... THE GOODS ARE OF BELGIAN ORIGIN.\n... DECLARE THAT THE GOODS ... ORIGINATE IN BELGIUM",
+      "invoice_value": "COUNTRY OF ORIGIN: BELGIUM\nWE HEREBY CERTIFY THAT ... THE GOODS ARE OF BELGIAN ORIGIN.\nEXPORTER'S DECLARATION ... THE GOODS ... ORIGINATE IN BELGIUM",
       "rules_applied": [
         {
           "rule_id": "4.5.1",
-          "outcome": "explicit_origin_field_found"
+          "outcome": "MATCH - ursprung framgår i explicit origin-fält i fakturan"
         },
         {
           "rule_id": "4.5.4.2",
-          "outcome": "eu_member_state_verifies_european_community"
+          "outcome": "MATCH - certifikatets EU/European Community verifieras av specifikt EU-medlemsland Belgium i fakturan"
         },
         {
           "rule_id": "4.5.5",
-          "outcome": "MATCH"
+          "outcome": "MATCH - varje ursprungsangivelse i certifikatet kan identifieras i fakturan"
         }
       ],
-      "motivation": "Certifikatet anger ursprung 'The European Community, Belgium'. Fakturan anger uttryckligen 'COUNTRY OF ORIGIN: BELGIUM' och innehåller dessutom två ytterligare explicita ursprungsuttalanden om belgiskt ursprung. 'Belgium' verifierar både det specifikt namngivna landet Belgium och EU-samlingsbegreppet 'The European Community' eftersom Belgium är en EU-medlemsstat."
+      "motivation": "Certifikatet anger ursprung som \"The European Community, Belgium\". Fakturan innehåller ett explicit ursprungsfält: \"COUNTRY OF ORIGIN: BELGIUM\" samt två ytterligare explicita ursprungsuttalanden om belgiskt ursprung. Belgien är ett EU-medlemsland, så certifikatets del \"The European Community\" verifieras genom fakturans specifika medlemsland enligt EU-normaliseringsregeln, och den specifika angivelsen \"Belgium\" matchar dessutom exakt."
     }
   },
   "overall_assessment": {
@@ -189,12 +185,12 @@
     "confidence": 0.94,
     "critical_failures": [],
     "manual_review_triggers": [],
-    "decision_summary": "Samtliga tillämpliga kontrollpunkter kan verifieras mot fakturan: consignor, consignee, varubeskrivning, kvantitet och ursprungsland.",
-    "human_explanation": "Certifikatet och fakturan avser samma avsändare, mottagare, vara, vikt och ursprung. Volvo Truck Corporation/Sweden, Marubeni Dagitim Ve Servis A.S/Turkey, VOLVO FM42R RIGID TRUCK, 7147 KG och Belgium kan alla identifieras i fakturan. Dokumentparet kan godkännas automatiskt."
+    "decision_summary": "Dokumentparet har kunnat klassificeras och paras korrekt som Certificate of Origin respektive invoice. LC-undantaget är inte tillämpligt. Samtliga fem tillämpliga kontrollpunkter—consignor, consignee, varubeskrivning, kvantitet och ursprungsland—är verifierade som MATCH mot den separata fakturafilen. Ingen tillämplig kontrollpunkt har MISMATCH eller MANUAL_REVIEW, och samtliga MATCH-bedömningar ligger över confidence-golvet för automatiskt godkännande.",
+    "human_explanation": "Certifikatet och fakturan avser samma leverans från Volvo Truck Corporation till Marubeni Dagitim Ve Servis A.S. Varubeskrivningen för Volvo FM42R rigid truck, vikten 7147 KG och ursprunget Belgien kan verifieras i fakturan. Dokumentparet kan därför godkännas automatiskt."
   },
   "_meta": {
-    "tested_at": "2026-04-01T12:52:36.780969+00:00",
-    "prompt_hash": "9b9df42642d8",
+    "tested_at": "2026-04-02T11:06:44.038591+00:00",
+    "prompt_hash": "f81eb9b0d2ea",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P233_MATCH",

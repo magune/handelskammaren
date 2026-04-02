@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-04-01T00:00:00Z",
+    "verification_timestamp": "2026-04-02T00:00:00Z",
     "document_pair_id": null,
     "certificate_issue_date": "2023-04-27",
     "source_documents_received": 2
@@ -20,7 +20,7 @@
     "document_b": {
       "label": "Document B",
       "assumed_role": "invoice",
-      "document_type": "Commercial Invoice"
+      "document_type": "Invoice"
     }
   },
   "rule_activation": {
@@ -33,16 +33,16 @@
     "eu_origin_normalization_active": true,
     "activated_rules": [
       {
-        "rule_id": "8.5.2",
-        "rule_name": "Certifikatets fakturareferens måste återfinnas i separat fakturafil"
-      },
-      {
         "rule_id": "8.6",
-        "rule_name": "Obligatorisk parningsvalidering"
+        "rule_name": "Parningsvalidering passerad via consignor-identifiering i fakturan"
       },
       {
-        "rule_id": "4.5.4.1",
-        "rule_name": "EU-normalisering för ursprung"
+        "rule_id": "4.5.4.2",
+        "rule_name": "EU-medlemsland och EU-samlingsbegrepp normalisering för ursprung"
+      },
+      {
+        "rule_id": "4.4.3.1",
+        "rule_name": "Uttrycklig motsägelse mellan certifikatets och fakturans viktvärden"
       }
     ]
   },
@@ -52,7 +52,7 @@
       "status": "MATCH",
       "confidence": 0.99,
       "certificate_value": "Bakels Sweden AB\nBox 13099\n40252, Gothenburg\nSverige",
-      "invoice_value": "Bakels Sweden AB\nvon Utfallsgatan 26-30\nSE-40252 Gothenburg\nSweden\nVAT registration number SE556042136301",
+      "invoice_value": "Bakels Sweden AB\nvon Utfallsgatan 26-30\nSE-40252 Gothenburg\nSweden",
       "rules_applied": [
         {
           "rule_id": "4.1.0",
@@ -63,115 +63,128 @@
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.1.5",
+          "rule_id": "4.1.4",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor 'Bakels Sweden AB' återfinns uttryckligen i fakturans adress-/issuerblock. Landet Sverige verifieras direkt genom adressen 'Sweden' och stöds även av VAT-prefix 'SE'."
+      "motivation": "Certifikatets consignor 'Bakels Sweden AB' återfinns uttryckligen i fakturans utställaruppgifter. Landet framgår som Sweden/Sverige i båda dokumenten. Skillnader i gatuadress påverkar inte utfallet eftersom företagsnamn och land är verifierade."
     },
     "consignee": {
       "applicable": true,
-      "status": "MANUAL_REVIEW",
-      "confidence": 0.42,
+      "status": "MISMATCH",
+      "confidence": 0.99,
       "certificate_value": "CBL Foods International (PVT) Ltd\nP.O. Box 1\nHabarakada Road\nRANALA\nSRI LANKA",
-      "invoice_value": "Invoice number SI309039\nDelivery address / Business address:\nNational Food Company\nCake Division (AMERICANA)\nSA21543 Jeddah\nSaudi Arabia",
+      "invoice_value": "Delivery address / Business address:\nNational Food Company\nCake Division (AMERICANA)\nSA21543 Jeddah\nSaudi Arabia",
       "rules_applied": [
         {
-          "rule_id": "8.5.2",
-          "outcome": "MANUAL_REVIEW"
+          "rule_id": "4.2.0.2",
+          "outcome": "secondary fields reviewed because no clear bill-to field"
         },
         {
-          "rule_id": "8.6",
-          "outcome": "PAIRING_PARTIALLY_VALID_BY_CONSIGNOR_ONLY"
+          "rule_id": "4.2.1.1",
+          "outcome": "MISMATCH"
+        },
+        {
+          "rule_id": "4.2.3",
+          "outcome": "MISMATCH"
+        },
+        {
+          "rule_id": "4.2.4",
+          "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Certifikatet hänvisar uttryckligen till faktura SI309081, men den separata fakturafilen innehåller faktura SI309039. Eftersom den refererade fakturan inte återfinns i fakturafilen kan mottagaren inte verifieras mot det avsedda dokumentparet med teknisk säkerhet."
+      "motivation": "Certifikatets consignee är 'CBL Foods International (PVT) Ltd' i Sri Lanka. Denna part kan inte identifieras i fakturan; fakturan visar i stället 'National Food Company, Cake Division (AMERICANA), Saudi Arabia' i relevanta adressfält. Både företagsnamn och land avviker, vilket ger MISMATCH."
     },
     "goods_description": {
       "applicable": true,
-      "status": "MANUAL_REVIEW",
-      "confidence": 0.41,
-      "certificate_value": "20 pallets\n20 pallets Colco stuffed into one 20 ft container with no: EITU 034629-7\nSeal no: 0928060\nBakery Ingredients",
-      "invoice_value": "Invoice number SI309039\n692023 Cake Flavour K2000 Lemon\n225715 Jilk 60\nWe hereby certify that the goods are of Swedish origin.",
+      "status": "MISMATCH",
+      "confidence": 0.97,
+      "certificate_value": "Bakery Ingredients\nRemarks: Invoice SI309081",
+      "invoice_value": "Invoice number SI309039\nItems: Cake Flavour K2000 Lemon; Jilk 60",
       "rules_applied": [
         {
-          "rule_id": "8.5.2",
-          "outcome": "MANUAL_REVIEW"
+          "rule_id": "4.3.5",
+          "outcome": "MISMATCH"
         },
         {
-          "rule_id": "4.3.2",
-          "outcome": "NO_ARTICLE_NUMBERS_IN_CERTIFICATE"
+          "rule_id": "8.5.2.1",
+          "outcome": "MISMATCH"
         },
         {
-          "rule_id": "4.3.3",
-          "outcome": "NOT_FINALIZED_DUE_TO_PAIRING_BLOCKER"
+          "rule_id": "4.3.8",
+          "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Varubeskrivningen kan inte slutligt verifieras eftersom certifikatet refererar till en annan faktura än den som finns i fakturafilen. Under parningsregeln får systemet inte använda SI309039 som ersättning för den uttryckligen refererade fakturan SI309081."
+      "motivation": "Certifikatet använder en generell varubeskrivning och hänvisar till 'Invoice SI309081'. Den bifogade fakturan har fakturanummer 'SI309039', alltså ett helt annat nummer, och certifikatet anger dessutom inte något fakturadatum för att uppfylla kravet för generell varubeskrivning med fakturareferens. Därför kan varubeskrivningen inte verifieras enligt reglerna."
     },
     "quantity": {
       "applicable": true,
-      "status": "MANUAL_REVIEW",
-      "confidence": 0.4,
+      "status": "MISMATCH",
+      "confidence": 0.99,
       "certificate_value": "9600 kg net\n10400 kg gross",
-      "invoice_value": "Net weight: 19 908 kg\nGross weight: 21 028 kg\nQuantity 19,809.00",
+      "invoice_value": "Net weight: 19 908 kg\nGross weight: 21 028 kg",
       "rules_applied": [
         {
-          "rule_id": "8.5.2",
-          "outcome": "MANUAL_REVIEW"
+          "rule_id": "4.4.2.1",
+          "outcome": "box 7 values selected as verifieringsgrund"
         },
         {
-          "rule_id": "4.4.2.1",
-          "outcome": "CERTIFICATE_BOX_7_IDENTIFIED"
+          "rule_id": "4.4.3.1",
+          "outcome": "MISMATCH"
+        },
+        {
+          "rule_id": "4.4.6",
+          "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Kvantiteten i certifikatet avser den faktura som uttryckligen anges som SI309081. Eftersom fakturafilen endast innehåller SI309039 kan kvantiteten inte verifieras mot det avsedda oberoende fakturadokumentet med teknisk säkerhet."
+      "motivation": "Certifikatets verifieringsgrundande kvantiteter i box 7 är 9600 kg net och 10400 kg gross. Fakturan anger uttryckligen Net weight 19 908 kg och Gross weight 21 028 kg. Dessa värden motsäger certifikatets viktuppgifter och avviker långt utanför tillåten tolerans, vilket ger MISMATCH."
     },
     "origin": {
       "applicable": true,
-      "status": "MANUAL_REVIEW",
-      "confidence": 0.46,
+      "status": "MATCH",
+      "confidence": 0.88,
       "certificate_value": "EC; SWEDEN",
-      "invoice_value": "Origin: SWE\nWe hereby certify that this invoice is true and correct and that the goods are of Swedish origin.",
+      "invoice_value": "Origin: SWE\nWe hereby certify that the goods are of Swedish origin.",
       "rules_applied": [
         {
-          "rule_id": "8.5.2",
-          "outcome": "MANUAL_REVIEW"
+          "rule_id": "4.5.1",
+          "outcome": "explicit origin statement found"
         },
         {
-          "rule_id": "4.5.4.1",
-          "outcome": "POTENTIALLY_SUPPORTIVE"
+          "rule_id": "4.5.4.2",
+          "outcome": "MATCH"
         },
         {
-          "rule_id": "4.5.4.2.1",
-          "outcome": "POTENTIALLY_SUPPORTIVE"
+          "rule_id": "4.5.5",
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Den bifogade fakturan innehåller uppgifter om svenskt ursprung som skulle kunna stödja certifikatets 'EC; SWEDEN'. Slutsatsen kan ändå inte fastställas automatiskt eftersom certifikatet uttryckligen hänvisar till faktura SI309081 och denna faktura inte finns i fakturafilen."
+      "motivation": "Certifikatet anger ursprung 'EC; SWEDEN'. Fakturan anger explicit 'Origin: SWE' samt att varorna är av Swedish origin. Sweden/SWE verifierar det namngivna landet Sweden, och EU/EC kan verifieras genom att fakturan anger ett specifikt EU-medlemsland."
     }
   },
   "overall_assessment": {
-    "comparison_result": "MANUAL_REVIEW",
+    "comparison_result": "NOT_IDENTICAL",
     "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
     "auto_approval_eligible": false,
-    "confidence": 0.44,
-    "critical_failures": [],
-    "manual_review_triggers": [
-      "Certifikatet hänvisar till faktura SI309081.",
-      "Den separata fakturafilen innehåller endast faktura SI309039.",
-      "Regel 8.5.2 kräver manuell hantering när refererad faktura inte återfinns i fakturafilen."
+    "confidence": 0.98,
+    "critical_failures": [
+      "Certifikatet hänvisar till faktura SI309081 medan bifogad faktura är SI309039.",
+      "Consignee i certifikatet (CBL Foods International (PVT) Ltd, Sri Lanka) kan inte identifieras i fakturan, som i stället visar National Food Company, Saudi Arabia.",
+      "Kvantiteterna 9600 kg net och 10400 kg gross i certifikatet motsägs uttryckligen av fakturans 19 908 kg net och 21 028 kg gross.",
+      "Varubeskrivningen kan inte verifieras via regeln för generell varubeskrivning eftersom fakturareferensen inte stämmer och fakturadatum saknas i certifikatet."
     ],
-    "decision_summary": "Dokumentrollen kunde klassificeras och consignor kunde verifieras, men dokumentparningen blockerades eftersom certifikatet refererar till en annan faktura än den som finns i den separata fakturafilen. Därför kan slutlig verifiering av mottagare, varubeskrivning, kvantitet och ursprung inte göras mot rätt oberoende faktura.",
-    "human_explanation": "Certifikatet hänvisar till faktura SI309081, men den bifogade fakturan har nummer SI309039. Därför går det inte att säkerställa att rätt faktura har bifogats för verifiering. Manuell granskning krävs."
+    "manual_review_triggers": [],
+    "decision_summary": "Dokumentparet är inte identiskt. Consignor och ursprungsland kan verifieras, men consignee, varubeskrivning/fakturareferens och kvantitet ger tydliga avvikelser mot den bifogade fakturan.",
+    "human_explanation": "Certifikatet hänvisar till faktura SI309081 medan den bifogade fakturan är SI309039. Mottagaren i certifikatet är CBL Foods International (PVT) Ltd i Sri Lanka, men fakturan avser National Food Company i Saudiarabien, och vikterna 9600/10400 kg stämmer inte med fakturans 19908/21028 kg. Därför kan dokumentparet inte godkännas."
   },
   "_meta": {
-    "tested_at": "2026-04-01T14:07:23.240102+00:00",
-    "prompt_hash": "9b9df42642d8",
+    "tested_at": "2026-04-02T11:36:29.841728+00:00",
+    "prompt_hash": "f81eb9b0d2ea",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P090_MISMATCH",
     "expected": "NOT_IDENTICAL",
-    "actual": "MANUAL_REVIEW",
-    "status": "REVIEW"
+    "actual": "NOT_IDENTICAL",
+    "status": "PASS"
   }
 }

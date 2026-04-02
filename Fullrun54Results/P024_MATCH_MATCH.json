@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": null,
+    "verification_timestamp": "2026-04-02T00:00:00Z",
     "document_pair_id": null,
     "certificate_issue_date": "2026-02-02",
     "source_documents_received": 2
@@ -15,12 +15,12 @@
     "document_a": {
       "label": "Document A",
       "assumed_role": "certificate",
-      "document_type": "Certificate of Origin"
+      "document_type": "Certificate of Origin (bilingual English/Swedish, image-based but readable)"
     },
     "document_b": {
       "label": "Document B",
       "assumed_role": "invoice",
-      "document_type": "Commercial Invoice"
+      "document_type": "Commercial Invoice (English, text-based PDF)"
     }
   },
   "rule_activation": {
@@ -34,15 +34,19 @@
     "activated_rules": [
       {
         "rule_id": "8.6",
-        "rule_name": "Parningsvalidering passerad via consignor/consignee/orderreferens"
+        "rule_name": "Parningsvalidering godkänd via consignor och consignee i fakturan"
       },
       {
-        "rule_id": "4.1.0",
-        "rule_name": "Consignor hittad uttryckligen i fakturans header"
+        "rule_id": "4.1.3.6",
+        "rule_name": "Förkortning/utelämnande av juridisk bolagsform för consignor"
+      },
+      {
+        "rule_id": "4.2.2.1.1.1",
+        "rule_name": "Efterföljande kort layout-/OCR-fragment i certifikatets mottagarnamn"
       },
       {
         "rule_id": "4.5.4.2",
-        "rule_name": "EU-medlemsland ↔ EU-normalisering för ursprung"
+        "rule_name": "EU-medlemsland/EU-normalisering för ursprungsland"
       }
     ]
   },
@@ -50,16 +54,12 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.94,
+      "confidence": 0.95,
       "certificate_value": "Nouryon Functional Chemicals\nGamlestadsvägen 18 B\n41502, Göteborg\nSWEDEN",
-      "invoice_value": "Nouryon Functional Chemicals AB\nBOX 47067\n402 58 Goteborg\nSweden",
+      "invoice_value": "Nouryon Functional\nChemicals AB\nBOX 47067\n402 58 Goteborg\nSweden",
       "rules_applied": [
         {
-          "rule_id": "4.1.0",
-          "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.1.2.1",
+          "rule_id": "8.6",
           "outcome": "MATCH"
         },
         {
@@ -67,93 +67,89 @@
           "outcome": "MATCH"
         },
         {
+          "rule_id": "4.1.2.1",
+          "outcome": "MATCH"
+        },
+        {
           "rule_id": "4.1.4",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor-namn 'Nouryon Functional Chemicals' kan identifieras uttryckligen i fakturans header som 'Nouryon Functional Chemicals AB' på fakturans sidor. Skillnaden avser endast bolagsform ('AB'), vilket är tillåten normalisering. Landet Sverige framgår explicit i fakturaadressen."
+      "motivation": "Certifikatet anger consignor som \"Nouryon Functional Chemicals\" i Sverige. Fakturan identifierar utställaren som \"Nouryon Functional Chemicals AB\" med svensk adress och svensk VAT-prefix \"SE\". Skillnaden består endast av juridisk bolagsform/utelämnat \"AB\", vilket är tillåtet, och land Sverige kan verifieras i fakturan."
     },
     "consignee": {
       "applicable": true,
-      "status": "MISMATCH",
-      "confidence": 0.9,
+      "status": "MATCH",
+      "confidence": 0.87,
       "certificate_value": "Kimteks Kimya Tekstil Urunleri Ric\nBarbaros Mahallesi Begonya\nPolat Plaza B Blok 1B\nSokak No:7 Kat:4 9 A+Live Plaza\n34746 Istanbul\nTürkiye",
       "invoice_value": "Sold To 41166024\nKimteks Kimya Tekstil Urunleri\nBarbaros Mahallesi Begonya Sokak No:7 Kat:4 9 A+Live Plaza\n34746 ISTANBUL\nTÜRKIYE",
       "rules_applied": [
         {
-          "rule_id": "4.2.0.2",
-          "outcome": "PRIMARY_CANDIDATE_SELECTED"
+          "rule_id": "8.6",
+          "outcome": "MATCH"
         },
         {
-          "rule_id": "4.1.3.1",
-          "outcome": "MISMATCH"
+          "rule_id": "4.2.0.2",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.2.2.1.1.1",
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.2.3",
           "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.2.4",
-          "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Det närmaste relevanta mottagarfältet i fakturan är 'Sold To', som anger 'Kimteks Kimya Tekstil Urunleri'. Certifikatet anger 'Kimteks Kimya Tekstil Urunleri Ric'. Det extra ordet 'Ric' i certifikatets företagsnamn kan inte verifieras i fakturan och omfattas inte av någon tillåten namnnormalisering; därför kan samma juridiska part inte fastställas trots att adress och land i övrigt överensstämmer."
+      "motivation": "Certifikatets consignee kan identifieras i fakturans primära kundfält \"Sold To\". Namnkärnan \"Kimteks Kimya Tekstil Urunleri\" matchar exakt, medan det avslutande fragmentet \"Ric\" i certifikatet bedöms som ett kort avklippt/OCR-påverkat efterföljande fragment och påverkar inte identifieringen. Landet Türkiye/TÜRKIYE överensstämmer."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.98,
+      "confidence": 0.97,
       "certificate_value": "Bermocoll EBS 481 FQ\nBermocoll EHM EXTRA\nBERMOCOLL ML71\nBermocoll EM 7000 FQ\nBermocoll PRIME 2500\nBermocoll E230X",
       "invoice_value": "Bermocoll EBS 481 FQ\nBermocoll EHM EXTRA\nBERMOCOLL ML71\nBermocoll EM 7000 FQ\nBermocoll PRIME 2500\nBermocoll E230X",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "PRIORITY_2_TEXT_MATCH_USED"
+          "outcome": "NO_ARTICLE_NUMBERS_IN_CERTIFICATE"
         },
         {
           "rule_id": "4.3.3",
           "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.3.8",
-          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger sex produktbeteckningar och samtliga kan identifieras exakt i fakturans varurader: Bermocoll EBS 481 FQ, Bermocoll EHM EXTRA, BERMOCOLL ML71, Bermocoll EM 7000 FQ, Bermocoll PRIME 2500 och Bermocoll E230X. Ingen semantisk tolkning behövs."
+      "motivation": "Certifikatet listar sex specifika produktnamn. Samtliga sex produktnamn kan identifieras explicit i fakturan med samma ordalydelse. Ingen semantisk tolkning behövs och ingen annan motstridig varubeskrivning förekommer för dessa varor."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.97,
+      "confidence": 0.96,
       "certificate_value": "2.000,000 KG net\n2.000,000 KG net\n7.500,000 KG net\n3.000,000 KG net\n400,000 KG net\n750,000 KG net",
-      "invoice_value": "2.000,000 KG\n2.000,000 KG\n7.500,000 KG\n3.000,000 KG\n400,000 KG\n750,000 KG",
+      "invoice_value": "2.000,000 KG\n2.000,000 KG\n7.500,000 KG\n3.000,000 KG\n400,000 KG\n750,000 KG\n(Net Weight per corresponding item)",
       "rules_applied": [
         {
           "rule_id": "4.4.2.1",
-          "outcome": "BOX_7_USED"
+          "outcome": "BOX_7_USED_AS_VERIFICATION_BASIS"
         },
         {
           "rule_id": "4.4.3",
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.4.6",
+          "rule_id": "4.4.3.1",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets verifieringsgrundande kvantiteter i box 7 är sex nettotaler i KG. Varje värde kan identifieras uttryckligen i fakturan för motsvarande vara: 2.000,000 KG, 2.000,000 KG, 7.500,000 KG, 3.000,000 KG, 400,000 KG och 750,000 KG. Kvantiteterna överensstämmer utan behov av undantag eller beräkning."
+      "motivation": "Verifieringsgrundande kvantitet är box 7 i certifikatet. De sex nettovikterna i certifikatet återfinns explicit i fakturan som motsvarande kvantiteter/nettovikter för respektive produkt: 2.000,000 KG, 2.000,000 KG, 7.500,000 KG, 3.000,000 KG, 400,000 KG och 750,000 KG. Ingen avvikelse eller uttrycklig motsägelse finns."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.93,
+      "confidence": 0.89,
       "certificate_value": "Sweden EU",
       "invoice_value": "Country of Origin Sweden",
       "rules_applied": [
-        {
-          "rule_id": "4.5.1",
-          "outcome": "EXPLICIT_ORIGIN_FOUND"
-        },
         {
           "rule_id": "4.5.4.2",
           "outcome": "MATCH"
@@ -163,29 +159,27 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Fakturan anger uttryckligen 'Country of Origin Sweden' för varuraderna. Certifikatets ursprungsfält 'Sweden EU' verifieras genom att Sweden återfinns explicit i fakturan och EU-delen täcks av att Sweden är ett EU-medlemsland enligt EU-normaliseringen. Ingen motstridig icke-EU-ursprungsuppgift förekommer i fakturan."
+      "motivation": "Certifikatet anger ursprung som \"Sweden EU\". Fakturan anger explicit \"Country of Origin Sweden\" för varorna. Sverige verifieras direkt, och EU-delen är förenlig eftersom Sverige är ett EU-medlemsland. Fakturan innehåller ingen motstridig ursprungsuppgift."
     }
   },
   "overall_assessment": {
-    "comparison_result": "NOT_IDENTICAL",
-    "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
-    "auto_approval_eligible": false,
+    "comparison_result": "IDENTICAL",
+    "workflow_recommendation": "AUTO_APPROVAL_ELIGIBLE",
+    "auto_approval_eligible": true,
     "confidence": 0.93,
-    "critical_failures": [
-      "Consignee mismatch: certifikatet anger 'Kimteks Kimya Tekstil Urunleri Ric' medan fakturan anger 'Kimteks Kimya Tekstil Urunleri' i relevant mottagarfält."
-    ],
+    "critical_failures": [],
     "manual_review_triggers": [],
-    "decision_summary": "Dokumentparet är korrekt parat och avsändare, varubeskrivning, kvantitet samt ursprungsland kan verifieras mot fakturan. Mottagaren kan däremot inte verifieras som samma juridiska part eftersom certifikatets företagsnamn innehåller ett extra ord ('Ric') som inte återfinns i fakturans mottagarfält. Minst en tillämplig kontrollpunkt är därför MISMATCH och totalresultatet blir NOT_IDENTICAL.",
-    "human_explanation": "Avsändare, varor, mängder och ursprung kan verifieras mot fakturan. Certifikatet anger mottagaren som 'Kimteks Kimya Tekstil Urunleri Ric' medan fakturan anger 'Kimteks Kimya Tekstil Urunleri'. Därför är dokumenten inte identiska och behöver manuell hantering."
+    "decision_summary": "All applicable control points matched. Consignor, consignee, goods descriptions, quantities, and origin can be verified against the invoice using only allowed normalization.",
+    "human_explanation": "Avsändare, mottagare, varubeskrivning, mängder och ursprungsland kan verifieras mot fakturan. Certifikatet och fakturan avser samma leverans och uppgifterna stämmer överens. Dokumentparet är därför lämpligt för automatisk godkännandehantering."
   },
   "_meta": {
-    "tested_at": "2026-04-01T21:54:35.807331+00:00",
-    "prompt_hash": "9b9df42642d8",
+    "tested_at": "2026-04-02T11:23:49.161823+00:00",
+    "prompt_hash": "f81eb9b0d2ea",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P024_MATCH",
     "expected": "IDENTICAL",
-    "actual": "NOT_IDENTICAL",
-    "status": "FAIL"
+    "actual": "IDENTICAL",
+    "status": "PASS"
   }
 }

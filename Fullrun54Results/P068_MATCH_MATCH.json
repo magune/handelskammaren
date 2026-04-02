@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-04-01T00:00:00Z",
+    "verification_timestamp": "2026-04-02T00:00:00Z",
     "document_pair_id": null,
     "certificate_issue_date": "2026-02-26",
     "source_documents_received": 2
@@ -34,31 +34,19 @@
     "activated_rules": [
       {
         "rule_id": "8.5.0",
-        "rule_name": "Filbaserad dokumentparning: certifikat från fil 1 och faktura från fil 2"
+        "rule_name": "Filbaserad dokumentparning"
       },
       {
         "rule_id": "8.6",
-        "rule_name": "Parningsvalidering passerad via consignor och consignee i fakturan"
+        "rule_name": "Obligatorisk parningsvalidering"
       },
       {
         "rule_id": "4.1.0",
-        "rule_name": "Koncernstruktur / consignor återfinns uttryckligen i fakturan"
-      },
-      {
-        "rule_id": "4.3.3",
-        "rule_name": "Kontrollerad textmatchning av varubeskrivning"
-      },
-      {
-        "rule_id": "4.4.3.1",
-        "rule_name": "Flera kvantitetsuppgifter – minst en ska verifieras"
+        "rule_name": "Consignor via uttrycklig förekomst i fakturan"
       },
       {
         "rule_id": "4.5.4.1.1",
-        "rule_name": "Ytterligare EU-medlemsländer i fakturan vid namngivna länder i certifikatet"
-      },
-      {
-        "rule_id": "4.5.4.2",
-        "rule_name": "EU ↔ EU-medlemsland-normalisering"
+        "rule_name": "EU-normalisering med ytterligare EU-medlemsland i fakturan"
       }
     ]
   },
@@ -66,7 +54,7 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.94,
+      "confidence": 0.87,
       "certificate_value": "Borealis GmbH c/o Borealis AB\nIndustrivägen 3\n444 86, STENUNGSUND\nSweden",
       "invoice_value": "Exporter:\nBorealis GmbH, Vienna VAT ID No.: SE502065098101\nc/o Borealis AB\nSE - 444 86 STENUNGSUND, SWEDEN",
       "rules_applied": [
@@ -75,7 +63,7 @@
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.1.2",
+          "rule_id": "4.1.2.1",
           "outcome": "MATCH"
         },
         {
@@ -83,7 +71,7 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor kan identifieras uttryckligen i fakturans exporter-block. Företagsnamnet 'Borealis GmbH' och texten 'c/o Borealis AB' återfinns i fakturan, och landet Sweden/Sweden framgår explicit i samma block. Matchningen stöds av koncernstrukturregeln eftersom consignor-namnet förekommer direkt i fakturatexten."
+      "motivation": "Certifikatets consignor-namn återfinns uttryckligen i fakturans exportörsblock på sida 2 som \"Borealis GmbH ... c/o Borealis AB ... SWEDEN\". Det uppfyller sökkravet i hela fakturaunderlaget enligt 4.1.0, och landet Sverige stöds både av adressen \"SWEDEN\" och SE-prefix i VAT-numret. Att fakturans issuer-block även innehåller Wien/Austria hindrar inte matchning eftersom samma consignor uttryckligen identifieras i ett annat tydligt block i fakturan."
     },
     "consignee": {
       "applicable": true,
@@ -97,7 +85,7 @@
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.2.2",
+          "rule_id": "4.2.2.1",
           "outcome": "MATCH"
         },
         {
@@ -105,35 +93,35 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignee återfinns i fakturans primära kund-/faktureringsfält. Företagsnamnet är samma efter tillåten normalisering av radbrytning och interpunktion, och landet Türkiye överensstämmer exakt. Leveransadress och kundadress i fakturan bekräftar samma part ytterligare."
+      "motivation": "Certifikatets consignee återfinns direkt i fakturans primära kund-/faktureringsfält på sida 1. Företagsnamn, stad och land överensstämmer efter tillåten normalisering av radbrytningar och mindre formateringsskillnader (\"N:20\"/\"NO:20\"). Ingen motstridig mottagare anges."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.97,
+      "confidence": 0.98,
       "certificate_value": "Visico LE4423 Borealis Octabin LD Polyethylene\nAmbicat LE4476 Bag Catalyst masterbatch\nAmbicat LE4472 Bag Catalyst masterbatch",
       "invoice_value": "Visico LE4423 Borealis Octabin LD Polyethylene\nAmbicat LE4476 Bag Catalyst masterbatch\nAmbicat LE4472 Bag Catalyst masterbatch",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "Priority 2 used; no article number comparison required"
+          "outcome": "MATCH"
         },
         {
-          "rule_id": "4.3.3",
+          "rule_id": "4.3.6",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Varubeskrivningarna i certifikatet kan identifieras exakt i fakturans radspecifikationer. Samtliga tre identitetsbärande huvudbeteckningar förekommer i fakturan utan behov av semantisk tolkning. Därmed är varubeskrivningen verifierad genom kontrollerad textmatchning."
+      "motivation": "De identitetsbärande produktbeteckningarna LE4423, LE4476 och LE4472 med full varubeskrivning återfinns uttryckligen i fakturan. Artikel-/produktbeteckningarna matchar direkt utan semantisk tolkning. Att fakturan dessutom innehåller en extra rad för LE4476 med annan kvantitet utgör endast ytterligare information och motsäger inte att certifikatets tre angivna varor kan identifieras."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.98,
+      "confidence": 0.97,
       "certificate_value": "net 10.750,00KG\nnet 6.225,00 kg\nnet 2.500,00 kg",
       "invoice_value": "10.750,00 KG\n6.225,00 KG\n2.500,00 KG",
       "rules_applied": [
         {
-          "rule_id": "4.4.2",
+          "rule_id": "4.4.1",
           "outcome": "MATCH"
         },
         {
@@ -145,44 +133,40 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger tre explicita nettokvantiteter med enhet. Samma numeriska värden återfinns i fakturans tre produktrader: 10.750,00 KG, 6.225,00 KG och 2.500,00 KG. Ingen motsägande kvantitetsuppgift förekommer för dessa rader, så kvantitetskontrollen är uppfylld."
+      "motivation": "Samtliga tre numeriska nettovikter i certifikatet kan identifieras uttryckligen i fakturans varurader: 10.750,00 KG, 6.225,00 KG och 2.500,00 KG. Därmed är kontrollpunkten uppfylld enligt förekomstkontrollen utan behov av summering eller annat undantag. Den extra fakturaraden med 1.500,00 KG utgör inte en uttrycklig motsägelse mot något av certifikatets tre angivna värden."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.89,
+      "confidence": 0.9,
       "certificate_value": "European Community; Sweden",
-      "invoice_value": "Country of origin per rad: Sweden; Finland; Finland",
+      "invoice_value": "Country of origin\nSweden\nCountry of origin\nFinland",
       "rules_applied": [
         {
-          "rule_id": "4.5.1",
+          "rule_id": "4.5.4.2",
           "outcome": "MATCH"
         },
         {
           "rule_id": "4.5.4.1.1",
           "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.5.4.2",
-          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger 'European Community; Sweden'. Fakturan anger explicit ursprung per rad i origin-kolumnen: Sweden för en artikel och Finland för två artiklar. Sweden kan identifieras uttryckligen i fakturan, och European Community verifieras genom att fakturan innehåller EU-medlemsländer som ursprung; det extra landet Finland är också ett EU-land och skapar därför ingen motsägelse."
+      "motivation": "Certifikatet anger både samlingsbegreppet \"European Community\" och det specifika landet \"Sweden\". Fakturan anger uttryckligen ursprung per rad som \"Sweden\" och \"Finland\"; Sweden verifierar det specifikt namngivna landet, och Finland är ett ytterligare EU-medlemsland som är tillåtet när certifikatet samtidigt anger European Community. Inga icke-EU-ursprung förekommer i fakturan."
     }
   },
   "overall_assessment": {
     "comparison_result": "IDENTICAL",
     "workflow_recommendation": "AUTO_APPROVAL_ELIGIBLE",
     "auto_approval_eligible": true,
-    "confidence": 0.95,
+    "confidence": 0.92,
     "critical_failures": [],
     "manual_review_triggers": [],
-    "decision_summary": "Alla fem tillämpliga kontrollpunkter kan verifieras mot fakturan. Ingen LC-regel aktiveras och ingen motsägelse har identifierats. Dokumentparet är därför IDENTICAL och lämpligt för automatisk hantering.",
-    "human_explanation": "Alla relevanta uppgifter i ursprungscertifikatet kan verifieras mot den bifogade fakturan. Avsändare, mottagare, varubeskrivning, mängder och ursprung stämmer enligt tillåtna normaliseringar. Ärendet kan därför godkännas automatiskt."
+    "decision_summary": "Dokumentparet är giltigt parat och samtliga fem tillämpliga kontrollpunkter verifieras som MATCH. Consignor verifieras via exportörsblocket i fakturan, consignee återfinns direkt i kundfältet, varor och kvantiteter återfinns uttryckligen i fakturaraderna och ursprung verifieras via Sweden samt EU-normalisering för Finland som ytterligare EU-ursprung.",
+    "human_explanation": "Certifikatet och fakturan stämmer överens för avsändare, mottagare, varubeskrivning, mängd och ursprungsland. Avsändaren kunde verifieras via exportörsblocket i fakturan och övriga uppgifter återfinns direkt i fakturan. Dokumentparet kan därför godkännas automatiskt."
   },
   "_meta": {
-    "tested_at": "2026-04-01T17:41:39.925133+00:00",
-    "prompt_hash": "9b9df42642d8",
+    "tested_at": "2026-04-02T11:36:29.823517+00:00",
+    "prompt_hash": "f81eb9b0d2ea",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P068_MATCH",

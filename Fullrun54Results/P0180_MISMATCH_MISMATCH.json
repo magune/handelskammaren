@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": null,
+    "verification_timestamp": "2026-04-02T00:00:00Z",
     "document_pair_id": null,
     "certificate_issue_date": "2025-01-27",
     "source_documents_received": 2
@@ -20,7 +20,7 @@
     "document_b": {
       "label": "Document B",
       "assumed_role": "invoice",
-      "document_type": "Commercial Invoice"
+      "document_type": "Invoice"
     }
   },
   "rule_activation": {
@@ -34,19 +34,19 @@
     "activated_rules": [
       {
         "rule_id": "8.5.0",
-        "rule_name": "Filbaserad dokumentparning"
+        "rule_name": "Standardregel två filer tillämpad: certifikat från fil 1 och faktura från fil 2"
       },
       {
         "rule_id": "8.6",
-        "rule_name": "Obligatorisk parningsvalidering"
+        "rule_name": "Parningsvalidering passerad genom consignor- och consignee-träff i fakturan"
       },
       {
         "rule_id": "4.1.0",
-        "rule_name": "Consignor-sökning i hela fakturan"
+        "rule_name": "Consignor identifierad uttryckligen i fakturans footer/headertext"
       },
       {
-        "rule_id": "4.4.2.1",
-        "rule_name": "Box 7 är verifieringsgrundande för kvantitet"
+        "rule_id": "4.4.5.7",
+        "rule_name": "Box 7 innehåller endast numeriskt styckantal utan enhet och matchas mot fakturarad med enhet"
       }
     ]
   },
@@ -56,7 +56,7 @@
       "status": "MATCH",
       "confidence": 0.98,
       "certificate_value": "Hammar Maskin AB\nBuagärde 36\n517 95, Olsfors\nSweden",
-      "invoice_value": "Hammar Maskin AB Buagärde 36 | SE-517 95 Olsfors, Sweden\nVAT no: SE556282502501\nIBAN: SE1780000803250032941445",
+      "invoice_value": "Hammar Maskin AB Buagärde 36 | SE-517 95 Olsfors, Sweden\nVAT no: SE556282502501",
       "rules_applied": [
         {
           "rule_id": "4.1.0",
@@ -71,14 +71,14 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor 'Hammar Maskin AB' återfinns uttryckligen i fakturans footer på sida 1. Landet Sverige verifieras både genom adressen 'SE-517 95 Olsfors, Sweden' och indirekta identifierare som VAT-prefix 'SE' och IBAN som börjar med 'SE'."
+      "motivation": "Certifikatets consignor 'Hammar Maskin AB' återfinns uttryckligen i fakturans footer som 'Hammar Maskin AB Buagärde 36 | SE-517 95 Olsfors, Sweden'. Landet Sverige verifieras både via adressen och VAT-prefixet 'SE'. Samma juridiska part och land kan därför identifieras i fakturan."
     },
     "consignee": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.97,
+      "confidence": 0.99,
       "certificate_value": "HAMMAR MASKIN (M) SDN BHD\nNo 41, LEBUH SULTAN MOHAMED 1\nKU 18, Tmn Perindustrian B.S.S\n42000 POT KLANG SELANGOR D.E\nMALAYSIA\nMalaysia",
-      "invoice_value": "Invoice address\nHammar Maskin (M) Sdn Bhd\nNo 41, Lebuh Sultan Mohamed 1/\nKU 18, Tmn Perindustrian B.S.S\n42000 Port Klang Selangor D.E\nMALAYSIA",
+      "invoice_value": "Invoice address\nHammar Maskin (M) Sdn Bhd\nNo 41,Lebuh Sultan Mohamed 1/\nKU 18, Tmn Perindustrian B.S.S\n42000 Port Klang Selangor D.E\nMALAYSIA",
       "rules_applied": [
         {
           "rule_id": "4.2.0.2",
@@ -97,19 +97,15 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignee återfinns i fakturans primära faktureringsfält 'Invoice address'. Namn, adresskärna och land Malaysia överensstämmer efter tillåten normalisering av versaler/gemener, skiljetecken och mindre OCR-/layoutskillnader som 'POT KLANG' kontra 'Port Klang'."
+      "motivation": "Fakturan innehåller ett primärt faktureringsfält ('Invoice address') med parten 'Hammar Maskin (M) Sdn Bhd', vilket motsvarar certifikatets consignee efter tillåten normalisering av versaler/gemener och mindre adressformatsskillnader. Landet Malaysia framgår uttryckligen i båda dokumenten. Därmed är mottagaren verifierad mot auktoritativt faktureringsfält."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.93,
-      "certificate_value": "HAMMAR CRANE KIT\n1 UNIT HAMMAR 195 S UL CRANE KIT WITH ID.NR #241813A19# AND #241813B19# COMPLETE WITH ACCESORIES\n*YEAR OF MANUFACTURING: 2024",
+      "confidence": 0.9,
+      "certificate_value": "HAMMAR CRANE KIT\n1 UNIT HAMMAR 195 S UL CRANE KIT WITH ID.NR #241813A19# \nAND #241813B19# COMPLETE WITH ACCESORIES\n*YEAR OF MANUFACTURING: 2024",
       "invoice_value": "Crane kit\nProduct record: YT995S241S8002130\nCrane kit information\nHammar 195 S UL\nVIN CODE #241813A19# & #241813B19#\nCOMPLETE WITH ACCESORIES\n*YEAR OF MANUFACTURING: 2024",
       "rules_applied": [
-        {
-          "rule_id": "4.3.2",
-          "outcome": "NO_ARTICLE_NUMBER_IN_CERTIFICATE"
-        },
         {
           "rule_id": "4.3.3",
           "outcome": "MATCH"
@@ -123,29 +119,29 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Varubeskrivningen kan verifieras genom flera exakta textträffar i fakturan: 'Crane kit', modellbeteckningen 'Hammar 195 S UL', båda VIN-koderna '#241813A19#' och '#241813B19#', samt fraserna 'COMPLETE WITH ACCESORIES' och '*YEAR OF MANUFACTURING: 2024'. Matchningen kan göras utan semantisk tolkning."
+      "motivation": "Den identitetsbärande varan kan verifieras genom kombinationen av 'Crane kit'/'HAMMAR CRANE KIT', modellbeteckningen 'Hammar 195 S UL' samt de exakta identifierarna '#241813A19#' och '#241813B19#'. Tilläggen 'COMPLETE WITH ACCESORIES' och '*YEAR OF MANUFACTURING: 2024' återfinns också i fakturan. Varubeskrivningen kan därför identifieras utan otillåten semantisk tolkning."
     },
     "quantity": {
       "applicable": true,
-      "status": "MISMATCH",
-      "confidence": 0.99,
-      "certificate_value": "1",
-      "invoice_value": "1,00 pcs",
+      "status": "MATCH",
+      "confidence": 0.86,
+      "certificate_value": "7 Quantity / Mängd: 1",
+      "invoice_value": "Pos. 10 HM02 Crane kit ... Qty 1,00 pcs",
       "rules_applied": [
-        {
-          "rule_id": "4.4.2",
-          "outcome": "MISMATCH"
-        },
         {
           "rule_id": "4.4.2.1",
           "outcome": "BOX_7_SELECTED"
         },
         {
+          "rule_id": "4.4.5.7",
+          "outcome": "MATCH"
+        },
+        {
           "rule_id": "4.4.6",
-          "outcome": "MISMATCH"
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets verifieringsgrundande kvantitet i box 7 är endast '1' och saknar uttrycklig enhet. Enligt reglerna måste både numeriskt värde och enhet framgå uttryckligen i samma uppgift. Det är inte tillåtet att ersätta box 7-värdet med '1 UNIT' från box 6, även om fakturan anger '1,00 pcs'."
+      "motivation": "Den verifieringsgrundande kvantiteten är box 7-värdet '1'. Även om enheten inte står uttryckligen i box 7 får numeriskt styckantal utan enhet godtas när motsvarande fakturarad kan identifieras entydigt; här kopplas värdet till raden 'Crane kit' med 'Qty 1,00 pcs'. Freight-raden med eget '1,00 pcs' avser inte certifikatets vara och inkluderas därför inte."
     },
     "origin": {
       "applicable": true,
@@ -167,29 +163,27 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets ursprungsland 'SWEDEN' återfinns uttryckligen i fakturan i ett dedikerat origin-fält: 'Country of origin: Sweden'."
+      "motivation": "Certifikatet anger ursprungsland 'SWEDEN'. Fakturan innehåller ett explicit ursprungsfält med texten 'Country of origin: Sweden'. Ursprungslandet kan därför uttryckligen identifieras i fakturan."
     }
   },
   "overall_assessment": {
-    "comparison_result": "NOT_IDENTICAL",
-    "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
-    "auto_approval_eligible": false,
-    "confidence": 0.97,
-    "critical_failures": [
-      "Kvantitetskontrollpunkten är MISMATCH eftersom certifikatets box 7 endast anger '1' utan uttrycklig enhet."
-    ],
+    "comparison_result": "IDENTICAL",
+    "workflow_recommendation": "AUTO_APPROVAL_ELIGIBLE",
+    "auto_approval_eligible": true,
+    "confidence": 0.93,
+    "critical_failures": [],
     "manual_review_triggers": [],
-    "decision_summary": "Dokumentparet är korrekt parat och consignor, consignee, varubeskrivning samt ursprungsland kan verifieras mot fakturan. Kvantitetskontrollpunkten faller dock på att certifikatets mängdfält (box 7) saknar uttrycklig enhet. Minst en tillämplig kontrollpunkt är därför MISMATCH, vilket medför NOT_IDENTICAL.",
-    "human_explanation": "Avsändare, mottagare, varubeskrivning och ursprungsland stämmer mot fakturan. Certifikatet anger dock mängden i mängdfältet som enbart '1' utan enhet, medan regelverket kräver att både antal och enhet framgår där. Därför kan dokumentparet inte godkännas automatiskt."
+    "decision_summary": "Dokumentparet är giltigt parat och samtliga tillämpliga kontrollpunkter är verifierade som MATCH. Consignor och consignee återfinns i fakturan, varubeskrivningen stöds av modellnamn och identifikationsnummer, box 7-kvantiteten '1' kan kopplas entydigt till fakturaraden för crane kit, och ursprungslandet Sweden framgår uttryckligen i fakturan. Inga LC-regler eller andra specialundantag som begränsar verifieringen är tillämpliga.",
+    "human_explanation": "Certifikatet och fakturan stämmer överens för avsändare, mottagare, vara, kvantitet och ursprungsland. Varubeskrivningen stöds av 'Hammar 195 S UL' samt VIN-koderna #241813A19# och #241813B19#. Dokumentparet kan därför godkännas automatiskt."
   },
   "_meta": {
-    "tested_at": "2026-04-01T21:51:47.291990+00:00",
-    "prompt_hash": "9b9df42642d8",
+    "tested_at": "2026-04-02T11:21:38.835657+00:00",
+    "prompt_hash": "f81eb9b0d2ea",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P0180_MISMATCH",
     "expected": "NOT_IDENTICAL",
-    "actual": "NOT_IDENTICAL",
-    "status": "PASS"
+    "actual": "IDENTICAL",
+    "status": "FAIL"
   }
 }

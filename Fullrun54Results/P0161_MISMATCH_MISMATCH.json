@@ -20,7 +20,7 @@
     "document_b": {
       "label": "Document B",
       "assumed_role": "invoice",
-      "document_type": "Commercial Invoice"
+      "document_type": "Commercial Invoice with continuation sheet and goods specification"
     }
   },
   "rule_activation": {
@@ -34,112 +34,186 @@
     "activated_rules": [
       {
         "rule_id": "8.5.0",
-        "rule_name": "Filbaserad dokumentparning"
+        "rule_name": "Certifikatet hämtas från certifikatfilen och fakturan från separat fakturafil"
       },
       {
-        "rule_id": "8.5.2",
-        "rule_name": "Fakturareferens i certifikatet vs fakturafilen"
+        "rule_id": "8.5.2.1",
+        "rule_name": "Helt avvikande fakturanummer i certifikat och fakturafil ger NOT_IDENTICAL"
+      },
+      {
+        "rule_id": "8.6",
+        "rule_name": "Obligatorisk parningsvalidering"
+      },
+      {
+        "rule_id": "4.1.3.1",
+        "rule_name": "Juridisk part måste kunna identifieras som samma juridiska namn"
+      },
+      {
+        "rule_id": "4.2.0.2",
+        "rule_name": "Prioritetsordning för consignee-identifiering"
+      },
+      {
+        "rule_id": "4.3.2",
+        "rule_name": "Varubeskrivning verifieras primärt via artikelnummer"
+      },
+      {
+        "rule_id": "4.4.2",
+        "rule_name": "Kvantitet i certifikatet ska ha numeriskt värde och enhet"
       },
       {
         "rule_id": "4.5.4.1",
-        "rule_name": "EU-normalisering"
+        "rule_name": "EU-normalisering för ursprungsland"
       }
     ]
   },
   "control_points": {
     "consignor": {
       "applicable": true,
-      "status": "MANUAL_REVIEW",
-      "confidence": 0.32,
+      "status": "MISMATCH",
+      "confidence": 0.9,
       "certificate_value": "Husqvarna Construction Products\nSE433 81, Partille\nSweden",
-      "invoice_value": "HUSQVARNA AB\n56182 HUSKVARNA Sweden",
+      "invoice_value": "HUSQVARNA AB\nEORI-NO: SE5560005331\n56182 HUSKVARNA Sweden",
       "rules_applied": [
         {
-          "rule_id": "8.5.2",
-          "outcome": "Referenced invoice 4753295 is not present in the invoice file; consignor verification against the intended invoice is technically impossible."
+          "rule_id": "8.6",
+          "outcome": "PASS - minst ett parningskriterium uppfyllt via consignor-kärna 'Husqvarna' i fakturan, men full consignor-verifiering kräver separat prövning"
+        },
+        {
+          "rule_id": "4.1.0",
+          "outcome": "NO_MATCH - certifikatets fulla consignor-namn 'Husqvarna Construction Products' kunde inte identifieras uttryckligen någonstans i fakturans sidor 1-3"
+        },
+        {
+          "rule_id": "4.1.0.1",
+          "outcome": "APPLIED - delad varumärkesprefix 'Husqvarna' räcker inte när juridiskt entitetsnamn skiljer sig"
+        },
+        {
+          "rule_id": "4.1.3.1",
+          "outcome": "MISMATCH - 'Husqvarna Construction Products' och 'HUSQVARNA AB' är inte samma verifierade juridiska namn"
         }
       ],
-      "motivation": "Certifikatet hänvisar uttryckligen till faktura 4753295 i fältet 'Attached invoices:4753295'. Fakturafilen innehåller endast faktura 4753137. Enligt parningsregeln får den bifogade fakturan 4753137 inte användas som ersättning för den refererade fakturan, därför kan consignor inte verifieras mot rätt oberoende faktura."
+      "motivation": "Certifikatet anger consignor som 'Husqvarna Construction Products' i Sverige. Fakturan anger säljaren som 'HUSQVARNA AB' i Sverige och sökning i fakturans tre sidor visar inte den exakta eller normaliserat motsvarande texten 'Husqvarna Construction Products'. Enligt reglerna får gemensamt varumärkesprefix 'Husqvarna' inte ensam användas för att likställa olika juridiska entiteter, därför blir kontrollpunkten MISMATCH trots att landet Sverige förekommer i båda dokumenten."
     },
     "consignee": {
       "applicable": true,
-      "status": "MANUAL_REVIEW",
-      "confidence": 0.31,
+      "status": "MISMATCH",
+      "confidence": 0.99,
       "certificate_value": "Vision Joint Stock Co.\nBT1-17, Khu biet thu - Khu Doan ngoai giao, Nguyen Xuan Khoat, Xuan Đinh, Bac Tu Liem Hanoi\nVIETNAM",
-      "invoice_value": "INMA CO OMAN L.L.C.(SEA)\nP.O.BOX 760 RUWI\n0112 MUSCAT\nOMAN",
+      "invoice_value": "Consignee: INMA CO OMAN L.L.C.(SEA), P.O.BOX 760 RUWI, 0112 MUSCAT, OMAN\nBuyer: INMA CO OMAN L.L.C., P.O.BOX 160 NEAR BURJ AL SAWA ROUND, 101 MAWALEH, OMAN",
       "rules_applied": [
         {
-          "rule_id": "8.5.2",
-          "outcome": "Referenced invoice 4753295 is not present in the invoice file; consignee verification against the intended invoice is technically impossible."
+          "rule_id": "4.2.0.2",
+          "outcome": "APPLIED - primära mottagarfält i fakturan är Consignee och Buyer"
+        },
+        {
+          "rule_id": "4.2.1",
+          "outcome": "NO_MATCH - certifikatets consignee-namn förekommer inte i relevanta fakturafält"
+        },
+        {
+          "rule_id": "4.2.4",
+          "outcome": "MISMATCH - varken företagsnamn eller land överensstämmer"
         }
       ],
-      "motivation": "Mottagaren i certifikatet ska verifieras mot den faktura som certifikatet refererar till. Eftersom certifikatet refererar till faktura 4753295 men fakturafilen endast innehåller faktura 4753137 kan consignee inte bedömas mot avsedd faktura. Den observerade parten i den bifogade fakturan används inte som substitut."
+      "motivation": "Certifikatet anger mottagaren som 'Vision Joint Stock Co.' i Vietnam. Fakturans relevanta mottagarfält anger endast 'INMA CO OMAN L.L.C.(SEA)' och 'INMA CO OMAN L.L.C.' i Oman. Certifikatets consignee kan inte identifieras i fakturan och landet skiljer sig dessutom (Vietnam kontra Oman), vilket ger MISMATCH."
     },
     "goods_description": {
       "applicable": true,
-      "status": "MANUAL_REVIEW",
-      "confidence": 0.3,
-      "certificate_value": "2 Krt\n6213224,6213918\nPOWER CUTTER K 770 RESCUE 1 unit\nVARI-CUT FR3 300 25.4/20 1 pc",
-      "invoice_value": "967 34 80-01 POWER CUTTER K 970 14\" | 20MM/ 8 PCS SE*\n504 00 02-02 VARI-DISC STONE 356 4.0 22.2 75 PCS PL\n967 85 52-05 REVERSIBLE PLATE LG 204 HATZ | 8 PCS BG",
+      "status": "MISMATCH",
+      "confidence": 0.98,
+      "certificate_value": "Attached invoices:4753295\n6213224,6213918\nPOWER CUTTER K 770 RESCUE 1 unit\nVARI-CUT FR3 300 25.4/20 1 pc",
+      "invoice_value": "Invoice No. 4753137\n100004-202254 / 967 34 80-01 POWER CUTTER K 970 14\" | 20MM/ 8 PCS\n300004-2022234 / 504 00 02-02 VARI-DISC STONE 356 4.0 22.2 75 PCS\n100004-202254A / 967 85 52-05 REVERSIBLE PLATE LG 204 HATZ | 8 PCS",
       "rules_applied": [
         {
-          "rule_id": "8.5.2",
-          "outcome": "Referenced invoice 4753295 is not present in the invoice file; goods comparison against the intended invoice is technically impossible."
+          "rule_id": "8.5.2.1",
+          "outcome": "APPLIED - certifikatet refererar faktura 4753295 medan fakturafilen innehåller 4753137; numren är inte samma och inte en godtagbar variant"
+        },
+        {
+          "rule_id": "4.3.2",
+          "outcome": "NO_MATCH - artikelnumren 6213224 och 6213918 från certifikatet kan inte identifieras i fakturan"
+        },
+        {
+          "rule_id": "4.3.2.3",
+          "outcome": "NOT_APPLICABLE - eftersom produktnamnen inte heller kan identifieras exakt"
+        },
+        {
+          "rule_id": "4.3.3",
+          "outcome": "MISMATCH - 'POWER CUTTER K 770 RESCUE' motsvaras inte av 'POWER CUTTER K 970' och 'VARI-CUT FR3 300 25.4/20' motsvaras inte av 'VARI-DISC STONE 356 4.0 22.2'"
         }
       ],
-      "motivation": "Varubeskrivningen får inte slutligt jämföras mot en annan faktura än den som certifikatet refererar till. Certifikatet anger 'Attached invoices:4753295', medan fakturafilen innehåller 4753137. Därför stoppas varuverifieringen på parningsnivå och kan inte avgöras mot rätt faktura."
+      "motivation": "Varubeskrivningen i certifikatet kan inte verifieras mot den bifogade fakturan. Certifikatet hänvisar dessutom till invoice 4753295 medan fakturafilen visar invoice 4753137. Därutöver återfinns varken certifikatets artikelnummer 6213224/6213918 eller de angivna produktbeteckningarna 'POWER CUTTER K 770 RESCUE' och 'VARI-CUT FR3 300 25.4/20' i fakturans varurader, som i stället avser K970, VARI-DISC STONE och REVERSIBLE PLATE."
     },
     "quantity": {
       "applicable": true,
-      "status": "MANUAL_REVIEW",
-      "confidence": 0.29,
-      "certificate_value": "14,37\n0,08",
-      "invoice_value": "Gross weight, kg 2041,76\nNet weight, kg 1959,80\nGoods specification: 9 Pall / 4 Krt / 2,041.8 / 7.51",
+      "status": "MISMATCH",
+      "confidence": 0.94,
+      "certificate_value": "Box 7 Quantity:\n14,37\n0,08",
+      "invoice_value": "Gross weight, kg 2041,76\nNet weight, kg 1959,80\nLine quantities: 8 PCS, 75 PCS, 8 PCS",
       "rules_applied": [
         {
-          "rule_id": "8.5.2",
-          "outcome": "Referenced invoice 4753295 is not present in the invoice file; quantity verification against the intended invoice is technically impossible."
+          "rule_id": "4.4.2",
+          "outcome": "DEFICIENCY - certifikatet visar numeriska värden men ingen uttrycklig enhet i box 7"
+        },
+        {
+          "rule_id": "4.4.2.1",
+          "outcome": "APPLIED - verifieringsgrundande kvantitet är box 7-värdena 14,37 och 0,08"
+        },
+        {
+          "rule_id": "4.4.1",
+          "outcome": "NO_MATCH - dessa numeriska värden kan inte identifieras i fakturan som motsvarande kvantitet eller vikt"
+        },
+        {
+          "rule_id": "4.4.6",
+          "outcome": "MISMATCH - certifikatets box 7-värden överensstämmer inte med fakturans uttryckliga kvantitets- eller viktuppgifter"
         }
       ],
-      "motivation": "Kvantitetsuppgiften i certifikatet måste verifieras mot den refererade fakturan. Eftersom faktura 4753295 inte finns i fakturafilen kan box 7-värdena inte kontrolleras mot rätt underlag. Den tillgängliga fakturan 4753137 får inte användas som ersättning."
+      "motivation": "Den verifieringsgrundande kvantiteten i certifikatet är box 7 med värdena '14,37' och '0,08'. Dessa värden saknar enhet i certifikatet och kan inte återfinnas i fakturan, som i stället anger gross weight 2041,76 kg, net weight 1959,80 kg samt radkvantiteter 8 PCS, 75 PCS och 8 PCS. Eftersom certifikatets numeriska box 7-värden inte kan identifieras i fakturan blir utfallet MISMATCH."
     },
     "origin": {
       "applicable": true,
-      "status": "MANUAL_REVIEW",
-      "confidence": 0.34,
+      "status": "MISMATCH",
+      "confidence": 0.97,
       "certificate_value": "the European Community\n(Sweden)\nVietnam",
-      "invoice_value": "SE*\nPL\nBG",
+      "invoice_value": "Country of origin: SEE BELOW\nLine origins: SE*, PL, BG",
       "rules_applied": [
         {
-          "rule_id": "8.5.2",
-          "outcome": "Referenced invoice 4753295 is not present in the invoice file; origin verification against the intended invoice is technically impossible."
+          "rule_id": "4.5.4.1",
+          "outcome": "PARTIAL_MATCH - EU/European Community i certifikatet kan stödjas av EU-ursprung i fakturan såsom SE*, PL och BG"
+        },
+        {
+          "rule_id": "4.5.4.2.1",
+          "outcome": "PARTIAL_MATCH - '(Sweden)' kan rymmas inom EU-ursprung"
+        },
+        {
+          "rule_id": "4.5.5",
+          "outcome": "MISMATCH - varje ursprungsland i certifikatet måste identifieras uttryckligen i fakturan; Vietnam saknas helt"
         }
       ],
-      "motivation": "Ursprungslandet ska verifieras mot den avsedda fakturan i dokumentparet. Certifikatet hänvisar till faktura 4753295, men fakturafilen innehåller endast 4753137. Därför kan ursprungsuppgiften inte verifieras mot korrekt faktura och kontrollpunkten måste skickas till manuell granskning."
+      "motivation": "Certifikatet anger flera ursprung: 'the European Community (Sweden)' och 'Vietnam'. Fakturan innehåller endast EU-relaterade radursprung 'SE*', 'PL' och 'BG'. EU-delen kan normaliseras, men Vietnam förekommer inte uttryckligen i fakturans ursprungsuppgifter. Eftersom varje ursprungsland i certifikatet måste kunna identifieras i fakturan blir kontrollpunkten MISMATCH."
     }
   },
   "overall_assessment": {
-    "comparison_result": "MANUAL_REVIEW",
+    "comparison_result": "NOT_IDENTICAL",
     "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
     "auto_approval_eligible": false,
-    "confidence": 0.96,
-    "critical_failures": [],
-    "manual_review_triggers": [
-      "Certifikatet refererar uttryckligen till faktura 4753295 ('Attached invoices:4753295').",
-      "Den separata fakturafilen innehåller endast faktura 4753137 på samtliga fakturasidor.",
-      "Enligt parningsregeln får den bifogade fakturan 4753137 inte användas som ersättning för den refererade fakturan 4753295."
+    "confidence": 0.98,
+    "critical_failures": [
+      "Certifikatet refererar invoice 4753295 medan den bifogade fakturafilen innehåller invoice 4753137.",
+      "Consignor kan inte verifieras som samma juridiska part: 'Husqvarna Construction Products' i certifikatet kontra 'HUSQVARNA AB' i fakturan.",
+      "Consignee motsäger dokumentparet: 'Vision Joint Stock Co., Vietnam' i certifikatet kontra 'INMA CO OMAN L.L.C., Oman' i fakturan.",
+      "Varubeskrivning och artikelnummer i certifikatet återfinns inte i fakturan.",
+      "Ursprungslandet Vietnam i certifikatet saknas i fakturans ursprungsuppgifter."
     ],
-    "decision_summary": "Dokumentrollen kunde klassificeras tydligt, men dokumentparningen blockerar verifieringen. Certifikatet hänvisar till faktura 4753295 medan fakturafilen endast innehåller faktura 4753137. Därför är det tekniskt omöjligt att verifiera kontrollpunkterna mot rätt oberoende faktura och ärendet ska till manuell handläggning.",
-    "human_explanation": "Certifikatet hänvisar till faktura 4753295, men den bifogade fakturafilen innehåller faktura 4753137. Därför går det inte att verifiera certifikatet mot den avsedda oberoende fakturan. Ärendet behöver granskas manuellt."
+    "manual_review_triggers": [],
+    "decision_summary": "Dokumentparet är inte identiskt. Flera tillämpliga kontrollpunkter ger MISMATCH: fakturareferensen i certifikatet avser ett annat fakturanummer än den bifogade fakturan, consignor och consignee kan inte verifieras som samma parter, varubeskrivning och kvantitet stämmer inte mot fakturan, och certifikatets ursprungsland Vietnam återfinns inte i fakturans origin-uppgifter. Därför ska ärendet hanteras manuellt och är inte berättigat till automatisk godkännandeprocess.",
+    "human_explanation": "Certifikatet hänvisar till faktura 4753295, men den bifogade fakturan är nummer 4753137. Dessutom stämmer inte parterna, varorna eller ursprungsuppgifterna mellan dokumenten. Dokumentparet kan därför inte godkännas automatiskt."
   },
   "_meta": {
-    "tested_at": "2026-04-01T20:23:52.696685+00:00",
-    "prompt_hash": "9b9df42642d8",
+    "tested_at": "2026-04-02T11:21:38.826142+00:00",
+    "prompt_hash": "f81eb9b0d2ea",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P0161_MISMATCH",
     "expected": "NOT_IDENTICAL",
-    "actual": "MANUAL_REVIEW",
-    "status": "REVIEW"
+    "actual": "NOT_IDENTICAL",
+    "status": "PASS"
   }
 }

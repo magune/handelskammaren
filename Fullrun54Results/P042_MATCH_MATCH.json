@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-04-01T00:00:00Z",
+    "verification_timestamp": "2026-04-02T00:00:00Z",
     "document_pair_id": null,
     "certificate_issue_date": "2025-11-25",
     "source_documents_received": 2
@@ -15,12 +15,12 @@
     "document_a": {
       "label": "Document A",
       "assumed_role": "certificate",
-      "document_type": "Certificate of Origin"
+      "document_type": "certificate_of_origin"
     },
     "document_b": {
       "label": "Document B",
       "assumed_role": "invoice",
-      "document_type": "Pro Forma Invoice"
+      "document_type": "pro_forma_invoice"
     }
   },
   "rule_activation": {
@@ -33,32 +33,12 @@
     "eu_origin_normalization_active": false,
     "activated_rules": [
       {
-        "rule_id": "8.5.0",
-        "rule_name": "Filbaserad dokumentparning"
-      },
-      {
-        "rule_id": "8.6",
-        "rule_name": "Obligatorisk parningsvalidering"
-      },
-      {
-        "rule_id": "4.1.0",
-        "rule_name": "Consignor-sökning i hela fakturan"
+        "rule_id": "8.1.2",
+        "rule_name": "Pro forma invoice accepted as valid verification document"
       },
       {
         "rule_id": "4.2.1.1",
-        "rule_name": "Alternativ mottagaradress eftersom primärt faktureringsfält saknas"
-      },
-      {
-        "rule_id": "4.3.2",
-        "rule_name": "Varubeskrivning via kontrollerad textmatchning"
-      },
-      {
-        "rule_id": "4.4.4",
-        "rule_name": "Verifiering mot total vikt i fakturan"
-      },
-      {
-        "rule_id": "4.5.1",
-        "rule_name": "Ursprungsland i explicit origin-fält"
+        "rule_name": "Consignee verified via delivery address because no primary billing field is shown"
       }
     ]
   },
@@ -66,39 +46,35 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.98,
+      "confidence": 0.97,
       "certificate_value": "ERICSSON AB\nTORSHAMNSGATAN 23\n164 80, STOCKHOLM\nSWEDEN",
       "invoice_value": "ERICSSON AB\nTorshamnsgatan 21-23\nS-164 83 STOCKHOLM, SWEDEN",
       "rules_applied": [
-        {
-          "rule_id": "4.1.0",
-          "outcome": "MATCH"
-        },
         {
           "rule_id": "4.1.2",
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.1.4",
+          "rule_id": "4.1.2.1",
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.1.5",
+          "rule_id": "4.1.4",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor 'ERICSSON AB' identifieras uttryckligen i fakturans sidhuvud på sida 1 och återkommer även i fakturans footer/bankblock på sida 2. Landet 'SWEDEN' framgår uttryckligen i fakturans adressblock. Skillnaden mellan 'Torshamnsgatan 23' och 'Torshamnsgatan 21-23' påverkar inte utfallet eftersom consignor-kontrollen enligt reglerna avgörs av företagsnamn och land, inte full identisk gatuadress."
+      "motivation": "The certificate consignor is explicitly stated as ERICSSON AB in Sweden. The pro forma invoice header identifies ERICSSON AB as issuer with a Stockholm, Sweden address. Company name matches directly after standard case normalization, and the country is explicitly Sweden in both documents."
     },
     "consignee": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.97,
+      "confidence": 0.9,
       "certificate_value": "KCELL JSC\nALIMZHANOVA STREET 51\n050004 ALMATY\nKAZAKHSTAN",
       "invoice_value": "DELIVERY ADDRESS :\nKCELL JSC\nALIMZHANOVA STREET 51, 050004\nALMATY, KAZAKHSTAN",
       "rules_applied": [
         {
           "rule_id": "4.2.0.2",
-          "outcome": "PRIMARY_BILL_TO_NOT_FOUND"
+          "outcome": "NO_PRIMARY_BILLING_FIELD_FOUND"
         },
         {
           "rule_id": "4.2.1.1",
@@ -107,31 +83,23 @@
         {
           "rule_id": "4.2.3",
           "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.2.4",
-          "outcome": "MATCH"
         }
       ],
-      "motivation": "Fakturan visar inget tydligt primärt faktureringsfält såsom 'Bill to' eller 'Invoice to'. Därför får mottagaren sökas i sekundärt fält, och certifikatets consignee återfinns exakt i fakturans 'DELIVERY ADDRESS' som 'KCELL JSC, ALIMZHANOVA STREET 51, 050004 ALMATY, KAZAKHSTAN'. Företagsnamn och land överensstämmer uttryckligen."
+      "motivation": "The certificate consignee KCELL JSC, Alimzhanova Street 51, 050004 Almaty, Kazakhstan is explicitly identifiable in the invoice delivery address block. No separate primary billing field is shown, so verification through the delivery address is permitted. Company name and country match directly."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.94,
+      "confidence": 0.89,
       "certificate_value": "42 PACKAGES\nTELECOM EQUIPMENT\nPL - AIR 3258 B78V and HWACs\nPL - AIR 3258 B78V and HWACs",
       "invoice_value": "Telecommunication Equipment:\n...\nAIR 3258 B78V and HWACs / Приемопередатчик AIR 3258 B78V и Коды аппаратной активации\n...\nAIR 3258 B78V and HWACs / Приемопередатчик AIR 3258 B78V и Коды аппаратной активации",
       "rules_applied": [
         {
-          "rule_id": "4.3.2",
-          "outcome": "ARTICLE_NUMBER_NOT_USED"
+          "rule_id": "4.3.1",
+          "outcome": "IDENTIFIED"
         },
         {
           "rule_id": "4.3.3",
-          "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.3.4",
           "outcome": "MATCH"
         },
         {
@@ -139,21 +107,17 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet innehåller den identitetsbärande huvudbeteckningen 'AIR 3258 B78V and HWACs', och exakt samma ordsekvens finns uttryckligen i fakturans två varurader på sida 1. Det generella uttrycket 'TELECOM EQUIPMENT' i certifikatet är förenligt med fakturans rubrik 'Telecommunication Equipment' och förändrar inte produktidentiteten. Ingen semantisk tolkning utöver tillåten textmatchning behövs eftersom huvudbeteckningen matchar explicit."
+      "motivation": "The certificate describes telecom equipment and specifically lists 'AIR 3258 B78V and HWACs' twice. The invoice contains the same identity-bearing product string in two line items. The broader wording 'TELECOM EQUIPMENT' versus 'Telecommunication Equipment' does not prevent verification because the specific product designation is explicitly present in the invoice."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.98,
       "certificate_value": "G.W 5298,000 KG",
-      "invoice_value": "GRAND TOTAL: ... 5 298,000 ... 42\nGross Weight: 5.298,000 kg",
+      "invoice_value": "GRAND TOTAL: 1 086 172,56 EUR 5 298,000 3 528,000 42\n...\nGross Weight: 5.298,000 kg",
       "rules_applied": [
         {
-          "rule_id": "4.4.2.1",
-          "outcome": "BOX_7_USED"
-        },
-        {
-          "rule_id": "4.4.1",
+          "rule_id": "4.4.2.2",
           "outcome": "MATCH"
         },
         {
@@ -165,22 +129,18 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Den verifieringsgrundande kvantiteten i certifikatets box 7 är 'G.W 5298,000 KG'. Fakturan anger samma totalvikt som '5 298,000' i grand total-raden på sida 1 och även 'Gross Weight: 5.298,000 kg' på sida 2. Skillnaden i tusentalsavskiljare/formatering ändrar inte det numeriska värdet, och viktkategori samt enhet överensstämmer."
+      "motivation": "The certificate box 7 states gross weight 5298,000 KG. The invoice shows total gross weight as 5 298,000 and again as 5.298,000 kg. After allowed formatting normalization of separators, the numeric value and unit match exactly."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.95,
+      "confidence": 0.97,
       "certificate_value": "PL",
-      "invoice_value": "COUNTRY OF ORIGIN\nPL\n...\nPL\nCountry of Origin: mentioned above",
+      "invoice_value": "COUNTRY OF ORIGIN\nPL\nPL\n...\nCountry of Origin: mentioned above",
       "rules_applied": [
         {
           "rule_id": "4.5.1",
-          "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.5.2",
-          "outcome": "MATCH"
+          "outcome": "IDENTIFIED"
         },
         {
           "rule_id": "4.5.4",
@@ -191,22 +151,22 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger ursprungsland 'PL'. Fakturan har en explicit kolumn 'COUNTRY OF ORIGIN' där båda relevanta varuraderna är märkta 'PL', och sida 2 bekräftar dessutom 'Country of Origin: mentioned above'. Ursprungslandet kan därför identifieras uttryckligen i fakturan."
+      "motivation": "The certificate origin is PL. The invoice contains an explicit 'COUNTRY OF ORIGIN' column and both relevant goods lines are marked PL. The origin is therefore explicitly identifiable in the invoice as required."
     }
   },
   "overall_assessment": {
     "comparison_result": "IDENTICAL",
     "workflow_recommendation": "AUTO_APPROVAL_ELIGIBLE",
     "auto_approval_eligible": true,
-    "confidence": 0.96,
+    "confidence": 0.93,
     "critical_failures": [],
     "manual_review_triggers": [],
-    "decision_summary": "Dokumentrollen kunde klassificeras säkert som Certificate of Origin respektive Pro Forma Invoice. Parningsvalideringen passerar eftersom både consignor och consignee från certifikatet återfinns uttryckligen i fakturan. Samtliga fem tillämpliga kontrollpunkter ger MATCH med confidence minst 0.94, varför det övergripande resultatet är IDENTICAL och dokumentparet är berättigat till automatisk hantering.",
-    "human_explanation": "Certifikatet och fakturan stämmer överens för avsändare, mottagare, varubeskrivning, bruttovikt 5298,000 kg och ursprungsland PL. Uppgifterna kan verifieras direkt i fakturan. Dokumentparet kan därför godkännas automatiskt."
+    "decision_summary": "All applicable control points are verifiable against the attached pro forma invoice. Consignor, consignee, goods description, gross weight, and origin all match under the allowed rules and normalizations. No LC exception applies and no blocking readability issue was identified.",
+    "human_explanation": "Alla relevanta uppgifter i ursprungscertifikatet kan verifieras mot den bifogade proformafakturan. Avsändare Ericsson AB, mottagare KCELL JSC, varubeskrivningen AIR 3258 B78V and HWACs, bruttovikten 5 298,000 kg och ursprungslandet PL återfinns i fakturan. Dokumentparet kan därför godkännas automatiskt."
   },
   "_meta": {
-    "tested_at": "2026-04-01T14:13:26.615257+00:00",
-    "prompt_hash": "9b9df42642d8",
+    "tested_at": "2026-04-02T11:23:49.169348+00:00",
+    "prompt_hash": "f81eb9b0d2ea",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P042_MATCH",

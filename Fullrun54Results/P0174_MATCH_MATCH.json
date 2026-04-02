@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": null,
+    "verification_timestamp": "2026-04-02T00:00:00Z",
     "document_pair_id": null,
     "certificate_issue_date": "2026-03-03",
     "source_documents_received": 2
@@ -20,7 +20,7 @@
     "document_b": {
       "label": "Document B",
       "assumed_role": "invoice",
-      "document_type": "Commercial Invoice"
+      "document_type": "Invoice"
     }
   },
   "rule_activation": {
@@ -33,32 +33,24 @@
     "eu_origin_normalization_active": true,
     "activated_rules": [
       {
-        "rule_id": "8.5.2",
-        "rule_name": "Fakturareferens i certifikatet vs fakturafilen"
+        "rule_id": "8.5.1.1",
+        "rule_name": "Normalisering av fakturanummer med ledande nollor"
       },
       {
-        "rule_id": "8.6",
-        "rule_name": "Obligatorisk parningsvalidering"
+        "rule_id": "4.3.5",
+        "rule_name": "Generell varubeskrivning med fakturareferens"
       },
       {
-        "rule_id": "4.1.0",
-        "rule_name": "Consignor-sökning i hela fakturan"
+        "rule_id": "4.3.5",
+        "rule_name": "Datumformatnormalisering"
       },
       {
-        "rule_id": "4.2.0.2",
-        "rule_name": "Prioritetsordning för consignee-identifiering"
-      },
-      {
-        "rule_id": "4.3.3",
-        "rule_name": "Kontrollerad textmatchning för varubeskrivning"
-      },
-      {
-        "rule_id": "4.4.3.3",
-        "rule_name": "Tusentalsavskiljare-normalisering"
+        "rule_id": "4.5.4.1",
+        "rule_name": "EU-normalisering"
       },
       {
         "rule_id": "4.5.4.2",
-        "rule_name": "EU-medlemsland-normalisering"
+        "rule_name": "EU-medlemsland"
       }
     ]
   },
@@ -79,11 +71,11 @@
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.1.5",
+          "rule_id": "4.1.4",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor 'Swedish Match Industries AB' återfinns uttryckligen i fakturans sidhuvud/adressblock på båda sidorna. Landet 'Sweden' framgår explicit i fakturans adressblock och stöds även av VAT-prefix 'SE'. Företagsnamn och land kan därför verifieras utan behov av undantagsregler."
+      "motivation": "Certifikatets consignor 'Swedish Match Industries AB' kan identifieras uttryckligen i fakturan som fakturautställare och i adress-/footerblock. Landet 'Sweden' framgår explicit i båda dokumenten. Skillnader i gatadress påverkar inte bedömningen när företagsnamn och land överensstämmer."
     },
     "consignee": {
       "applicable": true,
@@ -97,10 +89,6 @@
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.2.2",
-          "outcome": "MATCH"
-        },
-        {
           "rule_id": "4.2.3",
           "outcome": "MATCH"
         },
@@ -109,67 +97,63 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Fakturan innehåller ett tydligt primärt faktureringsfält 'Invoice address' med parten 'PETER & COMPANY LIMITED', vilket enligt prioritetsregeln är auktoritativt för consignee-verifiering. Namnet matchar certifikatet efter normalisering av versaler/gemener och landet 'Saint Lucia' / 'ST. LUCIA' överensstämmer. Det separata fakturafältet 'Consignee' med 'PETER & CO. DRY & PHARM' behövde därför inte användas som verifieringsgrund."
+      "motivation": "Fakturan innehåller ett primärt faktureringsfält i form av 'Invoice address' med 'PETER & COMPANY LIMITED', vilket enligt prioritetsregeln är auktoritativ consignee. Namn och land överensstämmer med certifikatet efter normalisering av versaler/gemener. Förekomsten av ett separat 'Consignee'-fält i fakturan ändrar inte detta eftersom faktureringsfältet har företräde och redan matchar certifikatets mottagare."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.95,
+      "confidence": 0.91,
       "certificate_value": "SAFETY MATCHES\nMADE IN SWEDEN\n996 cartons of Safety Matches\nSafety Matches\nSee attached invoice 632597 dated 260305\nfor item description",
-      "invoice_value": "Goods summary\n996 CRT Safety Matches\nStat number 36050000",
+      "invoice_value": "Invoice no 000632597\nInvoice date 2026-03-05\nGoods summary\n996 CRT Safety Matches",
       "rules_applied": [
         {
-          "rule_id": "4.3.2",
-          "outcome": "Priority 2 used"
-        },
-        {
-          "rule_id": "4.3.3",
+          "rule_id": "4.3.5",
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.3.5",
-          "outcome": "NOT_USED_FOR_MATCH"
+          "rule_id": "8.5.1.1",
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.3.8",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Den identitetsbärande huvudbeteckningen i certifikatet är 'Safety Matches'. Samma ordsekvens återfinns explicit i fakturans goods summary. Matchningen har därför gjorts via kontrollerad textmatchning, inte via den generella fakturareferensregeln."
+      "motivation": "Certifikatet använder en generell varubeskrivning men innehåller uttrycklig fakturahänvisning: 'See attached invoice 632597 dated 260305'. Fakturans nummer '000632597' matchar efter normalisering av ledande nollor och datumet '260305' motsvarar '2026-03-05' enligt tillåten datumformatnormalisering. Fakturans varuinnehåll är förenligt med certifikatets beskrivning genom den uttryckliga varubeskrivningen 'Safety Matches' i goods summary."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.9,
+      "confidence": 0.96,
       "certificate_value": "7324 kg gross",
-      "invoice_value": "Goods summary\nQuantity 996\nUnit CRT\nGoods description Safety Matches\nAverage gross weight KG 7 324",
+      "invoice_value": "Goods summary\nQuantity 996 CRT Safety Matches\nAverage gross weight KG 7 324",
       "rules_applied": [
         {
           "rule_id": "4.4.2.1",
-          "outcome": "Box 7 used as governing quantity"
-        },
-        {
-          "rule_id": "4.4.3",
-          "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.4.3.3",
           "outcome": "MATCH"
         },
         {
           "rule_id": "4.4.4",
           "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.4.6",
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Den verifieringsgrundande kvantiteten i certifikatets box 7 är '7324 kg gross'. Fakturan anger på sida 2 'Average gross weight KG 7 324'. Efter tillåten normalisering av tusentalsavskiljare identifieras samma numeriska värde 7324 och samma viktenhet KG, samt gross-vikt framgår uttryckligen."
+      "motivation": "Den verifieringsgrundande kvantiteten i certifikatets box 7 är '7324 kg gross'. Fakturan innehåller i goods summary den uttryckliga viktuppgiften 'Average gross weight KG 7 324', vilket ger samma numeriska värde och samma viktkategori gross/GW. Därmed kan certifikatets kvantitet identifieras direkt i fakturan utan att något undantag behöver användas."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.91,
+      "confidence": 0.88,
       "certificate_value": "European Community; Sweden",
       "invoice_value": "Country of origin: Sweden",
       "rules_applied": [
+        {
+          "rule_id": "4.5.4.1",
+          "outcome": "MATCH"
+        },
         {
           "rule_id": "4.5.4.2",
           "outcome": "MATCH"
@@ -179,29 +163,27 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Fakturan innehåller ett explicit ursprungsfält: 'Country of origin: Sweden'. Certifikatets specifika land 'Sweden' kan därmed verifieras direkt, och certifikatets samlingsbegrepp 'European Community' verifieras genom regeln att EU-samlingsbegrepp och specifikt EU-medlemsland är utbytbara för ursprungskontroll."
+      "motivation": "Certifikatet anger ursprung 'European Community; Sweden'. Fakturan anger explicit 'Country of origin: Sweden', vilket verifierar det specifikt namngivna landet Sweden. Eftersom Sweden är en EU-medlemsstat verifierar samma uppgift även den generella ursprungsangivelsen 'European Community' enligt EU-normaliseringsreglerna; fakturan innehåller inga motstridiga icke-EU-ursprung."
     }
   },
   "overall_assessment": {
-    "comparison_result": "MANUAL_REVIEW",
-    "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
-    "auto_approval_eligible": false,
-    "confidence": 0.76,
+    "comparison_result": "IDENTICAL",
+    "workflow_recommendation": "AUTO_APPROVAL_ELIGIBLE",
+    "auto_approval_eligible": true,
+    "confidence": 0.94,
     "critical_failures": [],
-    "manual_review_triggers": [
-      "Certifikatet hänvisar uttryckligen till faktura '632597', medan fakturafilen visar fakturanummer '000632597'. Exakt fakturareferens kan därför inte bekräftas enligt parningsregeln för specifik fakturareferens."
-    ],
-    "decision_summary": "Samtliga fem kontrollpunkter kan verifieras som MATCH mot den bifogade fakturan. Ärendet kan ändå inte auto-godkännas eftersom certifikatet uttryckligen hänvisar till faktura 632597 medan fakturafilen visar 000632597, vilket enligt den särskilda parningsregeln kräver manuell granskning.",
-    "human_explanation": "De flesta uppgifter stämmer mellan certifikatet och fakturan. Certifikatet hänvisar dock till faktura 632597 medan den bifogade fakturan är numrerad 000632597, så ärendet behöver granskas manuellt innan det kan godkännas."
+    "manual_review_triggers": [],
+    "decision_summary": "Dokumentparet är giltigt parat genom certifikatets hänvisning till invoice 632597 dated 260305 och fakturans invoice no 000632597 dated 2026-03-05. Samtliga tillämpliga kontrollpunkter kan verifieras i fakturan: consignor, consignee, varubeskrivning, kvantitet och ursprungsland. Ingen tillämplig kontrollpunkt gav MISMATCH eller MANUAL_REVIEW och samtliga MATCH-bedömningar uppnår confidence över auto-approval-golvet.",
+    "human_explanation": "Certifikatet och fakturan avser samma säljare, samma mottagare, samma fakturanummer och samma datum. Varubeskrivningen Safety Matches, kvantiteten 7324 kg gross och ursprunget Sweden/European Community kan verifieras i fakturan. Dokumentparet kan därför godkännas automatiskt."
   },
   "_meta": {
-    "tested_at": "2026-04-01T21:51:47.289388+00:00",
-    "prompt_hash": "9b9df42642d8",
+    "tested_at": "2026-04-02T11:21:38.833021+00:00",
+    "prompt_hash": "f81eb9b0d2ea",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P0174_MATCH",
     "expected": "IDENTICAL",
-    "actual": "MANUAL_REVIEW",
-    "status": "REVIEW"
+    "actual": "IDENTICAL",
+    "status": "PASS"
   }
 }

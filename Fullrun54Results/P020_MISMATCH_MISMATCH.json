@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-04-01T00:00:00Z",
+    "verification_timestamp": "2026-04-02T00:00:00Z",
     "document_pair_id": null,
     "certificate_issue_date": "2026-02-26",
     "source_documents_received": 2
@@ -29,16 +29,24 @@
     "general_goods_description_with_invoice_reference_active": false,
     "mixed_origins_rule_active": false,
     "to_order_rule_active": false,
-    "quantity_exception_applied": null,
+    "quantity_exception_applied": "3B",
     "eu_origin_normalization_active": false,
     "activated_rules": [
       {
-        "rule_id": "8.6",
-        "rule_name": "Parningsvalidering passerad via fakturanummer, consignor och consignee"
+        "rule_id": "8.5.0",
+        "rule_name": "Standardregel för dokumentparning: certifikat från fil 1 och faktura från fil 2"
       },
       {
-        "rule_id": "4.4.3.1",
-        "rule_name": "Flera kvantitetsuppgifter i certifikatet - minst en verifierad kvantitet räcker"
+        "rule_id": "8.6",
+        "rule_name": "Obligatorisk parningsvalidering"
+      },
+      {
+        "rule_id": "4.1.0",
+        "rule_name": "Sökning efter consignor i alla fakturasidor"
+      },
+      {
+        "rule_id": "4.4.5.3",
+        "rule_name": "Enhetsomräkning MT ↔ KG"
       }
     ]
   },
@@ -51,23 +59,23 @@
       "invoice_value": "Ekman & Co AB\nPolhemsplatsen 5\nPO Box 230\nSE-401 23 Gothenburg, Sweden\nVAT NO: SE556020459501",
       "rules_applied": [
         {
+          "rule_id": "8.6",
+          "outcome": "pairing_validated_by_invoice_reference_and_consignor_presence"
+        },
+        {
           "rule_id": "4.1.0",
-          "outcome": "Not needed; direct identification exists in invoice issuer block"
+          "outcome": "match"
         },
         {
-          "rule_id": "4.1.2",
-          "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.1.4",
-          "outcome": "MATCH"
+          "rule_id": "4.1.2.1",
+          "outcome": "land_verified_via_address_and_vat_prefix"
         },
         {
           "rule_id": "4.1.5",
-          "outcome": "MATCH"
+          "outcome": "match"
         }
       ],
-      "motivation": "Certifikatets consignor 'Ekman & Co AB' kan identifieras direkt som fakturautställare i fakturans sidhuvud. Landet Sverige framgår uttryckligen i adressblocket och stöds även av VAT-prefixet 'SE'. Ingen avvikelse i juridiskt namn eller land föreligger."
+      "motivation": "Certifikatets consignor 'Ekman & Co AB' återfinns uttryckligen i fakturans sidhuvud på sida 1 och även på sida 2. Landet Sverige verifieras genom adressen 'Gothenburg, Sweden' samt VAT-prefix 'SE'. Samma juridiska part kan identifieras utan otillåten tolkning."
     },
     "consignee": {
       "applicable": true,
@@ -78,66 +86,70 @@
       "rules_applied": [
         {
           "rule_id": "4.2.0.2",
-          "outcome": "Primary billing field identified and matches certificate consignee"
+          "outcome": "primary_billing_field_used"
         },
         {
           "rule_id": "4.2.2",
-          "outcome": "MATCH"
+          "outcome": "match"
         },
         {
           "rule_id": "4.2.3",
-          "outcome": "MATCH"
+          "outcome": "land_match"
         },
         {
           "rule_id": "4.2.4",
-          "outcome": "MATCH"
+          "outcome": "match"
         }
       ],
-      "motivation": "Certifikatets consignee 'Middle East Packages LLC' återfinns uttryckligen i fakturans primära faktureringsfält 'SOLD TO' och även i 'CONSIGNED TO'. Landet United Arab Emirates överensstämmer. Skillnader i radbrytning och versaler är tillåten normalisering."
+      "motivation": "Certifikatets consignee 'Middle East Packages LLC' kan identifieras exakt i fakturans primära faktureringsfält 'SOLD TO' och även i 'CONSIGNED TO'. Landet United Arab Emirates överensstämmer. Skillnader i radbrytning och versaler är tillåten normalisering."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.98,
+      "confidence": 0.96,
       "certificate_value": "37 rolls\nWHITE TOP TESTLINER - WE grade",
       "invoice_value": "37 Reels: WHITE TOP TESTLINER - WE grade",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "No article number in certificate; moved to controlled text matching"
+          "outcome": "no_article_number_in_certificate_so_text_match_used"
         },
         {
           "rule_id": "4.3.3",
-          "outcome": "MATCH"
+          "outcome": "identity_bearing_main_designation_matched"
         },
         {
           "rule_id": "4.3.8",
-          "outcome": "MATCH"
+          "outcome": "match"
         }
       ],
-      "motivation": "Den identitetsbärande huvudbeteckningen 'WHITE TOP TESTLINER - WE grade' återfinns exakt i fakturan. Ingen semantisk tolkning behövs. Skillnaden 'rolls' i certifikatet och 'Reels' i fakturan påverkar inte huvudbeteckningen, eftersom kontrollpunkten avser varubeskrivningens identitetsbärande del."
+      "motivation": "Den identitetsbärande huvudbeteckningen 'WHITE TOP TESTLINER - WE grade' återfinns exakt i fakturan. Artikelnummer anges inte i certifikatet, så verifiering sker genom kontrollerad textmatchning. Skillnaden '37 rolls' respektive '37 Reels' påverkar inte varubeskrivningens identitetsbärande huvudbeteckning och kvantiteten verifieras separat."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.88,
-      "certificate_value": "37 rolls\n49474,693 kg",
-      "invoice_value": "Total Unit Count: 37 Reels\nTotal Gross Weight Quantity: 49.474693 MT\nTotal Net Weight Quantity: 49.228550 MT",
+      "confidence": 0.93,
+      "certificate_value": "49474,693 kg",
+      "invoice_value": "Total Gross Weight Quantity: 49.474693 MT",
       "rules_applied": [
         {
-          "rule_id": "4.4.2",
-          "outcome": "Certificate contains explicit numerical quantity and unit"
+          "rule_id": "4.4.2.1",
+          "outcome": "box_7_used_as_verification_basis"
         },
         {
-          "rule_id": "4.4.3.1",
-          "outcome": "MATCH - at least one quantity from the certificate is verified in the invoice"
+          "rule_id": "4.4.2.2",
+          "outcome": "single_weight_without_category_matches_gross_weight"
         },
         {
-          "rule_id": "4.4.6.1",
-          "outcome": "Not applicable because a certificate quantity is verified"
+          "rule_id": "4.4.5.3",
+          "outcome": "mt_to_kg_conversion_applied"
+        },
+        {
+          "rule_id": "4.4.6",
+          "outcome": "match"
         }
       ],
-      "motivation": "Certifikatet innehåller flera kvantitetsuppgifter: '37 rolls' och '49474,693 kg'. Fakturan innehåller 'Total Unit Count: 37 Reels', vilket verifierar minst en av certifikatets kvantitetsuppgifter genom samma numeriska värde 37. Eftersom minst en kvantitetsuppgift är verifierad och ingen uttrycklig motsägelse föreligger för den verifierade uppgiften, ska kontrollpunkten bedömas som MATCH."
+      "motivation": "Certifikatets ruta 7 anger vikten '49474,693 kg'. Fakturan anger 'Total Gross Weight Quantity: 49.474693 MT'. Efter tillåten omräkning enligt 1 MT = 1000 KG motsvarar fakturans värde 49 474,693 kg, vilket exakt överensstämmer med certifikatets värde. Certifikatet anger ett enda viktvärde utan GW/NW-kategori och fakturans matchande värde är bruttovikten, vilket är godtagbart."
     },
     "origin": {
       "applicable": true,
@@ -148,33 +160,33 @@
       "rules_applied": [
         {
           "rule_id": "4.5.1",
-          "outcome": "Explicit origin statement identified in invoice"
+          "outcome": "explicit_origin_found"
         },
         {
           "rule_id": "4.5.4",
-          "outcome": "Allowed normalization applied: Indonesia ↔ Indonesian"
+          "outcome": "country_name_normalization_applied"
         },
         {
           "rule_id": "4.5.5",
-          "outcome": "MATCH"
+          "outcome": "match"
         }
       ],
-      "motivation": "Certifikatet anger ursprungsland 'Indonesia'. Fakturan innehåller en uttrycklig ursprungsangivelse: 'these goods are of Indonesian origin'. Detta är ett dedikerat och explicit origin-uttalande som bekräftar certifikatets ursprungsland."
+      "motivation": "Certifikatet anger ursprungsland 'Indonesia'. Fakturan innehåller en uttrycklig ursprungsangivelse: 'these goods are of Indonesian origin'. Ursprungslandet framgår alltså explicit i fakturan och kan verifieras utan att härledas från adress eller exportland."
     }
   },
   "overall_assessment": {
     "comparison_result": "IDENTICAL",
     "workflow_recommendation": "AUTO_APPROVAL_ELIGIBLE",
     "auto_approval_eligible": true,
-    "confidence": 0.95,
+    "confidence": 0.97,
     "critical_failures": [],
     "manual_review_triggers": [],
-    "decision_summary": "Dokumentparet är korrekt parat genom fakturanummer 46189555 och samma parter återfinns i båda dokumenten. Consignor, consignee, varubeskrivning, kvantitet och ursprungsland kan verifieras mot fakturan enligt tillåtna regler. Samtliga tillämpliga kontrollpunkter är MATCH.",
-    "human_explanation": "Certifikatet och fakturan stämmer överens för avsändare, mottagare, varubeskrivning, kvantitet och ursprung. Fakturanummer 46189555 återfinns i båda dokumenten och ursprunget anges som Indonesien i fakturan. Dokumentparet kan därför godkännas automatiskt."
+    "decision_summary": "Dokumentparet är giltigt parat genom exakt fakturareferens 46189555. Samtliga tillämpliga kontrollpunkter—consignor, consignee, varubeskrivning, kvantitet och ursprungsland—kan verifieras mot fakturan enligt tillåtna regler och normaliseringar. Ingen tillämplig kontrollpunkt ger MISMATCH eller MANUAL_REVIEW.",
+    "human_explanation": "Certifikatet och fakturan stämmer överens på avsändare, mottagare, varubeskrivning, kvantitet och ursprungsland. Fakturareferensen 46189555 matchar exakt och vikten 49.474693 MT motsvarar 49474,693 kg. Dokumentparet kan godkännas automatiskt."
   },
   "_meta": {
-    "tested_at": "2026-04-01T21:54:35.806021+00:00",
-    "prompt_hash": "9b9df42642d8",
+    "tested_at": "2026-04-02T11:23:49.160400+00:00",
+    "prompt_hash": "f81eb9b0d2ea",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P020_MISMATCH",

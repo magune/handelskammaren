@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-04-01T00:00:00Z",
+    "verification_timestamp": "2026-04-02T00:00:00Z",
     "document_pair_id": null,
     "certificate_issue_date": "2026-03-02",
     "source_documents_received": 2
@@ -42,23 +42,19 @@
       },
       {
         "rule_id": "4.1.3.3",
-        "rule_name": "Kommersiell förkortning av consignor-namn"
+        "rule_name": "Kommersiell förkortning för consignor"
       },
       {
         "rule_id": "4.2.0.2",
         "rule_name": "Prioritetsordning för consignee-identifiering"
       },
       {
-        "rule_id": "4.3.3",
-        "rule_name": "Kontrollerad textmatchning för varubeskrivning"
+        "rule_id": "4.3.4",
+        "rule_name": "Tillägg som inte påverkar produktidentitet"
       },
       {
         "rule_id": "4.4.2.1",
         "rule_name": "Box 7 är verifieringsgrundande för kvantitet"
-      },
-      {
-        "rule_id": "4.5.2",
-        "rule_name": "Enhetligt ursprungsland"
       }
     ]
   },
@@ -66,143 +62,155 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.89,
+      "confidence": 0.91,
       "certificate_value": "Nouryon Pulp and Perf. Ch. AB\nBOX 47067\n40258 Goteborg\nGamlestadsvägen 18\nSE-41502, GÖTEBORG\nSweden",
-      "invoice_value": "Nouryon Pulp and\nPerformance Chemicals AB\nBOX 47067\n402 58 Goteborg\nSweden\nRegist. No:- 556022-9972",
+      "invoice_value": "Nouryon Pulp and\nPerformance Chemicals AB\nBOX 47067\n402 58 Goteborg\nSweden",
       "rules_applied": [
         {
-          "rule_id": "4.1.1",
-          "outcome": "Invoice issuer identified in invoice header."
+          "rule_id": "4.1.0",
+          "outcome": "not_applicable_no_exact_occurrence_of_abbreviated_certificate_name"
         },
         {
-          "rule_id": "4.1.2.1",
-          "outcome": "Country Sweden verified from issuer address and VAT prefix SE."
+          "rule_id": "4.1.3.1",
+          "outcome": "not_matched_exact_legal_name_not_identical"
         },
         {
           "rule_id": "4.1.3.2",
-          "outcome": "Not applied; certificate name is not a pure layout prefix of invoice name."
+          "outcome": "not_applicable_not_layout_prefix_truncation"
         },
         {
           "rule_id": "4.1.3.3",
-          "outcome": "Applied; 'Perf. Ch.' is a clear abbreviation of 'Performance Chemicals'."
+          "outcome": "match_via_clear_commercial_abbreviation"
         },
         {
           "rule_id": "4.1.4",
-          "outcome": "Country match: Sweden."
+          "outcome": "country_match"
         }
       ],
-      "motivation": "Certifikatet anger consignor som 'Nouryon Pulp and Perf. Ch. AB' i Sverige. Fakturan är utställd av 'Nouryon Pulp and Performance Chemicals AB' i Sverige, med samma boxadress och svensk VAT-prefix 'SE'. Skillnaden 'Perf. Ch.' mot 'Performance Chemicals' är en tillåten kommersiell förkortning och avsändaren kan därför verifieras som samma juridiska part."
+      "motivation": "Certifikatets consignor är förkortad som \"Nouryon Pulp and Perf. Ch. AB\" medan fakturan anger fullformen \"Nouryon Pulp and Performance Chemicals AB\". Förkortningen \"Perf. Ch.\" är en tydlig kommersiell förkortning av orden \"Performance Chemicals\", fullständigt juridiskt namn framgår uttryckligen i fakturan, ingen annan liknande juridisk part förekommer och landet Sverige framgår i båda dokumenten. Därför är consignor verifierad som samma juridiska part enligt regeln om kommersiell förkortning."
     },
     "consignee": {
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.97,
       "certificate_value": "Nouryon Chemicals India Pvt ltd\nNB-102 1st Floor Empire Tower,\nReliable Cloud City Campus,\nAiroli\n400708 THANE\nINDIA\n400708\nIndia",
-      "invoice_value": "Bill To 6800255\nNouryon Chemicals India Pvt Ltd.\nSN PLOT E-18, 19 and 20, C 61 Part\n402301 MIDC-MAHAD-RAIGAD\nINDIA\n\nShip To PT1021\nNouryon Chemicals India Pvt ltd.\nNB-102 1st Floor Empire Tower, Reliable Cloud City Campus,\nAiroli\n400708 THANE\nINDIA",
+      "invoice_value": "Bill To 6800255\nNouryon Chemicals India Pvt Ltd.\nSN PLOT E-18, 19 and 20, C 61 Part\n402301 MIDC-MAHAD-RAIGAD\nINDIA",
       "rules_applied": [
         {
           "rule_id": "4.2.0.2",
-          "outcome": "Primary billing field checked first; same company name found in Bill To."
+          "outcome": "bill_to_selected_as_authoritative_field"
         },
         {
           "rule_id": "4.2.2.1",
-          "outcome": "Normalization applied for case and formatting only."
+          "outcome": "normalization_case_and_company_suffix"
         },
         {
           "rule_id": "4.2.3",
-          "outcome": "Country match: India."
+          "outcome": "country_match"
         },
         {
           "rule_id": "4.2.4",
-          "outcome": "Address differences do not prevent match when company name and country match."
+          "outcome": "match"
         }
       ],
-      "motivation": "Certifikatet anger mottagaren som 'Nouryon Chemicals India Pvt ltd' i Indien. Samma företagsnamn finns i fakturans primära Bill To-fält och även i Ship To-fältet; certifikatets adress överensstämmer dessutom exakt med Ship To-adressen. Eftersom företagsnamn och land kan identifieras i fakturan är consignee verifierad."
+      "motivation": "Fakturan innehåller ett tydligt primärt faktureringsfält, \"Bill To\", som enligt prioritetsordningen är auktoritativt för consignee-verifiering. Företagsnamnet \"Nouryon Chemicals India Pvt Ltd.\" kan identifieras direkt mot certifikatets \"Nouryon Chemicals India Pvt ltd\" efter normalisering av versaler/gemener, och landet Indien överensstämmer. Att certifikatets adress i praktiken också matchar fakturans Ship To stärker slutsatsen men behövs inte för MATCH."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.96,
+      "confidence": 0.92,
       "certificate_value": "168 Packages - Expancel 930 DU 120 Bag 18 KG - SE\n280 Packages - Expancel 920 DU 40 Bag 18 KG\n112 Packages - Expancel 909 DU 80 Bag 18 KG - SE",
       "invoice_value": "10 Expancel 930 DU 120 Bag 18 KG\n20 Expancel 920 DU 40 Bag 18 KG\n30 Expancel 909 DU 80 Bag 18 KG",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "No article numbers stated in certificate; text matching used."
+          "outcome": "article_number_priority_not_applicable_no_article_number_in_certificate"
+        },
+        {
+          "rule_id": "4.3.5",
+          "outcome": "not_applicable_invoice_reference_without_invoice_date"
         },
         {
           "rule_id": "4.3.3",
-          "outcome": "Identity-bearing product descriptions found explicitly in invoice."
+          "outcome": "controlled_text_match"
         },
         {
           "rule_id": "4.3.4",
-          "outcome": "Non-identity additions such as package counts and trailing country marker do not create mismatch."
+          "outcome": "non_identity_bearing_suffix_se_ignored"
+        },
+        {
+          "rule_id": "4.3.8",
+          "outcome": "match"
         }
       ],
-      "motivation": "De identitetsbärande huvudbeteckningarna 'Expancel 930 DU 120 Bag 18 KG', 'Expancel 920 DU 40 Bag 18 KG' och 'Expancel 909 DU 80 Bag 18 KG' återfinns uttryckligen i fakturans varurader. Tilläggen '168/280/112 Packages' och suffixet '- SE' i certifikatet ändrar inte produktidentiteten. Varubeskrivningen kan därför verifieras utan semantisk tolkning."
+      "motivation": "Varubeskrivningarna i certifikatet kan identifieras direkt i fakturans materialrader: \"Expancel 930 DU 120 Bag 18 KG\", \"Expancel 920 DU 40 Bag 18 KG\" och \"Expancel 909 DU 80 Bag 18 KG\". Certifikatets tillägg \"- SE\" på två rader är en landsbeteckning som inte ändrar produktidentiteten och får ignoreras när ursprunget separat verifieras som Sverige. Regeln om generell varubeskrivning med fakturareferens användes inte eftersom certifikatet saknar fakturadatum."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.99,
+      "confidence": 0.98,
       "certificate_value": "3.326,400 KG G.W.\n5.544,000 KG G.W.\n2.217,600 KG G.W.",
       "invoice_value": "Gross Weight 3.326,400 KG\nGross Weight 5.544,000 KG\nGross Weight 2.217,600 KG",
       "rules_applied": [
         {
           "rule_id": "4.4.2.1",
-          "outcome": "Box 7 values used as verification basis."
+          "outcome": "box_7_used_as_verification_basis"
         },
         {
           "rule_id": "4.4.2.2",
-          "outcome": "Weight category explicitly stated as G.W."
+          "outcome": "gross_weight_category_explicit"
         },
         {
           "rule_id": "4.4.3",
-          "outcome": "Exact numeric values identified in invoice."
+          "outcome": "exact_numeric_identification_in_invoice"
         },
         {
-          "rule_id": "4.4.3.1",
-          "outcome": "Multiple quantities present; all listed gross weights are explicitly confirmed in invoice."
+          "rule_id": "4.4.6",
+          "outcome": "match"
         }
       ],
-      "motivation": "Certifikatets verifieringsgrundande kvantiteter i box 7 är tre uttryckliga bruttovikter: 3.326,400 KG, 5.544,000 KG och 2.217,600 KG G.W. Samma tre gross weight-värden finns uttryckligen i fakturan för motsvarande varurader. Det finns ingen avvikelse i numeriskt värde, enhet eller viktkategori."
+      "motivation": "Certifikatets verifieringsgrundande kvantiteter finns i box 7 och består av tre separata bruttovikter: 3.326,400 KG G.W., 5.544,000 KG G.W. och 2.217,600 KG G.W. Samma tre gross weight-värden återfinns uttryckligen i fakturan på respektive produktrad. Ingen summering, omräkning eller toleransregel behövde användas eftersom värdena matchar exakt."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.98,
+      "confidence": 0.99,
       "certificate_value": "sweden",
       "invoice_value": "Country of Origin Sweden",
       "rules_applied": [
         {
           "rule_id": "4.5.1",
-          "outcome": "Explicit origin field found in invoice."
+          "outcome": "explicit_origin_field_found_in_invoice"
         },
         {
           "rule_id": "4.5.2",
-          "outcome": "Single origin country in certificate is supported by invoice origin statements."
+          "outcome": "uniform_origin_sufficient"
         },
         {
           "rule_id": "4.5.4",
-          "outcome": "Case normalization only."
+          "outcome": "case_normalization"
+        },
+        {
+          "rule_id": "4.5.5",
+          "outcome": "match"
         }
       ],
-      "motivation": "Certifikatet anger ursprungsland 'sweden'. Fakturan anger uttryckligen 'Country of Origin Sweden' för varorna. Ursprungslandet kan därför verifieras direkt i ett explicit origin-fält."
+      "motivation": "Certifikatet anger ursprungsland som \"sweden\" i box 3. Fakturan anger uttryckligen \"Country of Origin Sweden\" på varuraderna, vilket är ett explicit origin-fält. Därmed kan certifikatets ursprungsland identifieras direkt i fakturan efter enkel normalisering av versaler/gemener."
     }
   },
   "overall_assessment": {
     "comparison_result": "IDENTICAL",
     "workflow_recommendation": "AUTO_APPROVAL_ELIGIBLE",
     "auto_approval_eligible": true,
-    "confidence": 0.96,
+    "confidence": 0.95,
     "critical_failures": [],
     "manual_review_triggers": [],
-    "decision_summary": "Dokumentparet är giltigt parat via identiskt fakturanummer 9589008218. Samtliga tillämpliga kontrollpunkter — consignor, consignee, varubeskrivning, kvantitet och ursprungsland — kan verifieras mot fakturan enligt tillåtna regler och normaliseringar. Ingen MISMATCH eller teknisk blockerare identifierades.",
-    "human_explanation": "Alla uppgifter i ursprungscertifikatet kan verifieras mot den bifogade fakturan. Fakturanummer, avsändare, mottagare, varubeskrivning, vikter och ursprungsland stämmer överens. Dokumentparet kan därför godkännas automatiskt."
+    "decision_summary": "Dokumentparet kunde pareras entydigt via fakturanummer 9589008218 samt matchande consignor och consignee. Samtliga fem tillämpliga kontrollpunkter verifierades som MATCH. Ingen LC-regel eller manuell granskningsutlösare aktiverades.",
+    "human_explanation": "Alla relevanta uppgifter i ursprungscertifikatet kan verifieras mot fakturan. Avsändaren matchar genom en tillåten företagsförkortning, och mottagare, varor, vikter samt ursprungsland stämmer med fakturan. Dokumentparet kan därför godkännas automatiskt."
   },
   "_meta": {
-    "tested_at": "2026-04-01T14:13:26.611056+00:00",
-    "prompt_hash": "9b9df42642d8",
+    "tested_at": "2026-04-02T11:23:49.165786+00:00",
+    "prompt_hash": "f81eb9b0d2ea",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P032_MATCH",

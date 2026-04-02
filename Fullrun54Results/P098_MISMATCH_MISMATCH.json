@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": null,
+    "verification_timestamp": "2026-04-02T00:00:00Z",
     "document_pair_id": null,
     "certificate_issue_date": "2025-11-20",
     "source_documents_received": 2
@@ -20,147 +20,146 @@
     "document_b": {
       "label": "Document B",
       "assumed_role": "invoice",
-      "document_type": "Scanned invoice PDF containing multiple separate invoices"
+      "document_type": "Commercial invoice PDF containing multiple separate invoices"
     }
   },
   "rule_activation": {
     "lc_exception_active": false,
     "lc_number_found": null,
     "general_goods_description_with_invoice_reference_active": false,
-    "mixed_origins_rule_active": false,
+    "mixed_origins_rule_active": true,
     "to_order_rule_active": false,
     "quantity_exception_applied": null,
     "eu_origin_normalization_active": false,
     "activated_rules": [
       {
-        "rule_id": "8.5.0",
-        "rule_name": "Filbaserad dokumentparning"
-      },
-      {
         "rule_id": "8.5.1",
-        "rule_name": "Flera fakturor från samma utställare utan entydig fakturareferens"
+        "rule_name": "Flera fakturor från samma utställare utan entydig fakturareferens ger MANUAL_REVIEW"
       },
       {
         "rule_id": "8.6",
-        "rule_name": "Obligatorisk parningsvalidering"
+        "rule_name": "Parningsvalidering passerad via consignor-identifikation"
       },
       {
-        "rule_id": "4.1.0",
-        "rule_name": "Consignor-sökning i hela fakturafilen"
+        "rule_id": "4.1.2.1",
+        "rule_name": "Consignor-land kan verifieras via explicit issuer/adressblock"
       }
     ]
   },
   "control_points": {
     "consignor": {
       "applicable": true,
-      "status": "MANUAL_REVIEW",
-      "confidence": 0.41,
-      "certificate_value": "SKF Sverige AB, Kvibergs Broväg 8, SE-415 05 Göteborg, Sweden",
-      "invoice_value": "\"Issued by: SKF Sverige AB ... Sweden\" förekommer på flera separata fakturor i fakturafilen, bl.a. sidset med \"Page 1 of 6\", \"Page 1 of 4\", \"Page 1 of 7\", \"Page 1 of 3\" och \"Page 1 of 19\".",
+      "status": "MATCH",
+      "confidence": 0.96,
+      "certificate_value": "SKF Sverige AB\nKvibergs Broväg 8\nSE-415 05, GÖTEBORG\nSweden",
+      "invoice_value": "Issued by:\nSKF Sverige AB\nvon Utfallsgatan 4\n415 50 Göteborg\nSweden",
       "rules_applied": [
         {
           "rule_id": "4.1.0",
-          "outcome": "Consignor-namnet identifierades i flera delar av fakturafilen"
+          "outcome": "Consignor name found explicitly in invoice file"
         },
         {
-          "rule_id": "8.5.1",
-          "outcome": "Ingen unik faktura kan väljas eftersom flera fakturor från samma utställare finns och certifikatet saknar specifikt fakturanummer"
+          "rule_id": "4.1.2.1",
+          "outcome": "Country verified from explicit issuer address block"
         }
       ],
-      "motivation": "Certifikatets consignor kan identifieras i fakturafilen, men fakturafilen innehåller flera separata fakturor från samma utställare SKF Sverige AB. Eftersom certifikatet inte anger något specifikt fakturanummer är det tekniskt omöjligt att fastställa vilken av dessa fakturor som ska användas för consignor-verifieringen."
+      "motivation": "Certifikatets consignor 'SKF Sverige AB ... Sweden' kan identifieras uttryckligen i fakturafilen genom issuer-blocket som återkommer i dokumentet: 'Issued by: SKF Sverige AB ... Sweden'. Företagsnamnet och landet är verifierbara trots att gatuadressen skiljer sig, vilket är tillåtet. Detta löser dock inte dokumentparningen eftersom fakturafilen innehåller flera separata fakturor."
     },
     "consignee": {
       "applicable": true,
       "status": "MANUAL_REVIEW",
-      "confidence": 0.28,
-      "certificate_value": "SKF Vietnam CO Ltd, 105 Ton Dat Tien, Tan Phu Ward, 700000 Ho Chi Minh, Viet Nam",
-      "invoice_value": "I de synliga fakturorna förekommer andra mottagar-/destinationsuppgifter, t.ex. \"Ship to ... Türkiye\" och \"ISTANBUL\"; någon entydig vald faktura för kontroll mot \"SKF Vietnam CO Ltd\" kan inte fastställas.",
+      "confidence": 0.43,
+      "certificate_value": "SKF Vietnam CO Ltd \n105 Ton Dat Tien,Tan Phu Ward \n700000 Ho Chi Minh\nViet Nam",
+      "invoice_value": "Ship to\nTürkiye",
       "rules_applied": [
         {
           "rule_id": "8.5.1",
-          "outcome": "Dokumentparningen är tvetydig på grund av flera fakturor från samma utställare utan certifikatreferens"
+          "outcome": "Applicable - no unique invoice can be selected"
         },
         {
           "rule_id": "4.2.0.2",
-          "outcome": "Consignee-prioritering kan inte tillämpas slutligt eftersom korrekt faktura inte kan väljas"
+          "outcome": "Could not be applied on a uniquely identified invoice"
         }
       ],
-      "motivation": "Mottagarkontrollen kan inte avgöras slutligt eftersom korrekt faktura inte kan identifieras i fakturafilen. Flera olika fakturor och destinationsuppgifter förekommer, och certifikatet saknar den fakturareferens som krävs för att välja rätt underlag."
+      "motivation": "Certifikatet anger mottagaren som 'SKF Vietnam CO Ltd ... Viet Nam'. Fakturafilen är bildbaserad och innehåller flera separata fakturor från samma utställare, men certifikatet anger inget fakturanummer som entydigt pekar ut vilken faktura som ska användas. Synliga exempel i fakturafilen visar ship-to i Türkiye snarare än Viet Nam, men eftersom rätt faktura inte kan väljas tekniskt enligt flerfakturaregeln blir kontrollpunkten MANUAL_REVIEW i stället för slutlig MISMATCH."
     },
     "goods_description": {
       "applicable": true,
       "status": "MANUAL_REVIEW",
-      "confidence": 0.31,
-      "certificate_value": "LOCK WASHER; NUTS",
-      "invoice_value": "Varubeskrivningar som \"LOCK WASHER\" och \"NUTS\" förekommer i minst en av de separata fakturorna i fakturafilen, men andra fakturor innehåller helt andra varor såsom lager och tillbehör.",
+      "confidence": 0.46,
+      "certificate_value": "1 COLLIE\nLOCK WASHER\nNUTS",
+      "invoice_value": "LOCK WASHER\nNUTS",
       "rules_applied": [
         {
           "rule_id": "8.5.1",
-          "outcome": "Ingen unik faktura får väljas genom att välja den som råkar matcha varorna bäst"
+          "outcome": "Applicable - intended invoice not uniquely identifiable"
         },
         {
-          "rule_id": "4.3.2",
-          "outcome": "Varubeskrivning kan inte verifieras mot en entydigt vald faktura"
+          "rule_id": "4.3.1",
+          "outcome": "Goods text seen in parts of invoice file but not on a uniquely selected invoice"
         }
       ],
-      "motivation": "Det finns varukandidater i fakturafilen som liknar certifikatets varubeskrivning, men fakturafilen innehåller flera separata fakturor med olika varusortiment. Reglerna förbjuder att välja den faktura som bara verkar passa bäst när certifikatet saknar entydig fakturareferens."
+      "motivation": "Certifikatet beskriver varorna som 'LOCK WASHER' och 'NUTS'. Dessa benämningar förekommer i delar av den bifogade fakturafilen, men filen innehåller flera separata fakturor och certifikatet saknar fakturanummer eller annan entydig fakturahänvisning som binder certifikatet till en specifik faktura. Därför kan varubeskrivningen inte verifieras på ett unikt dokumentpar."
     },
     "quantity": {
       "applicable": true,
       "status": "MANUAL_REVIEW",
-      "confidence": 0.27,
-      "certificate_value": "2 pcs; 2 pcs",
-      "invoice_value": "Olika kvantiteter förekommer i olika separata fakturor i fakturafilen; utan entydig fakturaparning kan ingen slutlig kvantitetsjämförelse göras.",
+      "confidence": 0.41,
+      "certificate_value": "2 pcs\n2 pcs",
+      "invoice_value": "LOCK WASHER 848\nNUTS 526",
       "rules_applied": [
         {
           "rule_id": "8.5.1",
-          "outcome": "Korrekt faktura kan inte fastställas"
+          "outcome": "Applicable - no unique invoice selection possible"
         },
         {
           "rule_id": "4.4.1",
-          "outcome": "Förekomstkontroll kan inte genomföras mot ett unikt valt fakturaunderlag"
+          "outcome": "Direct quantity verification blocked by pairing ambiguity"
         }
       ],
-      "motivation": "Kvantitetskontrollen kan inte göras på ett revisionssäkert sätt eftersom fakturafilen innehåller flera olika fakturor och certifikatet inte pekar ut vilken faktura som avses. Därmed går det inte att fastställa vilken kvantitetsuppgift som ska jämföras mot certifikatets 2 pcs / 2 pcs."
+      "motivation": "Certifikatet anger kvantiteterna '2 pcs' och '2 pcs'. I fakturafilen finns varurader med helt andra kvantiteter för LOCK WASHER och NUTS i vissa fakturor, medan andra fakturor avser andra varor. Eftersom rätt faktura inte kan identifieras entydigt kan kvantiteten inte avgöras tekniskt mot ett unikt verifieringsunderlag."
     },
     "origin": {
       "applicable": true,
       "status": "MANUAL_REVIEW",
-      "confidence": 0.39,
+      "confidence": 0.44,
       "certificate_value": "SWEDEN",
-      "invoice_value": "Ursprungsangivelser i fakturafilen varierar mellan olika separata fakturor och omfattar bl.a. Sweden, Germany, Poland, P.R. China och Chinese Taiwan.",
+      "invoice_value": "COUNTRY OF ORIGIN:\nSWEDEN\nPOLAND\nP.R. CHINA",
       "rules_applied": [
         {
           "rule_id": "8.5.1",
-          "outcome": "Flera fakturor från samma utställare utan certifikatreferens medför att korrekt faktura inte kan fastställas"
+          "outcome": "Applicable - intended invoice not uniquely identifiable"
         },
         {
           "rule_id": "4.5.1",
-          "outcome": "Explicit origin-fält finns i flera fakturor men kan inte kopplas till ett entydigt dokumentpar"
+          "outcome": "Explicit origin fields exist in invoice file"
+        },
+        {
+          "rule_id": "4.5.3",
+          "outcome": "Mixed origins present in parts of invoice file"
         }
       ],
-      "motivation": "Fakturafilen innehåller flera separata fakturor med olika ursprungsländer. Även om Sverige förekommer i vissa fakturor går det inte att avgöra vilken faktura som är den rätta verifieringsfakturan, och ursprungskontrollen kan därför inte avgöras tekniskt säkert."
+      "motivation": "Certifikatet anger ursprungsland 'SWEDEN'. I fakturafilen finns explicita origin-fält, men olika fakturor i samma PDF visar olika ursprungsbilder: vissa visar enbart Sweden medan andra visar blandade ursprung som Sweden, Poland och P.R. China. Utan en entydig fakturareferens från certifikatet går det inte att fastställa vilken faktura som ska användas för ursprungsverifieringen."
     }
   },
   "overall_assessment": {
     "comparison_result": "MANUAL_REVIEW",
     "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
     "auto_approval_eligible": false,
-    "confidence": 0.33,
+    "confidence": 0.56,
     "critical_failures": [
-      "Fakturafilen innehåller flera separata fakturor från samma utställare SKF Sverige AB.",
-      "Certifikatet saknar specifikt fakturanummer som entydigt identifierar vilken faktura i fakturafilen som ska användas."
+      "Document B contains multiple separate invoices from the same issuer, and the certificate does not reference a specific invoice number."
     ],
     "manual_review_triggers": [
-      "Ambiguous invoice pairing under 8.5.1: multiple invoices from same issuer in the invoice PDF without a unique invoice reference in the certificate.",
-      "Invoice file is scanned/image-based, which reduces traceability and reinforces the pairing problem."
+      "Unique document pairing is technically impossible from the provided certificate and multi-invoice PDF.",
+      "Invoice file is image-based and parsed text is missing, increasing dependence on visual inspection."
     ],
-    "decision_summary": "Document A är ett Certificate of Origin. Document B är en skannad faktura-PDF som innehåller flera separata fakturor från samma utställare, SKF Sverige AB, med olika sidset och olika varu-/mottagaruppgifter. Certifikatet anger inget specifikt fakturanummer. Enligt parningsreglerna går det därför inte att avgöra vilken faktura i fakturafilen som ska användas för verifieringen, och ärendet måste skickas till manuell hantering.",
-    "human_explanation": "Certifikatet saknar ett specifikt fakturanummer, medan fakturafilen innehåller flera olika fakturor från SKF Sverige AB. Därför går det inte att avgöra vilken faktura som ska användas för kontrollen. Ärendet behöver granskas manuellt."
+    "decision_summary": "Consignor kan verifieras mot fakturafilen, men dokumentparningen kan inte fastställas entydigt eftersom fakturafilen innehåller flera separata fakturor från samma utställare och certifikatet saknar specifik fakturareferens. Därför kan mottagare, varor, kvantitet och ursprung inte slutligt verifieras mot ett unikt dokumentpar.",
+    "human_explanation": "Fakturafilen innehåller flera separata fakturor från SKF Sverige AB, men certifikatet anger inget fakturanummer som visar vilken faktura som ska användas. Därför går det inte att tekniskt fastställa rätt dokumentpar. Manuell granskning krävs."
   },
   "_meta": {
-    "tested_at": "2026-04-01T14:07:23.247044+00:00",
-    "prompt_hash": "9b9df42642d8",
+    "tested_at": "2026-04-02T11:36:29.851237+00:00",
+    "prompt_hash": "f81eb9b0d2ea",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P098_MISMATCH",

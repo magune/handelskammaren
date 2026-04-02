@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-04-01T00:00:00Z",
+    "verification_timestamp": null,
     "document_pair_id": null,
     "certificate_issue_date": "2025-10-14",
     "source_documents_received": 2
@@ -34,35 +34,35 @@
     "activated_rules": [
       {
         "rule_id": "8.5.0",
-        "rule_name": "Filbaserad dokumentparning"
+        "rule_name": "Certifikat hämtat från certifikatfilen och faktura från separat fakturafil"
       },
       {
         "rule_id": "8.6",
-        "rule_name": "Obligatorisk parningsvalidering"
+        "rule_name": "Parningsvalidering uppfylld genom consignor- och consignee-spår i fakturan"
       },
       {
         "rule_id": "4.1.3.3",
-        "rule_name": "Kommersiell förkortning för consignor"
+        "rule_name": "Kommersiell förkortning i consignor-namn"
       },
       {
-        "rule_id": "4.2.0.3",
-        "rule_name": "Ship-To-regel för slutmottagare"
+        "rule_id": "4.2.0.3.1",
+        "rule_name": "Ship-To-regeln ger MANUAL_REVIEW vid oberoende Bill-To-part"
       },
       {
         "rule_id": "4.3.5",
-        "rule_name": "Generell varubeskrivning med fakturareferens"
+        "rule_name": "Generell varubeskrivning med order-/fakturareferens och datum"
       },
       {
-        "rule_id": "4.5.3",
-        "rule_name": "Blandade ursprung"
+        "rule_id": "4.4.3.2",
+        "rule_name": "Försändelsekvantitet med fakturareferens"
       },
       {
         "rule_id": "4.5.4.1",
-        "rule_name": "EU-normalisering"
+        "rule_name": "EU-normalisering för ursprungsland"
       },
       {
         "rule_id": "4.5.4.1.2",
-        "rule_name": "Extra EU-länder i fakturan vid blandad EU/icke-EU-lista"
+        "rule_name": "Extra EU-länder i fakturan tillåtna vid blandad EU/icke-EU-lista"
       }
     ]
   },
@@ -70,165 +70,129 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.9,
+      "confidence": 0.89,
       "certificate_value": "Berg Prop Prod. AB\nTärnvägen 15\nSE-475 40, HÖNÖ\nSweden",
-      "invoice_value": "Berg Propulsion\nProduction AB\nTärnvägen 15\n475 40 HÖNÖ\nSWEDEN",
+      "invoice_value": "Berg Propulsion\nProduction AB\nTärnvägen 15\n475 40 HÖNÖ\nSWEDEN\nVAT reg. no.:SE556568305801",
       "rules_applied": [
         {
           "rule_id": "4.1.0",
-          "outcome": "searched_all_invoice_pages; exact shortened consignor string not found as such, full legal name found in issuer/footer blocks"
-        },
-        {
-          "rule_id": "4.1.3.1",
-          "outcome": "full names not identical"
+          "outcome": "Not exact full-name identification in invoice text for cert form; sequential normalization required"
         },
         {
           "rule_id": "4.1.3.2",
-          "outcome": "not_applicable"
+          "outcome": "Not applied as pure layout-prefix truncation was not sufficient"
         },
         {
           "rule_id": "4.1.3.3",
-          "outcome": "match_via_commercial_abbreviation"
-        },
-        {
-          "rule_id": "4.1.2.1",
-          "outcome": "country_verified_via_address_and_SE_VAT_IBAN"
+          "outcome": "MATCH via commercial abbreviations 'Prop.' -> 'Propulsion' and 'Prod.' -> 'Production'"
         },
         {
           "rule_id": "4.1.4",
-          "outcome": "land_match"
+          "outcome": "Country matched as Sweden/SWEDEN"
         }
       ],
-      "motivation": "Certifikatet anger \"Berg Prop Prod. AB\". Fakturan anger den fullständiga juridiska parten \"Berg Propulsion Production AB\" i säljar-/issueruppgifterna med samma adress Tärnvägen 15, Hönö, Sweden och med svenska landindikatorer (SWEDEN, VAT-prefix SE, IBAN SE). Skillnaden \"Prop\"/\"Propulsion\" och \"Prod.\"/\"Production\" är en vedertagen kommersiell förkortning och kan därför accepteras som samma juridiska part."
+      "motivation": "Certifikatet anger consignor som 'Berg Prop Prod. AB' i Sverige. Fakturan anger säljarentiteten i footer/adressblock som 'Berg Propulsion Production AB' på samma adress Tärnvägen 15, Hönö, Sweden/SWEDEN. Skillnaden består av vedertagna förkortningar i företagsnamnet och landet överensstämmer, vilket ger MATCH."
     },
     "consignee": {
       "applicable": true,
-      "status": "MATCH",
-      "confidence": 0.94,
+      "status": "MANUAL_REVIEW",
+      "confidence": 0.72,
       "certificate_value": "BERG Propulsion Shanghai\nRoom1704, Xu Hui Wan Ke Centre\nLee Kun Kee Plaza\nNo 970, Nanning Road\nShanghai P.R.C 200235\nChina",
-      "invoice_value": "Delivery address\nBERG Propulsion Shanghai\nRm. 1704, Xu Hui Wan Ke Center Lee Kun Kee Plaza, No.970, Nanning Road,\nShanghai, 200235\nPEOPLE'S REPUBLIC OF CHINA",
+      "invoice_value": "Delivery address\nBERG Propulsion Shanghai\nRm. 1704, Xu Hui Wan Ke Center Lee Kun Kee Plaza, No.970, Nanning Road,\nShanghai, 200235\nPEOPLE'S REPUBLIC OF CHINA\n\nMailing address\nSinopec Offshore Oilfield Services Company\nRoom 1-107, No. 2001 Yanggao North Road\nWaigaoqiao Free Trade Zone\n200131 Shanghai\nPEOPLE'S REPUBLIC OF CHINA",
       "rules_applied": [
         {
           "rule_id": "4.2.0.2",
-          "outcome": "invoice_contains_multiple_parties"
+          "outcome": "Invoice contains both a delivery address and a separate mailing/billing-type address"
         },
         {
           "rule_id": "4.2.0.3",
-          "outcome": "match_via_ship_to_rule"
+          "outcome": "Certificate consignee matched in invoice delivery address"
         },
         {
-          "rule_id": "4.2.2.1",
-          "outcome": "normalization_applied_case_spacing_punctuation"
+          "rule_id": "4.2.0.3.1",
+          "outcome": "MANUAL_REVIEW because mailing/bill-to party is a different independent legal entity with no evidenced link"
         },
         {
           "rule_id": "4.2.3",
-          "outcome": "country_match_China_vs_Peoples_Republic_of_China"
+          "outcome": "Country matched as China/PEOPLE'S REPUBLIC OF CHINA"
         }
       ],
-      "motivation": "Fakturan har både en faktureringspart (\"Sinopec Offshore Oilfield Services Company\") och en separat leveransadress. Certifikatets consignee återfinns exakt i fakturans Delivery address/Ship-To-block som \"BERG Propulsion Shanghai\" på samma adress i Shanghai, Kina. Detta uppfyller undantaget för slutmottagare där certifikatet får följa varuflödet medan fakturan kan vara ställd till ett annat mellanled."
+      "motivation": "Certifikatets consignee 'BERG Propulsion Shanghai' återfinns uttryckligen i fakturans Delivery address. Fakturan visar dock en annan kommersiell part i Mailing address, nämligen 'Sinopec Offshore Oilfield Services Company', och dokumentet ger ingen uttrycklig koppling mellan denna bill-to-part och certifikatets consignee. Enligt Ship-To-regelns begränsning ska detta därför hanteras som MANUAL_REVIEW och inte MATCH."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.88,
       "certificate_value": "Order:S7081TR806\nSHIP SPARES 1x 80*60*78cm TW: 194 kg\nAccording to attached invoice with order number S7081TR806\ndated 04/07/25",
-      "invoice_value": "Commercial invoice\nOrder number\nS7081TR806\nOrder date 2025-07-04\n...line items including BEARING, O-RING, GUIDE RING, SERVICE KIT and other spare parts...",
+      "invoice_value": "Commercial invoice\nOrder number\nS7081TR806\nOrder date Printout date Date format\n2025-07-04 2025-07-04 YYYY-MM-DD\nPos. Part no. Name ...\nKU32222 BEARING 32222 J2 ...\nKU29334 SPHERICAL THRUST BEARING 29334E ...\n...\nAT47108R01 SERVICE KIT - PROP. SHAFT BAT/BTT3 ...",
       "rules_applied": [
         {
-          "rule_id": "4.3.2",
-          "outcome": "no_certificate_article_numbers_to_apply_priority_1"
+          "rule_id": "4.3.5",
+          "outcome": "General goods description rule activated by explicit order/invoice reference and date"
         },
         {
-          "rule_id": "4.3.5",
-          "outcome": "general_goods_description_with_explicit_invoice_reference_applied"
-        },
-        {
-          "rule_id": "4.3.5",
-          "outcome": "order_reference_match_S7081TR806"
-        },
-        {
-          "rule_id": "4.3.5",
-          "outcome": "date_match_04_07_25_vs_2025_07_04"
+          "rule_id": "4.3.5.2",
+          "outcome": "Invoice contents considered consistent with generic description 'SHIP SPARES'"
         }
       ],
-      "motivation": "Certifikatet använder en generell varubeskrivning (\"SHIP SPARES\") men innehåller samtidigt en uttrycklig hänvisning till den bifogade fakturan med ordernummer S7081TR806 och datum 04/07/25. Fakturan i dokumentparet bär samma ordernummer och datum 2025-07-04. Fakturans innehåll består av reservdelar/spare parts och är förenligt med certifikatets generella beskrivning."
+      "motivation": "Certifikatet använder en generell varubeskrivning ('SHIP SPARES') men innehåller en uttrycklig hänvisning till attached invoice/order number S7081TR806 samt datum 04/07/25. Fakturan i den separata fakturafilen bär ordernummer S7081TR806 och datum 2025-07-04, vilket motsvarar certifikatets datumformat. Fakturans artiklar består av reservdelar/spares (lager, tätningar, brickor, service kit m.m.), vilket är förenligt med den generella beskrivningen."
     },
     "quantity": {
       "applicable": true,
-      "status": "MANUAL_REVIEW",
-      "confidence": 0.46,
-      "certificate_value": "1 pcs\ndated 04/07/25",
-      "invoice_value": "Fakturan visar endast radkvantiteter, t.ex. \"1,00 pcs\" och \"1,00 set\", men ingen explicit försändelse- eller totalkvantitet som motsvarar certifikatets ensamma \"1 pcs\" för hela certifikatsposten.",
+      "status": "MATCH",
+      "confidence": 0.76,
+      "certificate_value": "7 Quantity / Mängd\n1 pcs\n\ndated 04/07/25\n\n6 Item numbers ...\nSHIP SPARES 1x 80*60*78cm TW: 194 kg\nAccording to attached invoice with order number S7081TR806",
+      "invoice_value": "Commercial invoice\nOrder number\nS7081TR806\nPos. Part no. Name Del. date Quantity ...\n[referenced shipment under order S7081TR806 with detailed line-item quantities across pages 1-6]",
       "rules_applied": [
         {
-          "rule_id": "4.4.2.1",
-          "outcome": "box_7_quantity_selected_as_verification_basis"
-        },
-        {
-          "rule_id": "4.4.3",
-          "outcome": "no_clear_corresponding_shipment_level_quantity_identified"
+          "rule_id": "4.4.3.1",
+          "outcome": "Multiple quantity indications assessed; not every quantity needs separate verification if one valid shipment quantity is verified"
         },
         {
           "rule_id": "4.4.3.2",
-          "outcome": "shipment_quantity_rule_not_applicable; certificate does not explicitly use package/shipment/case/carton wording in the selected quantity field"
-        },
-        {
-          "rule_id": "4.4.5.1",
-          "outcome": "no_quantity_exception_3A_to_3E_applicable"
-        },
-        {
-          "rule_id": "4.4.6.1",
-          "outcome": "manual_review_due_to_missing_comparable_quantity_type_for_selected_certificate_quantity"
+          "outcome": "MATCH via shipment-level quantity/consignment reference tied to the referenced invoice/order"
         }
       ],
-      "motivation": "Den verifieringsgrundande kvantiteten i certifikatet är box 7: \"1 pcs\". Fakturan innehåller många radkvantiteter men ingen tydlig total- eller försändelsekvantitet som entydigt motsvarar certifikatets enskilda \"1 pcs\" för hela certifikatsposten. Eftersom fakturan inte uttryckligen motsäger värdet men inte heller ger ett säkert jämförbart shipment-level-fält ska kontrollpunkten skickas till manuell granskning."
+      "motivation": "Certifikatet avser en samlad försändelse 'SHIP SPARES' och innehåller samtidigt uttrycklig hänvisning till den bifogade fakturan/ordern S7081TR806. Kvantitetsuppgiften läses som en försändelse-/kolliuppgift kopplad till den refererade försändningen snarare än som summering av artikelrader. Eftersom den separata fakturafilen entydigt är den refererade kommersiella fakturan för denna försändning accepteras kvantiteten som verifierad enligt försändelsekvantitetsregeln, men med lägre säkerhet än en direkt totalrad."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.87,
+      "confidence": 0.93,
       "certificate_value": "EU\nChina, Bulgaria, UK, Taiwan",
-      "invoice_value": "Country of origin: Germany; Sweden; Bulgaria; People's Republic of China; United Kingdom; Italy; Denmark; The Netherlands; Taiwan",
+      "invoice_value": "Country of origin: Germany\nCountry of origin: Sweden\nCountry of origin: Bulgaria\nCountry of origin: People's Republic of China\nCountry of origin: United Kingdom\nCountry of origin: Taiwan\nCountry of origin: Italy\nCountry of origin: Denmark\nCountry of origin: The Netherlands",
       "rules_applied": [
         {
-          "rule_id": "4.5.3",
-          "outcome": "mixed_origins_evaluated"
-        },
-        {
           "rule_id": "4.5.4.1",
-          "outcome": "EU_normalization_applied"
+          "outcome": "EU in certificate verified by multiple EU member states in invoice"
         },
         {
           "rule_id": "4.5.4.1.2",
-          "outcome": "extra_invoice_origins_Germany_Sweden_Italy_Denmark_Netherlands_are_all_EU_member_states"
+          "outcome": "Extra origins in invoice are EU member states only and therefore acceptable"
         },
         {
           "rule_id": "4.5.4.2",
-          "outcome": "EU_and_specific_EU_member_states_treated_as_compatible"
-        },
-        {
-          "rule_id": "4.5.5",
-          "outcome": "all_certificate_origins_explicitly_identifiable_in_invoice_origin_fields"
+          "outcome": "Named/non-named EU treatment accepted symmetrically"
         }
       ],
-      "motivation": "Certifikatet anger en blandad ursprungslista: EU, China, Bulgaria, UK och Taiwan. Fakturan anger ursprung uttryckligen per artikel och innehåller China (som \"People's Republic of China\"), Bulgaria, United Kingdom och Taiwan. Därutöver förekommer Germany, Sweden, Italy, Denmark och The Netherlands, vilka alla är EU-medlemsstater och därför ryms inom certifikatets EU-angivelse; inga extra icke-EU-ursprung förekommer utöver dem som redan anges i certifikatet."
+      "motivation": "Certifikatet anger ursprung 'EU, China, Bulgaria, UK, Taiwan'. Fakturan innehåller explicita origin-fält för People's Republic of China, Bulgaria, United Kingdom och Taiwan, samt flera EU-medlemsländer såsom Germany, Sweden, Italy, Denmark och The Netherlands. EU-ursprunget i certifikatet är därmed verifierat via medlemsstater i fakturan, och de extra länder som tillkommer i fakturan utöver de namngivna icke-EU-länderna är alla EU-länder, vilket är tillåtet."
     }
   },
   "overall_assessment": {
     "comparison_result": "MANUAL_REVIEW",
     "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
     "auto_approval_eligible": false,
-    "confidence": 0.73,
+    "confidence": 0.78,
     "critical_failures": [],
     "manual_review_triggers": [
-      "Kvantiteten i certifikatets box 7 är \"1 pcs\", men fakturan saknar en tydlig och entydig försändelse- eller totalkvantitet som verifierar detta värde."
+      "Certifikatets mottagare BERG Propulsion Shanghai återfinns endast som leveransadress i fakturan medan fakturans mailing/bill-to-part är Sinopec Offshore Oilfield Services Company utan uttrycklig koppling mellan parterna."
     ],
-    "decision_summary": "Consignor, consignee, varubeskrivning och ursprungsland kan verifieras mot fakturan. Kvantiteten kan inte verifieras säkert eftersom certifikatet anger \"1 pcs\" medan fakturan endast visar radvisa kvantiteter utan en tydlig motsvarande shipment-level-kvantitet.",
-    "human_explanation": "Avsändare, mottagare, varubeskrivning och ursprung stämmer mot fakturan. Däremot går certifikatets mängd \"1 pcs\" inte att verifiera säkert eftersom fakturan bara visar radvisa mängder och ingen tydlig total- eller försändelsemängd. Ärendet behöver därför manuell granskning."
+    "decision_summary": "Avsändare, varubeskrivning, kvantitet och ursprungsuppgifter kan i huvudsak verifieras mot den separata fakturafilen. Mottagarkontrollen kan däremot inte godkännas automatiskt eftersom certifikatets consignee motsvarar invoice ship-to/delivery address medan en annan oberoende part anges som mailing/billing address i samma faktura. Därför krävs manuell handläggning.",
+    "human_explanation": "Certifikatet anger mottagaren som BERG Propulsion Shanghai, medan fakturan har Sinopec Offshore Oilfield Services Company som faktureringsadress och BERG Propulsion Shanghai som leveransadress. Det går därför inte att automatiskt fastställa att certifikatets mottagare är den kommersiella motparten, även om övriga uppgifter i huvudsak stämmer. Ärendet bör granskas manuellt."
   },
   "_meta": {
-    "tested_at": "2026-04-01T20:23:52.691588+00:00",
-    "prompt_hash": "9b9df42642d8",
+    "tested_at": "2026-04-02T11:21:38.821358+00:00",
+    "prompt_hash": "f81eb9b0d2ea",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P0151_MATCH",

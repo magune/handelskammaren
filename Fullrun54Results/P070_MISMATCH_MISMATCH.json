@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-04-01T00:00:00Z",
+    "verification_timestamp": "2026-04-02",
     "document_pair_id": null,
     "certificate_issue_date": "2023-03-15",
     "source_documents_received": 2
@@ -33,8 +33,16 @@
     "eu_origin_normalization_active": true,
     "activated_rules": [
       {
+        "rule_id": "8.5.0",
+        "rule_name": "Filbaserad dokumentparning"
+      },
+      {
+        "rule_id": "8.6",
+        "rule_name": "Obligatorisk parningsvalidering"
+      },
+      {
         "rule_id": "4.1.0",
-        "rule_name": "Koncernstruktur / explicit consignor search in invoice documents"
+        "rule_name": "Consignor via uttrycklig förekomst i fakturan"
       },
       {
         "rule_id": "4.5.4.1",
@@ -42,11 +50,7 @@
       },
       {
         "rule_id": "4.5.4.1.1",
-        "rule_name": "Ytterligare EU-medlemsländer i fakturan vid namngivna länder i certifikatet"
-      },
-      {
-        "rule_id": "8.6",
-        "rule_name": "Obligatorisk parningsvalidering"
+        "rule_name": "Ytterligare EU-medlemsländer i fakturan"
       }
     ]
   },
@@ -54,80 +58,72 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.92,
+      "confidence": 0.96,
       "certificate_value": "Borealis AG c/o Borealis AB\nIndustrivägen 3\n444 86, STENUNGSUND\nSverige",
       "invoice_value": "Exporter:\nBorealis AG, Vienna VAT ID No.: SE502065098101\nc/o Borealis AB\nSE - 444 86 STENUNGSUND, SWEDEN",
       "rules_applied": [
         {
-          "rule_id": "8.6",
-          "outcome": "PASS - valid document pairing established via consignor presence in invoice"
-        },
-        {
           "rule_id": "4.1.0",
-          "outcome": "MATCH - certificate consignor name found explicitly in invoice page 2 exporter block"
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.1.2.1",
-          "outcome": "MATCH - country Sweden verified explicitly in exporter block and via SE prefix"
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.1.5",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor 'Borealis AG c/o Borealis AB' återfinns uttryckligen i fakturans exporter-block på sida 2. Landet Sverige framgår explicit som 'SWEDEN' och stöds även av SE-prefix i VAT-numret. Därmed kan certifikatets avsändare verifieras mot fakturan trots att fakturans issuer-huvuddel även anger Borealis AG i Wien."
+      "motivation": "Certifikatets consignor 'Borealis AG c/o Borealis AB' återfinns uttryckligen i fakturans exporter-block på sida 2. Landet verifieras som Sverige genom adressen 'SE - 444 86 STENUNGSUND, SWEDEN' och VAT-prefixet 'SE'. Därmed är samma juridiska part och land identifierbara i fakturan."
     },
     "consignee": {
       "applicable": true,
       "status": "MISMATCH",
-      "confidence": 0.99,
+      "confidence": 0.98,
       "certificate_value": "Ayplastik Ambalaj San. ve Tic. A.S.\nNOSAB Sogut Cad. No: 9\n16140 NILUFER BURSA\nTurkey",
-      "invoice_value": "Customer Name / Mailing address\nSahra Kablo San.ve Tic. A.S.\nSaray Mah. Untel Sok. N:16\n34768 ÜMRANIYE ISTANBUL\nTURKEY",
+      "invoice_value": "Customer Name / Mailing address\nSahra Kablo San.ve Tic. A.S.\nSaray Mah. Untel Sok. N:16\n34768 ÜMRANIYE ISTANBUL\nTURKEY\n\nDelivery address\nSahra Kablo San.ve Tic. A.S.\nSaray Mah. Untel Sok. N:16\n34768 ÜMRANIYE ISTANBUL\nTURKEY",
       "rules_applied": [
         {
           "rule_id": "4.2.0.2",
-          "outcome": "Applied - primary billing field used as authoritative consignee source"
+          "outcome": "MISMATCH"
         },
         {
           "rule_id": "4.2.1",
-          "outcome": "Primary consignee candidate identified in invoice billing/customer fields"
-        },
-        {
-          "rule_id": "4.1.3.1",
-          "outcome": "MISMATCH - different legal party names; core names 'Ayplastik Ambalaj' vs 'Sahra Kablo' do not match"
+          "outcome": "MISMATCH"
         },
         {
           "rule_id": "4.2.4",
           "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Certifikatet anger mottagaren som 'Ayplastik Ambalaj San. ve Tic. A.S.' i Bursa, Turkiet. Fakturans primära kund-/faktureringsfält anger 'Sahra Kablo San.ve Tic. A.S.' i Istanbul, Turkiet, och certifikatets consignee kan inte identifieras någonstans i fakturan. Detta är en annan juridisk part, inte en tillåten variation."
+      "motivation": "Certifikatets consignee är 'Ayplastik Ambalaj San. ve Tic. A.S.' i Bursa, Turkiet. Fakturan anger i både kund-/faktureringsfält och leveransadress en annan juridisk part: 'Sahra Kablo San.ve Tic. A.S.' i Istanbul, Turkiet. Certifikatets mottagare kan inte identifieras i fakturan i något relevant fält, vilket ger MISMATCH."
     },
     "goods_description": {
       "applicable": true,
       "status": "MISMATCH",
-      "confidence": 0.97,
+      "confidence": 0.95,
       "certificate_value": "36 PAL = 1980 BAG (25 kg net / bag)\nFT3200",
       "invoice_value": "Visico LE4423 Borealis Octabin LD Polyethylene\nAmbicat LE4476 Bag Catalyst masterbatch",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "Applied - controlled verification of certificate goods description against invoice goods text"
+          "outcome": "NO_MATCH"
         },
         {
           "rule_id": "4.3.3",
-          "outcome": "MISMATCH - identity-bearing designation from certificate cannot be identified in invoice"
+          "outcome": "MISMATCH"
         },
         {
           "rule_id": "4.3.5",
-          "outcome": "Not applicable - no explicit invoice-reference phrase with invoice date in certificate goods description"
+          "outcome": "NOT_APPLICABLE"
         },
         {
           "rule_id": "4.3.8",
           "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Den identitetsbärande beteckningen i certifikatet är 'FT3200'. Fakturan innehåller i stället varubeskrivningarna 'Visico LE4423 Borealis Octabin LD Polyethylene' och 'Ambicat LE4476 Bag Catalyst masterbatch'; 'FT3200' kan inte identifieras där, och certifikatet saknar samtidig uttrycklig fakturahänvisning med fakturanummer och fakturadatum som skulle kunna aktivera regeln om generell varubeskrivning."
+      "motivation": "Certifikatets varubeskrivning innehåller 'FT3200' samt förpackningsuppgiften '36 PAL = 1980 BAG (25 kg net / bag)'. Fakturan visar i stället produkterna 'Visico LE4423 Borealis Octabin LD Polyethylene' och 'Ambicat LE4476 Bag Catalyst masterbatch'. 'FT3200' kan inte identifieras i fakturan, och certifikatet saknar verifierbar fakturahänvisning med fakturanummer och fakturadatum som skulle kunna aktivera regeln om generell varubeskrivning."
     },
     "quantity": {
       "applicable": true,
@@ -138,71 +134,63 @@
       "rules_applied": [
         {
           "rule_id": "4.4.2.1",
-          "outcome": "Applied - box 7 quantity is the mandatory verification basis"
+          "outcome": "BOX_7_SELECTED"
         },
         {
-          "rule_id": "4.4.2.2",
-          "outcome": "Applied - certificate states one gross weight with category and unit"
-        },
-        {
-          "rule_id": "4.4.3",
-          "outcome": "MISMATCH - certificate numeric value cannot be identified in invoice"
+          "rule_id": "4.4.3.4",
+          "outcome": "NORMALIZED_AND_COMPARED"
         },
         {
           "rule_id": "4.4.3.1",
-          "outcome": "MISMATCH - explicit contradiction: certificate GW 50,688.00 kg vs invoice GW 22,533.25 KG"
+          "outcome": "EXPLICIT_CONTRADICTION"
         },
         {
           "rule_id": "4.4.6",
           "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Den verifieringsgrundande kvantiteten i certifikatets ruta 7 är 'Gross 50.688,00 kg'. Fakturan anger uttryckligen 'Total gross weight 22.533,25 KG', vilket är en annan grossvikt och därmed en direkt motsägelse. Uppgifter i ruta 6 som '36 PAL = 1980 BAG' får inte ersätta ruta 7-värdet."
+      "motivation": "Den verifieringsgrundande kvantiteten är box 7 i certifikatet: 'Gross 50.688,00 kg'. Efter normalisering av numeriskt format motsvarar detta 50 688,00 kg. Fakturan anger uttryckligen 'Total gross weight 22.533,25 KG', vilket är ett annat bruttoviktsvärde och därför en uttrycklig motsägelse."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.9,
+      "confidence": 0.89,
       "certificate_value": "European Community; Sweden",
-      "invoice_value": "Country of origin\nSweden\nFinland",
+      "invoice_value": "Country of origin: Sweden\nCountry of origin: Finland",
       "rules_applied": [
         {
-          "rule_id": "4.5.1",
-          "outcome": "Origin identified explicitly in invoice line-level origin field"
-        },
-        {
           "rule_id": "4.5.4.1",
-          "outcome": "MATCH - 'European Community' may be verified by EU member state origin in invoice"
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.5.4.1.1",
-          "outcome": "MATCH - invoice contains extra EU country (Finland) while certificate states EU plus Sweden"
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.5.5",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger ursprung 'European Community; Sweden'. Fakturan anger uttryckligen ursprungsländerna 'Sweden' och 'Finland' i ett dedikerat 'Country of origin'-fält per rad. Sverige verifierar den namngivna landsangivelsen, och Finland är ett ytterligare EU-land som är tillåtet när certifikatet redan anger EU/European Community."
+      "motivation": "Certifikatet anger 'European Community; Sweden'. Fakturan anger ursprungsländerna Sverige och Finland per rad. Sverige återfinns uttryckligen, och 'European Community' verifieras genom att fakturan innehåller EU-medlemsländer som ursprung. Det extra landet Finland är också ett EU-land och medför därför inte avvikelse."
     }
   },
   "overall_assessment": {
     "comparison_result": "NOT_IDENTICAL",
     "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
     "auto_approval_eligible": false,
-    "confidence": 0.96,
+    "confidence": 0.97,
     "critical_failures": [
-      "Consignee mismatch: certificate consignee 'Ayplastik Ambalaj San. ve Tic. A.S.' cannot be identified in invoice, which names 'Sahra Kablo San.ve Tic. A.S.'",
-      "Goods description mismatch: certificate goods designation 'FT3200' cannot be identified in invoice goods descriptions",
-      "Quantity mismatch: certificate box 7 gross weight 50.688,00 kg contradicts invoice total gross weight 22.533,25 KG"
+      "Consignee mismatch",
+      "Goods description mismatch",
+      "Quantity mismatch"
     ],
     "manual_review_triggers": [],
-    "decision_summary": "Dokumentparet passerar parningsvalideringen via consignor, och ursprungsland kan verifieras. Däremot föreligger tydliga avvikelser i mottagare, varubeskrivning och kvantitet. Minst en tillämplig kontrollpunkt har MISMATCH, därför är det övergripande resultatet NOT_IDENTICAL.",
-    "human_explanation": "Certifikatet anger mottagaren som Ayplastik Ambalaj San. ve Tic. A.S. i Turkiet, medan fakturan är ställd till Sahra Kablo San.ve Tic. A.S. i Turkiet. Varubeskrivningen 'FT3200' och mängden 'Gross 50.688,00 kg' kan inte verifieras mot fakturans varor och totalvikt '22.533,25 KG'. Ursprunget kan verifieras, men dokumentparet är ändå inte identiskt."
+    "decision_summary": "Dokumentparet är inte identiskt. Consignor och ursprungsland kan verifieras, men certifikatets consignee återfinns inte i fakturan och både varubeskrivning samt bruttovikt motsägs av fakturans uppgifter.",
+    "human_explanation": "Certifikatet anger mottagaren som Ayplastik Ambalaj San. ve Tic. A.S. i Bursa, medan fakturan är ställd till och levererad till Sahra Kablo San.ve Tic. A.S. i Istanbul. Certifikatets varubeskrivning 'FT3200' och bruttovikt 50.688,00 kg kan inte verifieras mot fakturan, som i stället visar andra varor och total bruttovikt 22.533,25 kg. Avsändare och ursprung kan identifieras, men dokumenten är därför inte identiska."
   },
   "_meta": {
-    "tested_at": "2026-04-01T17:41:39.926139+00:00",
-    "prompt_hash": "9b9df42642d8",
+    "tested_at": "2026-04-02T11:36:29.828942+00:00",
+    "prompt_hash": "f81eb9b0d2ea",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P070_MISMATCH",

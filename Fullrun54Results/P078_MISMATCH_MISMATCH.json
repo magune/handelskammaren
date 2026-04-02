@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-04-01T00:00:00Z",
+    "verification_timestamp": "2026-04-02T00:00:00Z",
     "document_pair_id": null,
     "certificate_issue_date": "2026-03-02",
     "source_documents_received": 2
@@ -15,12 +15,12 @@
     "document_a": {
       "label": "Document A",
       "assumed_role": "certificate",
-      "document_type": "Certificate of Origin"
+      "document_type": "certificate of origin"
     },
     "document_b": {
       "label": "Document B",
       "assumed_role": "invoice",
-      "document_type": "Commercial invoice PDF containing multiple invoices"
+      "document_type": "commercial invoice PDF containing multiple invoices"
     }
   },
   "rule_activation": {
@@ -33,132 +33,128 @@
     "eu_origin_normalization_active": false,
     "activated_rules": [
       {
-        "rule_id": "8.5.0",
-        "rule_name": "Filbaserad dokumentparning"
-      },
-      {
         "rule_id": "8.5.1",
-        "rule_name": "Flera fakturor från samma utställare utan entydig fakturareferens"
+        "rule_name": "Flera fakturor från samma utställare utan entydig fakturareferens i certifikatet"
       },
       {
-        "rule_id": "4.1.0",
-        "rule_name": "Sökning efter consignor i alla fakturadokument"
-      },
-      {
-        "rule_id": "4.3.7",
-        "rule_name": "Blandade ursprung i certifikatet"
+        "rule_id": "8.6",
+        "rule_name": "Obligatorisk parningsvalidering"
       }
     ]
   },
   "control_points": {
     "consignor": {
       "applicable": true,
-      "status": "MANUAL_REVIEW",
-      "confidence": 0.34,
-      "certificate_value": "Rosemount Tank Radar AB\nBox 150\n43523, Mölnlycke",
-      "invoice_value": "Rosemount Tank Radar AB | Invoice No: D0485899-46504265 | Invoice No: D0485899-46504276",
+      "status": "MATCH",
+      "confidence": 0.93,
+      "certificate_value": "Rosemount Tank Radar AB, Box 150, 43523 Mölnlycke, Sweden",
+      "invoice_value": "Rosemount Tank Radar AB appears in the invoice file as shipper/issuer on multiple invoice pages, including invoice D0485899-46504265 and invoice D0485899-46504276.",
       "rules_applied": [
         {
           "rule_id": "4.1.0",
-          "outcome": "Consignor-namnet återfinns i fakturafilen men i mer än en separat faktura"
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.2.1",
+          "outcome": "MATCH"
         },
         {
           "rule_id": "8.5.1",
-          "outcome": "APPLIED"
+          "outcome": "PAIRING_AMBIGUITY_NOTED"
         }
       ],
-      "motivation": "Certifikatets consignor kan identifieras i fakturafilen, men fakturafilen innehåller minst två separata fakturor från samma utställare, D0485899-46504265 och D0485899-46504276. Certifikatet saknar fakturanummer som entydigt väljer en av dem. Därför kan consignor inte verifieras mot ett entydigt dokumentpar."
+      "motivation": "Certifikatets consignor \"Rosemount Tank Radar AB\" återfinns uttryckligen i fakturafilen, bland annat i sidhuvud/adressblock och Ship From-fält. Landet Sverige styrks även via adress och VAT-prefix SE. Consignor kan därför verifieras, men fakturafilen innehåller flera olika fakturor från samma utställare."
     },
     "consignee": {
       "applicable": true,
       "status": "MANUAL_REVIEW",
-      "confidence": 0.31,
-      "certificate_value": "EMERSON ASIA PACIFIC PRIVATE LIMITE\nC/O CEVA LOGISTICS SOLUTIONS\nSINGAPORE P 40 PENJURU LANE\n#03-11\n609216 SINGAPORE\nSINGAPORE",
-      "invoice_value": "Invoice No: D0485899-46504276 shows consignee/buyer text for BEIJING ROSEMOUNT FAR EAST INSTRUMENT CO; another separate invoice D0485899-46504265 is also present in the same file",
+      "confidence": 0.42,
+      "certificate_value": "EMERSON ASIA PACIFIC PRIVATE LIMITE C/O CEVA LOGISTICS SOLUTIONS, SINGAPORE ... 609216 SINGAPORE, SINGAPORE",
+      "invoice_value": "Invoice file contains multiple candidate invoices. One visible invoice (D0485899-46504276) shows Sold To / Invoice To / Ship To: BEIJING ROSEMOUNT FAR EAST INSTRUMENT CO, CHINA. Another invoice (D0485899-46504265) is only partially present in the PDF extract and does not provide a complete consignee block on the shown page.",
       "rules_applied": [
         {
           "rule_id": "8.5.1",
-          "outcome": "APPLIED"
+          "outcome": "MANUAL_REVIEW"
         },
         {
           "rule_id": "4.2.0.2",
-          "outcome": "Inte möjligt att tillämpa slutligt eftersom rätt faktura inte kan väljas entydigt"
+          "outcome": "NOT_COMPLETED_DUE_TO_AMBIGUOUS_PAIRING"
         }
       ],
-      "motivation": "Fakturafilen innehåller flera separata fakturor från samma utställare. En av dem visar en mottagare i Kina, men certifikatet anger mottagare i Singapore. Eftersom certifikatet inte anger något fakturanummer går det inte att fastställa vilken av fakturorna som ska användas för mottagarkontrollen."
+      "motivation": "Fakturafilen innehåller minst två separata fakturor från samma utställare: D0485899-46504265 och D0485899-46504276. Certifikatet saknar entydig fakturareferens, så det går inte tekniskt att avgöra vilken faktura som ska användas för mottagarverifieringen. Därför kan consignee-kontrollen inte avgöras säkert."
     },
     "goods_description": {
       "applicable": true,
       "status": "MANUAL_REVIEW",
-      "confidence": 0.29,
-      "certificate_value": "0565M23230AC406P1100Q1AC, Multiple Spot Temperature Sensor COO DK; 775TGXD21I7WA3WK9TJQ1, Wireless 775 THUM Adapter Assembly - Tank Gauging COO: SG; 5408A1SUA2NA1GBZZPAS8M5Q4, Radar Level Transmitter COO: SE; 2410MFRW001PSNA0A2PQ1, Tank Hub COO: SE; 2240SP0840FNA0A2MQ4Q1, Multi-input Temperature Transmitter COO SE",
-      "invoice_value": "Invoice No: D0485899-46504276 contains repeated line item 3408A1SHA2E77R4AASAAM6C2C4AWQ4Q8WR5, Radar Level Transmitter; another separate invoice D0485899-46504265 is also present in the same file",
+      "confidence": 0.41,
+      "certificate_value": "0565M23230AC406P1100Q1AC Multiple Spot Temperature Sensor; 775TGXD21I7WA3WK9TJQ1 Wireless 775 THUM Adapter Assembly; 5408A1SUA2NA1GBZZPAS8M5Q4 Radar Level Transmitter; 2410MFRW001PSNA0A2PQ1 Tank Hub; 2240SP0840FNA0A2MQ4Q1 Multi-input Temperature Transmitter",
+      "invoice_value": "Invoice file contains multiple candidate invoices. Visible invoice D0485899-46504276 mainly contains repeated item 3408A1SHA2E77R4AASAAM6C2C4AWQ4Q8WR5 Radar Level Transmitter plus service/certificate charge lines. Invoice D0485899-46504265 is only partially available in the extract.",
       "rules_applied": [
         {
           "rule_id": "8.5.1",
-          "outcome": "APPLIED"
+          "outcome": "MANUAL_REVIEW"
         },
         {
           "rule_id": "4.3.2",
-          "outcome": "Inte möjligt att utföra slutlig artikelnummerbaserad matchning eftersom rätt faktura inte kan väljas entydigt"
+          "outcome": "NOT_COMPLETED_DUE_TO_AMBIGUOUS_PAIRING"
         }
       ],
-      "motivation": "Certifikatet listar fem specifika artikelnummer och varor med blandade ursprung. Fakturafilen innehåller flera separata fakturor, och minst en av dem visar andra artikelnummer än certifikatet. Eftersom certifikatet inte refererar till ett entydigt fakturanummer kan varubeskrivningen inte granskas mot rätt faktura med teknisk säkerhet."
+      "motivation": "Varubeskrivningen i certifikatet kan inte verifieras mot en entydigt vald faktura eftersom fakturafilen innehåller flera fakturor från samma consignor och certifikatet inte anger vilket fakturanummer som avses. Att välja den faktura som råkar passa bäst är uttryckligen förbjudet enligt parningsregeln."
     },
     "quantity": {
       "applicable": true,
       "status": "MANUAL_REVIEW",
-      "confidence": 0.3,
-      "certificate_value": "Gross Weight: 294,01 KG; Net Weight: 211,44 KG; 7 PCS; 3 PCS; 7 PCS; 3 PCS; 7 PCS",
-      "invoice_value": "Invoice file contains packing summary with 13 Pallet, Gross WT 2913.38 KG, Net WT 2075.66 KG and multiple separate invoice contexts including D0485899-46504265 and D0485899-46504276",
+      "confidence": 0.4,
+      "certificate_value": "Gross Weight 294,01 KG; Net Weight 211,44 KG; 4 Packages; quantities 7 PCS, 3 PCS, 7 PCS, 3 PCS, 7 PCS",
+      "invoice_value": "Invoice file contains multiple candidate invoices. Visible invoice D0485899-46504276 shows packing summary 13 Pallet, Gross WT 2913.38 KG, Net WT 2075.66 KG and many 1 EA lines. Another invoice D0485899-46504265 is only partially visible.",
       "rules_applied": [
         {
           "rule_id": "8.5.1",
-          "outcome": "APPLIED"
+          "outcome": "MANUAL_REVIEW"
         },
         {
           "rule_id": "4.4.1",
-          "outcome": "Slutlig förekomstkontroll kan inte göras mot entydigt vald faktura"
+          "outcome": "NOT_COMPLETED_DUE_TO_AMBIGUOUS_PAIRING"
         }
       ],
-      "motivation": "Certifikatet anger både styckantal och vikter. Fakturafilen innehåller flera separata fakturor och packningssammanställningar. Utan entydig fakturareferens i certifikatet går det inte att avgöra vilken kvantitetsuppgift som ska jämföras mot rätt faktura."
+      "motivation": "Kvantiteten kan inte bedömas mot rätt faktura eftersom dokumentparningen inte kan fastställas tekniskt. Fakturafilen innehåller flera separata fakturor från samma utställare och certifikatet saknar en specifik fakturareferens som väljer rätt underlag."
     },
     "origin": {
       "applicable": true,
       "status": "MANUAL_REVIEW",
-      "confidence": 0.33,
+      "confidence": 0.44,
       "certificate_value": "Denmark, Sweden, Singapore",
-      "invoice_value": "At least one separate invoice in the invoice file states Country of Origin: SWEDEN; another separate invoice D0485899-46504265 is also present in the same file",
+      "invoice_value": "Visible invoice D0485899-46504276 shows Country of Origin: SWEDEN on item rows. Other invoice D0485899-46504265 is only partially visible and does not provide full origin data in the shown page extract.",
       "rules_applied": [
         {
           "rule_id": "8.5.1",
-          "outcome": "APPLIED"
+          "outcome": "MANUAL_REVIEW"
         },
         {
           "rule_id": "4.5.3",
-          "outcome": "Blandade ursprung i certifikatet kräver entydig fakturakoppling som saknas"
+          "outcome": "NOT_COMPLETED_DUE_TO_AMBIGUOUS_PAIRING"
         }
       ],
-      "motivation": "Certifikatet anger tre ursprungsländer: Danmark, Sverige och Singapore. Fakturafilen innehåller flera separata fakturor, och minst en av dem visar endast Sverige som ursprung. Eftersom rätt faktura inte kan väljas entydigt kan ursprungsland inte verifieras med tillräcklig säkerhet."
+      "motivation": "Certifikatet anger flera ursprungsländer. Eftersom fakturafilen innehåller flera fakturor från samma utställare och certifikatet inte identifierar vilken faktura som avses går det inte säkert att avgöra vilken fakturas ursprungsuppgifter som ska användas för verifieringen."
     }
   },
   "overall_assessment": {
     "comparison_result": "MANUAL_REVIEW",
     "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
     "auto_approval_eligible": false,
-    "confidence": 0.33,
+    "confidence": 0.43,
     "critical_failures": [],
     "manual_review_triggers": [
-      "Fakturafilen innehåller flera separata fakturor från samma utställare",
-      "Certifikatet saknar entydigt fakturanummer",
-      "Det går därför inte att välja ett konsistent dokumentpar för verifiering"
+      "Fakturafilen innehåller flera separata fakturor från samma utställare (bl.a. D0485899-46504265 och D0485899-46504276).",
+      "Certifikatet innehåller ingen entydig fakturareferens som väljer vilken faktura i fakturafilen som ska användas.",
+      "Regel 8.5.1 kräver manuell granskning när flera fakturor från samma utställare finns och certifikatet saknar specifikt fakturanummer."
     ],
-    "decision_summary": "MANUAL_REVIEW eftersom fakturafilen innehåller minst två separata fakturor från samma consignor/utställare och certifikatet saknar fakturanummer eller annan entydig referens som väljer rätt faktura.",
-    "human_explanation": "Fakturafilen innehåller två separata fakturor från Rosemount Tank Radar AB, bland annat D0485899-46504265 och D0485899-46504276. Certifikatet anger inget fakturanummer som visar vilken faktura som ska användas. Därför går det inte att avgöra rätt dokumentpar och ärendet måste granskas manuellt."
+    "decision_summary": "Dokumentrollen är tydlig (certifikat mot fakturafil), och consignor kan verifieras. Den separata fakturafilen innehåller dock flera olika fakturor från samma utställare medan certifikatet inte anger något fakturanummer eller annan entydig referens som identifierar rätt faktura. Därför är korrekt dokumentparning tekniskt omöjlig och den fortsatta verifieringen måste skickas till manuell handläggning.",
+    "human_explanation": "Fakturafilen innehåller flera olika fakturor från samma avsändare, men certifikatet anger inget fakturanummer som visar vilken faktura som ska användas. Därför går det inte att avgöra vilket dokumentpar som ska jämföras, och ärendet måste granskas manuellt."
   },
   "_meta": {
-    "tested_at": "2026-04-01T17:41:39.929851+00:00",
-    "prompt_hash": "9b9df42642d8",
+    "tested_at": "2026-04-02T11:36:29.834220+00:00",
+    "prompt_hash": "f81eb9b0d2ea",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P078_MISMATCH",

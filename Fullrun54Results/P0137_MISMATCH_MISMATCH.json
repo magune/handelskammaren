@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": null,
+    "verification_timestamp": "2026-04-02T00:00:00Z",
     "document_pair_id": null,
     "certificate_issue_date": "2025-10-16",
     "source_documents_received": 2
@@ -34,15 +34,27 @@
     "activated_rules": [
       {
         "rule_id": "8.6",
-        "rule_name": "Obligatorisk parningsvalidering"
+        "rule_name": "Parningsvalidering"
       },
       {
         "rule_id": "4.1.0",
-        "rule_name": "Koncernstruktur - consignor får verifieras om namnet uttryckligen förekommer någonstans i fakturan"
+        "rule_name": "Koncernstruktur / consignor får styrkas om namnet förekommer uttryckligen i fakturan"
       },
       {
-        "rule_id": "4.5.4.2",
-        "rule_name": "EU-medlemsland normalisering"
+        "rule_id": "4.2.0.2",
+        "rule_name": "Prioritetsordning för consignee-identifiering"
+      },
+      {
+        "rule_id": "4.3.3",
+        "rule_name": "Kontrollerad textmatchning för varubeskrivning"
+      },
+      {
+        "rule_id": "4.4.3.3",
+        "rule_name": "Tusentalsavskiljare"
+      },
+      {
+        "rule_id": "4.5.4",
+        "rule_name": "Landnormalisering för ursprungsland"
       }
     ]
   },
@@ -50,14 +62,10 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.91,
+      "confidence": 0.89,
       "certificate_value": "Källbergs Industri AB\nBox 73\nSE-545 22, TÖREBODA\nSweden",
       "invoice_value": "Källbergs Industri AB\nSkövdevägen 25\nBox 73\n54522 Töreboda\nSverige\nVAT No. : SE556059176901\nIBAN: SE0412000000012200153163",
       "rules_applied": [
-        {
-          "rule_id": "8.6",
-          "outcome": "PASS"
-        },
         {
           "rule_id": "4.1.0",
           "outcome": "MATCH"
@@ -67,11 +75,11 @@
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.1.4",
+          "rule_id": "4.1.5",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor är 'Källbergs Industri AB ... Sweden'. Fakturan är utställd i annat namn ('Agro Food Solutions'), men certifikatets consignor-namn förekommer uttryckligen i fakturans footer som 'Källbergs Industri AB'. Landet kan styrkas genom footer-adressen 'Sverige' samt indirekta identifierare med SE-prefix i VAT-nummer och IBAN. Därmed är consignor verifierad enligt koncernstrukturregeln."
+      "motivation": "Certifikatets consignor 'Källbergs Industri AB' kan identifieras uttryckligen i fakturans footer. Landet verifieras som Sverige genom adressen 'Sverige' samt VAT-prefix 'SE' och svensk IBAN. Att fakturans övre vänstra block visar 'Agro Food Solutions' hindrar inte MATCH eftersom certifikatets consignor förekommer uttryckligen någonstans i fakturan och landet överensstämmer."
     },
     "consignee": {
       "applicable": true,
@@ -81,132 +89,112 @@
       "invoice_value": "Agro Food Solutions\nLouise Henriettestraat 3\nNL-2595TN The Hauge\nThe Netherlands\n\nShip-to Address\nKadbanoo Co.\nNo. 24, 7t Fath St, Fath highway\nTehran\nIran",
       "rules_applied": [
         {
-          "rule_id": "8.6",
-          "outcome": "PASS"
-        },
-        {
           "rule_id": "4.2.0.2",
-          "outcome": "PRIMARY_BILL_TO_SELECTED"
+          "outcome": "Primary invoice parties identified as Agro Food Solutions / Kadbanoo Co., not certificate consignee"
         },
         {
-          "rule_id": "4.2.1",
-          "outcome": "NO_MATCH"
-        },
-        {
-          "rule_id": "4.2.1.1",
-          "outcome": "NO_MATCH"
+          "rule_id": "4.2.0.3",
+          "outcome": "Not applicable - certificate consignee not found in Ship-To"
         },
         {
           "rule_id": "4.2.4",
           "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Certifikatet anger mottagaren som 'General Food Processing Industries' i United Arab Emirates. Fakturans primära kund/faktureringspart är 'Agro Food Solutions' i The Netherlands, och separat Ship-to-part är 'Kadbanoo Co.' i Iran. Certifikatets consignee kan inte identifieras i något relevant fält i fakturan, och inget av fakturans namn eller länder överensstämmer med certifikatet. Detta är därför en tydlig avvikelse."
+      "motivation": "Certifikatets consignee är 'General Food Processing Industries' i Förenade Arabemiraten. Denna part kan inte identifieras i fakturan. Fakturan visar i stället 'Agro Food Solutions' i Nederländerna och separat Ship-to 'Kadbanoo Co.' i Iran, vilket innebär att certifikatets mottagare inte kan verifieras mot fakturan."
     },
     "goods_description": {
       "applicable": true,
       "status": "MISMATCH",
-      "confidence": 0.96,
+      "confidence": 0.92,
       "certificate_value": "Heat Stable EYP Mayo-Max399\n126 bags of lot 25-12818\n462 bags of lot 25-12873",
-      "invoice_value": "1541119 Food Shaping Compound (Mayomax) 17.640 Kg\nPacking material 1 St",
+      "invoice_value": "Food Shaping Compound (Mayomax)",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "NO_CERTIFICATE_ARTICLE_NUMBER"
+          "outcome": "No article number available for primary match"
+        },
+        {
+          "rule_id": "4.3.5",
+          "outcome": "Not satisfied - certificate does not provide invoice number and invoice date in goods reference"
         },
         {
           "rule_id": "4.3.3",
-          "outcome": "NO_EXACT_IDENTIFYING_TEXT_MATCH"
-        },
-        {
-          "rule_id": "4.3.4",
-          "outcome": "NOT_APPLICABLE"
+          "outcome": "MISMATCH"
         },
         {
           "rule_id": "4.3.8",
           "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Certifikatet beskriver varan som 'Heat Stable EYP Mayo-Max399'. Fakturan beskriver varan som 'Food Shaping Compound (Mayomax)'. Den identitetsbärande huvudbeteckningen från certifikatet kan inte identifieras exakt i fakturan: 'Mayo-Max399' återfinns inte, och fakturatexten innehåller i stället en annan produktbeteckning utan '399' och utan den fulla certifikatstexten. Ingen uttrycklig fakturareferensregel i certifikatet kan ersätta denna textmatchning."
+      "motivation": "Certifikatet anger varan som 'Heat Stable EYP Mayo-Max399' med två lot-nummer. Fakturan anger 'Food Shaping Compound (Mayomax)'. Den identitetsbärande huvudbeteckningen från certifikatet kan inte identifieras exakt i fakturan utan semantisk tolkning, och certifikatet saknar sådan fakturareferens som skulle kunna aktivera regeln om generell varubeskrivning."
     },
     "quantity": {
       "applicable": true,
       "status": "MISMATCH",
       "confidence": 0.99,
       "certificate_value": "8820 kg net",
-      "invoice_value": "Total Net Weight\n17.640\n\n1541119 Food Shaping Compound (Mayomax) 17.640 Kg",
+      "invoice_value": "Total Net Weight 17.640\nQty. 17.640 Kg",
       "rules_applied": [
         {
-          "rule_id": "4.4.2",
-          "outcome": "CERTIFICATE_QUANTITY_VALID_FORMAT"
-        },
-        {
-          "rule_id": "4.4.2.1",
-          "outcome": "BOX_7_SELECTED"
-        },
-        {
-          "rule_id": "4.4.3",
-          "outcome": "VALUE_COMPARED"
+          "rule_id": "4.4.2.2",
+          "outcome": "Certificate states a single net weight"
         },
         {
           "rule_id": "4.4.3.3",
-          "outcome": "THOUSANDS_SEPARATOR_NORMALIZATION_CONSIDERED"
+          "outcome": "Invoice value normalized from 17.640 to 17640 as thousands-separated integer"
         },
         {
           "rule_id": "4.4.3.1",
-          "outcome": "EXPLICIT_CONTRADICTION"
+          "outcome": "Explicit contradiction on same quantity type (net weight)"
         },
         {
           "rule_id": "4.4.6",
           "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Certifikatets verifieringsgrundande kvantitet i box 7 är '8820 kg net'. Fakturan anger uttryckligen 'Total Net Weight 17.640' och även radkvantiteten '17.640 Kg'. Med hänsyn till fakturans europeiska sifferformat och beloppsberäkning är '17.640' en tusentalsavskiljare, dvs. 17 640 kg, inte 8 820 kg. Certifikatets nettovikt motsägs därför uttryckligen av fakturans nettovikt."
+      "motivation": "Certifikatet anger '8820 kg net'. Fakturan anger uttryckligen 'Total Net Weight 17.640' och även radkvantitet '17.640 Kg'. Med tillåten normalisering av tusentalsavskiljare blir fakturans värde 17640 kg, vilket direkt motsäger certifikatets 8820 kg och ligger långt utanför tillåten tolerans."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.88,
+      "confidence": 0.97,
       "certificate_value": "EC: Sweden",
       "invoice_value": "Country fo origin: Sweden",
       "rules_applied": [
         {
           "rule_id": "4.5.1",
-          "outcome": "EXPLICIT_ORIGIN_FIELD_FOUND"
+          "outcome": "Explicit origin field found in invoice"
         },
         {
           "rule_id": "4.5.4",
-          "outcome": "NORMALIZATION_APPLIED"
-        },
-        {
-          "rule_id": "4.5.4.2",
-          "outcome": "MATCH"
+          "outcome": "Normalized country naming"
         },
         {
           "rule_id": "4.5.5",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger ursprung som 'EC: Sweden', vilket uttryckligen innehåller Sweden i ursprungsfältet. Fakturan innehåller ett explicit origin-fält: 'Country fo origin: Sweden'. Ursprung Sverige kan därför identifieras direkt i fakturan. EC-prefixet påverkar inte att det specifika landet Sweden är explicit verifierat."
+      "motivation": "Certifikatet anger ursprung som 'EC: Sweden'. Fakturan innehåller ett explicit ursprungsfält 'Country fo origin: Sweden'. Sverige kan därför uttryckligen identifieras i fakturan som ursprungsland."
     }
   },
   "overall_assessment": {
     "comparison_result": "NOT_IDENTICAL",
     "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
     "auto_approval_eligible": false,
-    "confidence": 0.98,
+    "confidence": 0.97,
     "critical_failures": [
-      "Consignee mismatch: certificate consignee not found in invoice",
-      "Goods description mismatch: certificate goods text cannot be identified in invoice",
-      "Quantity mismatch: certificate net weight 8820 kg contradicts invoice net weight 17.640 kg"
+      "Consignee in the certificate cannot be found in the invoice",
+      "Goods description in the certificate cannot be verified against the invoice text",
+      "Net weight differs: certificate 8820 kg vs invoice 17640 kg"
     ],
     "manual_review_triggers": [],
-    "decision_summary": "Dokumentparet passerar parningsvalideringen eftersom certifikatets consignor kan identifieras i fakturan. Trots detta finns tydliga avvikelser i mottagare, varubeskrivning och kvantitet. Endast ursprungslandet kan verifieras utan avvikelse.",
-    "human_explanation": "Certifikatet anger mottagaren som General Food Processing Industries i Förenade Arabemiraten, men fakturan är ställd till Agro Food Solutions i Nederländerna och har leveransadress till Kadbanoo Co. i Iran. Varubeskrivningen och kvantiteten stämmer inte heller: certifikatet anger Heat Stable EYP Mayo-Max399, 8820 kg net, medan fakturan anger Food Shaping Compound (Mayomax), total net weight 17.640 kg. Ursprungslandet Sverige kan identifieras i båda dokumenten, men dokumentparet är ändå inte identiskt."
+    "decision_summary": "Document pairing is valid because the certificate consignor is explicitly identifiable in the invoice, but the document pair is not identical. Consignee, goods description and quantity fail verification, while origin matches.",
+    "human_explanation": "Certifikatet anger mottagaren som General Food Processing Industries i Dubai, men fakturan visar i stället Agro Food Solutions och Ship-to Kadbanoo Co.; certifikatets mottagare finns inte i fakturan. Varubeskrivningen och kvantiteten stämmer inte heller: certifikatet anger 'Heat Stable EYP Mayo-Max399' och 8 820 kg net, medan fakturan anger 'Food Shaping Compound (Mayomax)' och total net weight 17.640 kg. Ursprungslandet Sweden kan verifieras, men dokumenten är sammantaget inte identiska."
   },
   "_meta": {
-    "tested_at": "2026-04-01T14:31:51.288701+00:00",
-    "prompt_hash": "9b9df42642d8",
+    "tested_at": "2026-04-02T11:22:43.079127+00:00",
+    "prompt_hash": "f81eb9b0d2ea",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P0137_MISMATCH",

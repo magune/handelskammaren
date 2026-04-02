@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-04-01T00:00:00Z",
+    "verification_timestamp": "2026-04-02T00:00:00Z",
     "document_pair_id": null,
     "certificate_issue_date": "2026-03-12",
     "source_documents_received": 2
@@ -15,12 +15,12 @@
     "document_a": {
       "label": "Document A",
       "assumed_role": "certificate",
-      "document_type": "certificate_of_origin"
+      "document_type": "Certificate of Origin"
     },
     "document_b": {
       "label": "Document B",
       "assumed_role": "invoice",
-      "document_type": "commercial_invoice"
+      "document_type": "Commercial Invoice"
     }
   },
   "rule_activation": {
@@ -33,16 +33,28 @@
     "eu_origin_normalization_active": true,
     "activated_rules": [
       {
+        "rule_id": "8.5.0",
+        "rule_name": "Filbaserad dokumentparning: certifikat från fil 1 och faktura från fil 2"
+      },
+      {
+        "rule_id": "8.6",
+        "rule_name": "Obligatorisk parningsvalidering"
+      },
+      {
         "rule_id": "4.1.0",
-        "rule_name": "Consignor kan verifieras via uttrycklig förekomst någonstans i fakturan"
+        "rule_name": "Consignor-sökning i hela fakturan / koncernstrukturssökning"
+      },
+      {
+        "rule_id": "4.2.0.2",
+        "rule_name": "Prioritetsordning för consignee-identifiering"
+      },
+      {
+        "rule_id": "4.3.3.2",
+        "rule_name": "Certifikatets huvudbeteckning som ordsekvens i fakturan"
       },
       {
         "rule_id": "4.4.3.1",
-        "rule_name": "Minst en kvantitetsuppgift ska verifieras; ytterligare matchande kvantiteter tillåts"
-      },
-      {
-        "rule_id": "4.4.3",
-        "rule_name": "Tillåten trunkering av decimaler vid kvantitetsverifiering"
+        "rule_name": "Flera kvantitetsuppgifter – minst en ska verifieras, uttrycklig motsägelse förbjuden"
       },
       {
         "rule_id": "4.5.4.1",
@@ -50,11 +62,7 @@
       },
       {
         "rule_id": "4.5.4.2",
-        "rule_name": "EU-samlingsbegrepp och specifikt EU-medlemsland"
-      },
-      {
-        "rule_id": "4.3.3.2",
-        "rule_name": "Certifikatets huvudbeteckning som ordsekvens i fakturan ger MANUAL_REVIEW"
+        "rule_name": "EU-medlemsland ↔ EU-samlingsbegrepp"
       }
     ]
   },
@@ -62,9 +70,9 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.97,
-      "certificate_value": "Elmo Sweden AB\nKyrkogatan 18\n51250, Svenljunga\nSweden",
-      "invoice_value": "Elmo Sweden AB\nSE-512 81 SVENLJUNGA\nSWEDEN\nVAT.NO:\nSE556821587401",
+      "confidence": 0.98,
+      "certificate_value": "Elmo Sweden AB, Kyrkogatan 18, 51250 Svenljunga, Sweden",
+      "invoice_value": "Elmo Sweden AB; POSTADRESS/POSTAL ADRESS: Elmo Sweden AB, SE-512 81 SVENLJUNGA, SWEDEN; VAT.NO: SE556821587401",
       "rules_applied": [
         {
           "rule_id": "4.1.0",
@@ -75,29 +83,33 @@
           "outcome": "MATCH"
         },
         {
+          "rule_id": "4.1.4",
+          "outcome": "MATCH"
+        },
+        {
           "rule_id": "4.1.5",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor 'Elmo Sweden AB' återfinns uttryckligen i fakturan i footer/postadress och bankbetalningsblock. Landet 'Sweden' framgår explicit i fakturan och bekräftas även av VAT-prefix 'SE'. Samma juridiska part och land kan därför verifieras."
+      "motivation": "Certifikatets consignor är 'Elmo Sweden AB ... Sweden'. Samma företagsnamn återfinns uttryckligen flera gånger i fakturan, bl.a. i betalningsinstruktionen ('For Credit to Elmo Sweden AB') och i footer/postadressblocket ('Elmo Sweden AB ... SWEDEN'). Landet verifieras explicit genom adressuppgiften 'SWEDEN' och indirekt genom VAT-prefix 'SE'. Samma juridiska part och samma land kan därför identifieras i fakturan."
     },
     "consignee": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.89,
-      "certificate_value": "Brusarosco de Mexico S.A de C.Vv\nAvenida Industrial #168\n37564 Leon\nMexico",
-      "invoice_value": "Payer: BRUSAROSCO DE MEXICO S.A. de C.V. ( 17500040 )\nIND.ZAPATERA, FIDEICOMISO CIUDAD INDUSTRIAL 168-1,\n37564 - LEON DE LOS ALDAMA GTO, Mexico\nShip-to:\nBrusarosco de Mexico S.A. de C.Vv ( 18007237 )\nAvenida Industrial #168\n37564 - Leon GTO, Mexico",
+      "confidence": 0.94,
+      "certificate_value": "Brusarosco de Mexico S.A de C.Vv, Avenida Industrial #168, 37564 Leon, Mexico",
+      "invoice_value": "Payer: BRUSAROSCO DE MEXICO S.A. de C.V., IND.ZAPATERA, FIDEICOMISO CIUDAD INDUSTRIAL 168-1, 37564 - LEON DE LOS ALDAMA GTO, Mexico; Ship-to: Brusarosco de Mexico S.A. de C.Vv, Avenida Industrial #168, 37564 - Leon GTO, Mexico",
       "rules_applied": [
         {
           "rule_id": "4.2.0.2",
-          "outcome": "Primary billing party and ship-to identify the same consignee in invoice"
-        },
-        {
-          "rule_id": "4.2.0.1",
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.2.2.1",
+          "rule_id": "4.2.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.2.2",
           "outcome": "MATCH"
         },
         {
@@ -109,66 +121,74 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignee-namn förekommer uttryckligen i fakturans Ship-to-block som 'Brusarosco de Mexico S.A. de C.Vv' med samma adress på Avenida Industrial #168 i Mexico. Fakturans primära Payer-fält visar samma kommersiella motpart med endast mindre interpunktions-/OCR-variation i bolagsformsdelen. Landet Mexico överensstämmer."
+      "motivation": "Certifikatets consignee 'Brusarosco de Mexico S.A de C.Vv' återfinns exakt i fakturans Ship-to-block och samma kommersiella part framgår även i det primära Payer/Bill-to-blocket som 'BRUSAROSCO DE MEXICO S.A. de C.V.'. Landet Mexico framgår uttryckligen i fakturan. Företagsnamn och land kan därför verifieras mot fakturan."
     },
     "goods_description": {
       "applicable": true,
-      "status": "MANUAL_REVIEW",
-      "confidence": 0.74,
+      "status": "MATCH",
+      "confidence": 0.9,
       "certificate_value": "Provence Santorini",
       "invoice_value": "PROVENCE 116H SANTORINI",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "Priority 2 text matching used; no article number in certificate for primary article matching"
+          "outcome": "ARTICLE_NUMBER_NOT_USED"
         },
         {
           "rule_id": "4.3.3",
-          "outcome": "Not an exact contiguous text match"
+          "outcome": "TEXT_MATCH_EVALUATED"
         },
         {
           "rule_id": "4.3.3.2",
-          "outcome": "MANUAL_REVIEW"
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.3.8",
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger varubeskrivningen 'Provence Santorini'. Fakturan anger 'PROVENCE 116H SANTORINI', där alla ord från certifikatets huvudbeteckning förekommer i samma ordning men med det mellanliggande tillägget '116H'. Enligt regeln för ordsekvens med mellanliggande specifikationskod ska kontrollpunkten därför sättas till MANUAL_REVIEW, inte MATCH."
+      "motivation": "Certifikatets identitetsbärande huvudbeteckning är 'Provence Santorini'. I fakturan förekommer 'PROVENCE 116H SANTORINI', där alla ord från certifikatet återfinns i samma ordning och det mellanliggande tillägget '116H' är en alfanumerisk modell/specifikationskod. Detta är tillåtet enligt regeln om ordsekvens med mellanliggande kod, och varubeskrivningen är därför verifierad."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.98,
-      "certificate_value": "182,19 M2\n219 kgs\n149 kgs",
-      "invoice_value": "Q-ty 182,190 M2\nTotal M2: 182,19 M2\nGross weight 219 kgs\nNet weight 149 kgs",
+      "confidence": 0.99,
+      "certificate_value": "182,19 M2; 219 kgs; 149 kgs",
+      "invoice_value": "Q-ty 182,190 M2; Total M2: 182,19 M2; Gross weight 219 kgs; Net weight 149 kgs",
       "rules_applied": [
         {
-          "rule_id": "4.4.2.1",
-          "outcome": "Box 7 used as verification basis"
+          "rule_id": "4.4.2",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.4.3",
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.4.3.1",
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.4.3",
-          "outcome": "Decimal truncation/precision normalization accepted for 182,190 vs 182,19"
+          "rule_id": "4.4.4",
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.4.6",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets kvantiteter i box 7 kan identifieras i fakturan: 182,19 M2 motsvaras av både 'Q-ty 182,190 M2' och 'Total M2: 182,19 M2', och vikterna 219 kgs respektive 149 kgs återfinns exakt som 'Gross weight 219 kgs' och 'Net weight 149 kgs'. Ingen motsägelse finns."
+      "motivation": "Certifikatets tre kvantitetsuppgifter kan identifieras direkt i fakturan: 182,19 M2 motsvaras av 'Total M2: 182,19 M2' och radkvantiteten '182,190 M2'; 219 kgs motsvaras av 'Gross weight 219 kgs'; 149 kgs motsvaras av 'Net weight 149 kgs'. Det finns ingen uttrycklig motsägelse mellan dokumenten. Kvantiteten är därför verifierad med direkt förekomstkontroll utan att något undantag behöver användas."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.96,
-      "certificate_value": "EUROPEAN UNION\nSweden",
-      "invoice_value": "Swedish Origin\nGOODS OF EUROPEAN COMMUNITY ORIGIN\nthese products are of European preferential origin",
+      "confidence": 0.97,
+      "certificate_value": "EUROPEAN UNION; Sweden",
+      "invoice_value": "Swedish Origin; GOODS OF EUROPEAN COMMUNITY ORIGIN",
       "rules_applied": [
         {
           "rule_id": "4.5.1",
-          "outcome": "Explicit origin fields found in invoice"
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.5.4.1",
@@ -183,29 +203,27 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger ursprung 'EUROPEAN UNION' och 'Sweden'. Fakturan innehåller både den explicita angivelsen 'Swedish Origin' och det explicita samlingsuttalandet 'GOODS OF EUROPEAN COMMUNITY ORIGIN' samt 'European preferential origin'. Samtliga ursprung som anges i certifikatet kan därför identifieras uttryckligen i fakturan."
+      "motivation": "Certifikatet anger ursprung 'EUROPEAN UNION' och 'Sweden'. Fakturan innehåller två explicita ursprungsangivelser i dedikerad ursprungstext: 'Swedish Origin' samt 'GOODS OF EUROPEAN COMMUNITY ORIGIN'. Därmed kan både det specifika landet Sweden och EU-samlingsbegreppet identifieras uttryckligen i fakturan. Ursprungslandskontrollen är därför uppfylld."
     }
   },
   "overall_assessment": {
-    "comparison_result": "MANUAL_REVIEW",
-    "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
-    "auto_approval_eligible": false,
-    "confidence": 0.83,
+    "comparison_result": "IDENTICAL",
+    "workflow_recommendation": "AUTO_APPROVAL_ELIGIBLE",
+    "auto_approval_eligible": true,
+    "confidence": 0.96,
     "critical_failures": [],
-    "manual_review_triggers": [
-      "Varubeskrivningen i certifikatet ('Provence Santorini') återfinns i fakturan endast som ordsekvens med mellanliggande modellkod ('PROVENCE 116H SANTORINI')."
-    ],
-    "decision_summary": "Consignor, consignee, quantity and origin are verifiable against the invoice. Goods description cannot be auto-approved because the certificate text is only identifiable as an ordered word sequence with an inserted specification code in the invoice, which triggers manual review.",
-    "human_explanation": "Avsändare, mottagare, mängd och ursprung kan verifieras mot fakturan. Varubeskrivningen i certifikatet är 'Provence Santorini' medan fakturan anger 'PROVENCE 116H SANTORINI', vilket tyder på samma vara men kräver manuell bekräftelse. Ärendet ska därför hanteras manuellt."
+    "manual_review_triggers": [],
+    "decision_summary": "Dokumentparet är korrekt klassificerat som Certificate of Origin och faktura. Parningsvalideringen passerar eftersom både consignor och consignee kan identifieras tydligt i fakturan. Samtliga tillämpliga kontrollpunkter—consignor, consignee, varubeskrivning, kvantitet och ursprungsland—är verifierade som MATCH utan kvarstående motsägelser.",
+    "human_explanation": "Certifikatet och fakturan stämmer överens på alla kontrollerade punkter. Avsändare, mottagare, varubeskrivning, mängd och ursprung kan alla bekräftas i fakturan. Dokumentparet kan därför godkännas automatiskt."
   },
   "_meta": {
-    "tested_at": "2026-04-01T12:41:47.894492+00:00",
-    "prompt_hash": "560a24ca7498",
+    "tested_at": "2026-04-02T11:06:44.041696+00:00",
+    "prompt_hash": "f81eb9b0d2ea",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P241_MATCH",
     "expected": "IDENTICAL",
-    "actual": "MANUAL_REVIEW",
-    "status": "REVIEW"
+    "actual": "IDENTICAL",
+    "status": "PASS"
   }
 }

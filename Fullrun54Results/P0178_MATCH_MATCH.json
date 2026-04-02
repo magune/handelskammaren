@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-04-01T00:00:00Z",
+    "verification_timestamp": "2026-04-02T00:00:00Z",
     "document_pair_id": null,
     "certificate_issue_date": "2026-02-24",
     "source_documents_received": 2
@@ -15,12 +15,12 @@
     "document_a": {
       "label": "Document A",
       "assumed_role": "certificate",
-      "document_type": "Certificate of Origin"
+      "document_type": "certificate of origin"
     },
     "document_b": {
       "label": "Document B",
       "assumed_role": "invoice",
-      "document_type": "Commercial Invoice"
+      "document_type": "commercial invoice"
     }
   },
   "rule_activation": {
@@ -33,32 +33,24 @@
     "eu_origin_normalization_active": false,
     "activated_rules": [
       {
-        "rule_id": "8.5.0",
-        "rule_name": "Filbaserad dokumentparning"
-      },
-      {
         "rule_id": "8.6",
-        "rule_name": "Obligatorisk parningsvalidering"
+        "rule_name": "Parningsvalidering passerad via consignor/consignee-identifikation"
       },
       {
         "rule_id": "4.1.0",
-        "rule_name": "Consignor via koncernstruktur/explicit förekomst i fakturan"
+        "rule_name": "Consignor identifierad någonstans i fakturan"
       },
       {
-        "rule_id": "4.2.1.1",
-        "rule_name": "Alternativ mottagaradress"
+        "rule_id": "4.2.0.3.1",
+        "rule_name": "Ship-To-regel med oberoende Bill-To-part ger MANUAL_REVIEW"
       },
       {
         "rule_id": "4.3.2",
-        "rule_name": "Varubeskrivning verifierad primärt via artikelnummer"
-      },
-      {
-        "rule_id": "4.4.2.1",
-        "rule_name": "Box 7 är verifieringsgrundande för kvantitet"
+        "rule_name": "Varubeskrivning verifierad via artikelnummer"
       },
       {
         "rule_id": "4.5.1",
-        "rule_name": "Explicit ursprungsangivelse i fakturan"
+        "rule_name": "Ursprungsland verifierat via explicit origin-fält"
       }
     ]
   },
@@ -66,9 +58,9 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.95,
+      "confidence": 0.96,
       "certificate_value": "Swedish Oat Fiber AB\nBåtafjordsvägen 12\n432 63, BUA\nSweden",
-      "invoice_value": "Swedish Oat Fiber AB\nAddress: Båtafjordsvägen 12, 432 63 Bua Sweden\nVAT No: SE556509014801",
+      "invoice_value": "Swedish Oat Fiber AB\nAddress: Båtafjordsvägen 12, 432 63 Bua Sweden - Corporate Identity No: 556509-0148\nVAT No: SE556509014801",
       "rules_applied": [
         {
           "rule_id": "4.1.0",
@@ -79,115 +71,117 @@
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.1.5",
+          "rule_id": "4.1.4",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor 'Swedish Oat Fiber AB' återfinns uttryckligen i fakturans sidfot tillsammans med svensk adress och svensk VAT-prefix 'SE'. Därmed är både företagsnamn och land verifierade i fakturan, även om fakturan även innehåller annan part i separat block."
+      "motivation": "Certifikatets consignor \"Swedish Oat Fiber AB\" återfinns uttryckligen i fakturans footer. Landet verifieras som Sweden både i adressen och via VAT-prefixet \"SE\". Samma juridiska part och samma land kan därför identifieras i fakturan."
     },
     "consignee": {
       "applicable": true,
-      "status": "MATCH",
-      "confidence": 0.9,
+      "status": "MANUAL_REVIEW",
+      "confidence": 0.46,
       "certificate_value": "Tianjin Yujiu International Trade Co., Ltd\nUnit1-801-2,Building1,No2\nGonghua Road Huayuan Industrial\nZone, Binhai High-tech Zone\n300392 Tianjin\nChina",
-      "invoice_value": "Delivery address\nTianjin Yujiu International Trade Co., Ltd\nUnit1-801-2,Building1,No.2 Gonghua Road\nHuayuan Industrial Zone,Binhai High - tech Zone, Tianjin\nTianjin 300392\nCHINA\n\nCONSIGNEE AS PER SHIP TO :\nTianjin Yujiu International Trade Co., Ltd",
+      "invoice_value": "Givaudan International AG (EUR)\nNeugutstrasse 46\nDübendorf 8600\nSWITZERLAND | Delivery address / CONSIGNEE AS PER SHIP TO:\nTianjin Yujiu International Trade Co., Ltd\nUnit1-801-2,Building1,No.2 Gonghua Road, Huayuan Industrial Zone, Binhai High-tech Zone, Tianjin\nCHINA",
       "rules_applied": [
         {
           "rule_id": "4.2.0.2",
-          "outcome": "PRIMARY BILL-TO NOT EXPLICITLY LABELED; SECONDARY SEARCH ALLOWED"
+          "outcome": "Bill-To identifierad som primärt faktureringsfält"
         },
         {
-          "rule_id": "4.2.1.1",
-          "outcome": "MATCH"
+          "rule_id": "4.2.0.3",
+          "outcome": "Certifikatets consignee återfinns i Ship-To/Delivery-fält"
+        },
+        {
+          "rule_id": "4.2.0.3.1",
+          "outcome": "MANUAL_REVIEW"
         },
         {
           "rule_id": "4.2.3",
-          "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.2.4",
-          "outcome": "MATCH"
+          "outcome": "Land i Ship-To överensstämmer"
         }
       ],
-      "motivation": "Certifikatets consignee-namn återfinns exakt i fakturans tydligt märkta 'Delivery address' och även i texten 'CONSIGNEE AS PER SHIP TO'. Landet är China/CHINA i båda dokumenten. Skillnader i detaljadress/postnummer påverkar inte bedömningen."
+      "motivation": "Certifikatets consignee kan identifieras exakt i fakturans Delivery/Ship-To-fält som \"Tianjin Yujiu International Trade Co., Ltd\" i Kina. Fakturan har dock en separat fakturerad part, \"Givaudan International AG (EUR)\", Schweiz, som är en annan juridisk entitet och ingen uttrycklig koppling mellan denna Bill-To-part och certifikatets consignee framgår. Enligt Ship-To-begränsningen kräver detta manuell granskning i stället för MATCH."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.97,
+      "confidence": 0.93,
       "certificate_value": "300 x 18 kg paperbags\nOatWell Bran BG22 OI012B22",
-      "invoice_value": "OATWELL® Bran BG22 - paper bag\nOI012B22",
+      "invoice_value": "OATWELL® Bran BG22 - paper bag OI012B22",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "ARTICLE NUMBER EXACT MATCH"
+          "outcome": "MATCH"
         },
         {
-          "rule_id": "4.3.8",
-          "outcome": "MATCH"
+          "rule_id": "4.3.4",
+          "outcome": "Förpackningsuppgift påverkar inte produktidentiteten"
         }
       ],
-      "motivation": "Certifikatet innehåller artikelnummer 'OI012B22'. Fakturan innehåller samma artikelnummer exakt i produkt-/referensraden. Därmed är varan verifierad enligt prioritetsregel för artikelnummer; kompletterande text 'OatWell/OATWELL Bran BG22' är också förenlig."
+      "motivation": "Certifikatet anger artikelnummer och produktbeteckning \"OatWell Bran BG22 OI012B22\". Fakturan innehåller samma artikelnummer \"OI012B22\" och samma identitetsbärande produktnamn \"OATWELL Bran BG22\". Skillnaden mellan \"paperbags\" och \"paper bag\" är förpackningsformulering och ändrar inte produktidentiteten."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.97,
       "certificate_value": "Net weight 5400 kg",
-      "invoice_value": "Net Weight 5400.0000 Kg",
+      "invoice_value": "5400.0000 Kg",
       "rules_applied": [
         {
-          "rule_id": "4.4.2.1",
-          "outcome": "BOX 7 SELECTED"
+          "rule_id": "4.4.1",
+          "outcome": "Numeriskt värde identifierat"
+        },
+        {
+          "rule_id": "4.4.2.2",
+          "outcome": "Net weight uttryckligen angiven"
         },
         {
           "rule_id": "4.4.3",
           "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.4.6",
-          "outcome": "MATCH"
         }
       ],
-      "motivation": "Verifieringsgrundande kvantitet är box 7 i certifikatet: 'Net weight 5400 kg'. Fakturan anger 'Net Weight 5400.0000 Kg'. Samma numeriska värde och samma viktenhet kan identifieras direkt."
+      "motivation": "Certifikatet anger \"Net weight 5400 kg\". Fakturan anger för samma produkt \"5400.0000 Kg\" som net weight. Numeriskt värde och enhet överensstämmer utan otillåten omräkning."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.98,
+      "confidence": 0.99,
       "certificate_value": "Sweden",
       "invoice_value": "COUNTRY OF ORIGIN SWEDEN",
       "rules_applied": [
         {
           "rule_id": "4.5.1",
-          "outcome": "EXPLICIT ORIGIN FIELD FOUND"
+          "outcome": "Explicit origin-fält identifierat"
         },
         {
           "rule_id": "4.5.5",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets ursprungsland 'Sweden' återfinns uttryckligen i fakturan i ett dedikerat ursprungsfält: 'COUNTRY OF ORIGIN SWEDEN'. Ingen motsägande ursprungsuppgift har identifierats."
+      "motivation": "Certifikatets ursprungsland är \"Sweden\". Fakturan innehåller den uttryckliga ursprungsangivelsen \"COUNTRY OF ORIGIN SWEDEN\". Ursprungslandet kan därför verifieras explicit i fakturan."
     }
   },
   "overall_assessment": {
-    "comparison_result": "IDENTICAL",
-    "workflow_recommendation": "AUTO_APPROVAL_ELIGIBLE",
-    "auto_approval_eligible": true,
-    "confidence": 0.96,
+    "comparison_result": "MANUAL_REVIEW",
+    "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
+    "auto_approval_eligible": false,
+    "confidence": 0.78,
     "critical_failures": [],
-    "manual_review_triggers": [],
-    "decision_summary": "Alla fem tillämpliga kontrollpunkter är verifierade som MATCH mot den bifogade fakturan. Ingen LC-regel är aktiv och inga tekniska blockerare hindrar automatisk bedömning.",
-    "human_explanation": "Certifikatet och fakturan stämmer överens på avsändare, mottagare, varubeskrivning, mängd och ursprungsland. Certifikatet anger Swedish Oat Fiber AB, Tianjin Yujiu International Trade Co., Ltd, OatWell Bran BG22 OI012B22, net weight 5400 kg och ursprung Sweden, och dessa uppgifter kan återfinnas i fakturan. Dokumentparet kan därför godkännas automatiskt."
+    "manual_review_triggers": [
+      "Consignee i certifikatet återfinns endast som Ship-To/Delivery-mottagare medan fakturans primära faktureringspart är Givaudan International AG (EUR), Schweiz, utan uttrycklig koppling mellan parterna."
+    ],
+    "decision_summary": "Consignor, varubeskrivning, kvantitet och ursprungsland kan verifieras mot fakturan. Mottagaren i certifikatet matchar fakturans Ship-To/Delivery-part, men fakturans primära faktureringspart är en annan juridisk entitet i Schweiz utan uttrycklig relation till mottagaren. Därför krävs manuell granskning av mottagarkontrollen och totalresultatet blir MANUAL_REVIEW.",
+    "human_explanation": "Avsändare, varubeskrivning, kvantitet och ursprungsland stämmer mellan certifikatet och fakturan. Certifikatet anger mottagaren som Tianjin Yujiu International Trade Co., Ltd, men fakturan är fakturerad till Givaudan International AG i Schweiz och Tianjin Yujiu förekommer som leveransmottagare. Därför behövs manuell granskning av mottagarrollen."
   },
   "_meta": {
-    "tested_at": "2026-04-01T21:51:47.290926+00:00",
-    "prompt_hash": "9b9df42642d8",
+    "tested_at": "2026-04-02T11:21:38.834159+00:00",
+    "prompt_hash": "f81eb9b0d2ea",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P0178_MATCH",
     "expected": "IDENTICAL",
-    "actual": "IDENTICAL",
-    "status": "PASS"
+    "actual": "MANUAL_REVIEW",
+    "status": "REVIEW"
   }
 }

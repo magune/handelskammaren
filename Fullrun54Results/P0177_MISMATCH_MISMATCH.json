@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-04-01T00:00:00Z",
+    "verification_timestamp": "2026-04-02T00:00:00Z",
     "document_pair_id": "P0177",
     "certificate_issue_date": "2026-02-17",
     "source_documents_received": 2
@@ -20,7 +20,7 @@
     "document_b": {
       "label": "Document B",
       "assumed_role": "invoice",
-      "document_type": "Commercial Invoice"
+      "document_type": "Invoice"
     }
   },
   "rule_activation": {
@@ -34,11 +34,15 @@
     "activated_rules": [
       {
         "rule_id": "8.6",
-        "rule_name": "Parningsvalidering godkänd via consignor som återfinns i fakturan"
+        "rule_name": "Parningsvalidering passerad via consignor-matchning"
       },
       {
         "rule_id": "4.1.0",
-        "rule_name": "Consignor återfinns uttryckligen i fakturans header/issuer-block"
+        "rule_name": "Consignor identifierad i fakturan"
+      },
+      {
+        "rule_id": "4.2.0.2",
+        "rule_name": "Faktureringsfält prioriterat för consignee"
       }
     ]
   },
@@ -47,30 +51,30 @@
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.98,
-      "certificate_value": "J. UNGERTH AB\nLilla Bommen 2\nSE-411 04, GOTHENBURG\nSWEDEN",
-      "invoice_value": "J.UNGERTH AB\nLilla Bommen 2\nSE-411 04 Göteborg\nSweden",
+      "certificate_value": "J. UNGERTH AB, Lilla Bommen 2, SE-411 04, GOTHENBURG, SWEDEN",
+      "invoice_value": "J.UNGERTH AB, Lilla Bommen 2, SE-411 04 Göteborg, Sweden",
       "rules_applied": [
         {
           "rule_id": "4.1.0",
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.1.4",
+          "rule_id": "4.1.2",
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.1.5",
+          "rule_id": "4.1.4",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor \"J. UNGERTH AB\" återfinns uttryckligen i fakturans issuer/header som \"J.UNGERTH AB\". Skillnaden är endast punktnotation och versalisering, vilket är tillåten normalisering. Landet är Sweden/SWEDEN i båda dokumenten."
+      "motivation": "Certifikatets consignor 'J. UNGERTH AB' återfinns uttryckligen i fakturans utställarhuvud. Landet Sverige framgår i båda dokumenten. Skillnaderna 'J. UNGERTH AB' kontra 'J.UNGERTH AB' och 'GOTHENBURG' kontra 'Göteborg' påverkar inte den juridiska partens identifiering."
     },
     "consignee": {
       "applicable": true,
       "status": "MISMATCH",
       "confidence": 0.99,
-      "certificate_value": "CEMENT PRODUCTS INDUSTRY CO.LTD\nINDUSTRIAL VALLEY PHASE 3, JAWDA ST., KAEC 23987-4281 TEL:\n+966125784070\nSaudi Arabia",
-      "invoice_value": "Buyers:\nRUFSAC - Société Rufisquoise de Fabrication de Sacs\nKm 22, Route de Rufisque\nRufisque\nSenegal",
+      "certificate_value": "CEMENT PRODUCTS INDUSTRY CO.LTD, INDUSTRIAL VALLEY PHASE 3, JAWDA ST., KAEC 23987-4281 TEL: +966125784070, Saudi Arabia",
+      "invoice_value": "Buyers: RUFSAC - Société Rufisquoise de Fabrication de Sacs, Km 22, Route de Rufisque, Rufisque, Senegal",
       "rules_applied": [
         {
           "rule_id": "4.2.0.2",
@@ -81,74 +85,70 @@
           "outcome": "MISMATCH"
         },
         {
-          "rule_id": "4.2.3",
-          "outcome": "MISMATCH"
-        },
-        {
           "rule_id": "4.2.4",
           "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Fakturans primära mottagarfält är buyer-blocket och anger RUFSAC i Senegal. Certifikatets consignee \"CEMENT PRODUCTS INDUSTRY CO.LTD\" i Saudi Arabia kan inte identifieras i fakturan, varken i buyer-fältet eller någon annan synlig mottagarroll. Landet skiljer sig dessutom mellan certifikat och faktura."
+      "motivation": "Fakturan innehåller ett tydligt primärt faktureringsfält 'Buyers' med parten 'RUFSAC - Société Rufisquoise de Fabrication de Sacs' i Senegal. Certifikatets consignee är 'CEMENT PRODUCTS INDUSTRY CO.LTD' i Saudiarabien. Denna part kan inte identifieras i fakturan, och inget separat Ship-To/Delivery-fält med denna part finns."
     },
     "goods_description": {
       "applicable": true,
       "status": "MISMATCH",
-      "confidence": 0.93,
+      "confidence": 0.79,
       "certificate_value": "UNBLEACHED SACK KRAFT PAPER (HP)",
       "invoice_value": "Fully Extensible Hi Porosity Sack Kraft Paper, manufactured by Nordic Paper Bäckhammar, Sweden Origin. HS CODE: 48042110",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "NOT_APPLICABLE_NO_ARTICLE_NUMBER"
+          "outcome": "NO_ARTICLE_NUMBER_IN_CERTIFICATE"
         },
         {
           "rule_id": "4.3.3",
-          "outcome": "MISMATCH"
+          "outcome": "PARTIAL_TEXT_OVERLAP_ONLY"
         },
         {
-          "rule_id": "4.3.4",
-          "outcome": "REJECTED"
+          "rule_id": "4.3.3.4",
+          "outcome": "MISMATCH"
         },
         {
           "rule_id": "4.3.8",
           "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Certifikatet innehåller inget artikelnummer, så verifiering ska ske genom kontrollerad textmatchning. Den identitetsbärande beskrivningen i certifikatet är \"UNBLEACHED SACK KRAFT PAPER (HP)\", medan fakturan anger \"Fully Extensible Hi Porosity Sack Kraft Paper\". För att godta detta skulle systemet behöva göra otillåten semantisk tolkning, bland annat att \"HP\" motsvarar \"Hi Porosity\" och att frånvaron av \"UNBLEACHED\" inte påverkar identiteten."
+      "motivation": "Båda dokumenten avser sack kraft paper, men certifikatet anger uttryckligen 'UNBLEACHED SACK KRAFT PAPER (HP)' medan fakturan anger 'Fully Extensible Hi Porosity Sack Kraft Paper'. Fakturan bekräftar inte uttryckligen kvalifikatorn 'UNBLEACHED', som är identitetsbärande enligt regelverket. Varubeskrivningen kan därför inte verifieras utan otillåten tolkning."
     },
     "quantity": {
       "applicable": true,
       "status": "MISMATCH",
       "confidence": 0.99,
       "certificate_value": "551,940MT net",
-      "invoice_value": "Quantity (mt) 297,076\nReels 275",
+      "invoice_value": "Quantity (mt): 297,076; Reels: 275",
       "rules_applied": [
         {
           "rule_id": "4.4.2.1",
-          "outcome": "BOX_7_SELECTED_AS_VERIFICATION_BASIS"
+          "outcome": "BOX_7_IS_VERIFICATION_BASIS"
+        },
+        {
+          "rule_id": "4.4.2.2",
+          "outcome": "NET_WEIGHT_EXPLICIT_IN_CERTIFICATE"
         },
         {
           "rule_id": "4.4.3",
           "outcome": "MISMATCH"
         },
         {
-          "rule_id": "4.4.5.1",
-          "outcome": "NO_EXCEPTION_APPLICABLE"
-        },
-        {
           "rule_id": "4.4.6",
           "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Enligt reglerna är box 7 i certifikatet verifieringsgrundande. Certifikatet anger där \"551,940MT net\", medan fakturan uttryckligen anger \"Quantity (mt) 297,076\"; dessa numeriska värden överensstämmer inte och avvikelsen ligger långt utanför tillåten tolerans. Certifikatet innehåller även \"516 REELS\" i varubeskrivningen, men fakturan anger 275 reels, vilket ytterligare motsäger uppgifterna."
+      "motivation": "Den verifieringsgrundande kvantiteten finns i certifikatets box 7: '551,940MT net'. Fakturan visar 'Quantity (mt) 297,076' och dessutom 'Reels 275'. Värdet 551,940 MT kan inte identifieras i fakturan och avviker tydligt från 297,076 MT, vilket är en uttrycklig numerisk avvikelse."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.97,
+      "confidence": 0.98,
       "certificate_value": "SWEDEN",
-      "invoice_value": "Sweden Origin\nWe certify that this invoice is true and correct and that the goods are of Sweden origin.",
+      "invoice_value": "Sweden Origin; We certify that this invoice is true and correct and that the goods are of Sweden origin.",
       "rules_applied": [
         {
           "rule_id": "4.5.1",
@@ -159,7 +159,7 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets ursprungsland är \"SWEDEN\". Fakturan innehåller uttryckliga ursprungsangivelser \"Sweden Origin\" och längst ned \"the goods are of Sweden origin\", vilket uppfyller kravet på positiv verifiering i ett explicit origin-uttryck."
+      "motivation": "Certifikatet anger ursprungsland 'SWEDEN'. Fakturan anger uttryckligen 'Sweden Origin' och längst ned att varorna är 'of Sweden origin'. Ursprungslandet är därmed uttryckligen identifierat i fakturan."
     }
   },
   "overall_assessment": {
@@ -168,17 +168,17 @@
     "auto_approval_eligible": false,
     "confidence": 0.98,
     "critical_failures": [
-      "Consignee mismatch: certifikatet anger CEMENT PRODUCTS INDUSTRY CO.LTD, Saudi Arabia, medan fakturan anger RUFSAC, Senegal.",
-      "Goods description mismatch: \"UNBLEACHED SACK KRAFT PAPER (HP)\" kan inte verifieras exakt mot \"Fully Extensible Hi Porosity Sack Kraft Paper\" utan otillåten tolkning.",
-      "Quantity mismatch: certifikatet anger 551,940 MT net och 516 reels, medan fakturan anger 297,076 mt och 275 reels."
+      "Consignee mismatch: certifikatet anger CEMENT PRODUCTS INDUSTRY CO.LTD i Saudi Arabia medan fakturan anger RUFSAC - Société Rufisquoise de Fabrication de Sacs i Senegal.",
+      "Quantity mismatch: certifikatet anger 551,940MT net medan fakturan anger 297,076 mt.",
+      "Goods description not fully verifiable: certifikatet anger UNBLEACHED SACK KRAFT PAPER (HP) medan fakturan inte uttryckligen bekräftar UNBLEACHED."
     ],
     "manual_review_triggers": [],
-    "decision_summary": "Dokumentparet är inte identiskt. Consignor och ursprungsland kan verifieras, men mottagare, varubeskrivning och kvantitet motsäger fakturan.",
-    "human_explanation": "Certifikatet anger mottagaren som CEMENT PRODUCTS INDUSTRY CO.LTD i Saudiarabien, medan fakturan är ställd till RUFSAC i Senegal. Kvantiteten skiljer sig också: certifikatet anger 551,940 MT net och 516 reels, medan fakturan anger 297,076 mt och 275 reels. Varubeskrivningen kan inte verifieras exakt utan tolkning, därför är dokumenten inte identiska."
+    "decision_summary": "Dokumentparet passerar parningsvalideringen genom att certifikatets consignor matchar fakturans utställare. Därefter konstateras flera tillämpliga kontrollpunkter med MISMATCH: mottagare, varubeskrivning och kvantitet. Därför måste totalresultatet vara NOT_IDENTICAL.",
+    "human_explanation": "Certifikatet anger mottagaren som CEMENT PRODUCTS INDUSTRY CO.LTD i Saudiarabien, men fakturan är ställd till RUFSAC i Senegal. Certifikatet anger också 551,940 MT net medan fakturan anger 297,076 mt, och varubeskrivningen 'UNBLEACHED SACK KRAFT PAPER (HP)' kan inte fullt verifieras mot fakturans text. Dokumenten är därför inte identiska och kräver manuell hantering."
   },
   "_meta": {
-    "tested_at": "2026-04-01T21:51:47.290570+00:00",
-    "prompt_hash": "9b9df42642d8",
+    "tested_at": "2026-04-02T11:21:38.833884+00:00",
+    "prompt_hash": "f81eb9b0d2ea",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P0177_MISMATCH",

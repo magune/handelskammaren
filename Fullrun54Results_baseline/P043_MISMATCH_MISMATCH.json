@@ -1,0 +1,207 @@
+{
+  "schema_version": "3.0",
+  "metadata": {
+    "verification_timestamp": "2026-04-01T00:00:00Z",
+    "document_pair_id": null,
+    "certificate_issue_date": "2025-11-25",
+    "source_documents_received": 2
+  },
+  "task": {
+    "task_type": "customs_document_pair_verification",
+    "comparison_mode": "certificate_vs_invoice",
+    "strictness": "conservative"
+  },
+  "documents": {
+    "document_a": {
+      "label": "Document A",
+      "assumed_role": "certificate",
+      "document_type": "Certificate of Origin"
+    },
+    "document_b": {
+      "label": "Document B",
+      "assumed_role": "invoice",
+      "document_type": "Pro Forma Invoice"
+    }
+  },
+  "rule_activation": {
+    "lc_exception_active": false,
+    "lc_number_found": null,
+    "general_goods_description_with_invoice_reference_active": false,
+    "mixed_origins_rule_active": false,
+    "to_order_rule_active": false,
+    "quantity_exception_applied": null,
+    "eu_origin_normalization_active": false,
+    "activated_rules": [
+      {
+        "rule_id": "4.1.0",
+        "rule_name": "Consignor identified explicitly in invoice text/header/footer"
+      },
+      {
+        "rule_id": "4.2.1.1",
+        "rule_name": "Consignee verified via delivery address because no primary billing field was identified"
+      },
+      {
+        "rule_id": "4.3.2",
+        "rule_name": "Goods description verified using priority 2 controlled text match"
+      },
+      {
+        "rule_id": "4.4.2.1",
+        "rule_name": "Quantity verification based exclusively on box 7 value in certificate"
+      },
+      {
+        "rule_id": "4.5.1",
+        "rule_name": "Origin identified explicitly in invoice origin field"
+      }
+    ]
+  },
+  "control_points": {
+    "consignor": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.98,
+      "certificate_value": "ERICSSON AB\nTORSHAMNSGATAN 23\n164 80, STOCKHOLM\nSWEDEN",
+      "invoice_value": "ERICSSON AB\nTorshamnsgatan 21-23\nS-164 83 STOCKHOLM, SWEDEN",
+      "rules_applied": [
+        {
+          "rule_id": "4.1.0",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.2.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.5",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatets consignor 'ERICSSON AB' kan identifieras uttryckligen i fakturans header och footer som 'ERICSSON AB'. Landet Sverige framgår explicit i adressen på fakturan. Skillnader i gatunummer och postnummer utgör inte avvikelse eftersom företagsnamn och land kan verifieras."
+    },
+    "consignee": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.97,
+      "certificate_value": "KCELL JSC\nALIMZHANOVA STREET 51\n050004 ALMATY\nKAZAKHSTAN",
+      "invoice_value": "DELIVERY ADDRESS :\nKCELL JSC\nALIMZHANOVA STREET 51, 050004\nALMATY, KAZAKHSTAN",
+      "rules_applied": [
+        {
+          "rule_id": "4.2.0.2",
+          "outcome": "No primary billing field identified; secondary field review allowed"
+        },
+        {
+          "rule_id": "4.2.1.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.2.3",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.2.4",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Fakturan visar ingen tydlig 'Invoice to/Bill to'-part, men innehåller en leveransadress med 'KCELL JSC' på samma adress i Almaty, Kazakhstan. Certifikatets mottagare kan därför identifieras i relevant sekundärt adressfält, och landuppgiften överensstämmer."
+    },
+    "goods_description": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.96,
+      "certificate_value": "TELECOM EQUIPMENT\nPL - AIR 3258 B78V and HWACs \nPL - AIR 3258 B78V and HWACs",
+      "invoice_value": "Telecommunication Equipment:\n...\nAIR 3258 B78V and HWACs / Приемопередатчик AIR 3258 B78V и Коды аппаратной активации\n...\nAIR 3258 B78V and HWACs / Приемопередатчик AIR 3258 B78V и Коды аппаратной активации",
+      "rules_applied": [
+        {
+          "rule_id": "4.3.2",
+          "outcome": "Priority 2 applied because no article number was stated in certificate"
+        },
+        {
+          "rule_id": "4.3.3",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.3.4",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.3.8",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Den identitetsbärande huvudbeteckningen 'AIR 3258 B78V and HWACs' förekommer uttryckligen i fakturan på båda relevanta raderna. Den generella texten 'TELECOM EQUIPMENT' i certifikatet motsägs inte av fakturans 'Telecommunication Equipment'. Varubeskrivningen kan därför verifieras utan semantisk omtolkning."
+    },
+    "quantity": {
+      "applicable": true,
+      "status": "MISMATCH",
+      "confidence": 0.99,
+      "certificate_value": "G.W 5218,000 KG",
+      "invoice_value": "GRAND TOTAL: ... 5 298,000 ...\nGross Weight: 5.298,000 kg",
+      "rules_applied": [
+        {
+          "rule_id": "4.4.2.1",
+          "outcome": "Box 7 value is the mandatory verification basis"
+        },
+        {
+          "rule_id": "4.4.2.2",
+          "outcome": "Weight category explicitly stated as G.W / Gross Weight"
+        },
+        {
+          "rule_id": "4.4.3",
+          "outcome": "Explicit numeric comparison performed"
+        },
+        {
+          "rule_id": "4.4.3.1",
+          "outcome": "Explicit contradiction found"
+        },
+        {
+          "rule_id": "4.4.6",
+          "outcome": "MISMATCH"
+        }
+      ],
+      "motivation": "Certifikatets verifieringsgrundande kvantitet i box 7 är 'G.W 5218,000 KG'. Fakturan anger total gross weight som '5 298,000' / '5.298,000 kg'. Båda dokumenten anger uttryckligen samma kvantitetstyp (gross weight), men värdena skiljer sig med 80 kg, vilket överstiger tillåten tolerans. Förekomsten av '42' i certifikatets box 6 får inte användas istället för box 7-värdet."
+    },
+    "origin": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.98,
+      "certificate_value": "PL",
+      "invoice_value": "PL\nPL\nCountry of Origin: mentioned above",
+      "rules_applied": [
+        {
+          "rule_id": "4.5.1",
+          "outcome": "Origin field identified in invoice"
+        },
+        {
+          "rule_id": "4.5.4",
+          "outcome": "ISO code normalization applied"
+        },
+        {
+          "rule_id": "4.5.5",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatet anger ursprungsland 'PL'. Fakturan har en explicit kolumn för 'COUNTRY OF ORIGIN' där båda varuraderna är märkta 'PL', och sida 2 bekräftar 'Country of Origin: mentioned above'. Ursprungslandet kan därför uttryckligen identifieras i fakturan."
+    }
+  },
+  "overall_assessment": {
+    "comparison_result": "NOT_IDENTICAL",
+    "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
+    "auto_approval_eligible": false,
+    "confidence": 0.98,
+    "critical_failures": [
+      "Quantity mismatch: certificate states 'G.W 5218,000 KG' while the invoice states total gross weight '5.298,000 kg'."
+    ],
+    "manual_review_triggers": [],
+    "decision_summary": "Dokumentparet är i huvudsak konsistent för consignor, consignee, varubeskrivning och ursprungsland, men kvantitetskontrollen ger en uttrycklig motsägelse i bruttovikt. Minst en tillämplig kontrollpunkt är därför MISMATCH, vilket medför totalresultatet NOT_IDENTICAL.",
+    "human_explanation": "Certifikatets avsändare, mottagare, varubeskrivning och ursprungsland kan verifieras mot fakturan. Däremot anger certifikatet bruttovikten 5218,000 KG medan fakturan anger 5.298,000 kg. Därför stämmer dokumenten inte överens och kräver manuell hantering."
+  },
+  "_meta": {
+    "tested_at": "2026-04-01T14:13:26.615613+00:00",
+    "prompt_hash": "9b9df42642d8",
+    "model": "gpt-5.4",
+    "tier": 2,
+    "pair": "P043_MISMATCH",
+    "expected": "NOT_IDENTICAL",
+    "actual": "NOT_IDENTICAL",
+    "status": "PASS"
+  }
+}

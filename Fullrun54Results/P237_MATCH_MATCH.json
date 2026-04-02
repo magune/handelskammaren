@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-04-01T00:00:00Z",
+    "verification_timestamp": "2026-04-02T00:00:00Z",
     "document_pair_id": null,
     "certificate_issue_date": "2026-01-29",
     "source_documents_received": 2
@@ -15,12 +15,12 @@
     "document_a": {
       "label": "Document A",
       "assumed_role": "certificate",
-      "document_type": "Certificate of Origin (certificate file; includes embedded supplementary invoice copy)"
+      "document_type": "Certificate of Origin"
     },
     "document_b": {
       "label": "Document B",
       "assumed_role": "invoice",
-      "document_type": "Commercial Invoice"
+      "document_type": "Invoice"
     }
   },
   "rule_activation": {
@@ -34,19 +34,11 @@
     "activated_rules": [
       {
         "rule_id": "8.5.0",
-        "rule_name": "Filbaserad dokumentparning tillämpad; certifikat hämtat från certifikatfilen och faktura från separat fakturafil"
+        "rule_name": "Filbaserad dokumentparning; separat fakturafil används för verifiering"
       },
       {
         "rule_id": "8.6",
-        "rule_name": "Parningsvalidering passerad genom explicit fakturanummer 830488 och identifierbar consignor/consignee"
-      },
-      {
-        "rule_id": "4.2.2.1.2",
-        "rule_name": "Kommersiell förkortning/abbrevierad mottagarnamnform"
-      },
-      {
-        "rule_id": "4.5.4",
-        "rule_name": "Landnormalisering med ISO-kod för ursprung"
+        "rule_name": "Obligatorisk parningsvalidering"
       }
     ]
   },
@@ -54,124 +46,112 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.98,
+      "confidence": 0.97,
       "certificate_value": "Bulten Sweden AB\nBox 512\n734 27, Hallstahammar\nSweden",
-      "invoice_value": "Bulten Sweden AB\nBox 512\nSE-734 27 Hallstahammar\nSweden",
+      "invoice_value": "Bulten Sweden AB\nBox 512\nSE-734 27 Hallstahammar\nSweden\nOrg nr/VAT No: SE556078364801",
       "rules_applied": [
         {
-          "rule_id": "4.1.1",
-          "outcome": "Issuer/consignor identified in invoice"
+          "rule_id": "4.1.0",
+          "outcome": "MATCH"
         },
         {
-          "rule_id": "4.1.2",
-          "outcome": "Company name and country identified"
+          "rule_id": "4.1.2.1",
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.1.5",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor \"Bulten Sweden AB\" återfinns uttryckligen i fakturan, inklusive adressformen \"Box 512\" och landet \"Sweden\". Skillnaden \"734 27\" vs \"SE-734 27\" är endast formatering av postnummer och påverkar inte identifikationen. Fakturans footer och företagsuppgifter styrker samma juridiska part i Sverige."
+      "motivation": "Certifikatets consignor 'Bulten Sweden AB' återfinns uttryckligen i fakturan, inklusive adressuppgiften 'Box 512, SE-734 27 Hallstahammar, Sweden'. Landet Sverige styrks dessutom av VAT-prefixet 'SE'."
     },
     "consignee": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.9,
+      "confidence": 0.88,
       "certificate_value": "Volvo Cars Chengdu\nZhongjia Automob Manufact. Ltd(764)\nNo. 366, Checheng Eastern 7 road\nLongquanyi District Chengdu\nSICHUAN PROVINCE 610100\nChina",
-      "invoice_value": "Payer:\nVOLVO CARS CHENGDU\nZHONGJIA AUTOMOBILE MANUFAC.LTD\nNo.368, Checheng Eastern 7 road\nLongQuanyi district, Chengdu City\nSichuan Province\n\nDelivery address:\nVOLVO CARS CHENGDU\nZhongjia Auto Manuf. Ltd (764-2CKR)\nNo 366, CHECHENG EASTERN 7 ROAD\nLONGQUANYI DISTRICT, CHENGDU\nSICHUAN PROVINCE 610100 CHINA",
+      "invoice_value": "Payer:\nVOLVO CARS CHENGDU\nZHONGJIA AUTOMOBILE MANUFAC.LTD\nNo.368, Chechen[g] Eastern 7 road\nLongQuanyi district, Chengdu City\nSichuan Province\n\nDelivery address:\nVOLVO CARS CHENGDU\nZhongjia Auto Manuf. Ltd (764-2CKR)\nNo 366, CHECHENG EASTERN 7 ROAD\nLONGQUANYI DISTRICT, CHENGDU\nSICHUAN PROVINCE 610100 CHINA",
       "rules_applied": [
         {
           "rule_id": "4.2.0.2",
-          "outcome": "Primary billing field reviewed first"
+          "outcome": "APPLIED"
         },
         {
-          "rule_id": "4.2.2",
-          "outcome": "Consignee identified in invoice"
-        },
-        {
-          "rule_id": "4.2.2.1.2",
-          "outcome": "Allowed abbreviation/commercial shortening applied"
-        },
-        {
-          "rule_id": "4.2.3",
-          "outcome": "Country China identified"
+          "rule_id": "4.2.2.1",
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.2.4",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets mottagare kan identifieras i fakturan som samma Volvo Cars Chengdu/Zhongjia-enhet. I primärt faktureringsfält anges \"VOLVO CARS CHENGDU ZHONGJIA AUTOMOBILE MANUFAC.LTD\", och leveransadressen innehåller den ännu närmare formen \"Zhongjia Auto Manuf. Ltd (764-2CKR)\" med samma gata nr 366 och samma land Kina. Skillnaderna \"Automob/Automobile\" och \"Manufact./Manuf.\" är förkortnings-/layoutvariationer, medan landet China överensstämmer uttryckligen."
+      "motivation": "Certifikatets consignee kan identifieras i fakturan som samma juridiska part genom kombinationen av payer- och delivery address-blocken: 'VOLVO CARS CHENGDU / ZHONGJIA AUTOMOBILE MANUFAC.LTD' respektive 'VOLVO CARS CHENGDU / Zhongjia Auto Manuf. Ltd (764-2CKR)'. Skillnaderna består av tillåtna förkortningar och något mer fullständiga adressuppgifter; landet Kina framgår uttryckligen i delivery address-blocket."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.96,
+      "confidence": 0.98,
       "certificate_value": "1 pallets fasteners\nScrews, other self-tapping (TT, PT, RF)\nstat no 73181499",
-      "invoice_value": "M8x25 FL-SCREW TT2000 Y 100-4\nScrews, other self-tapping (TT, PT, RF)\n73181499",
+      "invoice_value": "M8x25 FL-SCREW TT2000 Y 100-4\nScrews, other self-tapping (TT, PT, RF)\nCustoms Stat No 73181499",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "No certificate article number used for primary match"
+          "outcome": "NO_ARTICLE_NUMBER_IN_CERTIFICATE"
         },
         {
           "rule_id": "4.3.3",
-          "outcome": "Identity-bearing main designation matched exactly"
-        },
-        {
-          "rule_id": "4.3.4",
-          "outcome": "Additional non-conflicting text ignored"
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.3.8",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Den identitetsbärande huvudbeteckningen i certifikatet, \"Screws, other self-tapping (TT, PT, RF)\", återfinns exakt i fakturans varubeskrivning. Fakturan innehåller dessutom en mer detaljerad produktlinje \"M8x25 FL-SCREW TT2000 Y 100-4\", vilket är tillåten ytterligare information och inte en motsägelse. Tullstatistiskt nummer 73181499 förekommer också i båda dokumenten som stödjande evidens."
+      "motivation": "Den identitetsbärande huvudbeteckningen 'Screws, other self-tapping (TT, PT, RF)' återfinns exakt i fakturan. Fakturan innehåller dessutom samma tullstatistiska nummer 73181499, och inget i fakturan motsäger certifikatets varubeskrivning."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.99,
       "certificate_value": "3900pcs",
-      "invoice_value": "3900 PCS",
+      "invoice_value": "Quantity 3900 PCS",
       "rules_applied": [
         {
           "rule_id": "4.4.2",
-          "outcome": "Numeric value and unit explicitly present in certificate"
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.4.3",
-          "outcome": "Same numeric value identified in invoice"
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.4.6",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger kvantiteten som \"3900pcs\" och fakturan anger \"3900 PCS\". Både numeriskt värde och enhet kan identifieras uttryckligen och överensstämmer utan behov av undantag, summering eller omräkning."
+      "motivation": "Certifikatets verifieringsgrundande kvantitet i box 7 är '3900pcs'. Samma numeriska värde och enhet återfinns uttryckligen i fakturan som '3900 PCS'."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.92,
+      "confidence": 0.96,
       "certificate_value": "Sweden",
       "invoice_value": "Origin\nSE",
       "rules_applied": [
         {
           "rule_id": "4.5.1",
-          "outcome": "Explicit origin field identified in invoice"
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.5.4",
-          "outcome": "ISO country code normalization applied"
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.5.5",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger ursprungsland \"Sweden\". Fakturan innehåller ett explicit origin-fält i artikelraden med värdet \"SE\", vilket är en vedertagen ISO-landkod för Sweden. Ursprungslandet kan därför uttryckligen verifieras i fakturan."
+      "motivation": "Certifikatet anger ursprungsland 'Sweden'. Fakturan innehåller ett explicit origin-fält på raden med värdet 'SE', vilket är en tillåten ISO-landkod för Sverige."
     }
   },
   "overall_assessment": {
@@ -181,12 +161,12 @@
     "confidence": 0.95,
     "critical_failures": [],
     "manual_review_triggers": [],
-    "decision_summary": "Det separata fakturadokumentet innehåller faktura 830488 som refereras i certifikatet. Avsändare, mottagare, varubeskrivning, kvantitet och ursprungsland kan samtliga verifieras mot fakturan enligt tillåtna regler och normaliseringar.",
-    "human_explanation": "Certifikatet kan verifieras mot den bifogade fakturan. Fakturanummer 830488 stämmer, och avsändare, mottagare, varubeskrivning, kvantitet 3900 PCS samt ursprungsland Sweden/SE överensstämmer. Dokumentparet kan därför godkännas automatiskt."
+    "decision_summary": "Dokumentparet har parats via fakturanummer 830488 i den separata fakturafilen. Samtliga tillämpliga kontrollpunkter—consignor, consignee, varubeskrivning, kvantitet och ursprungsland—kan verifieras mot fakturan enligt tillåtna normaliseringar och utan kvarstående motsägelser.",
+    "human_explanation": "Alla relevanta uppgifter i certifikatet kan verifieras mot fakturan. Avsändare, mottagare, varubeskrivning, mängd 3900 PCS och ursprung Sverige/SE stämmer. Dokumentparet kan därför godkännas automatiskt."
   },
   "_meta": {
-    "tested_at": "2026-04-01T12:52:36.783005+00:00",
-    "prompt_hash": "9b9df42642d8",
+    "tested_at": "2026-04-02T11:06:44.040406+00:00",
+    "prompt_hash": "f81eb9b0d2ea",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P237_MATCH",

@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": null,
+    "verification_timestamp": "2026-04-02T00:00:00Z",
     "document_pair_id": null,
     "certificate_issue_date": "2026-03-02",
     "source_documents_received": 2
@@ -20,7 +20,7 @@
     "document_b": {
       "label": "Document B",
       "assumed_role": "invoice",
-      "document_type": "Commercial Invoice"
+      "document_type": "Invoice"
     }
   },
   "rule_activation": {
@@ -33,24 +33,24 @@
     "eu_origin_normalization_active": true,
     "activated_rules": [
       {
-        "rule_id": "8.5.0",
-        "rule_name": "Filbaserad dokumentparning: certifikat från fil 1 och faktura från fil 2"
-      },
-      {
         "rule_id": "8.6",
-        "rule_name": "Parningsvalidering godkänd via consignor, consignee och referens 5103458970"
-      },
-      {
-        "rule_id": "4.1.0",
-        "rule_name": "Consignor identifierad i fakturans sidhuvud/identifieringsblock"
+        "rule_name": "Obligatorisk parningsvalidering"
       },
       {
         "rule_id": "4.2.0.3",
         "rule_name": "Ship-To-regel för slutmottagare"
       },
       {
+        "rule_id": "4.2.0.3.1",
+        "rule_name": "Ship-To med oberoende Bill-To-part ger MANUAL_REVIEW"
+      },
+      {
+        "rule_id": "4.5.4.2",
+        "rule_name": "EU-medlemsland och EU är verifierbara i båda riktningarna"
+      },
+      {
         "rule_id": "4.5.4.2.1",
-        "rule_name": "EU + ett specifikt EU-land täcks av explicit EU-ursprungsuttalande i fakturan"
+        "rule_name": "Generellt EU-ursprungsuttalande täcker EU + ett specifikt EU-land"
       }
     ]
   },
@@ -58,136 +58,150 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.98,
+      "confidence": 0.96,
       "certificate_value": "Nouryon Surface Chemistry AB\nGamlestadsvägen 18\n41502, GÖTEBORG\nSweden",
-      "invoice_value": "Nouryon Surface Chemistry AB\nBOX 47067\n402 58 Goteborg\nSweden\nVAT nr. Nouryon SE556013898301",
+      "invoice_value": "Nouryon Surface Chemistry\nAB\nBOX 47067\n402 58 Goteborg\nSweden\nOrg. no. 556013-8983\nVAT nr. Nouryon SE556013898301",
       "rules_applied": [
+        {
+          "rule_id": "8.6",
+          "outcome": "PASS"
+        },
         {
           "rule_id": "4.1.0",
           "outcome": "MATCH"
         },
         {
           "rule_id": "4.1.2.1",
-          "outcome": "MATCH"
+          "outcome": "LAND_VERIFIED"
         },
         {
-          "rule_id": "4.1.4",
+          "rule_id": "4.1.5",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor 'Nouryon Surface Chemistry AB' återfinns uttryckligen i fakturans sidhuvud på flera sidor. Landet 'Sweden' framgår explicit i fakturans adressblock och stöds även av VAT-prefixet 'SE'. Företagsnamn och land kan därför verifieras utan otillåten tolkning."
+      "motivation": "Certifikatets consignor 'Nouryon Surface Chemistry AB' kan identifieras uttryckligen i fakturans sidhuvud som 'Nouryon Surface Chemistry AB'. Landet Sverige framgår uttryckligen i fakturans adressblock och stöds även av svensk VAT-prefix 'SE' i 'SE556013898301'. Skillnad i gatuadress/postadress påverkar inte bedömningen eftersom företagsnamn och land kan verifieras som samma juridiska part."
     },
     "consignee": {
       "applicable": true,
-      "status": "MATCH",
-      "confidence": 0.89,
+      "status": "MANUAL_REVIEW",
+      "confidence": 0.78,
       "certificate_value": "H.W. Coates Ltd\nReception A\nMiddlewich Road Ind Est\nByley\nCW10 9NT MIDDLEWICH\nUNITED KINGDOM",
-      "invoice_value": "Ship To 41346328\nH.W. Coates Ltd\nReception A\nMiddlewich Road Ind Est\nByley\nCW10 9NT MIDDLEWICH\nUNITED KINGDOM",
+      "invoice_value": "Bill To 6864292\nIMCD UK Limited\nTimes House Throwley Way\nSM1 4AF SUTTON\nUNITED KINGDOM\n\nSold To 41139507\nIMCD UK Limited\nTimes House Throwley Way\nSM1 4AF SUTTON\nUNITED KINGDOM\n\nShip To 41346328\nH.W. Coates Ltd\nReception A\nMiddlewich Road Ind Est\nByley\nCW10 9NT MIDDLEWICH\nUNITED KINGDOM",
       "rules_applied": [
         {
+          "rule_id": "8.6",
+          "outcome": "PASS"
+        },
+        {
           "rule_id": "4.2.0.2",
-          "outcome": "Bill To/Sold To skiljer från certifikatet"
+          "outcome": "BILL_TO_HAS_PRIORITY"
         },
         {
           "rule_id": "4.2.0.3",
-          "outcome": "MATCH"
+          "outcome": "SHIP_TO_EXCEPTION_CONSIDERED"
         },
         {
-          "rule_id": "4.2.3",
-          "outcome": "MATCH"
+          "rule_id": "4.2.0.3.1",
+          "outcome": "MANUAL_REVIEW"
         }
       ],
-      "motivation": "Fakturan har Bill To/Sold To = IMCD UK Limited, men certifikatets consignee 'H.W. Coates Ltd' återfinns exakt i fakturans Ship To-fält. Detta uppfyller undantaget för slutmottagare eftersom både Bill-To-parten och Ship-To-parten förekommer i samma faktura och inget motsäger att H.W. Coates Ltd är den faktiska mottagaren. Landet UNITED KINGDOM överensstämmer."
+      "motivation": "Certifikatets consignee 'H.W. Coates Ltd' återfinns exakt i fakturans Ship To-fält och landet United Kingdom överensstämmer. Fakturan har dock ett tydligt Bill To/Sold To-fält med en annan juridisk part, 'IMCD UK Limited'. Eftersom certifikatets consignee då endast framgår som leveransmottagare medan fakturerad part är en separat oberoende juridisk entitet ska kontrollpunkten sättas till MANUAL_REVIEW, inte MATCH."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.97,
-      "certificate_value": "ETHOMEEN O/12\nBEROL R648 NG\nETHYLAN 1005\nAROMOX T/12 HFP\nBEROL ENV 226 PLUS\nBEROL LFG 61\nBEROL DGR 81\nBEROL R648 PO",
-      "invoice_value": "ETHOMEEN O/12\nBEROL R648 NG\nETHYLAN 1005\nAROMOX T/12 HFP\nBEROL ENV 226 PLUS\nBEROL LFG 61\nBEROL DGR 81\nBEROL R648 PO",
+      "confidence": 0.95,
+      "certificate_value": "ETHOMEEN O/12\nBEROL R648 NG\nETHYLAN 1005\nAROMOX T/12 HFP\nBEROL ENV 226 PLUS\nBEROL LFG 61\nBEROL DGR 81\nBEROL R648 PO\n\n8 pcs of IBC 850 KG\n4 pcs of PLASTIC DRUM 200 KG\n4 pcs of STEEL DRUM TH 190 KG\n16 pcs of PLASTIC DRUM 200 KG\n8 pcs of PLASTIC DRUM 180 KG\n3 pcs of IBC 1000 KG\n4 pcs of PLASTIC DRUM 210 KG\n2 pcs of 1000 KG WP IBC",
+      "invoice_value": "10 ETHOMEEN O/12 / IBC 850 KG\n20 BEROL R648 NG / PLASTIC DRUM 200 KG\n30 ETHYLAN 1005 / STEEL DRUM TH 190 KG\n40 AROMOX T/12 HFP / PLASTIC DRUM 200 KG\n50 BEROL ENV 226 PLUS / PLASTIC DRUM 180 KG\n60 BEROL LFG 61 / IBC 1000 KG\n70 BEROL DGR 81 / PLASTIC DRUM 210 KG\n80 BEROL R648 PO / 1000 KG WP IBC",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "Artikelnummer ej styrande"
+          "outcome": "NO_ARTICLE_NUMBERS_IN_CERTIFICATE"
         },
         {
           "rule_id": "4.3.3",
-          "outcome": "MATCH"
+          "outcome": "TEXT_MATCH_APPLIED"
         },
         {
-          "rule_id": "4.3.4",
+          "rule_id": "4.3.8",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Samtliga identitetsbärande produktbeteckningar i certifikatet kan identifieras exakt i fakturans varurader. Förpacknings-/radtillägg som 'IBC 850 KG', 'PLASTIC DRUM 200 KG' och '1000 KG WP IBC' är förenliga och ändrar inte slutsatsen. Ingen semantisk omtolkning behövdes."
+      "motivation": "Certifikatet listar åtta produktnamn och tillhörande emballage-/förpackningsbeskrivningar. Samtliga identitetsbärande huvudbeteckningar kan identifieras exakt i fakturans rader: ETHOMEEN O/12, BEROL R648 NG, ETHYLAN 1005, AROMOX T/12 HFP, BEROL ENV 226 PLUS, BEROL LFG 61, BEROL DGR 81 och BEROL R648 PO. Emballagebeskrivningarna i certifikatet motsvaras också av fakturans radbeskrivningar."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.96,
+      "confidence": 0.97,
       "certificate_value": "6.800,000 KG net\n800,000 KG net\n760,000 KG net\n3.200,000 KG net\n1.440,000 KG net\n3.000,000 KG net\n840,000 KG net\n2.000,000 KG net",
       "invoice_value": "Net Weight 6.800,000 KG\nNet Weight 800,000 KG\nNet Weight 760,000 KG\nNet Weight 3.200,000 KG\nNet Weight 1.440,000 KG\nNet Weight 3.000,000 KG\nNet Weight 840,000 KG\nNet Weight 2.000,000 KG",
       "rules_applied": [
         {
-          "rule_id": "4.4.2",
-          "outcome": "Kvantitet och enhet uttryckligen angivna"
-        },
-        {
           "rule_id": "4.4.2.1",
-          "outcome": "Verifiering utgår från box 7"
+          "outcome": "BOX_7_USED"
         },
         {
-          "rule_id": "4.4.3.1",
-          "outcome": "MATCH"
+          "rule_id": "4.4.2.2",
+          "outcome": "NET_WEIGHT_EXPLICIT"
+        },
+        {
+          "rule_id": "4.4.3",
+          "outcome": "DIRECT_IDENTIFICATION"
         },
         {
           "rule_id": "4.4.6",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets box 7 innehåller åtta explicita net weight-värden med enhet KG. Samtliga dessa numeriska värden återfinns uttryckligen som 'Net Weight' på motsvarande fakturarader. Det finns ingen uttrycklig motsägelse mellan certifikat och faktura."
+      "motivation": "Certifikatets box 7 innehåller åtta explicita nettovikter i KG. Varje nettovikt kan identifieras exakt i fakturans respektive artikelrad som 'Net Weight' med samma numeriska värde och samma enhet. Ingen avvikelse eller motsägelse har identifierats."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.91,
+      "confidence": 0.93,
       "certificate_value": "EU Sweden",
-      "invoice_value": "Country of Origin Sweden\nThe exporter of the products covered by this document ... these products are of European Union preferential origin",
+      "invoice_value": "Country of Origin Sweden\n...\nthese products are of European Union preferential origin",
       "rules_applied": [
         {
           "rule_id": "4.5.1",
-          "outcome": "Explicit origin-fält identifierat"
+          "outcome": "EXPLICIT_ORIGIN_FOUND"
         },
         {
           "rule_id": "4.5.4.2",
-          "outcome": "MATCH"
+          "outcome": "EU_AND_MEMBER_STATE_VERIFIED"
         },
         {
           "rule_id": "4.5.4.2.1",
+          "outcome": "GENERAL_EU_STATEMENT_CONFIRMS_EU_SWEDEN"
+        },
+        {
+          "rule_id": "4.5.5",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger ursprung 'EU Sweden'. Fakturan anger per rad 'Country of Origin Sweden' och innehåller dessutom ett explicit generellt ursprungsuttalande: 'these products are of European Union preferential origin'. Därmed kan både 'Sweden' och 'EU' verifieras uttryckligen i dedikerade ursprungsangivelser utan motsägelse."
+      "motivation": "Certifikatet anger ursprung 'EU Sweden'. Fakturan anger 'Country of Origin Sweden' på varje artikelrad och innehåller dessutom ett uttryckligt generellt ursprungsuttalande: 'these products are of European Union preferential origin'. Därmed kan både det specifika landet Sweden och EU-ursprunget identifieras uttryckligen i fakturan."
     }
   },
   "overall_assessment": {
-    "comparison_result": "IDENTICAL",
-    "workflow_recommendation": "AUTO_APPROVAL_ELIGIBLE",
-    "auto_approval_eligible": true,
-    "confidence": 0.94,
+    "comparison_result": "MANUAL_REVIEW",
+    "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
+    "auto_approval_eligible": false,
+    "confidence": 0.79,
     "critical_failures": [],
-    "manual_review_triggers": [],
-    "decision_summary": "Dokumentparet är giltigt parat. Consignor matchar fakturautställaren, certifikatets consignee matchar fakturans Ship To enligt slutmottagarregeln, samtliga produktnamn och net weights i certifikatet återfinns uttryckligen i fakturan, och ursprunget 'EU Sweden' stöds av både radvisa 'Country of Origin Sweden' och ett explicit EU-ursprungsuttalande i fakturan.",
-    "human_explanation": "Alla kontrollerade uppgifter i certifikatet kan verifieras mot fakturan. Avsändare, mottagare, varor, mängder och ursprungsland stämmer. Dokumentparet kan därför godkännas automatiskt."
+    "manual_review_triggers": [
+      "Consignee i certifikatet är H.W. Coates Ltd, men fakturans Bill To/Sold To anger IMCD UK Limited och H.W. Coates Ltd förekommer endast som Ship To."
+    ],
+    "decision_summary": "Dokumentparet är giltigt eftersom certifikatets consignor och consignee kan identifieras i fakturan. Consignor, varubeskrivning, kvantitet och ursprungsland verifieras som MATCH. Consignee kräver dock MANUAL_REVIEW eftersom certifikatets mottagare endast återfinns i Ship To-fältet medan fakturans auktoritativa Bill To/Sold To-part är en annan oberoende juridisk entitet.",
+    "human_explanation": "Avsändare, varubeskrivning, mängd och ursprung kan verifieras mot fakturan. Certifikatet anger mottagaren som H.W. Coates Ltd, medan fakturan är ställd till IMCD UK Limited och H.W. Coates Ltd endast framgår som leveransmottagare. Därför krävs manuell handläggning."
   },
   "_meta": {
-    "tested_at": "2026-04-01T14:13:26.609828+00:00",
-    "prompt_hash": "9b9df42642d8",
+    "tested_at": "2026-04-02T11:23:49.165131+00:00",
+    "prompt_hash": "f81eb9b0d2ea",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P030_MATCH",
     "expected": "IDENTICAL",
-    "actual": "IDENTICAL",
-    "status": "PASS"
+    "actual": "MANUAL_REVIEW",
+    "status": "REVIEW"
   }
 }

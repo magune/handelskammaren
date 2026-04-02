@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-04-01T00:00:00Z",
+    "verification_timestamp": "2026-04-02T00:00:00Z",
     "document_pair_id": null,
     "certificate_issue_date": "2026-02-25",
     "source_documents_received": 2
@@ -15,12 +15,12 @@
     "document_a": {
       "label": "Document A",
       "assumed_role": "certificate",
-      "document_type": "certificate_of_origin"
+      "document_type": "Certificate of Origin"
     },
     "document_b": {
       "label": "Document B",
       "assumed_role": "invoice",
-      "document_type": "commercial_invoice"
+      "document_type": "Commercial Invoice"
     }
   },
   "rule_activation": {
@@ -34,26 +34,18 @@
     "activated_rules": [
       {
         "rule_id": "8.5.0",
-        "rule_name": "Filbaserad dokumentparning; certifikat från certifikatfil och faktura från separat fakturafil"
-      },
-      {
-        "rule_id": "8.5.2",
-        "rule_name": "Certifikatets fakturanummer ska återfinnas i fakturafilen"
+        "rule_name": "Filbaserad dokumentparning - använd separat fakturafil som verifieringsunderlag"
       },
       {
         "rule_id": "8.6",
         "rule_name": "Obligatorisk parningsvalidering"
       },
       {
-        "rule_id": "4.1.0",
-        "rule_name": "Sökning efter consignor i hela fakturan"
-      },
-      {
         "rule_id": "4.3.5",
-        "rule_name": "Generell varubeskrivning med fakturareferens"
+        "rule_name": "Generell varubeskrivning med fakturareferens och fakturadatum"
       },
       {
-        "rule_id": "4.5.3",
+        "rule_id": "4.3.7",
         "rule_name": "Blandade ursprung"
       },
       {
@@ -66,28 +58,24 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.97,
+      "confidence": 0.98,
       "certificate_value": "AB Volvo Penta\nTerminalvägen, ARK-S\nGropegårdsgatan 11\nSE-405 08, Gothenburg\nSweden",
       "invoice_value": "AB Volvo Penta\nGropegårdsgatan 11\n40508 Göteborg\nSweden",
       "rules_applied": [
         {
           "rule_id": "4.1.0",
-          "outcome": "matched"
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.1.2",
-          "outcome": "matched"
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.1.4",
-          "outcome": "matched"
-        },
-        {
-          "rule_id": "4.1.5",
-          "outcome": "matched"
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger consignor som \"AB Volvo Penta ... Sweden\". Fakturan innehåller samma företagsnamn uttryckligen i flera delar, bl.a. säljaruppgifter/footer och huvudidentifiering: \"AB Volvo Penta, Gropegårdsgatan 11, 40508 Göteborg, Sweden\". Samma juridiska namn och samma land kan identifieras direkt i fakturan."
+      "motivation": "Certifikatets consignor 'AB Volvo Penta' återfinns uttryckligen i fakturan som utställare/företagsidentitet och i adressblock. Landet Sverige framgår explicit i fakturans adressblock för AB Volvo Penta. Samma juridiska part kan därför verifieras direkt mot fakturan."
     },
     "consignee": {
       "applicable": true,
@@ -97,45 +85,37 @@
       "invoice_value": "Consignee\nORASCOM\nFREE ZONE\nEL AMIRIA\nALEXANDRIA\nEgypt",
       "rules_applied": [
         {
-          "rule_id": "4.2.0.2",
-          "outcome": "matched"
-        },
-        {
           "rule_id": "4.2.1",
-          "outcome": "matched"
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.2.2",
-          "outcome": "matched"
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.2.3",
-          "outcome": "matched"
-        },
-        {
-          "rule_id": "4.2.4",
-          "outcome": "matched"
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Fakturan innehåller ett uttryckligt primärt fält \"Consignee\" med texten \"ORASCOM / FREE ZONE / EL AMIRIA / ALEXANDRIA / Egypt\", vilket motsvarar certifikatets consignee. Därmed behöver ingen fallback till leveransadress eller annan part användas. Företagsnamn och land överensstämmer."
+      "motivation": "Certifikatets mottagare återfinns exakt i fakturans explicita fält 'Consignee'. Företagsnamn/platsangivelse och land Egypt matchar utan behov av otillåten tolkning."
     },
     "goods_description": {
       "applicable": true,
-      "status": "MISMATCH",
-      "confidence": 0.91,
+      "status": "MATCH",
+      "confidence": 0.9,
       "certificate_value": "13 THU\nIndustrial Diesel Engine & Accessories\nSee attached invoice:61622218/1S, dated: 25/02/2026",
-      "invoice_value": "Description of Goods\nMarine Leisure Diesel Engine & Accessories",
+      "invoice_value": "Description of Goods\nMarine Leisure Diesel Engine & Accessories\nInvoice No/Type 61622218/1S\nInvoice Date 2026-02-25",
       "rules_applied": [
         {
           "rule_id": "4.3.5",
-          "outcome": "partially_matched_reference_but_content_not_consistent"
+          "outcome": "MATCH"
         },
         {
-          "rule_id": "4.3.8",
-          "outcome": "mismatch"
+          "rule_id": "4.3.5.2",
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet innehåller en uttrycklig fakturahänvisning med fakturanummer \"61622218/1S\" och datum \"25/02/2026\", och dessa uppgifter matchar fakturan. Men den faktiska varubeskrivningen i certifikatet är \"Industrial Diesel Engine & Accessories\" medan fakturan anger \"Marine Leisure Diesel Engine & Accessories\" och radinnehållet avser marina produkter. Eftersom fakturainnehållet inte är konsistent med certifikatets angivna varubeskrivning kan kontrollpunkten inte godkännas."
+      "motivation": "Certifikatet innehåller en generell varubeskrivning samt uttrycklig hänvisning till bifogad faktura med fakturanummer 61622218/1S och datum 25/02/2026. Fakturan bär samma nummer och datum 2026-02-25 efter datumformatnormalisering. Fakturans varuinnehåll 'Marine Leisure Diesel Engine & Accessories' är förenligt med certifikatets breda kategori 'Industrial Diesel Engine & Accessories'."
     },
     "quantity": {
       "applicable": true,
@@ -146,70 +126,64 @@
       "rules_applied": [
         {
           "rule_id": "4.4.2.1",
-          "outcome": "box_7_selected"
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.4.3",
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.4.4",
-          "outcome": "matched"
-        },
-        {
-          "rule_id": "4.4.6",
-          "outcome": "matched"
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Den verifieringsgrundande kvantiteten i certifikatets box 7 är \"GW 4469 KG\". Fakturan anger uttryckligen \"Total Gross Weight 4469.00 KG\". Det numeriska värdet 4469 och viktenheten KG överensstämmer, så kvantiteten är verifierad."
+      "motivation": "Den verifieringsgrundande kvantiteten i certifikatets box 7 är 'GW 4469 KG'. Fakturan anger uttryckligen 'Total Gross Weight 4469.00 KG'. Numeriskt värde, viktkategori och enhet överensstämmer."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.89,
+      "confidence": 0.9,
       "certificate_value": "FR, DK, SE, LT, SK, IT, PL, TW",
-      "invoice_value": "Origin\nFR\nDK\nSE\nLT\nSK\nIT\nPL\nTW\nDE",
+      "invoice_value": "Origin column on invoice lines includes: FR, DK, SE, LT, SK, IT, PL, TW, DE",
       "rules_applied": [
         {
           "rule_id": "4.5.1",
-          "outcome": "matched"
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.5.3",
-          "outcome": "matched"
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.5.4",
-          "outcome": "normalized_country_codes"
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.5.4.1.2",
-          "outcome": "matched"
-        },
-        {
-          "rule_id": "4.5.5",
-          "outcome": "matched"
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger ursprungsländerna FR, DK, SE, LT, SK, IT, PL och TW. Samtliga dessa landskoder kan identifieras explicit i fakturans origin-kolumn på artikelraderna. Fakturan innehåller även DE som extra ursprungsland, men detta extra land är ett EU-medlemsland och certifikatets lista innehåller redan en blandning av EU- och icke-EU-ursprung; därför är detta tillåtet enligt regeln för extra EU-länder i fakturan."
+      "motivation": "Samtliga ursprungsländer i certifikatet - FR, DK, SE, LT, SK, IT, PL och TW - kan identifieras explicit i fakturans radnivåkolumn 'Origin'. Fakturan innehåller dessutom DE som extra ursprung, men detta extra land är ett EU-medlemsland. Eftersom certifikatländerna alla återfinns och det enda extra landet i fakturan är EU-land, är ursprungskontrollen MATCH enligt blandad EU/icke-EU-regel."
     }
   },
   "overall_assessment": {
-    "comparison_result": "NOT_IDENTICAL",
-    "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
-    "auto_approval_eligible": false,
-    "confidence": 0.93,
-    "critical_failures": [
-      "Varubeskrivningen avviker: certifikatet anger \"Industrial Diesel Engine & Accessories\" medan fakturan anger \"Marine Leisure Diesel Engine & Accessories\"."
-    ],
+    "comparison_result": "IDENTICAL",
+    "workflow_recommendation": "AUTO_APPROVAL_ELIGIBLE",
+    "auto_approval_eligible": true,
+    "confidence": 0.95,
+    "critical_failures": [],
     "manual_review_triggers": [],
-    "decision_summary": "Dokumentparningen är giltig eftersom certifikatets fakturanummer 61622218/1S återfinns i den separata fakturafilen och consignor/consignee kan identifieras i fakturan. Consignor, consignee, kvantitet och ursprung kan verifieras mot fakturan. Varubeskrivningen kan däremot inte godkännas eftersom certifikatets beskrivning \"Industrial Diesel Engine & Accessories\" inte är konsistent med fakturans \"Marine Leisure Diesel Engine & Accessories\". Minst en tillämplig kontrollpunkt är därför MISMATCH, vilket ger totalresultatet NOT_IDENTICAL.",
-    "human_explanation": "Certifikatet och fakturan stämmer överens för avsändare, mottagare, vikt och ursprung. Däremot anger certifikatet varubeskrivningen \"Industrial Diesel Engine & Accessories\" medan fakturan anger \"Marine Leisure Diesel Engine & Accessories\". Därför kan dokumentparet inte godkännas automatiskt."
+    "decision_summary": "Korrekt dokumentpar identifierades genom separat certifikatfil och separat fakturafil. Certifikatets fakturareferens 61622218/1S matchar fakturan exakt, consignor och consignee kan identifieras i fakturan, varubeskrivningen verifieras via generell beskrivning med fakturareferens och datum, kvantiteten GW 4469 KG matchar fakturans Total Gross Weight 4469.00 KG, och samtliga ursprungsländer i certifikatet återfinns i fakturans origin-kolumn. Ett extra ursprungsland DE förekommer i fakturan men detta är ett EU-medlemsland och är tillåtet enligt regeln för blandade EU/icke-EU-listor.",
+    "human_explanation": "Alla kontrollpunkter stämmer mellan ursprungscertifikatet och fakturan. Fakturanummer, avsändare, mottagare, varubeskrivning, bruttovikt och ursprungsländer kan verifieras i den bifogade fakturan. Dokumentparet kan därför godkännas automatiskt."
   },
   "_meta": {
-    "tested_at": "2026-04-01T14:31:51.289902+00:00",
-    "prompt_hash": "9b9df42642d8",
+    "tested_at": "2026-04-02T11:21:38.813984+00:00",
+    "prompt_hash": "f81eb9b0d2ea",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P013_MATCH",
     "expected": "IDENTICAL",
-    "actual": "NOT_IDENTICAL",
-    "status": "FAIL"
+    "actual": "IDENTICAL",
+    "status": "PASS"
   }
 }
