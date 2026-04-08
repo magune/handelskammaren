@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-04-02T00:00:00Z",
+    "verification_timestamp": "2026-04-07T00:00:00Z",
     "document_pair_id": null,
     "certificate_issue_date": "2025-01-27",
     "source_documents_received": 2
@@ -33,8 +33,12 @@
     "eu_origin_normalization_active": false,
     "activated_rules": [
       {
-        "rule_id": "8.6",
-        "rule_name": "Parningsvalidering passerad via consignor och consignee i fakturan"
+        "rule_id": "4.1.0",
+        "rule_name": "Consignor identifierad någonstans i fakturan"
+      },
+      {
+        "rule_id": "4.2.0.2",
+        "rule_name": "Consignee får verifieras mot valfritt mottagarfält i fakturan"
       }
     ]
   },
@@ -44,84 +48,92 @@
       "status": "MATCH",
       "confidence": 0.99,
       "certificate_value": "Hammar Maskin AB\nBuagärde 36\n517 95, Olsfors\nSweden",
-      "invoice_value": "Hammar Maskin AB Buagärde 36 1 SE-517 95 Olsfors, Sweden",
+      "invoice_value": "Hammar Maskin AB Buagärde 36 | SE-517 95 Olsfors, Sweden\nVAT no: SE556282502501",
       "rules_applied": [
         {
           "rule_id": "4.1.0",
-          "outcome": "consignor found explicitly in invoice"
+          "outcome": "MATCH"
         },
         {
-          "rule_id": "4.1.2",
-          "outcome": "name and country verified"
+          "rule_id": "4.1.2.1",
+          "outcome": "MATCH"
         },
         {
-          "rule_id": "4.1.4",
-          "outcome": "country matches"
+          "rule_id": "4.1.5",
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor 'Hammar Maskin AB' återfinns uttryckligen i fakturans säljar-/issueruppgifter i sidfoten tillsammans med adress och land 'Sweden'. Namn och land överensstämmer direkt utan behov av semantisk tolkning."
+      "motivation": "Certifikatets consignor 'Hammar Maskin AB' återfinns uttryckligen i fakturans footer/issuer-information på sida 1. Landet Sverige kan verifieras både via adressen 'Olsfors, Sweden' och VAT-prefixet 'SE'. Samma juridiska part och land kan därför identifieras entydigt i fakturan."
     },
     "consignee": {
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.99,
       "certificate_value": "HAMMAR MASKIN (M) SDN BHD\nNo 41, LEBUH SULTAN MOHAMED 1\nKU 18, Tmn Perindustrian B.S.S\n42000 POT KLANG SELANGOR D.E\nMALAYSIA\nMalaysia",
-      "invoice_value": "Invoice address\nHammar Maskin (M) Sdn Bhd\nNo 41,Lebuh Sultan Mohamed 1/\nKU 18, Tmn Perindustrian B.S.S\n42000 Port Klang Selangor D.E\nMALAYSIA",
+      "invoice_value": "Delivery address / Invoice address:\nHammar Maskin (M) Sdn Bhd\nNo 41 Lebuh Sultan Mohamed 1\nKU 18, Tmn Perindustrian B.S.S\n42000 Port Klang Selangor D.E\nMALAYSIA",
       "rules_applied": [
         {
           "rule_id": "4.2.0.2",
-          "outcome": "primary billing field used"
-        },
-        {
-          "rule_id": "4.2.2",
-          "outcome": "same legal party identified"
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.2.3",
-          "outcome": "country matches"
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.2.4",
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignee återfinns i fakturans primära faktureringsfält 'Invoice address' som 'Hammar Maskin (M) Sdn Bhd' i Malaysia. Mindre OCR-/formatvariationer i adressen påverkar inte bedömningen eftersom företagsnamn och land överensstämmer."
+      "motivation": "Certifikatets consignee återfinns uttryckligen i fakturans både Delivery address och Invoice address. Företagsnamnet matchar efter tillåten normalisering av versaler/gemener och landet Malaysia överensstämmer. Skillnaden 'POT KLANG' vs 'Port Klang' påverkar inte eftersom företagsnamn och land är tydligt verifierade."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.91,
+      "confidence": 0.96,
       "certificate_value": "HAMMAR CRANE KIT\n1 UNIT HAMMAR 195 S UL CRANE KIT WITH ID.NR #241813A19# AND #241813B19# COMPLETE WITH ACCESORIES\n*YEAR OF MANUFACTURING: 2024",
-      "invoice_value": "Crane kit\nProduct record: YT995S241S8002130\nCrane kit information\nHammar 195 S UL\nVIN CODE #241813A19# & #241813B19#\nCOMPLETE WITH ACCESORIES\n*YEAR OF MANUFACTURING: 2024",
+      "invoice_value": "Crane kit\nProduct record: YT995S241S8002130\nHammar 195 S UL\nVIN CODE #241813A19# & #241813B19#\nCOMPLETE WITH ACCESORIES\n*YEAR OF MANUFACTURING: 2024",
       "rules_applied": [
         {
+          "rule_id": "4.3.2",
+          "outcome": "NOT_APPLICABLE_NO_CLEAR_ARTICLE_NUMBER_IN_CERTIFICATE"
+        },
+        {
           "rule_id": "4.3.3",
-          "outcome": "identity-bearing designation verified"
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.3.4",
-          "outcome": "supporting additions consistent"
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.3.8",
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Den identitetsbärande beteckningen kan verifieras genom den exakta modellangivelsen 'Hammar 195 S UL' i fakturan, tillsammans med samma VIN-koder '#241813A19#' och '#241813B19#', samt samma tillägg 'COMPLETE WITH ACCESORIES' och 'YEAR OF MANUFACTURING: 2024'. Fakturans 'Crane kit' är förenlig med certifikatets 'HAMMAR CRANE KIT' och ingen motstridighet förekommer."
+      "motivation": "Varubeskrivningen kan verifieras genom flera explicita och unika identifikatorer som förekommer i båda dokumenten: 'Crane kit', modellen 'Hammar 195 S UL', VIN/ID-numren '#241813A19#' och '#241813B19#', texten 'COMPLETE WITH ACCESORIES' samt '*YEAR OF MANUFACTURING: 2024'. Kombinationen av dessa exakta uppgifter gör att varan kan identifieras entydigt i fakturan utan otillåten semantisk tolkning."
     },
     "quantity": {
       "applicable": true,
-      "status": "MANUAL_REVIEW",
-      "confidence": 0.62,
+      "status": "MISMATCH",
+      "confidence": 0.99,
       "certificate_value": "1",
-      "invoice_value": "Crane kit ... 1,00 pcs",
+      "invoice_value": "1,00 pcs",
       "rules_applied": [
         {
           "rule_id": "4.4.2",
-          "outcome": "certificate quantity lacks explicit unit"
+          "outcome": "MISMATCH"
         },
         {
           "rule_id": "4.4.2.1",
-          "outcome": "box 7 used as governing quantity field"
+          "outcome": "MISMATCH"
         },
         {
-          "rule_id": "4.4.3",
-          "outcome": "numeric value found in invoice for corresponding goods"
+          "rule_id": "4.4.6",
+          "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Certifikatets box 7 anger endast det numeriska värdet '1' utan uttrycklig enhet. Det motsvarande numeriska värdet kan identifieras i fakturan för varan 'Crane kit' som '1,00 pcs', men eftersom certifikatet saknar uttrycklig enhet i kvantitetsfältet ska kontrollpunkten bedömas som MANUAL_REVIEW och inte MATCH."
+      "motivation": "Certifikatets verifieringsgrundande kvantitetsfält (box 7) innehåller endast värdet '1' utan uttrycklig kvantitetsenhet. Regelverket kräver att både numeriskt värde och enhet framgår i samma uppgift. Fakturan anger '1,00 pcs', men den saknade enheten i certifikatets box 7 får inte kompletteras från box 6 eller från fakturan."
     },
     "origin": {
       "applicable": true,
@@ -132,40 +144,36 @@
       "rules_applied": [
         {
           "rule_id": "4.5.1",
-          "outcome": "explicit origin field identified"
-        },
-        {
-          "rule_id": "4.5.4",
-          "outcome": "country normalization applied"
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.5.5",
-          "outcome": "all certificate origin data verified"
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger ursprungsland 'SWEDEN' och fakturan innehåller ett explicit ursprungsfält 'Country of origin: Sweden'. Ursprungslandet kan därför verifieras direkt."
+      "motivation": "Certifikatet anger ursprungsland 'SWEDEN' och fakturan innehåller ett explicit origin-fält med texten 'Country of origin: Sweden'. Ursprungslandet kan därför identifieras uttryckligen i fakturan utan tolkning."
     }
   },
   "overall_assessment": {
-    "comparison_result": "MANUAL_REVIEW",
+    "comparison_result": "NOT_IDENTICAL",
     "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
     "auto_approval_eligible": false,
-    "confidence": 0.78,
-    "critical_failures": [],
-    "manual_review_triggers": [
-      "Kvantitetsfältet i certifikatet anger endast '1' utan uttrycklig enhet, medan fakturan anger '1,00 pcs' för motsvarande vara."
+    "confidence": 0.98,
+    "critical_failures": [
+      "Kvantitetsfältet i certifikatet (box 7) anger endast '1' utan uttrycklig enhet."
     ],
-    "decision_summary": "Consignor, consignee, varubeskrivning och ursprungsland kan verifieras mot fakturan. Den enda öppna punkten är kvantiteten, eftersom certifikatets box 7 saknar uttrycklig enhet trots att motsvarande numeriska värde återfinns i fakturan.",
-    "human_explanation": "Avsändare, mottagare, varubeskrivning och ursprungsland stämmer mellan dokumenten. Certifikatet anger dock kvantiteten endast som '1' utan uttrycklig enhet, medan fakturan anger '1,00 pcs' för crane kit. Därför krävs manuell handläggning."
+    "manual_review_triggers": [],
+    "decision_summary": "Fyra tillämpliga kontrollpunkter verifieras som MATCH: consignor, consignee, varubeskrivning och ursprungsland. Kontrollpunkten kvantitet är MISMATCH eftersom certifikatets box 7 saknar obligatorisk enhetsangivelse. Minst en tillämplig kontrollpunkt är därför MISMATCH, vilket ger totalresultatet NOT_IDENTICAL.",
+    "human_explanation": "Avsändare, mottagare, varubeskrivning och ursprungsland kan verifieras mot fakturan. Certifikatet anger dock mängden i ruta 7 som endast '1' utan någon enhet, medan fakturan anger '1,00 pcs'. Därför är dokumentparet inte identiskt och kräver manuell hantering."
   },
   "_meta": {
-    "tested_at": "2026-04-02T13:04:51.281205+00:00",
-    "prompt_hash": "3a9306fb8539",
+    "tested_at": "2026-04-07T10:42:41.320988+00:00",
+    "prompt_hash": "a85247cdbff7",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P0180_MISMATCH",
     "expected": "NOT_IDENTICAL",
-    "actual": "MANUAL_REVIEW",
-    "status": "REVIEW"
+    "actual": "NOT_IDENTICAL",
+    "status": "PASS"
   }
 }
