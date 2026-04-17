@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-04-02T00:00:00Z",
+    "verification_timestamp": null,
     "document_pair_id": null,
     "certificate_issue_date": "2025-12-01",
     "source_documents_received": 2
@@ -27,34 +27,18 @@
     "lc_exception_active": false,
     "lc_number_found": null,
     "general_goods_description_with_invoice_reference_active": false,
-    "mixed_origins_rule_active": true,
+    "mixed_origins_rule_active": false,
     "to_order_rule_active": false,
     "quantity_exception_applied": null,
     "eu_origin_normalization_active": true,
     "activated_rules": [
       {
-        "rule_id": "8.5.0",
-        "rule_name": "Standardregel för dokumentparning: certifikat från fil 1 och faktura från fil 2"
-      },
-      {
-        "rule_id": "8.6",
-        "rule_name": "Parningsvalidering passerad via consignor och consignee i fakturan"
-      },
-      {
-        "rule_id": "4.1.0",
-        "rule_name": "Consignor identifierad i fakturan"
-      },
-      {
         "rule_id": "4.2.0.2",
-        "rule_name": "Consignee verifierad mot fakturans faktureringsfält"
-      },
-      {
-        "rule_id": "4.3.3",
-        "rule_name": "Kontrollerad textmatchning av varubeskrivning"
+        "rule_name": "Consignee får verifieras i något relevant mottagarfält i fakturan"
       },
       {
         "rule_id": "4.5.4.2",
-        "rule_name": "EU-medlemsland och EU-samlingsbegrepp normalisering för ursprung"
+        "rule_name": "EU och specifikt EU-medlemsland får verifiera varandra"
       }
     ]
   },
@@ -79,7 +63,7 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor är \"Meltolit AB\" i Sweden. Fakturan är utställd av \"Meltolit AB\" och samma namn förekommer tydligt i sidhuvud/footer. Landet verifieras genom explicit svensk adress samt svensk VAT-prefix/IBAN i fakturan. Samma juridiska part kan identifieras utan otillåten tolkning."
+      "motivation": "Certifikatets consignor \"Meltolit AB\" återfinns uttryckligen i fakturan som utställare och i sidfoten. Landet Sverige verifieras genom adressen \"SE-421 31 VÄSTRA FRÖLUNDA\" samt svenska identifierare som VAT-prefix \"SE\" och IBAN som börjar med \"SE\"."
     },
     "consignee": {
       "applicable": true,
@@ -93,10 +77,6 @@
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.2.2",
-          "outcome": "MATCH"
-        },
-        {
           "rule_id": "4.2.3",
           "outcome": "MATCH"
         },
@@ -105,18 +85,18 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Fakturan innehåller ett tydligt primärt faktureringsfält, \"Fakturaadress\", med mottagaren \"Metso Sweden AB\" på adressen Pulpetgatan 20, 215 37 Malmö, Sverige. Detta överensstämmer direkt med certifikatets consignee. Leveransadressen till Schenker påverkar inte bedömningen eftersom faktureringsfältet har prioritet och redan matchar certifikatet."
+      "motivation": "Mottagaren i certifikatet kan identifieras direkt i fakturans mottagarfält \"Fakturaadress\" som \"Metso Sweden AB, Pulpetgatan 20, 215 37 Malmö, SVERIGE\". Företagsnamn och land överensstämmer."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.97,
-      "certificate_value": "625 XT 1,6x1000mm 5kg:s Meltolit",
-      "invoice_value": "625 XT 1,6x1000mm 5kg:s Meltolit",
+      "certificate_value": "2500005497 / DQ-240082\n625 XT 1,6x1000mm 5kg:s Meltolit",
+      "invoice_value": "8MINC62516 625 XT 1,6x1000mm 5kg:s Meltolit",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "Artikelnummer i certifikatet ej styrande"
+          "outcome": "Priority 2 applied"
         },
         {
           "rule_id": "4.3.3",
@@ -127,18 +107,18 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Den identitetsbärande huvudbeteckningen i certifikatet är \"625 XT 1,6x1000mm 5kg:s Meltolit\". Exakt samma text återfinns i fakturans varurad. Certifikatets referens \"2500005497 / DQ-240082\" används här som stödjande orderreferens, men varubeskrivningen kan redan verifieras genom direkt textmatchning utan semantisk tolkning."
+      "motivation": "Den identitetsbärande huvudbeteckningen i certifikatet är \"625 XT 1,6x1000mm 5kg:s Meltolit\". Samma text återfinns uttryckligen i fakturans varurad. Referensen \"2500005497 / DQ-240082\" förekommer också i fakturan som kundens ordernummer, men matchningen grundas på den exakta varubeskrivningen."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.9,
+      "confidence": 0.92,
       "certificate_value": "20 kg NW",
-      "invoice_value": "20 Kg",
+      "invoice_value": "8MINC62516 625 XT 1,6x1000mm 5kg:s Meltolit 20 Kg",
       "rules_applied": [
         {
-          "rule_id": "4.4.1",
-          "outcome": "Numeriskt värde identifierat"
+          "rule_id": "4.4.2.2",
+          "outcome": "Formkrav uppfyllt"
         },
         {
           "rule_id": "4.4.3",
@@ -149,40 +129,44 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger kvantiteten \"20 kg NW\". Fakturan anger för den matchade varuraden kvantiteten \"20 Kg\". Det numeriska värdet 20 och enheten kg återfinns uttryckligen i fakturan för motsvarande vara. Fakturan innehåller ingen motstridig kvantitetsuppgift för denna vara som skulle underkänna matchningen."
+      "motivation": "Certifikatet anger en uttrycklig kvantitet med numeriskt värde, enhet och viktkategori: \"20 kg NW\". För samma vara i fakturan anges kvantiteten \"20 Kg\". Det numeriska värdet 20 kan identifieras på motsvarande varurad och ingen fakturauppgift motsäger certifikatets kvantitet."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.88,
+      "confidence": 0.95,
       "certificate_value": "European Community\nItaly",
       "invoice_value": "Country of origin: Italy",
       "rules_applied": [
         {
+          "rule_id": "4.5.1",
+          "outcome": "Explicit origin field found"
+        },
+        {
           "rule_id": "4.5.4.2",
-          "outcome": "EU-medlemsland verifierar EU-samlingsbegrepp"
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.5.5",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger ursprung som både \"European Community\" och \"Italy\". Fakturan anger explicit origin-fält: \"Country of origin: Italy\". \"Italy\" verifieras direkt, och eftersom Italien är ett EU-medlemsland verifierar samma uppgift även certifikatets EU-samlingsbegrepp enligt EU-normaliseringsregeln. Ingen icke-EU-uppgift i fakturan motsäger certifikatet."
+      "motivation": "Fakturan innehåller ett explicit ursprungsfält: \"Country of origin: Italy\". Detta verifierar det specifika landet \"Italy\" i certifikatet. Eftersom Italien är en EU-medlemsstat verifierar samma uppgift även certifikatets \"European Community\" enligt EU-normaliseringen."
     }
   },
   "overall_assessment": {
     "comparison_result": "IDENTICAL",
     "workflow_recommendation": "AUTO_APPROVAL_ELIGIBLE",
     "auto_approval_eligible": true,
-    "confidence": 0.93,
+    "confidence": 0.96,
     "critical_failures": [],
     "manual_review_triggers": [],
-    "decision_summary": "Samtliga tillämpliga kontrollpunkter kan verifieras mot fakturan: consignor, consignee, varubeskrivning, kvantitet och ursprungsland. Ingen tillämplig kontrollpunkt gav MISMATCH eller MANUAL_REVIEW, och samtliga MATCH-bedömningar ligger på eller över confidence-golvet för IDENTICAL.",
-    "human_explanation": "Certifikatet och fakturan stämmer överens för avsändare, mottagare, varubeskrivning, kvantitet och ursprungsland. Varan \"625 XT 1,6x1000mm 5kg:s Meltolit\", kvantiteten 20 kg och ursprunget Italy kan alla verifieras i fakturan. Dokumentparet kan därför godkännas automatiskt."
+    "decision_summary": "Samtliga tillämpliga kontrollpunkter kan verifieras mot fakturan. Consignor, consignee, varubeskrivning, kvantitet och ursprungsland överensstämmer enligt regelverket. Ingen LC-hänvisning aktiverar undantag och ingen kritisk avvikelse har identifierats.",
+    "human_explanation": "Certifikatet kan verifieras mot fakturan. Avsändare, mottagare, varubeskrivning, mängd och ursprungsland stämmer överens. Dokumentparet kan därför godkännas automatiskt."
   },
   "_meta": {
-    "tested_at": "2026-04-02T11:06:44.033612+00:00",
-    "prompt_hash": "f81eb9b0d2ea",
+    "tested_at": "2026-04-11T08:06:46.148256+00:00",
+    "prompt_hash": "de0d620a2b38",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P222_MATCH",

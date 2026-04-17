@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-04-02T00:00:00Z",
+    "verification_timestamp": "2026-04-11T00:00:00Z",
     "document_pair_id": null,
     "certificate_issue_date": "2026-02-17",
     "source_documents_received": 2
@@ -15,12 +15,12 @@
     "document_a": {
       "label": "Document A",
       "assumed_role": "certificate",
-      "document_type": "Certificate of Origin"
+      "document_type": "certificate of origin"
     },
     "document_b": {
       "label": "Document B",
       "assumed_role": "invoice",
-      "document_type": "Commercial Invoice"
+      "document_type": "invoice"
     }
   },
   "rule_activation": {
@@ -34,19 +34,31 @@
     "activated_rules": [
       {
         "rule_id": "8.5.0",
-        "rule_name": "Filbaserad dokumentparning; separat fakturafil ska användas för verifiering"
+        "rule_name": "Filbaserad dokumentparning: certifikat från fil 1, verifieringsfaktura från separat fakturafil"
       },
       {
         "rule_id": "8.6",
         "rule_name": "Obligatorisk parningsvalidering"
       },
       {
-        "rule_id": "4.4.3.4",
-        "rule_name": "Normalisering av blandade decimalseparatorer"
+        "rule_id": "4.1.0",
+        "rule_name": "Consignor får verifieras om företagsnamnet uttryckligen förekommer någonstans i fakturan"
+      },
+      {
+        "rule_id": "4.2.0.2",
+        "rule_name": "Consignee får verifieras i något relevant mottagarfält i fakturan"
+      },
+      {
+        "rule_id": "4.3.2",
+        "rule_name": "Varubeskrivning verifieras primärt via artikelnummer när sådant anges"
+      },
+      {
+        "rule_id": "4.4.3",
+        "rule_name": "Kvantitet verifieras genom identifiering av motsvarande numeriska värde i fakturan"
       },
       {
         "rule_id": "4.5.4",
-        "rule_name": "Landnormalisering med ISO-landkod"
+        "rule_name": "Landnormalisering med vedertagen kortform/ISO-kod"
       }
     ]
   },
@@ -63,29 +75,21 @@
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.1.2.1",
-          "outcome": "MATCH"
-        },
-        {
           "rule_id": "4.1.4",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor 'ESAB AB' kan identifieras uttryckligen i fakturan i sidfoten på fakturasidan. Landet verifieras genom adressen 'Sweden' och stöds dessutom av VAT-prefix 'SE'. Skillnaden 'Gothenburg' vs 'Goteborg' påverkar inte bedömningen eftersom företagsnamn och land överensstämmer."
+      "motivation": "Certifikatets consignor 'ESAB AB' återfinns uttryckligen i den separata fakturafilen i utställar-/footerblocket. Landet 'SWEDEN/Sweden' framgår också i fakturan. Samma juridiska part och land kan därför verifieras."
     },
     "consignee": {
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.97,
       "certificate_value": "OERLİKON KAYNAK ELEKTRODLARI VE\nSANAYİ A.S.\nMOSB 2.KISIM GAZİLER CAD. NO:23\n450 30 MANISA\nTürkiye",
-      "invoice_value": "Invoice Address / Customer Address / Delivery address:\nOERLİKON KAYNAK ELEKTRODLARI VE SANAYİ A.S.\nMOSB 2.KISIM GAZİLER CAD. NO:23\nMANİSA\n450 30\nTurkiye",
+      "invoice_value": "Delivery address\nOERLİKON KAYNAK ELEKTRODLARI VE\nSANAYİ A.S.\nMOSB 2.KISIM GAZİLER CAD. NO:23\nMANİSA\n45030\nTurkiye",
       "rules_applied": [
         {
           "rule_id": "4.2.0.2",
-          "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.2.2.1",
           "outcome": "MATCH"
         },
         {
@@ -93,92 +97,72 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignee förekommer uttryckligen i fakturans faktureringsrelaterade adressfält ('Customer Address' och 'Invoice Address'). Företagsnamn och adressblock stämmer, och landet 'Türkiye/Turkiye' är samma land efter normalisering."
+      "motivation": "Mottagaren i certifikatet kan identifieras exakt i fakturans Delivery address. Företagsnamn, adresskärna och land överensstämmer efter tillåten normalisering av diakritik och landsstavning (Türkiye/Turkiye)."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.98,
+      "confidence": 0.99,
       "certificate_value": "1 pce OIL MIST LUBRICATOR 10-815-581\nNet weight 2,66 kg\nCommodity Code: 84243010",
       "invoice_value": "OIL MIST LUBRICATOR 10-815-581 2.66 KG\nCommodity Code 84243010",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "article_or_product_identifier_found"
-        },
-        {
-          "rule_id": "4.3.3",
-          "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.3.8",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Den identitetsbärande huvudbeteckningen 'OIL MIST LUBRICATOR 10-815-581' återfinns exakt i fakturan. Även commodity code 84243010 överensstämmer. Varubeskrivningen kan därför verifieras utan semantisk tolkning."
+      "motivation": "Certifikatet innehåller artikel-/identitetsbärande beteckningen '10-815-581', och denna kan identifieras exakt i fakturans varurad 'OIL MIST LUBRICATOR 10-815-581'. Även varunamn och commodity code 84243010 stöder samma vara."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.9,
       "certificate_value": "N.W. 2,66 kg",
-      "invoice_value": "2.66 KG",
+      "invoice_value": "OIL MIST LUBRICATOR 10-815-581 2.66 KG",
       "rules_applied": [
         {
-          "rule_id": "4.4.2.1",
-          "outcome": "box_7_used_as_verification_basis"
+          "rule_id": "4.4.2.2",
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.4.3",
-          "outcome": "numeric_value_identified"
-        },
-        {
-          "rule_id": "4.4.3.4",
-          "outcome": "decimal_separator_normalized"
-        },
-        {
-          "rule_id": "4.4.6",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Verifieringsgrundande kvantitet i certifikatets box 7 är 'N.W. 2,66 kg'. Fakturan anger '2.66 KG' på produktraden. Efter tillåten normalisering av kommatecken/punkt är det samma numeriska värde och samma viktenhet; ingen motstridande alternativ viktkategori förekommer i fakturan."
+      "motivation": "Den verifieringsgrundande kvantiteten i box 7 är 'N.W. 2,66 kg'. Fakturan anger för samma vara vikten '2.66 KG'. Efter normalisering av decimaltecken (2,66 = 2.66) kan det numeriska värdet identifieras för samma varurad och ingen motstridande vikt förekommer i fakturan."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.98,
+      "confidence": 0.99,
       "certificate_value": "Mexico",
-      "invoice_value": "Country of origin MX",
+      "invoice_value": "Country of origin\nMX",
       "rules_applied": [
         {
           "rule_id": "4.5.1",
-          "outcome": "explicit_origin_field_found"
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.5.4",
-          "outcome": "ISO_code_normalization_applied"
-        },
-        {
-          "rule_id": "4.5.5",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger ursprungsland 'Mexico'. Fakturan innehåller ett uttryckligt origin-fält: 'Country of origin MX'. ISO-koden 'MX' verifierar Mexico efter tillåten landnormalisering."
+      "motivation": "Certifikatet anger ursprungsland 'Mexico'. Fakturan innehåller ett explicit ursprungsfält 'Country of origin MX'. MX är vedertagen ISO-kod för Mexico och verifierar därmed ursprungslandet uttryckligen."
     }
   },
   "overall_assessment": {
     "comparison_result": "IDENTICAL",
     "workflow_recommendation": "AUTO_APPROVAL_ELIGIBLE",
     "auto_approval_eligible": true,
-    "confidence": 0.96,
+    "confidence": 0.97,
     "critical_failures": [],
     "manual_review_triggers": [],
-    "decision_summary": "Det identifierade dokumentparet består av ett Certificate of Origin i Document A och den separata fakturan i Document B. Certifikatets fakturanummer SEN266800012 matchar fakturan, consignor ESAB AB kan identifieras i fakturan, consignee OERLİKON KAYNAK ELEKTRODLARI VE SANAYİ A.S. kan identifieras i fakturans adressfält, varubeskrivningen 'OIL MIST LUBRICATOR 10-815-581' matchar, kvantiteten 'N.W. 2,66 kg' matchar fakturans '2.66 KG' efter decimalnormalisering, och ursprungslandet Mexico verifieras via explicit origin-fält 'MX'. Inga tillämpliga kontrollpunkter ger MISMATCH eller MANUAL_REVIEW.",
-    "human_explanation": "Samtliga uppgifter i ursprungsintyget kan verifieras mot fakturan: avsändare ESAB AB, mottagare OERLİKON KAYNAK ELEKTRODLARI VE SANAYİ A.S., varan OIL MIST LUBRICATOR 10-815-581, mängden 2,66 kg och ursprungslandet Mexico/MX. Fakturanummer SEN266800012 stämmer också. Dokumentparet kan därför godkännas automatiskt."
+    "decision_summary": "Dokumentparningen är giltig: certifikatet hämtades från Document A sida 1 och verifieringsfakturan från den separata fakturafilen Document B enligt filparningsregeln. Certifikatets fakturareferens 'SEN266800012' matchar fakturans nummer exakt. Avsändare, mottagare, varubeskrivning, kvantitet och ursprungsland kan alla verifieras mot den separata fakturan.",
+    "human_explanation": "Avsändare, mottagare, varubeskrivning, mängd och ursprungsland i certifikatet kan alla återfinnas i den separata bifogade fakturan. Certifikatet hänvisar till faktura SEN266800012 och fakturan visar samma nummer samt samma vara 'OIL MIST LUBRICATOR 10-815-581', mängd 2,66 kg och ursprung Mexico/MX. Dokumentparet kan därför godkännas automatiskt."
   },
   "_meta": {
-    "tested_at": "2026-04-02T11:06:44.026971+00:00",
-    "prompt_hash": "f81eb9b0d2ea",
+    "tested_at": "2026-04-11T08:06:46.142026+00:00",
+    "prompt_hash": "de0d620a2b38",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P208_MATCH",

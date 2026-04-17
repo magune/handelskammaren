@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-04-02T00:00:00Z",
+    "verification_timestamp": null,
     "document_pair_id": null,
     "certificate_issue_date": "2025-08-26",
     "source_documents_received": 2
@@ -15,7 +15,7 @@
     "document_a": {
       "label": "Document A",
       "assumed_role": "certificate",
-      "document_type": "certificate of origin"
+      "document_type": "certificate_of_origin"
     },
     "document_b": {
       "label": "Document B",
@@ -34,31 +34,11 @@
     "activated_rules": [
       {
         "rule_id": "8.5.0",
-        "rule_name": "Filbaserad dokumentparning – separat fakturafil användes för verifiering"
+        "rule_name": "Filbaserad dokumentparning: certifikat från certifikatfilen och faktura från separat fakturafil"
       },
       {
         "rule_id": "8.6",
-        "rule_name": "Obligatorisk parningsvalidering passerad"
-      },
-      {
-        "rule_id": "4.1.0",
-        "rule_name": "Consignor identifierad någonstans i fakturan"
-      },
-      {
-        "rule_id": "4.2.0.2",
-        "rule_name": "Primärt faktureringsfält prioriterat för consignee"
-      },
-      {
-        "rule_id": "4.3.3",
-        "rule_name": "Kontrollerad textmatchning av identitetsbärande huvudbeteckning"
-      },
-      {
-        "rule_id": "4.4.4",
-        "rule_name": "Total vikt i faktura använd för viktverifiering"
-      },
-      {
-        "rule_id": "4.5.4",
-        "rule_name": "Landnormalisering med ISO-kod för ursprung"
+        "rule_name": "Obligatorisk parningsvalidering"
       }
     ]
   },
@@ -66,12 +46,16 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.95,
+      "confidence": 0.97,
       "certificate_value": "Bulten Sweden AB\nBox512\nSE-734 27, HALLSTAHAMMAR\nSweden",
       "invoice_value": "Bulten Sweden AB\nBox 512\nSE-734 27 Hallstahammar\nSweden\nOrg nr/VAT No: SE556078364801",
       "rules_applied": [
         {
           "rule_id": "4.1.0",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.2",
           "outcome": "MATCH"
         },
         {
@@ -83,14 +67,14 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger consignor som 'Bulten Sweden AB ... Sweden'. I den separata fakturafilen återfinns samma juridiska namn uttryckligen i adress-/identifieringsblock som 'Bulten Sweden AB, Box 512, SE-734 27 Hallstahammar, Sweden'. Landet styrks även av explicit 'Sweden' och svensk VAT-kod med prefix 'SE'. Företagsnamn och land kan därför identifieras i fakturan."
+      "motivation": "Certifikatets consignor är 'Bulten Sweden AB ... Sweden'. Samma företagsnamn återfinns uttryckligen i fakturan som utställare/identifierande part i sidfot/adressblock, och landet verifieras explicit genom adressen 'Sweden' samt indirekt genom VAT-prefix 'SE'. Skillnader i formatering och mellanslag är tillåten normalisering och påverkar inte identiteten."
     },
     "consignee": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.98,
+      "confidence": 0.99,
       "certificate_value": "Döktas Dökümcülük Tic. ve San. A.S\nFatih Mahallesi Gölyolu no:26\n16800 Orhangazi - Bursa\nTurkey",
-      "invoice_value": "Payer\nDöktas Dökümcülük Tic. ve San. A.S.\nFatih Mahallesi Gölyolu no:26\n16800 Orhangazi - Bursa\nTurkey",
+      "invoice_value": "Döktas Dökümcülük Tic. ve San. A.S.\nFatih Mahallesi Gölyolu no:26\n16800 Orhangazi - Bursa\nTurkey",
       "rules_applied": [
         {
           "rule_id": "4.2.0.2",
@@ -105,15 +89,19 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger consignee som 'Döktas Dökümcülük Tic. ve San. A.S ... Turkey'. Fakturans primära faktureringsfält 'Payer' anger exakt samma part med samma adressland Turkey. Även delivery address visar samma part. Mottagaren kan därför verifieras direkt mot fakturan."
+      "motivation": "Certifikatets mottagare 'Döktas Dökümcülük Tic. ve San. A.S ... Turkey' återfinns uttryckligen i fakturans mottagarfält både under 'Payer' och 'Delivery address'. Företagsnamn och land överensstämmer direkt utan behov av otillåten tolkning."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.96,
+      "confidence": 0.95,
       "certificate_value": "Döktas Dökümcülük Tic. ve San. A.S.\n6 pallets Fasteners\nM14x90 STUD 8.8 Zi/NiB\nStat no 73181588",
       "invoice_value": "M14x90 STUD 8.8 Zi/NiB\nScrews, with head, hexagon, class >=8.8\nCustoms Stat No 73181588",
       "rules_applied": [
+        {
+          "rule_id": "4.3.2",
+          "outcome": "Priority 2 applied"
+        },
         {
           "rule_id": "4.3.3",
           "outcome": "MATCH"
@@ -127,7 +115,7 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Den identitetsbärande huvudbeteckningen 'M14x90 STUD 8.8 Zi/NiB' från certifikatet återfinns exakt i fakturans varurad. Ytterligare text i certifikatet ('6 pallets Fasteners') och i fakturan ('Screws, with head, hexagon, class >=8.8') motsäger inte varan. HS/statistiskt nummer 73181588 återfinns också i båda dokumenten och stödjer att det är samma vara."
+      "motivation": "Certifikatets identitetsbärande huvudbeteckning är 'M14x90 STUD 8.8 Zi/NiB'. Denna text återfinns exakt i fakturans varurad. Tilläggen 'Fasteners' i certifikatet och den längre förklarande texten 'Screws, with head, hexagon, class >=8.8' i fakturan motsäger inte produktidentiteten och medför därför inte avvikelse."
     },
     "quantity": {
       "applicable": true,
@@ -149,12 +137,12 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger ett enda viktvärde med kategori och enhet: '1674 kg Gross'. Fakturan anger uttryckligen 'Gross weight (kg) 1674'. Numeriskt värde, viktkategori och enhet överensstämmer direkt utan behov av undantag eller omräkning."
+      "motivation": "Certifikatets kvantitetsfält anger ett explicit viktvärde med numeriskt värde, enhet och viktkategori: '1674 kg Gross'. Fakturan anger uttryckligen 'Gross weight (kg) 1674'. Det numeriska värdet 1674 och viktenheten kg överensstämmer, och fakturans totalvikt avser den aktuella försändningen."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.97,
+      "confidence": 0.98,
       "certificate_value": "Sweden",
       "invoice_value": "Origin SE",
       "rules_applied": [
@@ -171,22 +159,22 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger ursprungsland 'Sweden'. Fakturan har ett explicit origin-fält på varuraden med värdet 'SE'. 'SE' är vedertagen ISO-landkod för Sweden, så certifikatets ursprungsland kan uttryckligen identifieras i fakturan efter tillåten landnormalisering."
+      "motivation": "Certifikatet anger ursprungsland 'Sweden'. Fakturan innehåller ett explicit origin-fält på varuraden med värdet 'SE'. ISO-landkod 'SE' är en vedertagen kortform för Sweden, vilket är tillåten landnormalisering. Ursprunget är därför uttryckligen verifierat i fakturan."
     }
   },
   "overall_assessment": {
     "comparison_result": "IDENTICAL",
     "workflow_recommendation": "AUTO_APPROVAL_ELIGIBLE",
     "auto_approval_eligible": true,
-    "confidence": 0.97,
+    "confidence": 0.98,
     "critical_failures": [],
     "manual_review_triggers": [],
-    "decision_summary": "Dokumentparningen har gjorts mot den separata fakturafilen och inte mot den inbäddade fakturakopian i certifikatfilen. Certifikatets fakturareferens 823184 återfinns i fakturan, consignor och consignee kan identifieras, varubeskrivningen matchar via den exakta huvudbeteckningen 'M14x90 STUD 8.8 Zi/NiB', kvantiteten '1674 kg Gross' matchar fakturans gross weight 1674, och ursprunget Sweden verifieras via origin-koden SE. Samtliga tillämpliga kontrollpunkter är därför MATCH.",
-    "human_explanation": "Certifikatet och den separata fakturan avser samma transaktion med fakturanummer 823184. Avsändare, mottagare, varubeskrivning, bruttovikt 1674 kg och ursprung Sverige/SE stämmer överens. Dokumentparet kan därför godkännas automatiskt."
+    "decision_summary": "Dokumentparet är giltigt parat via fakturanummer 823184, och samtliga tillämpliga kontrollpunkter kan verifieras entydigt mot den separata fakturafilen. LC-undantaget är inte tillämpligt. Resultatet är IDENTICAL.",
+    "human_explanation": "Certifikatet kan verifieras mot den bifogade fakturan. Avsändare Bulten Sweden AB, mottagare Döktas Dökümcülük Tic. ve San. A.S., varan M14x90 STUD 8.8 Zi/NiB, bruttovikt 1674 kg och ursprung Sverige/SE återfinns i fakturan. Dokumentparet kan därför godkännas automatiskt."
   },
   "_meta": {
-    "tested_at": "2026-04-02T11:36:29.837293+00:00",
-    "prompt_hash": "f81eb9b0d2ea",
+    "tested_at": "2026-04-11T08:06:14.352167+00:00",
+    "prompt_hash": "de0d620a2b38",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P083_MATCH",

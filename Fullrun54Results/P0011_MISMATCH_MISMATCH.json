@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-04-02",
+    "verification_timestamp": null,
     "document_pair_id": null,
     "certificate_issue_date": "2026-02-27",
     "source_documents_received": 2
@@ -24,7 +24,7 @@
     }
   },
   "rule_activation": {
-    "lc_exception_active": true,
+    "lc_exception_active": false,
     "lc_number_found": "ZHALC25148",
     "general_goods_description_with_invoice_reference_active": false,
     "mixed_origins_rule_active": true,
@@ -33,125 +33,162 @@
     "eu_origin_normalization_active": true,
     "activated_rules": [
       {
-        "rule_id": "2.2",
-        "rule_name": "LC-undantag aktiverat; endast ursprungsland verifieras"
+        "rule_id": "8.5.0",
+        "rule_name": "Filbaserad dokumentparning: certifikat från fil 1 och faktura från fil 2"
       },
       {
-        "rule_id": "2.2.1",
-        "rule_name": "Radnivå-ursprung i faktura accepteras vid LC"
+        "rule_id": "8.6",
+        "rule_name": "Obligatorisk parningsvalidering passerad via fakturanummer, consignor och consignee"
+      },
+      {
+        "rule_id": "4.1.0",
+        "rule_name": "Consignor identifierad uttryckligen i fakturan"
+      },
+      {
+        "rule_id": "4.2.0.2",
+        "rule_name": "Consignee identifierad i relevant mottagarfält i fakturan"
+      },
+      {
+        "rule_id": "4.3.7",
+        "rule_name": "Flera ursprung i certifikatet med uttrycklig fakturahänvisning i varubeskrivningen"
       },
       {
         "rule_id": "4.5.4.1",
-        "rule_name": "EU/European Community-normalisering"
-      },
-      {
-        "rule_id": "4.5.4.2",
-        "rule_name": "EU-medlemsland verifierar EU-angivelse"
+        "rule_name": "EU/European Community-normalisering för ursprung"
       }
     ]
   },
   "control_points": {
     "consignor": {
-      "applicable": false,
-      "status": "NOT_APPLICABLE",
-      "confidence": 0.99,
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.98,
       "certificate_value": "AB Volvo Penta\nGropegårdsgatan 11\nSE-405 08, Gothenburg\nSweden",
-      "invoice_value": null,
+      "invoice_value": "AB Volvo Penta\nGropegårdsgatan 11\n40508 Göteborg\nSweden",
       "rules_applied": [
         {
-          "rule_id": "2.2",
-          "outcome": "LC exception active; consignor not verified"
+          "rule_id": "4.1.0",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.2.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.5",
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet innehåller den uttryckliga separata LC-hänvisningen \"LC: ZHALC25148\" i remarks-fältet. Enligt LC-undantaget verifieras då enbart ursprungsland; kontrollpunkten consignor sätts därför till NOT_APPLICABLE."
+      "motivation": "Certifikatets consignor 'AB Volvo Penta' återfinns uttryckligen i fakturan på sida 1–4, bland annat i footer/issuer-blocket som 'AB Volvo Penta, Gropegårdsgatan 11, 40508 Göteborg, Sweden'. Företagsnamnet är samma juridiska part efter tillåten normalisering av postnummerformat och landet Sweden framgår explicit i fakturan. Därmed är avsändaren verifierad."
     },
     "consignee": {
-      "applicable": false,
-      "status": "NOT_APPLICABLE",
+      "applicable": true,
+      "status": "MATCH",
       "confidence": 0.99,
       "certificate_value": "SANY MARINE HEAVY INDUSTRY CO., LTD\nHAIGONGYI ROAD,GAOLANGANG ECONOMIC\nDISTRICT ZHUHAI CITY,GUANGDONG\nPROVINCE CHINA\nChina",
-      "invoice_value": null,
+      "invoice_value": "Consignee\nSANY MARINE HEAVY INDUSTRY CO., LTD\nHAIGONGYI ROAD,GAOLANGANG ECONOMIC DISTRICT\nZHUHAI CITY,GUANGDONG\nPROVINCE CHINA",
       "rules_applied": [
         {
-          "rule_id": "2.2",
-          "outcome": "LC exception active; consignee not verified"
+          "rule_id": "4.2.0.2",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.2.3",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.2.4",
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet innehåller den uttryckliga separata LC-hänvisningen \"LC: ZHALC25148\" i remarks-fältet. Enligt LC-undantaget verifieras då enbart ursprungsland; kontrollpunkten consignee sätts därför till NOT_APPLICABLE."
+      "motivation": "Certifikatets mottagare återfinns uttryckligen i fakturans fält 'Consignee' på sida 1 med samma företagsnamn och samma land, China. Adressens radbrytningar skiljer sig endast formateringsmässigt. Mottagaren är därför verifierad."
     },
     "goods_description": {
-      "applicable": false,
-      "status": "NOT_APPLICABLE",
-      "confidence": 0.99,
+      "applicable": true,
+      "status": "MISMATCH",
+      "confidence": 0.96,
       "certificate_value": "5 THU\nTAD880-84VE\nSee attached invoice: 61622342/1S\nDetails as per contract: SV251003-HG-881-CN4\nIndustrial diesel engine",
-      "invoice_value": null,
+      "invoice_value": "Invoice No/Type 61622342/1S\nAND/OR SERVICES COMMODITY: ENGINE TAD881VE\nDetails as per contract: SV251003-HG-881-CN4\nTAD881VE Industrial diesel engine",
       "rules_applied": [
         {
-          "rule_id": "2.2",
-          "outcome": "LC exception active; goods description not verified"
+          "rule_id": "4.3.2",
+          "outcome": "MISMATCH"
+        },
+        {
+          "rule_id": "4.3.3",
+          "outcome": "PARTIAL_MATCH"
+        },
+        {
+          "rule_id": "4.3.8",
+          "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Certifikatet innehåller den uttryckliga separata LC-hänvisningen \"LC: ZHALC25148\" i remarks-fältet. Enligt LC-undantaget verifieras då enbart ursprungsland; kontrollpunkten varubeskrivning sätts därför till NOT_APPLICABLE."
+      "motivation": "Fakturanumret 61622342/1S och kontraktsreferensen SV251003-HG-881-CN4 återfinns i båda dokumenten, och texten 'Industrial diesel engine' finns även i fakturan. Certifikatet anger dock den specifika beteckningen 'TAD880-84VE', medan fakturan anger 'TAD881VE'. Denna specifika varubeteckning kan inte identifieras exakt i fakturan och avvikelsen är inte en tillåten normalisering. Därför kan varubeskrivningen inte verifieras som identisk."
     },
     "quantity": {
-      "applicable": false,
-      "status": "NOT_APPLICABLE",
+      "applicable": true,
+      "status": "MATCH",
       "confidence": 0.99,
       "certificate_value": "GW 1168.00 KG",
-      "invoice_value": null,
+      "invoice_value": "Total Gross Weight\n1168.00 KG",
       "rules_applied": [
         {
-          "rule_id": "2.2",
-          "outcome": "LC exception active; quantity not verified"
+          "rule_id": "4.4.2.2",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.4.4",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.4.6",
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet innehåller den uttryckliga separata LC-hänvisningen \"LC: ZHALC25148\" i remarks-fältet. Enligt LC-undantaget verifieras då enbart ursprungsland; kontrollpunkten kvantitet sätts därför till NOT_APPLICABLE."
+      "motivation": "Certifikatet anger uttryckligen viktkategori och värde: 'GW 1168.00 KG'. Fakturan anger på sida 1 'Total Gross Weight 1168.00 KG'. Numeriskt värde, viktenhet och viktkategori överensstämmer, så kvantiteten är verifierad."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.93,
+      "confidence": 0.9,
       "certificate_value": "European Community\nThe United States",
-      "invoice_value": "Page 1: ORIGIN: FRANCE\nPages 2-4 Origin column includes: FR, SE, LT, PL, DE, CZ, US, AT",
+      "invoice_value": "ORIGIN:\nFRANCE\n...\n24686371 EATS component kit MET US ...",
       "rules_applied": [
         {
-          "rule_id": "2.2",
-          "outcome": "LC exception active; only origin verified"
-        },
-        {
-          "rule_id": "2.2.1",
-          "outcome": "Row-level origin accepted"
+          "rule_id": "4.3.7",
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.5.4.1",
-          "outcome": "European Community normalized to EU member state(s)"
+          "outcome": "MATCH"
         },
         {
-          "rule_id": "4.5.4.2",
-          "outcome": "Specific EU member state in invoice verifies EU-origin claim in certificate"
+          "rule_id": "4.5.5",
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "LC-undantaget aktiveras eftersom certifikatet innehåller den exakta textsträngen \"LC: ZHALC25148\" i remarks-fältet, som är en separat etikett/fält och inte en del av ett annat referensnummer. Därför verifieras endast ursprungsland. Certifikatet anger ursprung \"European Community\" och \"The United States\". Fakturan innehåller ett explicit origin-fält på sida 1: \"ORIGIN: FRANCE\", vilket verifierar EU-/European Community-angivelsen genom EU-medlemsstatsnormalisering. Fakturan innehåller dessutom en explicit kolumn \"Origin\" på radnivå på sidorna 2-4, där \"US\" förekommer för artikel 24686371 och flera övriga rader visar EU-medlemsstater (FR, SE, LT, PL, DE, CZ, AT). Samtliga ursprung i certifikatet kan därför identifieras explicit i dedikerade origin-fält i fakturan, och inga radursprung utanför EU eller USA identifierades."
+      "motivation": "Certifikatet anger två ursprung: 'European Community' och 'The United States'. Fakturan anger explicit 'ORIGIN: FRANCE' på sida 1, vilket verifierar European Community genom EU-normalisering, och anger dessutom minst en artikelrad med ursprung 'US' på sida 3. Den uttryckliga fakturahänvisningen i certifikatets varubeskrivning gör kopplingen vid flera ursprung tillräcklig. Ursprungsuppgifterna är därför verifierade."
     }
   },
   "overall_assessment": {
-    "comparison_result": "IDENTICAL",
-    "workflow_recommendation": "AUTO_APPROVAL_ELIGIBLE",
-    "auto_approval_eligible": true,
-    "confidence": 0.93,
-    "critical_failures": [],
+    "comparison_result": "NOT_IDENTICAL",
+    "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
+    "auto_approval_eligible": false,
+    "confidence": 0.95,
+    "critical_failures": [
+      "Varubeskrivningen kan inte verifieras som identisk eftersom certifikatet anger 'TAD880-84VE' medan fakturan anger 'TAD881VE'."
+    ],
     "manual_review_triggers": [],
-    "decision_summary": "Dokument A identifierades som Certificate of Origin och Dokument B som Commercial Invoice. Certifikatfilen innehåller både ORIGINAL och COPY; ORIGINAL användes som verifieringsgrund. Certifikatet refererar uttryckligen faktura 61622342/1S och fakturan bär samma nummer, vilket stödjer korrekt dokumentparning. LC-undantaget aktiverades på grund av den separata banktermen \"LC: ZHALC25148\" i certifikatet. Därmed verifierades endast ursprungsland. Certifikatets ursprung \"European Community\" verifieras genom fakturans explicita origin-angivelse \"FRANCE\" och radursprung från EU-medlemsstater. Certifikatets ursprung \"The United States\" verifieras genom fakturans explicita radursprung \"US\". Alla tillämpliga kontrollpunkter matchar och övriga är korrekt markerade som NOT_APPLICABLE enligt LC-regeln.",
-    "human_explanation": "Certifikatet innehåller en tydlig LC-referens, därför verifierades endast ursprungslandet mot fakturan. Ursprungen European Community och The United States återfinns i fakturans explicita origin-uppgifter, bland annat FRANCE och US. Dokumentparet kan därför godkännas automatiskt."
+    "decision_summary": "Dokumentparet är korrekt parat och avsändare, mottagare, kvantitet samt ursprung kan verifieras mot fakturan. Varubeskrivningen ger dock MISMATCH eftersom den specifika beteckningen i certifikatet inte återfinns exakt i fakturan. Därför är det övergripande resultatet NOT_IDENTICAL.",
+    "human_explanation": "Avsändare, mottagare, mängd och ursprungsuppgifter kan identifieras i fakturan. Certifikatet anger varan/modellbeteckningen 'TAD880-84VE' medan fakturan anger 'TAD881VE', vilket inte är samma beteckning. Därför är dokumenten inte identiska och kräver manuell handläggning."
   },
   "_meta": {
-    "tested_at": "2026-04-02T11:22:43.057571+00:00",
-    "prompt_hash": "f81eb9b0d2ea",
+    "tested_at": "2026-04-17T04:04:22.523313+00:00",
+    "prompt_hash": "32b216f423f0",
     "model": "gpt-5.4",
-    "tier": 2,
     "pair": "P0011_MISMATCH",
     "expected": "NOT_IDENTICAL",
-    "actual": "IDENTICAL",
-    "status": "FAIL"
+    "actual": "NOT_IDENTICAL",
+    "status": "PASS"
   }
 }

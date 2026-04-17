@@ -1,9 +1,9 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-04-02T00:00:00Z",
+    "verification_timestamp": null,
     "document_pair_id": null,
-    "certificate_issue_date": null,
+    "certificate_issue_date": "2026-02-13",
     "source_documents_received": 2
   },
   "task": {
@@ -15,12 +15,12 @@
     "document_a": {
       "label": "Document A",
       "assumed_role": "certificate",
-      "document_type": "certificate of origin"
+      "document_type": "Certificate of Origin"
     },
     "document_b": {
       "label": "Document B",
       "assumed_role": "invoice",
-      "document_type": "invoice"
+      "document_type": "Invoice"
     }
   },
   "rule_activation": {
@@ -33,32 +33,24 @@
     "eu_origin_normalization_active": false,
     "activated_rules": [
       {
-        "rule_id": "8.5.0",
-        "rule_name": "Standardregel för filbaserad dokumentparning"
+        "rule_id": "8.6",
+        "rule_name": "Parningsvalidering passerad via consignor och consignee i fakturan"
       },
       {
-        "rule_id": "8.6",
-        "rule_name": "Obligatorisk parningsvalidering"
+        "rule_id": "4.1.0",
+        "rule_name": "Consignor identifierad uttryckligen i fakturan"
+      },
+      {
+        "rule_id": "4.2.0.2",
+        "rule_name": "Consignee identifierad i mottagarfält i fakturan"
       },
       {
         "rule_id": "4.1.3.6",
-        "rule_name": "Förkortning av juridisk bolagsform"
-      },
-      {
-        "rule_id": "4.3.3",
-        "rule_name": "Kontrollerad textmatchning för varubeskrivning"
-      },
-      {
-        "rule_id": "4.3.4",
-        "rule_name": "Tillägg som inte påverkar produktidentitet"
+        "rule_name": "Juridisk bolagsform kan förkortas/utelämnas"
       },
       {
         "rule_id": "4.4.3.1",
         "rule_name": "Flera kvantitetsuppgifter i certifikatet"
-      },
-      {
-        "rule_id": "4.5.2",
-        "rule_name": "Enhetligt ursprungsland i faktura"
       }
     ]
   },
@@ -66,27 +58,31 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.99,
+      "confidence": 0.97,
       "certificate_value": "Meltolit AB\nJ A Gahms gata 4\n421 31, Västra Frölunda\nSweden",
       "invoice_value": "Meltolit AB\nJ A Gahms gata 4\nSE-421 31 VÄSTRA FRÖLUNDA\nVAT: SE556088611001",
       "rules_applied": [
         {
-          "rule_id": "4.1.2",
+          "rule_id": "4.1.0",
           "outcome": "MATCH"
         },
         {
           "rule_id": "4.1.2.1",
           "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.4",
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger avsändaren som \"Meltolit AB ... Sweden\". Fakturan är utställd av \"Meltolit AB\" med samma adress i Västra Frölunda och svensk landindikator via adressen \"SE-421 31\" samt VAT-prefix \"SE\". Samma juridiska part och land kan identifieras direkt i fakturan."
+      "motivation": "Certifikatets consignor 'Meltolit AB' återfinns uttryckligen i fakturan i header/footer. Landet verifieras via svensk adress och VAT-prefix 'SE'."
     },
     "consignee": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.96,
+      "confidence": 0.95,
       "certificate_value": "ALIT\n2 Moldavkska street\n03057 Kiev\nUkraine",
-      "invoice_value": "Invoice address\nALIT LLC\n2 Moldavska street, Appartement 120, office 102\n03057 Kiev\nUkraina",
+      "invoice_value": "Delivery address / Invoice address:\nALIT LLC\n2 Moldavska street, Appartement 120\n03057 Kiev\nUkraina",
       "rules_applied": [
         {
           "rule_id": "4.2.0.2",
@@ -101,41 +97,37 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger mottagaren som \"ALIT ... Ukraine\". Fakturans auktoritativa faktureringsfält är \"Invoice address\" och anger \"ALIT LLC ... 03057 Kiev Ukraina\". Kärnnamnet ALIT matchar och tillägget \"LLC\" är endast juridisk bolagsform; landet Ukraina överensstämmer."
+      "motivation": "Mottagaren identifieras i fakturans Delivery/Invoice address. 'ALIT' i certifikatet motsvarar 'ALIT LLC' i fakturan; skillnaden avser juridisk bolagsform. Landet Ukraine/Ukraina och orten Kiev överensstämmer."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.88,
+      "confidence": 0.89,
       "certificate_value": "Welding wire\nCustom tariff: 76052900\nCustom tariff: 76042910\nAlSi5 (4043) Mig 1,2mm 7kg:s Meltolit\nAlMg4,5Mn (5183) Mig 1,0mm 7kg:s Meltolit\nAlSi5 (4043) Tig 2,4x1000mm 2,0kg:s Meltolit\nAlSi5 (4043) Tig 3,2x1000mm 2,0kg:s Meltolit\nAlSi5 (4043) Tig 4,0x1000mm 2,5kg:s Meltolit\nAlMg4,5Mn (5183) Tig 2,4x1000mm 2,0kg:s Meltolit\nAlMg4,5Mn (5183) Tig 3,2x1000mm 2,0kg:s Meltolit\nAlMg4,5Mn (5183) Tig 4,0x1000mm 2,5kg:s Meltolit\nAlMg5Mn (5556A) Mig 1,2mm 7kg:s Safra",
       "invoice_value": "9MALSI5121 AlSi5 (4043) Mig 1,2mm 7kg:s Meltolit\n9MALMG4101 AlMg4,5Mn (5183) Mig 1,0mm 7kg:s Meltolit\n9MALSI5241 AlSi5 (4043) Tig 2,4x1000mm 2,0kg:s Meltolit\n9MALSI5321 AlSi5 (4043) Tig 3,2x1000mm 2,0kg:s Meltolit\n9MALSI5401 AlSi5 (4043) Tig 4,0x1000mm 2,5kg:s Meltolit\n9MALMG4241 AlMg4,5Mn (5183) Tig 2,4x1000mm 2,0kg:s Melto\n9MALMG4321 AlMg4,5Mn (5183) Tig 3,2x1000mm 2,0kg:s Melto\n9MALMG4401 AlMg4,5Mn (5183) Tig 4,0x1000mm 2,5kg:s Melto\n9M55561201 AlMg5Mn (5556A) Mig 1,2mm 7kg:s Safra",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "NOT_APPLICABLE"
+          "outcome": "Priority 2 applied"
         },
         {
           "rule_id": "4.3.3",
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.3.4",
+          "rule_id": "4.3.8",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet innehåller nio specifika produktbeskrivningar för svetstråd. Samtliga nio produkter kan identifieras i fakturans rader med samma identitetsbärande beteckningar, dimensioner och legeringsangivelser. På tre rader är det avslutande varumärkesordet trunkerat till \"Melto\" i fakturan, men den identitetsbärande huvudbeteckningen före detta tillägg matchar fortfarande exakt och ingen motsägande produkt förekommer."
+      "motivation": "Certifikatets varubeskrivning består av en specifik lista av nio svetsmaterial. Samma produktbeteckningar återfinns i fakturans rader. De identitetsbärande delarna (legering, process, dimension och förpackningsvikt) kan verifieras för samtliga rader."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.95,
-      "certificate_value": "210 kg NW\n252 kg NW\n20 kg NW\n30 kg NW\n30 kg NW\n30 kg NW\n50 kg NW\n100 kg NW\n70 kg NW",
+      "confidence": 0.86,
+      "certificate_value": "210 kg NW\n252 kg NW\n20 kg NW\n30 kg NW\n30 kg NW\n30 kg HW\n50 kg NW\n100 kg NW\n70 kg NW",
       "invoice_value": "210 Kg\n252 Kg\n20 Kg\n30 Kg\n30 Kg\n30 Kg\n50 Kg\n100 Kg\n70 Kg",
       "rules_applied": [
-        {
-          "rule_id": "4.4.2.1",
-          "outcome": "MATCH"
-        },
         {
           "rule_id": "4.4.3",
           "outcome": "MATCH"
@@ -143,9 +135,13 @@
         {
           "rule_id": "4.4.3.1",
           "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.4.6.1",
+          "outcome": "Not applicable"
         }
       ],
-      "motivation": "Certifikatets box 7 innehåller nio explicita kvantitetsvärden: 210, 252, 20, 30, 30, 30, 50, 100 och 70 kg NW. Fakturans respektive varurader visar samma numeriska värden som radkvantiteter i kg. Minst en kvantitetsuppgift måste verifieras, och här kan samtliga nio identifieras utan motsägelse."
+      "motivation": "Certifikatets box 7 innehåller flera line-item-kvantiteter. Samtliga numeriska värden 210, 252, 20, 30, 30, 30, 50, 100 och 70 kan identifieras i fakturans motsvarande rader. Fakturan innehåller ingen uttrycklig motsägelse mot dessa radkvantiteter."
     },
     "origin": {
       "applicable": true,
@@ -159,30 +155,26 @@
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.5.2",
-          "outcome": "MATCH"
-        },
-        {
           "rule_id": "4.5.5",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger ursprungsland som \"Italy\". Fakturan innehåller ett explicit ursprungsfält på sida 2: \"Country of origin: Italy\". Ursprungslandet kan därför verifieras direkt och utan tolkning."
+      "motivation": "Ursprungslandet 'Italy' anges uttryckligen i certifikatet och återfinns uttryckligen i fakturan som 'Country of origin: Italy'."
     }
   },
   "overall_assessment": {
     "comparison_result": "IDENTICAL",
     "workflow_recommendation": "AUTO_APPROVAL_ELIGIBLE",
     "auto_approval_eligible": true,
-    "confidence": 0.95,
+    "confidence": 0.91,
     "critical_failures": [],
     "manual_review_triggers": [],
-    "decision_summary": "Dokumentparet är korrekt parat och samtliga tillämpliga kontrollpunkter kan verifieras mot fakturan: consignor, consignee, varubeskrivning, kvantitet och ursprungsland. Ingen tillämplig kontrollpunkt gav MISMATCH eller MANUAL_REVIEW.",
-    "human_explanation": "Avsändare, mottagare, varubeskrivning, mängder och ursprungsland kan verifieras mot fakturan. Certifikatet anger Meltolit AB, ALIT, varorna och mängderna 210/252/20/30/30/30/50/100/70 kg samt ursprung Italy, och dessa uppgifter återfinns i fakturan. Dokumentparet kan därför godkännas automatiskt."
+    "decision_summary": "Dokumentparet är giltigt parat. Avsändare, mottagare, varubeskrivning, kvantiteter och ursprungsland kan verifieras mot fakturan enligt regelverket.",
+    "human_explanation": "Alla tillämpliga uppgifter i ursprungscertifikatet kan verifieras mot fakturan. Avsändare, mottagare, varubeskrivning, kvantiteter och ursprungsland stämmer överens. Dokumentparet kan därför godkännas automatiskt."
   },
   "_meta": {
-    "tested_at": "2026-04-02T11:06:44.033148+00:00",
-    "prompt_hash": "f81eb9b0d2ea",
+    "tested_at": "2026-04-11T08:06:46.147645+00:00",
+    "prompt_hash": "de0d620a2b38",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P221_MATCH",

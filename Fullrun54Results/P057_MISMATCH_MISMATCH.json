@@ -15,12 +15,12 @@
     "document_a": {
       "label": "Document A",
       "assumed_role": "certificate",
-      "document_type": "Certificate of Origin"
+      "document_type": "certificate_of_origin"
     },
     "document_b": {
       "label": "Document B",
       "assumed_role": "invoice",
-      "document_type": "Commercial Invoice"
+      "document_type": "commercial_invoice"
     }
   },
   "rule_activation": {
@@ -33,28 +33,16 @@
     "eu_origin_normalization_active": true,
     "activated_rules": [
       {
-        "rule_id": "8.5.0",
-        "rule_name": "Standardregel två filer: certifikat från fil 1 och faktura från fil 2"
-      },
-      {
-        "rule_id": "8.6",
-        "rule_name": "Parningsvalidering godkänd via fakturanummer, consignor och consignee"
-      },
-      {
-        "rule_id": "4.1.0",
-        "rule_name": "Consignor sökt i hela fakturafilen och identifierad i header/footer"
-      },
-      {
         "rule_id": "4.3.5",
         "rule_name": "Generell varubeskrivning med fakturareferens"
       },
       {
         "rule_id": "4.3.5.1",
-        "rule_name": "Datumdiskrepans inom ett dygn ger manual review"
+        "rule_name": "Datumdiskrepans inom ett dygn"
       },
       {
-        "rule_id": "4.5.4.1",
-        "rule_name": "EU-normalisering för ursprungsland"
+        "rule_id": "4.5.4.2",
+        "rule_name": "EU-medlemsland ↔ EU"
       }
     ]
   },
@@ -62,137 +50,129 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.95,
-      "certificate_value": "Vitrolife Sweden AB, Box 9080, 42132 Göteborg, Sweden",
+      "confidence": 0.93,
+      "certificate_value": "Vitrolife Sweden AB\nBox 9080\n42132, Göteborg\nSweden",
       "invoice_value": "Vitrolife Sweden AB, Box 9080, 400 92 Göteborg, SWEDEN",
       "rules_applied": [
         {
           "rule_id": "4.1.0",
-          "outcome": "MATCH"
+          "outcome": "Certifikatets consignor-namn återfanns uttryckligen i fakturans footer/företagsuppgifter på fakturans sidor."
         },
         {
           "rule_id": "4.1.2.1",
-          "outcome": "MATCH"
+          "outcome": "Landet Sweden verifieras genom fakturaadress och svensk VAT-kod/adressuppgift."
         },
         {
           "rule_id": "4.1.5",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor 'Vitrolife Sweden AB' identifieras uttryckligen i fakturans visuella header/footer på flera sidor som 'Vitrolife Sweden AB'. Landet Sverige verifieras också i fakturans adressblock och via VAT-prefix 'SE'. Skillnad i postnummer påverkar inte bedömningen."
+      "motivation": "Certifikatet anger consignor som \"Vitrolife Sweden AB ... Sweden\". Fakturan visar samma juridiska namn i företagsuppgifterna/fotrad som \"Vitrolife Sweden AB, Box 9080, 400 92 Göteborg, SWEDEN\" och även Vitrolife-branding i sidhuvudet. Företagsnamn och land kan därför verifieras mot fakturan."
     },
     "consignee": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.94,
-      "certificate_value": "Luvian company, Vital Village - Villa No.55, Zhulian Sharifi, 44001 Erbil, Iraq",
-      "invoice_value": "Invoice address: Luvian Company, vital village house number 55, IQ-Erbil, Iraq; Delivery address: Luvian company, Vital Village - Villa No.55, IQ-44001 Erbil, Iraq",
+      "confidence": 0.95,
+      "certificate_value": "Luvian company\nVital Village - Villa No.55\nZhulian Sharifi\nTel. +964 750 434 88 15\n44001 Erbil\nIraq",
+      "invoice_value": "Delivery address / Invoice address:\nLuvian company\nVital Village - Villa No.55 / vital village house number 55\nIQ-44001 Erbil\nIraq\nYour reference: Zhulian Sharifi",
       "rules_applied": [
         {
           "rule_id": "4.2.0.2",
-          "outcome": "MATCH"
+          "outcome": "Mottagaren identifierades i fakturans Delivery address och Invoice address."
         },
         {
-          "rule_id": "4.2.2.1",
-          "outcome": "MATCH"
+          "rule_id": "4.2.1.1",
+          "outcome": "Alternativt mottagarfält accepterat."
         },
         {
           "rule_id": "4.2.4",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignee 'Luvian company' återfinns i fakturans faktureringsadress och leveransadress. Namn, ort och land överensstämmer efter tillåten normalisering; mindre skillnader i stavning/format och att kontaktpersonen inte upprepas fullt ut i fakturan påverkar inte bedömningen."
+      "motivation": "Certifikatet anger mottagaren som \"Luvian company ... 44001 Erbil, Iraq\". Fakturan visar samma mottagare i både delivery address och invoice address, med samma företag, samma ort/postnummerland och referensen \"Zhulian Sharifi\". Skillnaden \"Villa No.55\" kontra \"house number 55\" ändrar inte identiteten enligt tillåten normalisering."
     },
     "goods_description": {
       "applicable": true,
       "status": "MANUAL_REVIEW",
-      "confidence": 0.72,
-      "certificate_value": "4 cartons; Reproductive Media Kits for IVF; See attached invoice 2005654 dated 20250730",
-      "invoice_value": "Invoice no -2005654; Shipping date 20250731; varurader med IVF-relaterade produkter såsom G-TL, G-MOPS PLUS, G-IVF PLUS, EmbryoGlue, RapidVit, HYASE, HSA-solution, ICSI, SpermRinse och OVOIL; footertext: 'Components for culturing media & medical instruments for In Vitro Fertilisation IVF'",
+      "confidence": 0.79,
+      "certificate_value": "4 cartons\nReproductive Media Kits for IVF\nSee attached invoice 2005654 dated 20250730",
+      "invoice_value": "COMMERCIAL INVOICE\nInvoice no -2005654\nShipping date 20250731\nVarurader med IVF-/reproduktionsprodukter; footertext: \"Components for culturing media & medical instruments for In Vitro Fertilisation IVF\"",
       "rules_applied": [
         {
           "rule_id": "4.3.5",
-          "outcome": "APPLICABLE"
+          "outcome": "Generell varubeskrivning med uttrycklig fakturareferens aktiverad; fakturanummer 2005654 identifierat och varuinnehållet är förenligt med IVF/reproduktiva media-kit."
         },
         {
           "rule_id": "4.3.5.2",
-          "outcome": "CONTENT_COMPATIBLE"
+          "outcome": "Fakturans varuinnehåll bedöms förenligt med certifikatets generella beskrivning."
         },
         {
           "rule_id": "4.3.5.1",
-          "outcome": "MANUAL_REVIEW"
+          "outcome": "Certifikatet anger datum 20250730 medan fakturan visar datumfältet Shipping date 20250731; en dags skillnad ger MANUAL_REVIEW."
         }
       ],
-      "motivation": "Certifikatet använder en generell varubeskrivning med uttrycklig fakturareferens. Fakturanummer 2005654 kan identifieras i fakturan och fakturainnehållet är förenligt med certifikatets generella IVF-beskrivning. Den enda tydliga datumuppgiften i fakturan är dock 20250731 medan certifikatet refererar 20250730; en endagsskillnad enligt reglerna leder till MANUAL_REVIEW i stället för MATCH eller MISMATCH."
+      "motivation": "Certifikatet använder en generell varubeskrivning och hänvisar uttryckligen till invoice 2005654 dated 20250730. Fakturan visar nummer 2005654 och innehåller IVF-/reproduktionsrelaterade produkter, vilket är förenligt med beskrivningen. Däremot är det synliga datumet i fakturan 20250731 (shipping date), alltså en dags skillnad mot certifikatet, vilket enligt regelverket ska skickas till manuell granskning."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.96,
+      "confidence": 0.91,
       "certificate_value": "Gross: 66,40 kg",
       "invoice_value": "Gross weight (kg): 66,4",
       "rules_applied": [
         {
-          "rule_id": "4.4.2.1",
-          "outcome": "BOX_7_USED"
+          "rule_id": "4.4.2.2",
+          "outcome": "Certifikatet anger både viktkategori (Gross) och viktenhet (kg)."
         },
         {
-          "rule_id": "4.4.3",
-          "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.4.3.4",
-          "outcome": "MATCH"
+          "rule_id": "4.4.4",
+          "outcome": "Certifikatets totalvikt verifierades mot fakturans totalrad för gross weight."
         },
         {
           "rule_id": "4.4.6",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Den verifieringsgrundande kvantiteten är box 7 i certifikatet: 'Gross: 66,40 kg'. Fakturan anger uttryckligen 'Gross weight (kg): 66,4'. Värdena är numeriskt identiska efter normalisering av decimalnotation."
+      "motivation": "Certifikatet anger kvantiteten som grossvikt 66,40 kg. Fakturan anger \"Gross weight (kg): 66,4\". Efter normalisering av decimalformat/trailing zero är det samma numeriska värde och samma viktkategori, varför kvantiteten är verifierad."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.9,
+      "confidence": 0.92,
       "certificate_value": "European Community",
       "invoice_value": "Country of Origin: Sweden",
       "rules_applied": [
         {
-          "rule_id": "4.5.1",
-          "outcome": "EXPLICIT_ORIGIN_FOUND"
-        },
-        {
-          "rule_id": "4.5.4.1",
-          "outcome": "MATCH"
+          "rule_id": "4.5.2",
+          "outcome": "Fakturan anger ett gemensamt ursprungsland för varorna."
         },
         {
           "rule_id": "4.5.4.2",
-          "outcome": "MATCH"
+          "outcome": "Certifikatets EU/European Community accepteras mot fakturans specifika EU-medlemsland Sweden."
         },
         {
           "rule_id": "4.5.5",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger ursprung 'European Community'. Fakturan anger uttryckligen 'Country of Origin: Sweden' på första sidan. Sverige är ett EU-land och verifierar därför certifikatets EU-ursprung enligt EU-normaliseringsreglerna."
+      "motivation": "Certifikatet anger ursprungsland som \"European Community\". Fakturan anger uttryckligen \"Country of Origin: Sweden\". Sweden är ett EU-medlemsland och verifierar därför certifikatets EU-angivelse enligt landnormaliseringsregeln."
     }
   },
   "overall_assessment": {
     "comparison_result": "MANUAL_REVIEW",
     "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
     "auto_approval_eligible": false,
-    "confidence": 0.8,
+    "confidence": 0.84,
     "critical_failures": [],
     "manual_review_triggers": [
-      "Varubeskrivningen bygger på generell fakturareferens där certifikatet anger datum 20250730 men fakturans enda tydliga datum är 20250731."
+      "Varubeskrivningen bygger på generell fakturareferens och certifikatet anger datum 20250730 medan fakturan visar 20250731 som synligt datumfält."
     ],
-    "decision_summary": "Dokumentparet är korrekt parat och consignor, consignee, kvantitet samt ursprungsland kan verifieras. Varubeskrivningen är i sak förenlig med fakturan via generell fakturareferens, men certifikatets refererade datum avviker med ett dygn från det datum som framgår av fakturan. Därför ska ärendet hanteras manuellt.",
-    "human_explanation": "Avsändare, mottagare, kvantitet och ursprungsland stämmer mellan dokumenten. Certifikatet hänvisar dock till faktura 2005654 daterad 2025-07-30 medan fakturan visar datum 2025-07-31. Därför behövs manuell granskning innan godkännande."
+    "decision_summary": "Consignor, consignee, quantity och origin kan verifieras mot fakturan. Varubeskrivningen är i sak förenlig och fakturanumret matchar, men datumet i certifikatet avviker med en dag från fakturans synliga datumfält, vilket kräver manuell granskning.",
+    "human_explanation": "Certifikatet hänvisar till invoice 2005654 dated 20250730, medan fakturan visar nummer 2005654 men datum 20250731 som synligt datumfält. Avsändare, mottagare, kvantitet och ursprung stämmer i övrigt. Ärendet behöver därför manuell granskning innan automatgodkännande."
   },
   "_meta": {
-    "tested_at": "2026-04-02T11:36:29.816138+00:00",
-    "prompt_hash": "f81eb9b0d2ea",
+    "tested_at": "2026-04-11T08:06:14.340992+00:00",
+    "prompt_hash": "de0d620a2b38",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P057_MISMATCH",

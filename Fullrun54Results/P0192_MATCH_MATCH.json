@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-04-02T00:00:00Z",
+    "verification_timestamp": "2026-04-11T00:00:00Z",
     "document_pair_id": null,
     "certificate_issue_date": "2025-11-05",
     "source_documents_received": 2
@@ -33,16 +33,32 @@
     "eu_origin_normalization_active": true,
     "activated_rules": [
       {
-        "rule_id": "8.5.0",
-        "rule_name": "Standardregel för filbaserad dokumentparning"
+        "rule_id": "8.6",
+        "rule_name": "Parningsvalidering passerad via fakturareferens, consignor och consignee"
       },
       {
-        "rule_id": "8.6",
-        "rule_name": "Obligatorisk parningsvalidering"
+        "rule_id": "4.1.0",
+        "rule_name": "Consignor identifierad någonstans i fakturan/fakturaunderlaget"
+      },
+      {
+        "rule_id": "4.2.0.2",
+        "rule_name": "Consignee får identifieras i något mottagarfält i fakturan"
+      },
+      {
+        "rule_id": "4.3.2",
+        "rule_name": "Varubeskrivning verifierad primärt via artikelnummer"
+      },
+      {
+        "rule_id": "4.4.3",
+        "rule_name": "Kvantitet verifierad mot explicit viktuppgift i fakturan"
+      },
+      {
+        "rule_id": "4.5.4.1",
+        "rule_name": "EU-normalisering för ursprungsland"
       },
       {
         "rule_id": "4.5.4.2",
-        "rule_name": "EU-medlemsland ↔ EU/European Community-normalisering"
+        "rule_name": "EU och specifikt EU-medlemsland är verifierbara i båda riktningarna"
       }
     ]
   },
@@ -50,12 +66,12 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.96,
+      "confidence": 0.97,
       "certificate_value": "Skylotec Nordic AB\nSagbäcksvägen 13\nSE-437 31 , LINDOME\nSweden",
       "invoice_value": "SKYLOTEC Nordic AB\nKontorsvägen 6\n246 43 Löddeköpinge\nSweden\nVAT Registration No.\nSE556996439701",
       "rules_applied": [
         {
-          "rule_id": "4.1.3.1",
+          "rule_id": "4.1.0",
           "outcome": "MATCH"
         },
         {
@@ -71,21 +87,17 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger consignor som \"Skylotec Nordic AB ... Sweden\". Fakturan identifierar utställaren som \"SKYLOTEC Nordic AB ... Sweden\" och innehåller även svenskt VAT-nummer med SE-prefix. Företagsnamnet är samma juridiska part efter normalisering av versaler/gemener, och landet Sverige kan verifieras i fakturan. Skillnad i gatuadress medför inte avvikelse."
+      "motivation": "Certifikatet anger consignor som 'Skylotec Nordic AB ... Sweden'. Samma juridiska namn kan identifieras uttryckligen i fakturan som 'SKYLOTEC Nordic AB' och landet Sverige framgår i adressblocket/VAT-kontexten. Skillnaden i gatuadress (Sagbäcksvägen 13 vs Kontorsvägen 6) medför inte avvikelse eftersom företagsnamn och land stämmer."
     },
     "consignee": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.98,
+      "confidence": 0.99,
       "certificate_value": "PARAMAHANSA DEFENCE LLP\nF-68, First Floor, Sector-11 (UP)\n201301\nNOIDA\nIndia",
-      "invoice_value": "Bill-to Address\nPramod V Otayoth\nParamahansa Defence LLP\nF-68, Sector 11\nNOIDA, 201301\nIndia\n\nShip-to Address**\nParamahansa Defence LLP\nF-68,First Floor, Sector-11 (UP)\nNOIDA, 201301\nIndia",
+      "invoice_value": "Ship-to Address**\nParamahansa Defence LLP\nF-68,First Floor, Sector-11 (UP)\nNOIDA, 201301\nIndia",
       "rules_applied": [
         {
           "rule_id": "4.2.0.2",
-          "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.2.2.1",
           "outcome": "MATCH"
         },
         {
@@ -97,14 +109,14 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger mottagaren som \"PARAMAHANSA DEFENCE LLP ... NOIDA ... India\". Fakturan har ett primärt faktureringsfält \"Bill-to Address\" för \"Paramahansa Defence LLP\" i India, och samma företag förekommer även i Ship-to-fältet med i princip samma adress. Därmed kan certifikatets consignee verifieras mot fakturans auktoritativa mottagare, och landet India överensstämmer."
+      "motivation": "Certifikatet anger mottagaren som 'PARAMAHANSA DEFENCE LLP ... NOIDA ... India'. Fakturan visar samma part i Ship-to-fältet med samma företagsnamn och land India. Mottagaren kan därför verifieras direkt i ett tillåtet mottagarfält."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.99,
       "certificate_value": "POA-030-1, 1 PCS (SE)\nICX POWER ASCENDER,COMPLETE, EU VER",
-      "invoice_value": "POA-030-1 ICX POWER ASCENDER,COMPLETE, EU VER",
+      "invoice_value": "Item No Description Net Weight Qty Unit\nPOA-030-1 ICX POWER ASCENDER,COMPLETE, EU VER 12.5 1 Pieces",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
@@ -115,17 +127,21 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet innehåller artikelnummer \"POA-030-1\" och varubeskrivningen \"ICX POWER ASCENDER,COMPLETE, EU VER\". Fakturan innehåller exakt samma artikelnummer och exakt samma produkttext på artikelraden. Eftersom artikelnummer anges i certifikatet ska matchning primärt ske via artikelnummer, och den kontrollen ger direkt MATCH utan behov av vidare texttolkning."
+      "motivation": "Certifikatet innehåller artikelnumret 'POA-030-1' och varubeskrivningen 'ICX POWER ASCENDER,COMPLETE, EU VER'. Fakturan innehåller exakt samma artikelnummer och exakt samma varubeskrivning på artikelraden. Enligt prioritetsordningen verifieras varan därför primärt via artikelnummer och matchningen är entydig."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.96,
       "certificate_value": "12,5 KG NW",
-      "invoice_value": "Net Weight\n12.5\n\nDIMS AND WEIGHT\n1 pallet 60x40x39, total weight 14 kg GW / NW 12,5 kg",
+      "invoice_value": "DIMS AND WEIGHT\n1 pallet 60x40x39, total weight 14 kg GW / NW 12,5 kg",
       "rules_applied": [
         {
           "rule_id": "4.4.2.1",
+          "outcome": "APPLIED_BOX_7_VALUE"
+        },
+        {
+          "rule_id": "4.4.2.2",
           "outcome": "MATCH"
         },
         {
@@ -133,11 +149,11 @@
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.4.4",
+          "rule_id": "4.4.6",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Den verifieringsgrundande kvantiteten är värdet i box 7 på certifikatet: \"12,5 KG NW\". Fakturan anger nettovikt som \"12.5\" i viktfältet och även \"NW 12,5 kg\" i avsnittet DIMS AND WEIGHT. Det numeriska värdet 12,5, viktkategorin NW och enheten kg kan därför identifieras i fakturan."
+      "motivation": "Verifieringsgrundande kvantitet är box 7 i certifikatet: '12,5 KG NW'. Fakturan innehåller explicit 'NW 12,5 kg' i avsnittet 'DIMS AND WEIGHT', vilket bekräftar samma numeriska värde, samma viktenhet och samma viktkategori. Därför är kvantiteten verifierad."
     },
     "origin": {
       "applicable": true,
@@ -151,6 +167,10 @@
           "outcome": "MATCH"
         },
         {
+          "rule_id": "4.5.4.1",
+          "outcome": "MATCH"
+        },
+        {
           "rule_id": "4.5.4.2",
           "outcome": "MATCH"
         },
@@ -159,7 +179,7 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger ursprung som \"EUROPEAN COMMUNITY\". Fakturan anger ett explicit origin-fält: \"Country of origin: SE\". Sverige (SE) är ett specifikt EU-medlemsland, och enligt EU-normaliseringen är certifikatets EU/European Community verifierat när fakturan anger ett EU-medlemsland som ursprung."
+      "motivation": "Certifikatet anger ursprungsland som 'EUROPEAN COMMUNITY' i box 3. Fakturan anger uttryckligen 'Country of origin: SE' på artikelraden. SE avser Sverige, som är en EU-medlemsstat, och EU-normalisering gör därför att certifikatets EU-ursprung kan verifieras mot fakturans specifika EU-land."
     }
   },
   "overall_assessment": {
@@ -169,12 +189,12 @@
     "confidence": 0.96,
     "critical_failures": [],
     "manual_review_triggers": [],
-    "decision_summary": "Dokumentparet är korrekt parat genom fakturanummer 209542 och samtliga tillämpliga kontrollpunkter kan verifieras mot fakturan. Consignor, consignee, varubeskrivning/artikelnummer, kvantitet och ursprungsland uppfyller regelverket. Ingen tillämplig kontrollpunkt gav MISMATCH eller MANUAL_REVIEW.",
-    "human_explanation": "Alla relevanta uppgifter i certifikatet kan verifieras mot fakturan: avsändare, mottagare, varubeskrivning/artikelnummer, nettovikt och ursprung. Dokumentparet kan därför godkännas automatiskt."
+    "decision_summary": "Dokumentparet är giltigt parat via export invoice 209542. Samtliga tillämpliga kontrollpunkter är verifierade: consignor Skylotec Nordic AB, consignee Paramahansa Defence LLP, artikel POA-030-1 / ICX POWER ASCENDER, kvantitet 12,5 KG NW och ursprung EU verifierat genom 'Country of origin: SE'.",
+    "human_explanation": "Alla tillämpliga uppgifter i certifikatet kan verifieras mot fakturan. Fakturan visar samma avsändare, mottagare, artikel POA-030-1, net weight 12,5 kg och ursprung SE som verifierar certifikatets EU-ursprung. Dokumentparet kan därför godkännas automatiskt."
   },
   "_meta": {
-    "tested_at": "2026-04-02T11:23:49.158850+00:00",
-    "prompt_hash": "f81eb9b0d2ea",
+    "tested_at": "2026-04-11T08:05:42.141822+00:00",
+    "prompt_hash": "de0d620a2b38",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P0192_MATCH",

@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-04-02T00:00:00Z",
+    "verification_timestamp": null,
     "document_pair_id": null,
     "certificate_issue_date": "2023-03-13",
     "source_documents_received": 2
@@ -20,7 +20,7 @@
     "document_b": {
       "label": "Document B",
       "assumed_role": "invoice",
-      "document_type": "Internal Invoice"
+      "document_type": "Invoice"
     }
   },
   "rule_activation": {
@@ -42,19 +42,15 @@
       },
       {
         "rule_id": "4.1.0",
-        "rule_name": "Consignor via uttrycklig förekomst i fakturan"
+        "rule_name": "Consignor identifierad någonstans i fakturan"
       },
       {
-        "rule_id": "4.2.0.3.1",
-        "rule_name": "Ship-To-regeln ger MANUAL_REVIEW vid oberoende Bill-To-part"
-      },
-      {
-        "rule_id": "4.3.2.1",
-        "rule_name": "Artikelnummer som prefix ger MANUAL_REVIEW"
+        "rule_id": "4.2.0.2",
+        "rule_name": "Consignee får identifieras i något mottagarfält"
       },
       {
         "rule_id": "4.5.4.1.2",
-        "rule_name": "Extra EU-ursprung i fakturan tillåts vid blandad EU/icke-EU-lista"
+        "rule_name": "Blandade EU/icke-EU-listor med extra EU-land i fakturan"
       }
     ]
   },
@@ -62,7 +58,7 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.9,
+      "confidence": 0.93,
       "certificate_value": "Flexlink AB\nByfogdegatan 11\nSE 415 50, Göteborg\nSweden",
       "invoice_value": "FlexLink AB\nByfogdegatan 11\n415 05 Gothenburg\nSweden",
       "rules_applied": [
@@ -71,110 +67,121 @@
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.1.2.1",
-          "outcome": "country_verified"
+          "rule_id": "4.1.4",
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor är \"Flexlink AB ... Sweden\". Fakturans adressfält anger en annan part (\"FLEXLINK ENGINEERING SDN BHD\"), men det exakta företagsnamnet \"FlexLink AB\" med svensk adress förekommer uttryckligen i fakturans footer på sidorna 1–19. Därmed är consignor verifierad via uttrycklig förekomst i fakturan, och landet Sverige framgår direkt i samma block."
+      "motivation": "Certifikatets consignor är \"Flexlink AB\" i Sverige. Samma juridiska namn förekommer uttryckligen i fakturans sidfot på flera sidor som \"FlexLink AB, Byfogdegatan 11, 415 05 Gothenburg, Sweden\". Detta uppfyller regeln om att consignor får verifieras någonstans i fakturan även om ett annat invoice address-block också finns."
     },
     "consignee": {
       "applicable": true,
-      "status": "MANUAL_REVIEW",
-      "confidence": 0.72,
+      "status": "MATCH",
+      "confidence": 0.94,
       "certificate_value": "MONDELEZ KINH DO VIETNAM\nJOINT STOCK COMPANY\n26 VSIP ROAD NO. 8,\nVIETNAM-SINGAPORE INDUSTRIAL PARK,\nBINH HOA WARD\nTHUAN AN CITY, BINH DUONG PROVINCE,\nVIETNAM",
-      "invoice_value": "Shipping Address MONDELEZ KINH DO VIETNAM JSC\n26 VSIP ST. NO.8\nVIETNAM-SINGAPORE INDUSTRIAL PARK\n59000 THUAN AN CITY, BINH DUONG\nPROVINCE\n\nInvoice Address\nFLEXLINK ENGINEERING SDN BHD\nNO. 13, JALAN TIANG U8/93\n... MALAYSIA",
+      "invoice_value": "Shipping Address MONDELEZ KINH DO VIETNAM JSC\n26 VSIP ST. NO.8\nVIETNAM-SINGAPORE INDUSTRIAL PARK\n59000 THUAN AN CITY, BINH DUONG",
       "rules_applied": [
         {
           "rule_id": "4.2.0.2",
-          "outcome": "billing_field_has_priority"
+          "outcome": "MATCH"
         },
         {
-          "rule_id": "4.2.0.3",
-          "outcome": "ship_to_exception_considered"
+          "rule_id": "4.1.3.6",
+          "outcome": "MATCH"
         },
         {
-          "rule_id": "4.2.0.3.1",
-          "outcome": "MANUAL_REVIEW"
+          "rule_id": "4.2.3",
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignee kan identifieras i fakturans Shipping Address som \"MONDELEZ KINH DO VIETNAM JSC\" i Vietnam. Fakturan har dock samtidigt ett separat faktureringsfält/Invoice Address för \"FLEXLINK ENGINEERING SDN BHD\" i Malaysia. Eftersom certifikatets consignee endast matchar Ship-To medan Bill-To/Invoice Address anger en annan självständig juridisk part utan styrkt koppling till consignee, ska utfallet vara MANUAL_REVIEW."
+      "motivation": "Certifikatets mottagare kan identifieras i fakturans Shipping Address. \"JOINT STOCK COMPANY\" i certifikatet motsvaras av den juridiska förkortningen \"JSC\" i fakturan, och landet Vietnam överensstämmer."
     },
     "goods_description": {
       "applicable": true,
-      "status": "MANUAL_REVIEW",
-      "confidence": 0.76,
-      "certificate_value": "CONVEYOR PARTS\nXBTP 5A85 Plain chain\nXBTP 5A85 Plain chain\nXBTP 5A85 Plain chain\nXBTP 5A85 Plain chain\nXCAN 8 T-slot nut\nXCBE 64 End cap 64mm x 64mm\nXCBL 3X44X88 Support beam 44mm x 88mm light\nXCBL 3X88 Support beam 88mm x 88mm light\nXCBL LX64 Support beam 64mm x 64mm light\nXCFF 64X210 Foot\nXCFF 88X260 Foot\nXHBH 90R170 A Wheel bend\nXHBV 90R400 Vertical bend\nXHCB 3 Conveyor beam\nXHCB L Conveyor beam\nXHCC 160 A Beam section for chain installation",
+      "status": "MISMATCH",
+      "confidence": 0.95,
+      "certificate_value": "CONVEYOR PARTS\nXBTP 5A85 Plain chain\nXBTP 5A85 Plain chain\nXBTP 5A85 Plain chain\nXBTP 5A85 Plain chain\nXCAN 8 T-slot nut\nXCBE 64 End cap 64mm x 64mm\nXCBL 3X44X88 Support beam 44mm x 88mm light\nXCBL 3X88 Support beam 88mm x 88mm light\nXCBL LX64 Support beam 64mm x 64mm light\nXCBL LX64 Support beam 64mm x 64mm light\nXCBL LX64 Support beam 64mm x 64mm light\nXCBL LX64 Support beam 64mm x 64mm light\nXCBL LX64 Support beam 64mm x 64mm light\nXCFF 64X210 Foot\nXCFF 88X260 Foot\nXHBH 90R170 A Wheel bend\nXHBV 90R400 Vertical bend\nXHCB 3 Conveyor beam\nXHCB L Conveyor beam\nXHCB L Conveyor beam\nXHCB L Conveyor beam\nXHCB L Conveyor beam\nXHCB L Conveyor beam\nXHCB L Conveyor beam\nXHCC 160 A Beam section for chain installation",
       "invoice_value": "510 XBTP 5A85 Plain chain\n520 XBTP 5A85 Plain chain\n530 XBTP 5A85 K Plain chain\n540 XBTP 5A85 K Plain chain\n550 XCAN 8 T-slot nut\n560 XCBE 64 End cap 64mm x 64mm\n570 XCBL 3X44X88 Support beam 44mm x 88mm light\n580 XCBL 3X88 Support beam 88mm x 88mm light\n590/600/610/620/630 XCBL LX64 Support beam 64mm x 64mm light\n640 XCFF 64X210 Foot\n650 XCFF 88X260 Foot\n660 XHBH 90R170 A Wheel bend\n670 XHBV 90R400 Vertical bend\n680 XHCB 3 Conveyor beam\n690/700/710/720/730/740 XHCB L Conveyor beam\n750 XHCC 160 A Beam section for chain installation",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "article_number_priority_used"
+          "outcome": "PARTIAL_MATCH"
         },
         {
           "rule_id": "4.3.2.1",
-          "outcome": "MANUAL_REVIEW_for_prefix_variant"
+          "outcome": "NOT_APPLICABLE"
+        },
+        {
+          "rule_id": "4.3.2.3",
+          "outcome": "FAILED"
+        },
+        {
+          "rule_id": "4.3.8",
+          "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Merparten av certifikatets artikelnummer kan identifieras exakt i fakturan. De två certifikatraderna \"XBTP 5A85 Plain chain\" med kvantiteterna 52 och 9 motsvaras dock i fakturan av \"XBTP 5A85 K Plain chain\". Certifikatets artikelnummer är där en exakt prefix av fakturans längre artikelnummer med ett kort suffix (\"K\"), vilket enligt reglerna inte ger MATCH utan MANUAL_REVIEW."
+      "motivation": "De flesta artikelnummer och beskrivningar i certifikatet kan identifieras i fakturan. Två certifikatrader anger dock \"XBTP 5A85 Plain chain\" medan fakturan för motsvarande kvantiteter 52 PC och 9 PC anger \"XBTP 5A85 K Plain chain\". Eftersom certifikatet innehåller artikelnummer ska matchning ske primärt via artikelnummer, och det kortare certifikatnumret kan inte accepteras mot de längre fakturaraderna här eftersom fakturan också innehåller exakta rader \"XBTP 5A85\" för andra kvantiteter; därmed är varubeskrivningen inte fullt verifierad."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.91,
-      "certificate_value": "4 PCS; 11 PCS; 52 PCS; 9 PCS; 30 PCS; 20 PCS; 2 PCS; 4 PCS; 1599 MM; 715 MM; 2832 MM; 1506 MM; 716 MM; 11 PCS; 4 PCS; 9 PCS; 6 PCS; 1 PCE; 2408 MM; 1500 MM; 960 MM; 1110 MM; 200 MM; 1268 MM; 3 PCS",
-      "invoice_value": "510 4 PC; 520 11 PC; 530 52 PC; 540 9 PC; 550 30 PC; 560 20 PC; 570 2 PC; 580 4 PC; 590 1.599 MM; 600 715 MM; 610 2.832 MM; 620 1.506 MM; 630 716 MM; 640 11 PC; 650 4 PC; 660 9 PC; 670 6 PC; 680 1 PC; 690 2.408 MM; 700 1.500 MM; 710 960 MM; 720 1.110 MM; 730 200 MM; 740 1.268 MM; 750 3 PC",
+      "confidence": 0.89,
+      "certificate_value": "4 PCS\n11 PCS\n52 PCS\n9 PCS\n30 PCS\n20 PCS\n2 PCS\n4 PCS\n1599 MM\n715 MM\n2832 MM\n1506 MM\n716 MM\n11 PCS\n4 PCS\n9 PCS\n6 PCS\n1 PCE\n2408 MM\n1500 MM\n960 MM\n1110 MM\n200 MM\n1268 MM\n3 PCS",
+      "invoice_value": "4 PC\n11 PC\n52 PC\n9 PC\n30 PC\n20 PC\n2 PC\n4 PC\n1.599 MM\n715 MM\n2.832 MM\n1.506 MM\n716 MM\n11 PC\n4 PC\n9 PC\n6 PC\n1 PC\n2.408 MM\n1.500 MM\n960 MM\n1.110 MM\n200 MM\n1.268 MM\n3 PC",
       "rules_applied": [
         {
-          "rule_id": "4.4.1",
-          "outcome": "direct_presence_check"
+          "rule_id": "4.4.3.1",
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.4.3.3",
-          "outcome": "thousand_separator_normalization_applied"
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Samtliga numeriska kvantiteter i certifikatet kan identifieras i fakturan med samma värden. För millimetermåtten har tillåten normalisering av tusentalsavskiljare använts, t.ex. 1599 MM ↔ 1.599 MM, 2832 MM ↔ 2.832 MM, 2408 MM ↔ 2.408 MM och 1268 MM ↔ 1.268 MM. Ingen uttrycklig kvantitetsmotsägelse har identifierats."
+      "motivation": "Kvantiteterna i certifikatets box 7 kan identifieras i fakturan. PCS/PCE motsvaras av PC, och millimetervärden som 1599, 2832, 1506, 2408, 1500, 1110 och 1268 återfinns som 1.599, 2.832, 1.506, 2.408, 1.500, 1.110 och 1.268 MM efter tillåten normalisering av tusentalsavskiljare. Ingen fakturakvantitet motsäger certifikatets angivna numeriska värden."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.89,
-      "certificate_value": "Sweden, Taiwan, Poland, China, Germany",
-      "invoice_value": "CoO: Sweden; CoO: Taiwan; CoO: Poland; CoO: China; CoO: Germany; additionally present in invoice: CoO: Czech Republic",
+      "confidence": 0.9,
+      "certificate_value": "Sweden, Taiwan, Poland,\nChina, Germany",
+      "invoice_value": "CoO: Sweden / Taiwan / Poland / China / Germany / Czech Republic",
       "rules_applied": [
         {
           "rule_id": "4.5.1",
-          "outcome": "explicit_origin_fields_found"
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.5.4.1.2",
           "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.5.5",
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Varje ursprungsland som anges i certifikatet — Sweden, Taiwan, Poland, China och Germany — förekommer uttryckligen i fakturans CoO-fält på artikelraderna. Fakturan innehåller dessutom \"Czech Republic\" för en annan artikelrad, men detta är ett extra EU-land. När samtliga certifikatländer finns i fakturan och extra länder endast är EU-medlemsstater ger detta MATCH."
+      "motivation": "Samtliga ursprungsländer som anges i certifikatet — Sweden, Taiwan, Poland, China och Germany — förekommer uttryckligen i fakturans CoO-fält på artikelnivå. Fakturan innehåller dessutom Czech Republic, men detta extra land är ett EU-land och certifikatet innehåller redan en blandning av EU- och icke-EU-länder, vilket är tillåtet enligt specialregeln för blandade EU/icke-EU-listor."
     }
   },
   "overall_assessment": {
-    "comparison_result": "MANUAL_REVIEW",
+    "comparison_result": "NOT_IDENTICAL",
     "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
     "auto_approval_eligible": false,
-    "confidence": 0.74,
-    "critical_failures": [],
-    "manual_review_triggers": [
-      "Certifikatets consignee återfinns endast i Shipping Address medan fakturan samtidigt har ett separat Invoice Address för FLEXLINK ENGINEERING SDN BHD i Malaysia.",
-      "Två varurader i certifikatet anger \"XBTP 5A85 Plain chain\" medan fakturan för motsvarande kvantiteter 52 och 9 anger \"XBTP 5A85 K Plain chain\"."
+    "confidence": 0.92,
+    "critical_failures": [
+      "Varubeskrivningen kan inte verifieras fullt ut eftersom certifikatet anger \"XBTP 5A85 Plain chain\" medan fakturan för två motsvarande rader anger \"XBTP 5A85 K Plain chain\"."
     ],
-    "decision_summary": "Dokumentparet är i huvudsak konsistent: fakturanummer 1001146366 matchar, consignor kan verifieras via fakturans footer, kvantiteterna återfinns och samtliga ursprungsländer i certifikatet finns uttryckligen i fakturan. Ärendet kan dock inte auto-godkännas eftersom mottagaren endast matchar Ship-To medan fakturan är ställd till en annan juridisk part, och eftersom två artikelnummer endast matchar som prefixvariant.",
-    "human_explanation": "Certifikatet hänvisar till faktura 1001146366 och avsändare, kvantiteter samt ursprungsländer kan i huvudsak verifieras. Manuell granskning krävs eftersom mottagaren i certifikatet bara återfinns som leveransadress medan fakturan är ställd till FlexLink Engineering SDN BHD, och eftersom två varurader i fakturan anges som \"XBTP 5A85 K Plain chain\" medan certifikatet anger \"XBTP 5A85 Plain chain\"."
+    "manual_review_triggers": [],
+    "decision_summary": "Dokumentparet är korrekt parat via fakturanummer 1001146366 och både consignor samt consignee kan identifieras i fakturan. Kvantiteter och ursprungsländer kan verifieras. Däremot finns en faktisk avvikelse i varubeskrivningen för två article-rader där fakturan använder artikelvariant med suffixet \"K\" som inte anges i certifikatet, vilket ger NOT_IDENTICAL.",
+    "human_explanation": "Certifikatet och fakturan stämmer inte helt överens. Certifikatet anger två rader som \"XBTP 5A85 Plain chain\", medan fakturan för motsvarande kvantiteter 52 och 9 anger \"XBTP 5A85 K Plain chain\". Övriga huvuduppgifter kan identifieras, men varubeskrivningen avviker och därför krävs manuell handläggning."
   },
   "_meta": {
-    "tested_at": "2026-04-02T11:23:49.155407+00:00",
-    "prompt_hash": "f81eb9b0d2ea",
+    "tested_at": "2026-04-08T11:13:56.015943+00:00",
+    "prompt_hash": "e21e62b90cd3",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P0185_MATCH",
     "expected": "IDENTICAL",
-    "actual": "MANUAL_REVIEW",
-    "status": "REVIEW"
+    "actual": "NOT_IDENTICAL",
+    "status": "FAIL"
   }
 }

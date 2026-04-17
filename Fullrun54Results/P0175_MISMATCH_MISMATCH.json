@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-04-02T00:00:00Z",
+    "verification_timestamp": null,
     "document_pair_id": null,
     "certificate_issue_date": "2023-04-04",
     "source_documents_received": 2
@@ -15,12 +15,12 @@
     "document_a": {
       "label": "Document A",
       "assumed_role": "certificate",
-      "document_type": "Certificate of Origin"
+      "document_type": "certificate_of_origin"
     },
     "document_b": {
       "label": "Document B",
       "assumed_role": "invoice",
-      "document_type": "Invoice"
+      "document_type": "commercial_invoice"
     }
   },
   "rule_activation": {
@@ -33,20 +33,12 @@
     "eu_origin_normalization_active": true,
     "activated_rules": [
       {
-        "rule_id": "8.6",
-        "rule_name": "Parningsvalidering passerad genom att consignor och consignee kan identifieras i fakturan"
-      },
-      {
-        "rule_id": "4.2.0.2",
-        "rule_name": "Prioritetsordning för consignee-identifiering"
-      },
-      {
         "rule_id": "4.5.4.2",
-        "rule_name": "EU-medlemsland och EU-samlingsbegrepp får verifieras symmetriskt"
+        "rule_name": "EU-medlemsland och EU-samlingsbegrepp behandlas som verifierade i båda riktningarna"
       },
       {
-        "rule_id": "4.4.2",
-        "rule_name": "Numerisk kvantitet utan uttrycklig enhet i certifikatet ger MANUAL_REVIEW om värdet återfinns i fakturan"
+        "rule_id": "4.5.4.1",
+        "rule_name": "EU-normalisering för ursprungsland"
       }
     ]
   },
@@ -56,128 +48,148 @@
       "status": "MATCH",
       "confidence": 0.98,
       "certificate_value": "Swedish Match Industries AB\nBox 84\nSE-522 22, TIDAHOLM\nSweden",
-      "invoice_value": "Swedish Match Industries AB\nPostal address:\nP.O Box 84\nSE-522 22 Tidaholm\nSweden\nOur VAT reg no\nSE556005025301",
+      "invoice_value": "Swedish Match Industries AB\nP.O Box 84\nSE-522 22 Tidaholm\nSweden",
       "rules_applied": [
         {
           "rule_id": "4.1.0",
-          "outcome": "MATCH"
+          "outcome": "not_applicable"
+        },
+        {
+          "rule_id": "4.1.2",
+          "outcome": "match"
         },
         {
           "rule_id": "4.1.2.1",
-          "outcome": "MATCH"
+          "outcome": "match"
         },
         {
           "rule_id": "4.1.5",
-          "outcome": "MATCH"
+          "outcome": "match"
         }
       ],
-      "motivation": "Certifikatets consignor 'Swedish Match Industries AB' återfinns uttryckligen i fakturans sidhuvud och företagsuppgifter. Landet Sverige verifieras i fakturans adressblock ('SE-522 22 Tidaholm Sweden') och stöds även av VAT-prefixet 'SE'."
+      "motivation": "Certifikatets consignor 'Swedish Match Industries AB' kan identifieras direkt i fakturan som utställare/företagsnamn. Fakturan anger även svensk adress och svenska landindikatorer ('Sweden', VAT-prefix 'SE', IBAN som börjar med 'SE'), vilket verifierar landet Sverige."
     },
     "consignee": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.97,
+      "confidence": 0.98,
       "certificate_value": "PUERTO RICO SUPPLIES COMPANY\nP.O.BOX 11908\nCAPARRA HTS STATION\nSAN JUAN\nPR 00922\nUSA",
       "invoice_value": "Buyer / Invoice address\nPUERTO RICO SUPPLIES COMPANY\nP.O.BOX 11908\nCAPARRA HTS STATION\nSAN JUAN, PR 00922\nUSA",
       "rules_applied": [
         {
           "rule_id": "4.2.0.2",
-          "outcome": "MATCH"
+          "outcome": "match"
         },
         {
           "rule_id": "4.2.3",
-          "outcome": "MATCH"
+          "outcome": "match"
         },
         {
           "rule_id": "4.2.4",
-          "outcome": "MATCH"
+          "outcome": "match"
         }
       ],
-      "motivation": "Certifikatets consignee matchar fakturans primära faktureringsfält 'Buyer / Invoice address' exakt till namn och land. Att fakturan dessutom innehåller ett separat 'Consignee'-fält med annan part ändrar inte bedömningen eftersom faktureringsfältet har prioritet och redan överensstämmer med certifikatet."
+      "motivation": "Certifikatets mottagare 'PUERTO RICO SUPPLIES COMPANY' återfinns exakt i fakturans mottagarfält 'Buyer / Invoice address'. Landet USA framgår uttryckligen i båda dokumenten. Att fakturan också innehåller en separat 'Consignee' med annat namn påverkar inte bedömningen eftersom certifikatets mottagare får verifieras mot något relevant mottagarfält i fakturan."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.96,
       "certificate_value": "SAFETY MATCHES\nMADE IN SWEDEN\n2560 cartons of Safety Matches",
-      "invoice_value": "Goods summery\nquantity Unit Goods description Stat no Av.gr.weight KG Av.net.weight KG Volume m3\n2560 CRT Safety Matches 36050000 15456 15008 67.2",
+      "invoice_value": "Goods summery\nquantity 2560\nUnit CRT\nGoods description Safety Matches\n...\nMarks: Strike on Box / Safety Matches / Made in Sweden.",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "NO_ARTICLE_NUMBER_IN_CERTIFICATE"
+          "outcome": "priority_2_used"
         },
         {
           "rule_id": "4.3.3",
-          "outcome": "MATCH"
+          "outcome": "match"
+        },
+        {
+          "rule_id": "4.3.4",
+          "outcome": "match"
         },
         {
           "rule_id": "4.3.8",
-          "outcome": "MATCH"
+          "outcome": "match"
         }
       ],
-      "motivation": "Den identitetsbärande huvudbeteckningen 'SAFETY MATCHES' i certifikatet kan identifieras exakt i fakturans goods summary som 'Safety Matches'. Den ytterligare texten om ursprung påverkar inte varuidentiteten i denna kontrollpunkt."
+      "motivation": "Den identitetsbärande huvudbeteckningen 'SAFETY MATCHES' kan identifieras direkt i fakturan som 'Safety Matches'. Tilläggen 'MADE IN SWEDEN' och '2560 cartons of Safety Matches' motsägs inte av fakturan; fakturan innehåller även 'Made in Sweden' och en sammanfattning med 2560 CRT Safety Matches."
     },
     "quantity": {
       "applicable": true,
-      "status": "MANUAL_REVIEW",
-      "confidence": 0.74,
+      "status": "MISMATCH",
+      "confidence": 0.99,
       "certificate_value": "15456",
-      "invoice_value": "Goods summery\nquantity Unit Goods description Stat no Av.gr.weight KG Av.net.weight KG Volume m3\n2560 CRT Safety Matches 36050000 15456 15008 67.2",
+      "invoice_value": "Avg.gr.weight KG 15456",
       "rules_applied": [
         {
           "rule_id": "4.4.2",
-          "outcome": "MANUAL_REVIEW"
+          "outcome": "mismatch"
         },
         {
-          "rule_id": "4.4.6.1",
-          "outcome": "NOT_APPLICABLE"
+          "rule_id": "4.4.2.2b",
+          "outcome": "mismatch"
+        },
+        {
+          "rule_id": "4.4.2.1",
+          "outcome": "box_7_is_verification_basis"
+        },
+        {
+          "rule_id": "4.4.6",
+          "outcome": "mismatch"
         }
       ],
-      "motivation": "Certifikatets kvantitetsfält innehåller endast det numeriska värdet '15456' utan uttrycklig enhet. Samma numeriska värde återfinns i fakturan som 'Av.gr.weight KG 15456', men enligt regeln för numerisk kvantitet utan uttrycklig enhet i certifikatet ska detta leda till MANUAL_REVIEW och inte MATCH."
+      "motivation": "Certifikatets kvantitetsfält (box 7) innehåller endast det numeriska värdet '15456' utan uttrycklig enhet. Regelverket kräver att både numeriskt värde och kvantitetsenhet framgår i samma uppgift. Fakturans text 'Avg.gr.weight KG 15456' får inte användas för att komplettera den saknade enheten i certifikatet. Därför är kontrollpunkten MISMATCH även om samma siffervärde förekommer i fakturan."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.9,
       "certificate_value": "EC; Sweden",
-      "invoice_value": "Marks: Strike on Box / Safety Matches / Made in Sweden.",
+      "invoice_value": "Made in Sweden.",
       "rules_applied": [
         {
           "rule_id": "4.5.1",
-          "outcome": "MATCH"
+          "outcome": "match"
+        },
+        {
+          "rule_id": "4.5.4.1",
+          "outcome": "eu_normalization_applied"
         },
         {
           "rule_id": "4.5.4.2",
-          "outcome": "MATCH"
+          "outcome": "match"
         },
         {
           "rule_id": "4.5.5",
-          "outcome": "MATCH"
+          "outcome": "match"
         }
       ],
-      "motivation": "Fakturan innehåller en explicit ursprungsangivelse genom texten 'Made in Sweden'. Certifikatets 'Sweden' verifieras direkt och den övergripande angivelsen 'EC' accepteras genom EU-normalisering eftersom Sverige är ett EU-medlemsland."
+      "motivation": "Certifikatet anger ursprung 'EC; Sweden'. Fakturan innehåller en explicit ursprungsangivelse 'Made in Sweden'. Sverige är ett namngivet ursprungsland i certifikatet och kan identifieras uttryckligen i fakturan. Eftersom Sverige är en EU-medlemsstat verifierar samma uppgift även certifikatets 'EC' genom EU-normalisering."
     }
   },
   "overall_assessment": {
-    "comparison_result": "MANUAL_REVIEW",
+    "comparison_result": "NOT_IDENTICAL",
     "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
     "auto_approval_eligible": false,
-    "confidence": 0.84,
-    "critical_failures": [],
-    "manual_review_triggers": [
-      "Kvantitetsfältet i certifikatet innehåller endast '15456' utan uttrycklig enhet, medan fakturan visar värdet som 'Av.gr.weight KG 15456'."
+    "confidence": 0.97,
+    "critical_failures": [
+      "Kvantitetsfältet i certifikatet anger endast '15456' utan uttrycklig enhet, vilket ger MISMATCH."
     ],
-    "decision_summary": "Avsändare, mottagare, varubeskrivning och ursprungsland kan verifieras mot fakturan. Kvantitetskontrollen kräver manuell granskning eftersom certifikatets box 7 saknar uttrycklig enhet trots att samma siffervärde återfinns i fakturan.",
-    "human_explanation": "Avsändare, mottagare, varubeskrivning och ursprungsland kan verifieras mot fakturan. Kvantitetsfältet i certifikatet innehåller bara värdet '15456' utan enhet, medan fakturan visar 'Av.gr.weight KG 15456'. Därför krävs manuell granskning."
+    "manual_review_triggers": [],
+    "decision_summary": "Dokumentparet passerar verifiering för consignor, consignee, varubeskrivning och ursprungsland. Kvantitet kan däremot inte godtas eftersom certifikatets box 7 saknar uttrycklig enhet och därför inte uppfyller formkravet för verifierbar kvantitetsuppgift. Minst en tillämplig kontrollpunkt är därför MISMATCH, vilket medför NOT_IDENTICAL.",
+    "human_explanation": "Avsändare, mottagare, varubeskrivning och ursprungsland stämmer mot fakturan. Certifikatets kvantitetsfält anger bara '15456' utan någon enhet, medan enheten måste framgå direkt i certifikatet. Därför är dokumenten inte identiska och måste hanteras manuellt."
   },
   "_meta": {
-    "tested_at": "2026-04-02T11:21:38.833326+00:00",
-    "prompt_hash": "f81eb9b0d2ea",
+    "tested_at": "2026-04-11T08:05:06.174245+00:00",
+    "prompt_hash": "de0d620a2b38",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P0175_MISMATCH",
     "expected": "NOT_IDENTICAL",
-    "actual": "MANUAL_REVIEW",
-    "status": "REVIEW"
+    "actual": "NOT_IDENTICAL",
+    "status": "PASS"
   }
 }

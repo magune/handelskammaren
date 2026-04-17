@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": null,
+    "verification_timestamp": "2026-04-11T00:00:00Z",
     "document_pair_id": null,
     "certificate_issue_date": "2026-03-12",
     "source_documents_received": 2
@@ -15,12 +15,12 @@
     "document_a": {
       "label": "Document A",
       "assumed_role": "certificate",
-      "document_type": "Certificate of Origin"
+      "document_type": "certificate of origin"
     },
     "document_b": {
       "label": "Document B",
       "assumed_role": "invoice",
-      "document_type": "Invoice"
+      "document_type": "invoice"
     }
   },
   "rule_activation": {
@@ -34,15 +34,23 @@
     "activated_rules": [
       {
         "rule_id": "4.1.0",
-        "rule_name": "Consignor identified elsewhere in invoice/exporter block"
+        "rule_name": "Consignor may be verified if explicitly present anywhere in the invoice documents"
       },
       {
-        "rule_id": "4.2.2.1.2",
-        "rule_name": "Commercial abbreviation for consignee name"
+        "rule_id": "4.2.0.2",
+        "rule_name": "Consignee may match any relevant recipient field in the invoice"
+      },
+      {
+        "rule_id": "4.3.2",
+        "rule_name": "Goods description verified primarily through exact identifiable product/article designations"
+      },
+      {
+        "rule_id": "4.4.3.1",
+        "rule_name": "When multiple quantities appear in the certificate, at least one must be verified and none may be contradicted"
       },
       {
         "rule_id": "4.5.4.2",
-        "rule_name": "EU member state and EU origin normalization"
+        "rule_name": "EU and specific EU member state may be treated as equivalent for origin verification"
       }
     ]
   },
@@ -50,9 +58,9 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.9,
-      "certificate_value": "Borealis GmbH c/o Borealis AB, Industrivägen 3, 444 86 STENUNGSUND, Sverige",
-      "invoice_value": "Exporter: Borealis GmbH, Vienna VAT ID No.: SE502065098101 c/o Borealis AB, SE - 444 86 STENUNGSUND, SWEDEN",
+      "confidence": 0.93,
+      "certificate_value": "Borealis GmbH c/o Borealis AB\nIndustrivägen 3\n444 86, STENUNGSUND\nSverige",
+      "invoice_value": "Exporter:\nBorealis GmbH, Vienna VAT ID No.: SE502065098101\nc/o Borealis AB\nSE - 444 86 STENUNGSUND, SWEDEN",
       "rules_applied": [
         {
           "rule_id": "4.1.0",
@@ -67,17 +75,21 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor kan identifieras uttryckligen i fakturans exporter-block som \"Borealis GmbH ... c/o Borealis AB ... STENUNGSUND, SWEDEN\". Namnkärnan Borealis GmbH c/o Borealis AB återfinns i fakturan och landet Sverige framgår explicit i adressen, vilket uppfyller kravet trots att fakturans issuer-huvud anger Wien."
+      "motivation": "Certifikatets consignor kan identifieras uttryckligen i fakturans exporter-block på sida 2 som \"Borealis GmbH ... c/o Borealis AB ... STENUNGSUND, SWEDEN\". Detta uppfyller regeln om explicit förekomst någonstans i fakturadokumentet. Landet verifieras av den svenska adressen och SE-prefix i VAT-numret, vilket överensstämmer med certifikatets Sverige."
     },
     "consignee": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.91,
-      "certificate_value": "Kastro Kablo San. Ticaret A.S., 34035 KAPAKLI / TEKIRDRAG, Türkiye",
-      "invoice_value": "Customer Name / Mailing address: Kastro Kablo Sanayi Ticaret A.S., 34035 KAPAKLI/TEKIRDAG, Türkiye",
+      "confidence": 0.95,
+      "certificate_value": "Kastro Kablo San. Ticaret A.S.\nCerkezkoy OSB, Fatih bulvari, Atatu\nCerkezkoy OSB, Fatih BL.Atatur 30/J\n34035 KAPAKLI / TEKIRDRAG\nTürkiye",
+      "invoice_value": "Delivery address\nKastro Kablo Sanayi Ticaret A.S.\nCerkezkoy OSB, Fatih bulvari, Atatu\nCerkezkoy OSB, Fatih BL.Ataturk Cd. 30/J\n34035 Kapakli/Tekirdag\nTürkiye",
       "rules_applied": [
         {
           "rule_id": "4.2.0.2",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.2.2.1",
           "outcome": "MATCH"
         },
         {
@@ -89,50 +101,58 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignee matchar fakturans primära kund-/faktureringsfält. Skillnaden mellan \"San.\" i certifikatet och \"Sanayi\" i fakturan är en tillåten kommersiell förkortning, och landet Türkiye/Turkiet överensstämmer."
+      "motivation": "Mottagaren i certifikatet kan identifieras i fakturans Delivery address, Customer name/address och Customer Name / Mailing address. Skillnaden \"San.\" i certifikatet mot \"Sanayi\" i fakturan är en tillåten kommersiell förkortning, medan övrig namnstruktur och landet Türkiye överensstämmer. Skillnader i gatuformat och mindre stavningsvariationer i adressen motsäger inte samma juridiska part."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.98,
-      "certificate_value": "HE3366 Bag HD Polyethylene; HE4883Bag HD Polyethylene",
-      "invoice_value": "HE3366 Bag HD Polyethylene; HE4883 Bag HD Polyethylene",
+      "confidence": 0.97,
+      "certificate_value": "HE3366 Bag HD Polyethylene\nHE4883Bag HD Polyethylene",
+      "invoice_value": "HE3366 Bag HD Polyethylene\nHE4883 Bag HD Polyethylene",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.3.6",
+          "rule_id": "4.3.4",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Artikel-/produktbeteckningarna i certifikatet kan identifieras exakt i fakturan: \"HE3366 Bag HD Polyethylene\" och \"HE4883 Bag HD Polyethylene\". Den enda skillnaden är ett obetydligt mellanslag i den andra raden, vilket är tillåten normalisering."
+      "motivation": "Varubeskrivningen i certifikatet innehåller två tydliga produktbeteckningar som kan identifieras exakt i fakturan på sida 1: \"HE3366 Bag HD Polyethylene\" och \"HE4883 Bag HD Polyethylene\". Den enda avvikelsen är ett saknat mellanslag i certifikatet i \"HE4883Bag\", vilket är tillåten formateringsnormalisering. Ingen semantisk tolkning behövs och båda varorna återfinns explicit i fakturan."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.97,
-      "certificate_value": "Net 4.125,00kg; Net 6.875,00 kg",
-      "invoice_value": "4.125,00 KG; 6.875,00 KG; Total net weight 11.000,00KG; Total number of packages 8 PAL (=440 BAG)",
+      "confidence": 0.96,
+      "certificate_value": "Net 4.125,00kg\nNet 6.875,00 kg",
+      "invoice_value": "4.125,00 KG\n6.875,00 KG",
       "rules_applied": [
         {
-          "rule_id": "4.4.1",
+          "rule_id": "4.4.2.2",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.4.3",
           "outcome": "MATCH"
         },
         {
           "rule_id": "4.4.3.1",
           "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.4.3.3",
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Båda nettovikterna i certifikatets mängdfält kan identifieras explicit på fakturans varurader: 4.125,00 KG och 6.875,00 KG. Fakturan innehåller dessutom total net weight 11.000,00KG och 8 PAL (=440 BAG), vilket är förenligt med certifikatet och innehåller ingen motsägelse."
+      "motivation": "Certifikatet anger två uttryckliga kvantitetsuppgifter i box 7 med både viktkategori och enhet: \"Net 4.125,00kg\" och \"Net 6.875,00 kg\". Fakturan på sida 1 visar motsvarande radkvantiteter exakt som \"4.125,00 KG\" och \"6.875,00 KG\" för respektive vara. Det finns ingen motsägelse och båda värdena kan identifieras direkt efter normalisering av versaler."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.87,
+      "confidence": 0.91,
       "certificate_value": "European Community; Sweden",
-      "invoice_value": "Country of origin: Sweden",
+      "invoice_value": "Country of origin\nSweden\nSweden",
       "rules_applied": [
         {
           "rule_id": "4.5.1",
@@ -143,22 +163,22 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Fakturan anger ursprung uttryckligen som \"Sweden\" på varuraderna. Certifikatets ursprungsangivelse \"European Community; Sweden\" verifieras eftersom Sweden identifieras explicit och Sweden är en EU-medlemsstat, vilket uppfyller EU-normaliseringsregeln."
+      "motivation": "Certifikatet anger ursprung som \"European Community; Sweden\". Fakturan anger uttryckligt origin-fält per rad med \"Sweden\". Sverige är ett specifikt EU-medlemsland och verifierar därmed både den namngivna landsuppgiften \"Sweden\" och EU-samlingsbegreppet i certifikatet, utan att några motstridiga icke-EU-ursprung förekommer."
     }
   },
   "overall_assessment": {
     "comparison_result": "IDENTICAL",
     "workflow_recommendation": "AUTO_APPROVAL_ELIGIBLE",
     "auto_approval_eligible": true,
-    "confidence": 0.93,
+    "confidence": 0.95,
     "critical_failures": [],
     "manual_review_triggers": [],
-    "decision_summary": "Certifikatet kan verifieras mot fakturan för samtliga tillämpliga kontrollpunkter. Consignor, consignee, varubeskrivning, kvantitet och ursprungsland återfinns i fakturan enligt tillåtna normaliseringar.",
-    "human_explanation": "Alla relevanta uppgifter i certifikatet kan återfinnas i fakturan. Avsändare, mottagare, varor, mängder och ursprung stämmer överens. Dokumentparet kan därför godkännas automatiskt."
+    "decision_summary": "Dokument A har klassificerats som Certificate of Origin och Dokument B som faktura. Parningsvalideringen stöds av att certifikatets consignor och consignee kan identifieras i fakturan samt att varor, kvantiteter och ursprungsland kan verifieras direkt mot fakturatexten. Samtliga tillämpliga kontrollpunkter har status MATCH med confidence minst 0.85, vilket ger comparison_result IDENTICAL.",
+    "human_explanation": "Avsändare, mottagare, varubeskrivning, mängd och ursprungsland i certifikatet kan återfinnas i fakturan. Certifikatet anger Borealis GmbH c/o Borealis AB, Kastro Kablo, varorna HE3366 och HE4883, nettovikter 4.125,00 kg och 6.875,00 kg samt ursprung European Community/Sweden, och dessa uppgifter stöds av fakturan. Dokumentparet kan godkännas automatiskt."
   },
   "_meta": {
-    "tested_at": "2026-04-02T11:06:44.040775+00:00",
-    "prompt_hash": "f81eb9b0d2ea",
+    "tested_at": "2026-04-11T08:06:46.154758+00:00",
+    "prompt_hash": "de0d620a2b38",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P238_MATCH",

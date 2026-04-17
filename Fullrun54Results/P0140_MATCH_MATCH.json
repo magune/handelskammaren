@@ -15,12 +15,12 @@
     "document_a": {
       "label": "Document A",
       "assumed_role": "certificate",
-      "document_type": "Certificate of Origin"
+      "document_type": "certificate of origin"
     },
     "document_b": {
       "label": "Document B",
       "assumed_role": "invoice",
-      "document_type": "Commercial Invoice"
+      "document_type": "invoice"
     }
   },
   "rule_activation": {
@@ -33,12 +33,12 @@
     "eu_origin_normalization_active": false,
     "activated_rules": [
       {
-        "rule_id": "8.6",
-        "rule_name": "Parningsvalidering passerad"
+        "rule_id": "4.2.0.2",
+        "rule_name": "Consignee may be identified in any relevant receiver field in the invoice"
       },
       {
-        "rule_id": "4.2.0.2",
-        "rule_name": "Primärt faktureringsfält Buyer användes för consignee"
+        "rule_id": "4.3.4",
+        "rule_name": "Non-identity-bearing additions do not cause mismatch when the core goods description is identifiable"
       }
     ]
   },
@@ -52,80 +52,88 @@
       "rules_applied": [
         {
           "rule_id": "4.1.2",
-          "outcome": "MATCH"
+          "outcome": "Company name and country identified in invoice"
         },
         {
-          "rule_id": "4.1.3.1",
-          "outcome": "MATCH"
+          "rule_id": "4.1.2.1",
+          "outcome": "Country verified via seller address and SE-prefixed identifiers"
         },
         {
-          "rule_id": "4.1.4",
+          "rule_id": "4.1.5",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor 'Gösta Jacobsson & CO AB' kan identifieras direkt i fakturans Seller-fält som 'Gösta Jacobsson & Co AB'. Skillnaden i versaler/gemener saknar betydelse enligt tillåten normalisering, och landet Sweden framgår uttryckligen i båda dokumenten."
+      "motivation": "Certifikatet anger consignor som \"Gösta Jacobsson & CO AB\" i Sverige. Fakturan anger säljaren som \"Gösta Jacobsson & Co AB\" med adress i Askim, Sweden, och innehåller även svenska identifierare såsom IBAN med SE-prefix och EORI med SE-prefix. Skillnaden i versaler/gemener påverkar inte bedömningen och samma juridiska part i samma land kan identifieras explicit i fakturan."
     },
     "consignee": {
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.99,
-      "certificate_value": "Shenzhen Shuwu Industrial Co.,Ltd\n13A, Yantian Modern Industry Service Center\n3018 Shayan Road,\nYantian District, Shenzhen\nChina",
+      "certificate_value": "Shenzhen Shuwu Industrial Co.,Ltd\n13A ,Yantian Modern Industry\nService Center\n3018 Shayan Road,\nYantian District, Shenzhen\nChina",
       "invoice_value": "Buyer\nShenzhen Shuwu Industrial Co., Ltd\n13A, Yantian Modern Industry Service Center\n3018 Shayan Road, Yantian District, Shenzhen\nChina",
       "rules_applied": [
         {
           "rule_id": "4.2.0.2",
-          "outcome": "MATCH"
+          "outcome": "Consignee identified in invoice Buyer field"
         },
         {
-          "rule_id": "4.2.2",
-          "outcome": "MATCH"
+          "rule_id": "4.2.2.1",
+          "outcome": "Allowed normalization of punctuation and spacing applied"
         },
         {
-          "rule_id": "4.2.3",
+          "rule_id": "4.2.4",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignee återfinns i fakturans primära faktureringsfält 'Buyer'. Företagsnamnet överensstämmer direkt med endast obetydlig interpunktionsskillnad ('Co.,Ltd' vs 'Co., Ltd'), och landet China framgår uttryckligen i båda dokumenten."
+      "motivation": "Certifikatet anger mottagaren som \"Shenzhen Shuwu Industrial Co.,Ltd\" i Kina. Fakturan anger köparen som \"Shenzhen Shuwu Industrial Co., Ltd\" i China. Skillnaden avser endast skiljetecken och mellanrum, och samma mottagare kan identifieras i ett relevant mottagarfält med samma land."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.97,
+      "confidence": 0.93,
       "certificate_value": "5905-25\nSpruce Lumber (Picea Abies)\n52 packages, Whitewood, KD 18%, TP",
-      "invoice_value": "Contract number 5905-25\nDescription of goods: Whitewood, KD 18%, TP\nSpruce Lumber (Picea Abies)\nPackages (nos): 52",
+      "invoice_value": "Marking: 5905-25\nDescription of goods: Whitewood, KD 18%, TP\nSpruce Lumber (Picea Abies)\nHS code 440712\nPackages (nos): 52",
       "rules_applied": [
         {
-          "rule_id": "4.3.1",
-          "outcome": "MATCH"
+          "rule_id": "4.3.2",
+          "outcome": "Priority 2 controlled text matching used; no article number in certificate"
         },
         {
           "rule_id": "4.3.3",
-          "outcome": "MATCH"
+          "outcome": "Identity-bearing main designation identified as \"Spruce Lumber (Picea Abies)\""
         },
         {
           "rule_id": "4.3.4",
+          "outcome": "Additional non-identity-bearing text such as package count accepted"
+        },
+        {
+          "rule_id": "4.3.8",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets identitetsbärande varubeskrivning 'Spruce Lumber (Picea Abies)' kan identifieras exakt i fakturan. Även tillägget 'Whitewood, KD 18%, TP' återfinns exakt i fakturans goods description, och fakturan visar dessutom 52 packages samt kontraktsreferensen 5905-25. Varubeskrivningen är därför verifierad utan semantisk tolkning."
+      "motivation": "Den identitetsbärande huvudbeteckningen i certifikatet är \"Spruce Lumber (Picea Abies)\" och den återfinns uttryckligen i fakturan. Certifikatets övriga varubeskrivning \"Whitewood, KD 18%, TP\" återfinns också uttryckligen i fakturans goods description, och märkningen \"5905-25\" återfinns i fakturans marking/contract context. Tillägget \"52 packages\" motsägs inte och ändrar inte produktidentiteten."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.99,
       "certificate_value": "214,600 m3",
-      "invoice_value": "Total M3: 214,600",
+      "invoice_value": "Total M3: 214,600\nTotal m3: 214,600",
       "rules_applied": [
         {
-          "rule_id": "4.4.1",
-          "outcome": "MATCH"
+          "rule_id": "4.4.2",
+          "outcome": "Numeric value and unit explicitly present in certificate"
         },
         {
           "rule_id": "4.4.3",
+          "outcome": "Same numeric value identified in invoice for the shipment"
+        },
+        {
+          "rule_id": "4.4.6",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets kvantitet '214,600 m3' kan identifieras direkt i fakturan som 'Total M3: 214,600'. Det numeriska värdet överensstämmer exakt och enheten M3 framgår i fakturan."
+      "motivation": "Certifikatet anger kvantiteten som \"214,600 m3\" i quantity-fältet. Fakturan anger samma numeriska värde uttryckligen som \"Total M3: 214,600\" och även \"Total m3: 214,600\". Det finns ingen motsägelse i fakturan och kvantiteten kan verifieras direkt utan undantag eller beräkning."
     },
     "origin": {
       "applicable": true,
@@ -136,29 +144,29 @@
       "rules_applied": [
         {
           "rule_id": "4.5.1",
-          "outcome": "MATCH"
+          "outcome": "Explicit origin field identified in invoice"
         },
         {
           "rule_id": "4.5.5",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets ursprungsland 'Norway' återfinns uttryckligen i fakturan i ett dedikerat origin-fält: 'Country of origin Norway'. Positiv verifiering är därmed uppfylld."
+      "motivation": "Certifikatet anger ursprungsland som \"Norway\". Fakturan innehåller ett explicit origin-fält, \"Country of origin\", med värdet \"Norway\". Ursprungslandet kan därför verifieras uttryckligen i fakturan utan tolkning."
     }
   },
   "overall_assessment": {
     "comparison_result": "IDENTICAL",
     "workflow_recommendation": "AUTO_APPROVAL_ELIGIBLE",
     "auto_approval_eligible": true,
-    "confidence": 0.99,
+    "confidence": 0.98,
     "critical_failures": [],
     "manual_review_triggers": [],
-    "decision_summary": "Dokumentparet är korrekt parat och samtliga tillämpliga kontrollpunkter kan verifieras direkt mot fakturan. Consignor, consignee, varubeskrivning, kvantitet 214,600 m3 och ursprungsland Norway återfinns i fakturan utan behov av otillåten tolkning.",
-    "human_explanation": "Alla kontrollpunkter stämmer mellan certifikatet och fakturan. Avsändare, mottagare, varubeskrivning, mängd 214,600 m3 och ursprungsland Norge kan identifieras i fakturan. Dokumentparet kan därför godkännas automatiskt."
+    "decision_summary": "Samtliga tillämpliga kontrollpunkter kan verifieras direkt mot fakturan: consignor, consignee, varubeskrivning, kvantitet och ursprungsland. Ingen LC-regel aktiveras och inga motsägelser eller blockerande osäkerheter har identifierats.",
+    "human_explanation": "Alla relevanta uppgifter i certifikatet kan återfinnas i fakturan. Avsändare, mottagare, varubeskrivning, mängd 214,600 m3 och ursprungsland Norway stämmer överens. Dokumentparet kan därför godkännas automatiskt."
   },
   "_meta": {
-    "tested_at": "2026-04-02T11:21:38.814286+00:00",
-    "prompt_hash": "f81eb9b0d2ea",
+    "tested_at": "2026-04-11T08:05:06.158058+00:00",
+    "prompt_hash": "de0d620a2b38",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P0140_MATCH",

@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": null,
+    "verification_timestamp": "2026-04-11T00:00:00Z",
     "document_pair_id": null,
     "certificate_issue_date": "2025-12-02",
     "source_documents_received": 2
@@ -34,27 +34,19 @@
     "activated_rules": [
       {
         "rule_id": "4.1.0",
-        "rule_name": "Consignor identified anywhere in invoice/factura underlag"
+        "rule_name": "Koncernstruktur / consignor får identifieras var som helst i fakturadokumentet"
       },
       {
-        "rule_id": "4.2.0.3.1",
-        "rule_name": "Ship-To rule with independent Bill-To gives manual review"
+        "rule_id": "8.6",
+        "rule_name": "Obligatorisk parningsvalidering"
       },
       {
-        "rule_id": "4.3.2",
-        "rule_name": "Goods description verified primarily by article number"
+        "rule_id": "4.4.3.2.1",
+        "rule_name": "Box 7-viktvärde har företräde och måste verifieras"
       },
       {
-        "rule_id": "4.4.3.1",
-        "rule_name": "At least one quantity may be verified when multiple quantities exist"
-      },
-      {
-        "rule_id": "4.4.3.2",
-        "rule_name": "Shipment/item quantity in box 6 may be used when weight in box 7 is not verified"
-      },
-      {
-        "rule_id": "4.5.1",
-        "rule_name": "Origin must be explicitly stated in invoice"
+        "rule_id": "4.4.6.1",
+        "rule_name": "Fakturan saknar motsvarande viktuppgift helt"
       }
     ]
   },
@@ -62,86 +54,98 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.96,
+      "confidence": 0.89,
       "certificate_value": "4Intelligence AB\nMarieholmsgatan 10 B\n41502 , Göteborg\nSweden",
-      "invoice_value": "4Intelligence AB\nMarieholmsgatan 10B\n41502 GÖTEBORG\nSweden\nVAT reg. no SE559172351401",
+      "invoice_value": "4intelligence AB\nMarieholmsgatan 10B\n41502 GÖTEBORG\nSweden",
       "rules_applied": [
         {
           "rule_id": "4.1.0",
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.1.2.1",
+          "rule_id": "4.1.0.2",
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.1.4",
+          "rule_id": "4.1.5",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor '4Intelligence AB' återfinns uttryckligen i fakturan i sidfoten/adressblocket. Landet Sweden verifieras både genom adressen 'Sweden' och VAT-prefix 'SE'. Samma juridiska part kan därför identifieras i fakturan."
+      "motivation": "Certifikatets consignor '4Intelligence AB' återfinns uttryckligen i fakturans footer som '4intelligence AB' med svensk adress och land 'Sweden'. Detta uppfyller regeln om explicit förekomst i fakturadokumentet trots att ett separat issuer-block även visar 'CORESYS TECHNOLOGIES LIMITED'."
     },
     "consignee": {
       "applicable": true,
-      "status": "MANUAL_REVIEW",
-      "confidence": 0.72,
+      "status": "MATCH",
+      "confidence": 0.93,
       "certificate_value": "DIEP NAM HUNG TECHNOLOGY\nJOINT STOCK COMPANY\nNo 300, Cau Giay Street\nCau Giay Ward\nHanoi\nVietnam",
-      "invoice_value": "Delivery address\nDIEP NAM HUNG TECHNOLOGY JOINT STOCK COMPANY\nFloor 16, Daeha building, No.360 Kim Ma\nNgoc Khanh Ward, Ba Dinh District\nHanoi\nViet Nam\n\nCORESYS TECHNOLOGIES LIMITED\nUnit 308, 3/F, Chevalier House\n45-51 Chatham Road South\nTsimshatsui\nHong Kong",
+      "invoice_value": "Delivery address\nDIEP NAM HUNG TECHNOLOGY JOINT STOCK COMPANY\nCOPMANY\nFloor 16, Daeha building, No.360 Kim Ma\nNgoc Khanh Ward, Ba Dinh District\nHanoi\nViet Nam",
       "rules_applied": [
         {
           "rule_id": "4.2.0.2",
-          "outcome": "SEPARATE_PARTIES_FOUND"
+          "outcome": "MATCH"
         },
         {
-          "rule_id": "4.2.0.3",
-          "outcome": "SHIP_TO_SCENARIO_IDENTIFIED"
-        },
-        {
-          "rule_id": "4.2.0.3.1",
-          "outcome": "MANUAL_REVIEW"
+          "rule_id": "4.2.2.1",
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.2.3",
-          "outcome": "MATCH_FOR_SHIP_TO_COUNTRY"
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.2.4",
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignee kan identifieras exakt i fakturans leveransadressfält ('Delivery address') i Vietnam. Fakturan visar samtidigt en separat kommersiell part, 'CORESYS TECHNOLOGIES LIMITED, Hong Kong', som framstår som den fakturerade motparten/buyern. Eftersom certifikatets consignee endast återfinns som Ship-To/Delivery-mottagare medan en annan oberoende juridisk part förekommer som kommersiell part, krävs manuell bedömning av mottagarrollen."
+      "motivation": "Certifikatets mottagare kan identifieras i fakturans Delivery address-fält som samma juridiska part. Gatuadressen skiljer sig, men företagsnamnet och landet Vietnam/Viet Nam överensstämmer och adressavvikelsen medför inte avvikelse enligt reglerna."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.95,
+      "confidence": 0.98,
       "certificate_value": "INT-LN002, 1 kolli\n1 pcs LOW NOISE DRILL",
-      "invoice_value": "Item no INT-LN002\nDesignation LOW NOISE DRILL",
+      "invoice_value": "Item no\nINT-LN002\nDesignation\nLOW NOISE DRILL\nAmount\n1",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "MATCH"
+          "outcome": "Prioritet 1 tillämpad"
         },
         {
           "rule_id": "4.3.6",
           "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.3.8",
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger artikelnummer 'INT-LN002' och varubeskrivning 'LOW NOISE DRILL'. Fakturan innehåller exakt samma artikelnummer och samma varubeskrivning på artikelraden. Varubeskrivningen är därför verifierad med primär matchning via artikelnummer."
+      "motivation": "Certifikatet anger artikelnummer 'INT-LN002' och varubeskrivningen 'LOW NOISE DRILL'. Fakturan innehåller exakt samma artikelnummer och samma varubeskrivning, vilket ger matchning enligt artikelnummer med högsta prioritet."
     },
     "quantity": {
       "applicable": true,
-      "status": "MATCH",
-      "confidence": 0.79,
-      "certificate_value": "Box 7: 17 kilo gross W\nBox 6: 1 pcs LOW NOISE DRILL",
-      "invoice_value": "Amount 1\n(Item no INT-LN002 / LOW NOISE DRILL)",
+      "status": "MANUAL_REVIEW",
+      "confidence": 0.46,
+      "certificate_value": "17 kilo gross W",
+      "invoice_value": "Amount 1",
       "rules_applied": [
         {
-          "rule_id": "4.4.3.1",
-          "outcome": "MATCH"
+          "rule_id": "4.4.2.1",
+          "outcome": "Box 7 identifierad som verifieringsgrundande kvantitet"
         },
         {
-          "rule_id": "4.4.3.2",
-          "outcome": "MATCH"
+          "rule_id": "4.4.3.2.1",
+          "outcome": "Box 7-vikten måste verifieras"
+        },
+        {
+          "rule_id": "4.4.3.0b",
+          "outcome": "Ingen uttrycklig motsägelse identifierad"
+        },
+        {
+          "rule_id": "4.4.6.1",
+          "outcome": "MANUAL_REVIEW"
         }
       ],
-      "motivation": "Certifikatet innehåller flera kvantitetsuppgifter: dels vikt i box 7 ('17 kilo gross W'), dels styckantal i box 6 ('1 pcs'). Fakturan visar ingen verifierbar vikt, men den visar numeriskt antal '1' för den matchande artikeln INT-LN002 / LOW NOISE DRILL. Enligt regeln att minst en kvantitetsuppgift räcker när flera uppgifter finns och ingen uttrycklig motsägelse föreligger blir kontrollpunkten MATCH."
+      "motivation": "Certifikatets kvantitetsfält (box 7) anger vikt: '17 kilo gross W'. Fakturan visar endast styckantalet 'Amount 1' för artikeln och innehåller ingen explicit viktuppgift som kan jämföras med 17 kilo gross weight. Eftersom box 7-vikten måste verifieras men fakturan saknar motsvarande viktfält uppstår manuell granskning, inte konstaterad mismatch."
     },
     "origin": {
       "applicable": true,
@@ -152,32 +156,31 @@
       "rules_applied": [
         {
           "rule_id": "4.5.1",
-          "outcome": "MATCH"
+          "outcome": "Explicit origin-fält identifierat"
         },
         {
           "rule_id": "4.5.5",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger ursprungsland 'Sweden'. Fakturan anger uttryckligen 'Made in Sweden' på artikelraden. Ursprungslandet är därmed explicit identifierat i fakturan."
+      "motivation": "Certifikatet anger ursprungsland 'Sweden'. Fakturan anger uttryckligen 'Made in Sweden', vilket är en explicit ursprungsangivelse och verifierar certifikatets uppgift."
     }
   },
   "overall_assessment": {
     "comparison_result": "MANUAL_REVIEW",
     "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
     "auto_approval_eligible": false,
-    "confidence": 0.78,
+    "confidence": 0.79,
     "critical_failures": [],
     "manual_review_triggers": [
-      "Consignee appears as delivery address in Vietnam, while a separate commercial party 'CORESYS TECHNOLOGIES LIMITED, Hong Kong' appears in the invoice as the other transaction party.",
-      "Invoice text was not OCR-parsed, but key fields were still readable from the rendered image; the remaining blocker is role allocation for consignee, not readability."
+      "Certifikatets kvantitetsfält anger '17 kilo gross W' men fakturan saknar explicit viktuppgift."
     ],
-    "decision_summary": "Consignor, goods description, quantity and origin could be verified against the invoice. The only unresolved point is consignee: the certificate consignee is present in the delivery address, while the invoice also shows a different commercial party in Hong Kong. Under the ship-to exception with an independent bill-to/buyer-type party, the result must be escalated for manual handling.",
-    "human_explanation": "Certifikatet anger mottagaren som DIEP NAM HUNG TECHNOLOGY JOINT STOCK COMPANY i Vietnam. I fakturan finns samma företag som leveransadress, men fakturan visar också en annan kommersiell part, CORESYS TECHNOLOGIES LIMITED i Hongkong. Övriga uppgifter stämmer, men mottagarrollen behöver därför granskas manuellt."
+    "decision_summary": "Consignor, consignee, varubeskrivning och ursprungsland kan verifieras mot fakturan. Kvantiteten i certifikatets box 7 är en viktuppgift som inte kan verifieras eftersom fakturan endast visar styckantal och ingen vikt.",
+    "human_explanation": "Avsändare, mottagare, varubeskrivning och ursprungsland kan verifieras mot fakturan. Certifikatet anger dock kvantiteten som '17 kilo gross W' medan fakturan inte visar någon viktuppgift, så kvantiteten kan inte verifieras säkert. Ärendet behöver därför granskas manuellt."
   },
   "_meta": {
-    "tested_at": "2026-04-02T11:06:44.028156+00:00",
-    "prompt_hash": "f81eb9b0d2ea",
+    "tested_at": "2026-04-11T08:06:46.143342+00:00",
+    "prompt_hash": "de0d620a2b38",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P211_MISMATCH",

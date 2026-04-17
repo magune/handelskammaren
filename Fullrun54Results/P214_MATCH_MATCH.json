@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-04-02T00:00:00Z",
+    "verification_timestamp": "2026-04-11T00:00:00Z",
     "document_pair_id": null,
     "certificate_issue_date": "2026-02-24",
     "source_documents_received": 2
@@ -15,12 +15,12 @@
     "document_a": {
       "label": "Document A",
       "assumed_role": "certificate",
-      "document_type": "Certificate of Origin"
+      "document_type": "certificate_of_origin"
     },
     "document_b": {
       "label": "Document B",
       "assumed_role": "invoice",
-      "document_type": "Invoice"
+      "document_type": "invoice"
     }
   },
   "rule_activation": {
@@ -29,32 +29,36 @@
     "general_goods_description_with_invoice_reference_active": false,
     "mixed_origins_rule_active": true,
     "to_order_rule_active": false,
-    "quantity_exception_applied": null,
+    "quantity_exception_applied": "3D",
     "eu_origin_normalization_active": false,
     "activated_rules": [
       {
-        "rule_id": "8.5.0",
-        "rule_name": "Filbaserad dokumentparning - separat fakturafil användes, inbäddade fakturasidor i certifikatfilen användes inte för verifiering"
-      },
-      {
-        "rule_id": "8.6",
-        "rule_name": "Obligatorisk parningsvalidering"
-      },
-      {
         "rule_id": "4.1.0",
-        "rule_name": "Consignor identifierad i fakturan"
+        "rule_name": "Consignor identified anywhere in invoice"
       },
       {
         "rule_id": "4.2.0.2",
-        "rule_name": "Prioritetsordning för consignee-identifiering"
+        "rule_name": "Consignee may match any recipient role in invoice"
       },
       {
-        "rule_id": "4.4.3.1",
-        "rule_name": "Flera kvantitetsuppgifter - minst en ska verifieras"
+        "rule_id": "4.3.3",
+        "rule_name": "Controlled text match for goods description"
       },
       {
-        "rule_id": "4.5.3",
-        "rule_name": "Blandade ursprung"
+        "rule_id": "4.3.7",
+        "rule_name": "Mixed origins with per-item linkage in certificate"
+      },
+      {
+        "rule_id": "4.4.5.5",
+        "rule_name": "3D summering av flera rader inom samma faktura"
+      },
+      {
+        "rule_id": "4.4.5.7",
+        "rule_name": "Multiple numeric values in box 7 without full unit repetition"
+      },
+      {
+        "rule_id": "8.6",
+        "rule_name": "Mandatory pairing sanity check"
       }
     ]
   },
@@ -75,21 +79,25 @@
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.1.5",
+          "rule_id": "4.1.4",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor '4on AB' återfinns uttryckligen i den separata fakturafilen på sida 2 i adressblocket, med samma land Sverige. Namn och land kan därför verifieras direkt mot fakturan. Den inbäddade fakturakopian i certifikatfilen användes inte som verifieringsunderlag enligt parningsregeln."
+      "motivation": "Certifikatets consignor '4on AB' återfinns uttryckligen i fakturan på sida 2 i adressblocket 'Address 4on AB, Hyvelvägen 3, 44432 Stenungsund, Sweden'. Landet Sweden framgår explicit och stöds även av VAT-prefix 'SE559312558501'."
     },
     "consignee": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.96,
-      "certificate_value": "NOBY USA LLC\n2771 W 76th St \nHialeah, FL\n33016\nUnited States of America",
-      "invoice_value": "NOBY USA LLC\n3105 NW 107TH AVE STE 400\n33172 Doral, FL\nUnited States\n\nDelivery address\nNOBY USA LLC\n2771 W 76th St\n33016 Hialeah, FL\nUnited States",
+      "confidence": 0.99,
+      "certificate_value": "NOBY USA LLC\n2771 W 76th St\nHialeah, FL\n33016\nUnited States of America",
+      "invoice_value": "Delivery address\nNOBY USA LLC\n2771 W 76th St\n33016 Hialeah, FL\nUnited States",
       "rules_applied": [
         {
           "rule_id": "4.2.0.2",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.2.3",
           "outcome": "MATCH"
         },
         {
@@ -97,62 +105,62 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Mottagarnamnet 'NOBY USA LLC' finns i fakturans huvudadressblock och även i leveransadressen. Landet är United States/United States of America i båda dokumenten. Skillnader i gatuadress påverkar inte bedömningen när samma juridiska namn och land kan identifieras."
+      "motivation": "Mottagaren i certifikatet kan identifieras i fakturans Delivery address. Företagsnamnet 'NOBY USA LLC' och landet 'United States/United States of America' överensstämmer. Att fakturan även visar en separat buyer-adress i Doral motsäger inte Ship-To/Delivery address-matchningen."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.95,
+      "confidence": 0.87,
       "certificate_value": "4on TotalGrip Spray 200ml - 457Boxes - Sweden\n4on TotalDry Spray - 9Boxes - Sweden\n4on TotalGrip Spray 100ml - 2Boxes - Sweden\n4on TotalGrip Paste - 1Boxes - New Zealand\n4on Spinmax - 2Boxes - US\n4on SwiftGrip - 1Box - China\n4on Overgrip Premium Comfort 3-p - 4Boxes - China\n4on Overgrip Premium Comfort 12-p - 1Boxes - China\n4on Overgrip Premium Comfort 1-p - 3Boxes - China",
       "invoice_value": "31 4on TotalGrip Spray - 200ml\n40 4on TotalDry Spray\n49 4on TotalGrip Spray - 100ml\n30 4on TotalGrip Paste\n47 4on SpinMax\n43 4on SwiftGrip\n42 4on Overgrip Premium Comfort 3-p\n46 4on Overgrip Premium Comfort 12-p\n26 4on Overgrip Premium Comfort 1-p",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "NOT_APPLICABLE"
+          "outcome": "Priority 2 applied; no certificate article numbers used as primary identifiers"
         },
         {
           "rule_id": "4.3.3",
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.3.8",
+          "rule_id": "4.3.7",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Samtliga varor som anges i certifikatet kan identifieras i den separata fakturan genom kontrollerad textmatchning: 200ml-spray, TotalDry Spray, 100ml-spray, TotalGrip Paste, SpinMax, SwiftGrip och tre Overgrip-varianter. Extra uppgifter i fakturan såsom 'Commercial Sample' påverkar inte eftersom certifikatets uttryckliga varor återfinns i fakturan och ensidig verifiering tillämpas."
+      "motivation": "De nio produktnamnen i certifikatet kan identifieras i fakturan via kontrollerad textmatchning: TotalGrip Spray 200ml, TotalDry Spray, TotalGrip Spray 100ml, TotalGrip Paste, SpinMax, SwiftGrip samt Overgrip Premium Comfort 3-p/12-p/1-p. Skillnaden 'Spinmax'/'SpinMax' är endast versalisering. Certifikatet visar dessutom per artikel vilket ursprungsland som hör till respektive vara, vilket stöds av fakturans HS/origin-rader."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.87,
+      "confidence": 0.86,
       "certificate_value": "5484 pcs\n268 pcs\n24 pcs\n200 pcs\n250 pcs\n150 pcs\n160 pcs\n30\n5000",
-      "invoice_value": "24,00 pcs\n200,00 pcs\n250,00 pcs\n150,00 pack\n160,00 pack\n30,00 pcs\n5 000,00 pcs",
+      "invoice_value": "5 040,00 pcs + 444,00 pcs\n88,00 pcs + 180,00 pcs\n24,00 pcs\n200,00 pcs\n250,00 pcs\n150,00 pack\n160,00 pack\n30,00 pcs\n5 000,00 pcs",
       "rules_applied": [
         {
-          "rule_id": "4.4.3.1",
+          "rule_id": "4.4.5.1",
+          "outcome": "Sequential exception review performed"
+        },
+        {
+          "rule_id": "4.4.5.5",
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.4.3",
+          "rule_id": "4.4.5.7",
           "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.4.6.1",
-          "outcome": "NOT_APPLICABLE"
         }
       ],
-      "motivation": "Certifikatet innehåller flera kvantitetsuppgifter i box 7. Minst en kvantitetsuppgift måste verifieras, och här kan flera numeriska värden identifieras direkt i fakturan: 24, 200, 250, 150, 160, 30 och 5000. Att fakturan använder 'pack' för vissa rader påverkar inte, eftersom kontrollen enligt reglerna avser det numeriska värdet och fakturan inte innehåller någon entydig motsägelse som underkänner kontrollpunkten."
+      "motivation": "Certifikatets nio radvärden kan identifieras i fakturan. Värdet 5484 verifieras som 5040 + 444 för samma produktfamilj/item 31, och 268 verifieras som 88 + 180 för item 40, enligt undantag 3D för summering av flera rader inom samma faktura. Övriga värden 24, 200, 250, 150, 160, 30 och 5000 återfinns direkt i fakturan. De två sista certifikatvärdena saknar intecknad enhet i OCR-råtexten, men eftersom box 7 innehåller flera distinkta radvärden och fakturan visar exakt motsvarande radkvantiteter är matchningen entydig."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.99,
-      "certificate_value": "Sweden, China \nNew Zealand, US",
+      "confidence": 0.98,
+      "certificate_value": "Sweden, China\nNew Zealand, US",
       "invoice_value": "item no 31: 3506100000 - Country of Origin: Sweden\nItem no 40: 3307200000 - Country of Origin: Sweden\nItem no 47: 6805300000 - Country of Origin: US\nItem no 30: 3404905150 - Country of Origin: New Zealand\nItem no 43: 3926909790 - Country of Origin: China\nItem no 42: 3926909790 - Country of Origin: China\nItem no 46: 3926909790 - Country of Origin: China\nItem no 26: 3926909790 - Country of Origin: China\nitem no 49: 3506100000 - Country of Origin: Sweden",
       "rules_applied": [
         {
           "rule_id": "4.5.1",
-          "outcome": "MATCH"
+          "outcome": "Explicit origin field identified"
         },
         {
           "rule_id": "4.5.3",
@@ -163,22 +171,22 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Samtliga ursprungsländer i certifikatet - Sweden, China, New Zealand och US - framgår uttryckligen i fakturans HS/origin-block på sida 2. Ursprungen är angivna i explicit origin-fält per artikelrad och inga motstridiga ursprungsuppgifter förekommer."
+      "motivation": "Samtliga ursprungsländer i certifikatet återfinns uttryckligen i fakturans 'Country of Origin'-rader: Sweden, US, New Zealand och China. Fakturan anger ursprung per artikel, vilket ger entydig koppling vid blandade ursprung."
     }
   },
   "overall_assessment": {
     "comparison_result": "IDENTICAL",
     "workflow_recommendation": "AUTO_APPROVAL_ELIGIBLE",
     "auto_approval_eligible": true,
-    "confidence": 0.93,
+    "confidence": 0.92,
     "critical_failures": [],
     "manual_review_triggers": [],
-    "decision_summary": "Dokumentrollen kunde klassificeras säkert: Document A är Certificate of Origin och Document B är den separata fakturan. Parningsvalideringen passerade eftersom certifikatets consignor och consignee kan identifieras i fakturan. Samtliga tillämpliga kontrollpunkter bedöms som MATCH; verifieringen gjordes mot den separata fakturafilen och inte mot den inbäddade fakturakopian i certifikatfilen.",
-    "human_explanation": "Certifikatet och den separata fakturan avser samma avsändare, mottagare, varor och ursprungsländer. Flera kvantiteter i certifikatet kan också verifieras direkt mot fakturaraderna. Dokumentparet kan därför godkännas automatiskt."
+    "decision_summary": "Dokumentparet är giltigt parat via consignor och consignee. Samtliga fem kontrollpunkter matchar; kvantitet krävde summering av två produktpar över två fakturasidor inom samma faktura, medan övriga uppgifter kunde verifieras direkt.",
+    "human_explanation": "Certifikatet och fakturan stämmer överens för avsändare, mottagare, varor, kvantiteter och ursprungsländer. Kvantiteterna 5 484 och 268 bekräftas genom summering av motsvarande rader i samma faktura, och övriga värden matchar direkt. Dokumentparet kan därför godkännas automatiskt."
   },
   "_meta": {
-    "tested_at": "2026-04-02T11:06:44.030561+00:00",
-    "prompt_hash": "f81eb9b0d2ea",
+    "tested_at": "2026-04-11T08:06:46.144635+00:00",
+    "prompt_hash": "de0d620a2b38",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P214_MATCH",

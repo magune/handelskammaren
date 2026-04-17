@@ -34,11 +34,11 @@
     "activated_rules": [
       {
         "rule_id": "8.6",
-        "rule_name": "Parningsvalidering passerad via consignorträff i fakturan"
+        "rule_name": "Parningsvalidering passerad via consignor-identifikation i fakturan"
       },
       {
         "rule_id": "4.5.4.2",
-        "rule_name": "EU-medlemsland normalisering för ursprungsland"
+        "rule_name": "EU-medlemsland och EU är utbytbara vid ursprungsverifiering"
       }
     ]
   },
@@ -46,46 +46,46 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.97,
+      "confidence": 0.98,
       "certificate_value": "Rosemount Tank Radar AB\nBox 150\n43523, Molnlycke\nSweden",
-      "invoice_value": "Rosemount Tank Radar AB\nLayoutevägen 1\n435 33 MÖLNLYCKE\nSWEDEN",
+      "invoice_value": "Rosemount Tank Radar AB\nLayoutvägen 1\n435 33 MÖLNLYCKE\nSWEDEN",
       "rules_applied": [
         {
           "rule_id": "4.1.0",
-          "outcome": "matched"
+          "outcome": "MATCH"
         },
         {
-          "rule_id": "4.1.2",
-          "outcome": "matched"
+          "rule_id": "4.1.2.1",
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.1.4",
-          "outcome": "matched"
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor 'Rosemount Tank Radar AB' återfinns uttryckligen i fakturan både i sidhuvud, 'Ship From' och footer. Landet Sverige framgår explicit i fakturan. Skillnader i adress/postnummer påverkar inte utfallet eftersom företagsnamn och land kan verifieras som samma juridiska part."
+      "motivation": "Certifikatets consignor 'Rosemount Tank Radar AB' kan identifieras uttryckligen i fakturans header, ship-from-block och footer. Landet Sverige verifieras i fakturans adressuppgifter och VAT-prefix 'SE'. Skillnader i gata/postnummer påverkar inte utfallet."
     },
     "consignee": {
       "applicable": true,
       "status": "MISMATCH",
       "confidence": 0.99,
       "certificate_value": "BEIJING ROSEMOUNT FAR EAST\n1st Floor Building No 1\nSouth of Shengfang Road\nQian Gao Mi Dian Economic Develompent ZO Da Xing District\n102600 Beijing\nChina",
-      "invoice_value": "Sold To / Invoice To / Ship To:\nEMERSON FZE\nS20137 STREET S219\nPO BOX 17034\nJEBEL ALI FREE ZONE SOUTH ZONE 2\nDUBAI\nUNITED ARAB EMIRATES",
+      "invoice_value": "EMERSON FZE\nS20137 STREET S219\nPO BOX 17034\nJEBEL ALI FREE ZONE SOUTH ZONE 2\nDUBAI\nUNITED ARAB EMIRATES",
       "rules_applied": [
         {
           "rule_id": "4.2.0.2",
-          "outcome": "mismatched"
+          "outcome": "MISMATCH"
         },
         {
           "rule_id": "4.2.1.1",
-          "outcome": "not_found"
+          "outcome": "MISMATCH"
         },
         {
           "rule_id": "4.2.4",
-          "outcome": "mismatched"
+          "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Certifikatets consignee är 'BEIJING ROSEMOUNT FAR EAST' i Kina. Fakturans auktoritativa mottagarfält ('Sold To', 'Invoice To' och 'Ship To') anger 'EMERSON FZE' i Förenade Arabemiraten. Certifikatets mottagare kan inte identifieras någonstans i fakturan, och både juridisk part och land skiljer sig."
+      "motivation": "Certifikatets consignee är 'BEIJING ROSEMOUNT FAR EAST' i Kina. Fakturans relevanta mottagarfält (Sold To, Invoice To, Ship To, Deliver To) anger genomgående 'EMERSON FZE' i Förenade Arabemiraten. Certifikatets mottagare kan inte identifieras i något mottagarfält i fakturan."
     },
     "goods_description": {
       "applicable": true,
@@ -96,44 +96,36 @@
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "mismatched"
-        },
-        {
-          "rule_id": "4.3.2.3",
-          "outcome": "rejected"
+          "outcome": "MISMATCH"
         },
         {
           "rule_id": "4.3.8",
-          "outcome": "mismatched"
+          "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Certifikatet listar fyra specifika varor med artikelnummer/produktbeteckningar: 5900S, 2410S, 2240S och 5900C. Dessa artikelnummer kan inte identifieras i fakturan. Fallback-regeln för uteblivet artikelnummer kan inte användas eftersom fakturan endast innehåller en annan varurad, 'Radar Level Transmitter', och produktnamnen i certifikatet kan därför inte verifieras exakt mot fakturan."
+      "motivation": "Certifikatet anger artikelnummer 5900S, 2410S, 2240S och 5900C. Enligt prioritet 1 ska matchning ske via artikelnummer när sådana anges i certifikatet. Dessa artikelnummer kan inte identifieras i fakturan, som i stället beskriver 'R-3408*70834951 Radar Level Transmitter'."
     },
     "quantity": {
       "applicable": true,
-      "status": "MISMATCH",
-      "confidence": 0.97,
-      "certificate_value": "Box 7: 4 PCS / 7 PCS / 1 PCS / 3 PCS",
-      "invoice_value": "Qty Shipped: 2 EA",
+      "status": "MANUAL_REVIEW",
+      "confidence": 0.63,
+      "certificate_value": "4 PCS\n7 PCS\n1 PCS\n3 PCS",
+      "invoice_value": "2 EA",
       "rules_applied": [
         {
-          "rule_id": "4.4.2.1",
-          "outcome": "box_7_selected"
+          "rule_id": "4.4.2",
+          "outcome": "PASS"
         },
         {
-          "rule_id": "4.4.3",
-          "outcome": "mismatched"
+          "rule_id": "4.4.3.1",
+          "outcome": "INCONCLUSIVE"
         },
         {
-          "rule_id": "4.4.3.2",
-          "outcome": "rejected"
-        },
-        {
-          "rule_id": "4.4.6",
-          "outcome": "mismatched"
+          "rule_id": "4.4.3.0b",
+          "outcome": "MANUAL_REVIEW"
         }
       ],
-      "motivation": "Verifieringsgrundande kvantitet finns i certifikatets box 7 och består av fyra uttryckliga styckantal: 4 PCS, 7 PCS, 1 PCS och 3 PCS. Fakturan anger endast '2 EA'. Ingen av certifikatets box 7-kvantiteter kan identifieras i fakturan. Uppgiften '2 packages' i certifikatets box 6 ändrar inte detta, eftersom box 7 är den verifieringsgrundande kvantitetsrutan och förutsättningarna för försändelsekvantitetsundantag är inte uppfyllda."
+      "motivation": "Certifikatet innehåller fyra radkvantiteter med enhet (4 PCS, 7 PCS, 1 PCS, 3 PCS). Fakturan innehåller endast en kvantitet '2 EA' för en vara som inte har kunnat kopplas till certifikatets artiklar, eftersom varubeskrivningen redan har fallit ut som MISMATCH. Reglerna förbjuder att blanda irrelevanta varor; när koppling till samma vara inte kan fastställas ska kvantiteten skickas till manuell granskning i stället för att klassas som bevisad avvikelse."
     },
     "origin": {
       "applicable": true,
@@ -143,38 +135,35 @@
       "invoice_value": "Country of Origin\nSWEDEN\nSWEDEN",
       "rules_applied": [
         {
-          "rule_id": "4.5.1",
-          "outcome": "matched"
-        },
-        {
           "rule_id": "4.5.4.2",
-          "outcome": "matched"
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.5.5",
-          "outcome": "matched"
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Fakturan innehåller ett explicit ursprungsfält 'Country of Origin' med värdet 'SWEDEN'. Certifikatets specifika ursprungsland 'Sweden' verifieras direkt. Certifikatets kompletterande ursprungsangivelse 'European Union' verifieras genom EU-medlemslandsnormalisering, eftersom Sweden är ett EU-medlemsland."
+      "motivation": "Certifikatet anger ursprung 'EUROPEAN UNION' och 'Sweden'. Fakturan anger explicit ursprung 'SWEDEN'. Sweden verifierar det specifika landet direkt, och EU-delen verifieras via regeln att ett specifikt EU-medlemsland kan bekräfta EU-ursprung."
     }
   },
   "overall_assessment": {
     "comparison_result": "NOT_IDENTICAL",
     "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
     "auto_approval_eligible": false,
-    "confidence": 0.98,
+    "confidence": 0.96,
     "critical_failures": [
-      "Certifikatets mottagare 'BEIJING ROSEMOUNT FAR EAST, China' kan inte återfinnas i fakturan, som anger 'EMERSON FZE, UNITED ARAB EMIRATES'.",
-      "Certifikatets varubeskrivning med artikelnummer 5900S, 2410S, 2240S och 5900C kan inte verifieras mot fakturans enda varurad 'Radar Level Transmitter' / 'R-3408*70834951'.",
-      "Certifikatets kvantiteter i box 7 (4 PCS, 7 PCS, 1 PCS, 3 PCS) kan inte identifieras i fakturan, som anger 2 EA."
+      "Consignee mismatch: certifikatet anger BEIJING ROSEMOUNT FAR EAST, medan fakturan anger EMERSON FZE.",
+      "Goods mismatch: certifikatets artikelnummer 5900S/2410S/2240S/5900C återfinns inte i fakturan."
     ],
-    "manual_review_triggers": [],
-    "decision_summary": "Dokumentparningen är tekniskt möjlig eftersom certifikatets consignor 'Rosemount Tank Radar AB' tydligt återfinns i fakturan. Avsändare och ursprungsland kan verifieras, men mottagare, varubeskrivning och kvantitet motsäger inte varandra bara delvis utan uppvisar tydliga avvikelser. Minst en tillämplig kontrollpunkt är MISMATCH, därför är totalresultatet NOT_IDENTICAL.",
-    "human_explanation": "Certifikatet anger mottagaren som BEIJING ROSEMOUNT FAR EAST i Kina, medan fakturan är ställd till EMERSON FZE i Förenade Arabemiraten. Certifikatet listar fyra andra produkter och kvantiteterna 4, 7, 1 och 3 PCS, medan fakturan endast innehåller en rad för Radar Level Transmitter med 2 EA. Avsändare och ursprungsland kan verifieras, men dokumenten är därför inte identiska."
+    "manual_review_triggers": [
+      "Kvantiteten kan inte kopplas till samma vara eftersom varubeskrivningen inte matchar."
+    ],
+    "decision_summary": "Dokumentparet passerar grundläggande parningsvalidering via consignor, men faller på mottagare och varubeskrivning. Ursprungslandet kan verifieras, medan kvantiteten inte kan bedömas säkert mot samma vara. Minst en tillämplig kontrollpunkt har MISMATCH, därför är totalresultatet NOT_IDENTICAL.",
+    "human_explanation": "Certifikatet anger mottagaren som BEIJING ROSEMOUNT FAR EAST i Kina, medan fakturan anger EMERSON FZE i Förenade Arabemiraten. Certifikatets varor 5900S, 2410S, 2240S och 5900C med kvantiteter 4, 7, 1 och 3 PCS kan inte återfinnas i fakturan, som i stället avser Radar Level Transmitter 2 EA. Ursprungslandet Sverige/EU kan verifieras, men dokumenten är inte identiska och kräver manuell hantering."
   },
   "_meta": {
-    "tested_at": "2026-04-02T11:36:29.835557+00:00",
-    "prompt_hash": "f81eb9b0d2ea",
+    "tested_at": "2026-04-11T08:06:14.351082+00:00",
+    "prompt_hash": "de0d620a2b38",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P080_MISMATCH",

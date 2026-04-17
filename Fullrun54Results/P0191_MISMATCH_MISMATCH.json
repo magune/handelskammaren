@@ -1,9 +1,9 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-04-02T00:00:00Z",
+    "verification_timestamp": "2026-04-11T00:00:00Z",
     "document_pair_id": null,
-    "certificate_issue_date": "2025-03-12",
+    "certificate_issue_date": null,
     "source_documents_received": 2
   },
   "task": {
@@ -15,12 +15,12 @@
     "document_a": {
       "label": "Document A",
       "assumed_role": "certificate",
-      "document_type": "certificate_of_origin"
+      "document_type": "certificate of origin"
     },
     "document_b": {
       "label": "Document B",
       "assumed_role": "invoice",
-      "document_type": "proforma_invoice"
+      "document_type": "proforma invoice"
     }
   },
   "rule_activation": {
@@ -33,24 +33,12 @@
     "eu_origin_normalization_active": true,
     "activated_rules": [
       {
-        "rule_id": "8.6",
-        "rule_name": "Parningsvalidering passerad genom consignor- och consignee-identifikation i fakturan"
-      },
-      {
-        "rule_id": "4.2.0.2.1",
-        "rule_name": "Kombinerat consignee/delivery-fält med separat buyer/bill-to behandlas som leveransfält"
-      },
-      {
-        "rule_id": "4.2.0.3.1",
-        "rule_name": "Ship-To-regeln ger MANUAL_REVIEW vid oberoende Bill-To-part"
-      },
-      {
-        "rule_id": "4.4.3.2",
-        "rule_name": "Försändelsekvantitet i box 6 kan verifiera kvantitet"
+        "rule_id": "4.2.0.2",
+        "rule_name": "Consignee kan verifieras i något mottagarfält i fakturan"
       },
       {
         "rule_id": "4.5.4.2",
-        "rule_name": "Specifikt EU-land i certifikatet kan verifieras mot EU-angivelse i fakturan"
+        "rule_name": "EU-medlemsland och European Union behandlas som verifierad ursprungsmatchning"
       }
     ]
   },
@@ -60,94 +48,106 @@
       "status": "MATCH",
       "confidence": 0.98,
       "certificate_value": "ARCTIC PAPER MUNKEDALS AB\nSE-455 81, MUNKEDAL\nSweden",
-      "invoice_value": "Sales Office / Agent\nArctic Paper Munkedals AB\nSE-45581 Munkedal\nSweden\nSeller\nArctic Paper Munkedals AB\nSE-455 81 Munkedal\nSWEDEN",
+      "invoice_value": "Sales Office / Agent\nArctic Paper Munkedals AB\nSE-45581 Munkedal\nSweden\n...\nSeller\nArctic Paper Munkedals AB\nSE-455 81 Munkedal\nSWEDEN",
       "rules_applied": [
         {
-          "rule_id": "4.1.3.6",
+          "rule_id": "4.1.0",
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.1.4",
+          "rule_id": "4.1.2",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.2.1",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger consignor som ARCTIC PAPER MUNKEDALS AB i Sverige. Fakturan identifierar samma juridiska part som Sales Office / Agent och Seller, med samma kärnnamn och samma land. Skillnaden i versaler och adressformat är tillåten normalisering."
+      "motivation": "Certifikatets consignor 'ARCTIC PAPER MUNKEDALS AB' återfinns uttryckligen i fakturan både i 'Sales Office / Agent' och i seller/footer-blocket. Landet Sweden framgår explicit i fakturans adressblock och stöds även av SE-prefix i VAT/IBAN. Samma juridiska part och land kan därför verifieras utan otillåten tolkning."
     },
     "consignee": {
       "applicable": true,
-      "status": "MANUAL_REVIEW",
-      "confidence": 0.76,
-      "certificate_value": "SURESH GENERAL TRADING CO LLC\nP.O BOX-29075, OFFICE NO 517,\nA1 KHALEEJ CENTER, BUR DUBAI\nSHARAF DG METRO STATION EXIT #2\nDUBAI\nUnited Arab Emirates",
-      "invoice_value": "Buyer\nKASHA CO., LTD.\n3rd Preseed Building 5 F,\n2-2-2 Shinjuku, Chou-ku Chiba-city\nJP-260-0000 CHIBA\nJapan\n\nConsignee and deliveryaddress:\nSURESH GENERAL TRADING COMPANY LLC\nP.O.Box - 29075,\nOffice no. : 517, Al Khaleej Center\nBur Dubai - Dubai - UAE\nSharaf DG Metro Station, Exit #2",
+      "status": "MATCH",
+      "confidence": 0.92,
+      "certificate_value": "SURESH GENERAL TRADING CO LLC\nP.O BOX-29075, OFFICE NO 517,\nA1 KHALEEJ CENTER, BUR DUBAI\nSHARAF DG METRO STATION EXIT #2\nTRN NO:100 377 649 700 003\nContact: Mahesh\n04-3932496, 050-4541496\nDUBAI\nUnited Arab Emirates",
+      "invoice_value": "Consignee and deliveryaddress:\nSURESH GENERAL TRADING COMPANY LLC\nAddress:\nP.O.Box - 29075,\nOffice no. : 517,Al Khaleej Center\nBur Dubai - Dubai - UAE\nSharaf DG Metro Station, Exit #2\nTRN no:\n100 377 649 700 003\nContact: Mahesh\n04-3932496\n050-4541496",
       "rules_applied": [
         {
           "rule_id": "4.2.0.2",
-          "outcome": "Buyer/Bill-To prioriteras som auktoritativ kommersiell part"
+          "outcome": "MATCH"
         },
         {
-          "rule_id": "4.2.0.2.1",
-          "outcome": "Det separata \"Consignee and deliveryaddress\"-fältet behandlas som Ship-To/leveransfält"
+          "rule_id": "4.2.2.1",
+          "outcome": "MATCH"
         },
         {
-          "rule_id": "4.2.0.3",
-          "outcome": "Certifikatets consignee återfinns exakt i leveransfältet"
+          "rule_id": "4.1.3.3",
+          "outcome": "MATCH"
         },
         {
-          "rule_id": "4.2.0.3.1",
-          "outcome": "MANUAL_REVIEW"
+          "rule_id": "4.2.3",
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignee återfinns i fakturans separata \"Consignee and deliveryaddress\"-fält, men fakturan har samtidigt en annan Buyer/Bill-To-part: KASHA CO., LTD. i Japan. Eftersom Buyer/Bill-To och certifikatets consignee är olika juridiska entiteter utan styrkt samband ska Ship-To-scenariot inte ge MATCH utan MANUAL_REVIEW."
+      "motivation": "Certifikatets consignee kan identifieras i fakturans separata 'Consignee and deliveryaddress'-block även om buyer/delivery address i fakturans övre del avser KASHA CO., LTD. Namnskillnaden 'CO LLC' i certifikatet mot 'COMPANY LLC' i fakturan är en tillåten kommersiell förkortning/abbreviationsskillnad, och övriga adressuppgifter, TRN-nummer, kontaktperson och land (United Arab Emirates/UAE) stödjer att det är samma mottagare."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.93,
+      "confidence": 0.94,
       "certificate_value": "Order 331957, 30 pallets.\nMUNKEN UNPRINTED UNCOATED PAPER\n1) 6 pallets, 300g, 720x1020 mm, Munken Polar Rough Laminated\n2) 9 pallets, 100g, 720x1020 mm, Munken Polar Rough\n3) 3 pallet, 300g, 720x1020 mm, Munken Lynx Rough Laminated\n4) 4 pallet, 300g, 720x1020 mm, Munken Kristall Rough Laminated\n5) 3 pallets, 170g, 720x1020 mm, Munken Pure\n6) 5 pallets, 240g, 720x1020 mm, Munken Pure",
-      "invoice_value": "Our order No. 331957\n1 ... Qty 6 ... 720x1020 ... 300 ... Munken Polar Rough Laminated\n2 ... Qty 9 ... 720x1020 ... 100 ... Munken Polar Rough\n3 ... Qty 3 ... 720x1020 ... 300 ... Munken Lynx Rough Laminated\n4 ... Qty 4 ... 720x1020 ... 300 ... Munken Kristall Rough Laminated\n5 ... Qty 3 ... 720x1020 ... 170 ... Munken Pure\n6 ... Qty 5 ... 720x1020 ... 240 ... Munken Pure",
+      "invoice_value": "Our order No. 331957\nPos. 1 ... Qty 6 ... 720x1020 ... 300 ... Munken Polar Rough Laminated\nPos. 2 ... Qty 9 ... 720x1020 ... 100 ... Munken Polar Rough\nPos. 3 ... Qty 3 ... 720x1020 ... 300 ... Munken Lynx Rough Laminated\nPos. 4 ... Qty 4 ... 720x1020 ... 300 ... Munken Kristall Rough Laminated\nPos. 5 ... Qty 3 ... 720x1020 ... 170 ... Munken Pure\nPos. 6 ... Qty 5 ... 720x1020 ... 240 ... Munken Pure",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "Inga artikelnummer i certifikatet; kontroll gick vidare till textmatchning"
+          "outcome": "PRIORITY_2_TEXT_MATCH"
         },
         {
           "rule_id": "4.3.3",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "De sex varuraderna i certifikatet kan identifieras i fakturan med samma produktnamn, format 720x1020 mm, gramvikt och radkvantiteter. Orderreferensen 331957 återfinns också i båda dokumenten. Varubeskrivningen är därför verifierbar utan semantisk omtolkning."
+      "motivation": "Certifikatet innehåller ingen artikelnummerstyrd verifiering, så kontrollen har gjorts via kontrollerad textmatchning. Samtliga sex specificerade pappersrader i certifikatet kan identifieras i fakturans radtabell med samma kvalitet, grammage, format 720x1020 och antal pallar; ordernummer 331957 återfinns också i båda dokumenten. Varubeskrivningen kan därför verifieras entydigt."
     },
     "quantity": {
       "applicable": true,
-      "status": "MATCH",
-      "confidence": 0.87,
-      "certificate_value": "Box 6: Order 331957, 30 pallets.\nBox 7: GROSS WT 3246 kgs / 4401 kgs / 1623 kgs / 2164 kgs / 1722 kgs / 2705 kgs",
-      "invoice_value": "Number and type of packages/Quality: PALLETS 9; PALLETS 21; PACKAGES 30\nGross weight: 15861,0",
+      "status": "MANUAL_REVIEW",
+      "confidence": 0.66,
+      "certificate_value": "GROSS WT\n3246 kgs\n4401 kgs\n1623 kgs\n2164 kgs\n1722 kgs\n2705 kgs",
+      "invoice_value": "Net weight\n4293,0\n11208,0\n15501,0\nGross weight\n15861,0\n...\nline weights (kg): 3174,0 / 4293,0 / 1587,0 / 2116,0 / 1686,0 / 2645,0",
       "rules_applied": [
         {
-          "rule_id": "4.4.3.2",
-          "outcome": "MATCH"
+          "rule_id": "4.4.2.1",
+          "outcome": "MULTIPLE_CERTIFICATE_QUANTITIES_IDENTIFIED"
+        },
+        {
+          "rule_id": "4.4.3.0b",
+          "outcome": "MANUAL_REVIEW"
         },
         {
           "rule_id": "4.4.3.1",
-          "outcome": "MINST EN kvantitetsuppgift verifierad"
+          "outcome": "NO_SINGLE_CERTIFICATE_VALUE_COULD_BE_EXPLICITLY_VERIFIED"
         }
       ],
-      "motivation": "Certifikatet innehåller en försändelsekvantitet i box 6: \"30 pallets\". Fakturan visar samma försändelse som 30 packages med pakettyp pallets uppdelat som 9 + 21, vilket tillsammans avser den aktuella sändningen. Box 7 innehåller separata grossvikter per delpost som inte används som enda grund eftersom försändelsekvantiteten i box 6 kan verifieras för den refererade sändningen."
+      "motivation": "Certifikatet anger sex separata bruttovikter i box 7: 3246, 4401, 1623, 2164, 1722 och 2705 kgs. Fakturan visar en total gross weight om 15861,0 samt radvisa nettovikter 3174,0 / 4293,0 / 1587,0 / 2116,0 / 1686,0 / 2645,0, men inte samma sex separata bruttovikter. Reglerna tillåter inte att flera värden i certifikatet summeras för att verifieras mot fakturans totalrad, och de saknade line-by-line bruttovikterna motsägs inte uttryckligen; därför blir utfallet MANUAL_REVIEW, inte MISMATCH."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.91,
+      "confidence": 0.88,
       "certificate_value": "SWEDEN",
-      "invoice_value": "Country of origin: European Union",
+      "invoice_value": "Country of origin\nEuropean Union",
       "rules_applied": [
+        {
+          "rule_id": "4.5.1",
+          "outcome": "EXPLICIT_ORIGIN_FIELD_FOUND"
+        },
         {
           "rule_id": "4.5.4.2",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger ursprung Sverige. Fakturan anger ursprung European Union. Sverige är en EU-medlemsstat och ett specifikt EU-land får verifieras mot en generell EU-angivelse i fakturan."
+      "motivation": "Certifikatet anger ursprungsland 'SWEDEN'. Fakturan innehåller ett explicit origin-fält med 'European Union'. Enligt EU-normaliseringen är ett specifikt EU-medlemsland verifierat när fakturan anger European Union, och Sverige är EU-medlemsstat. Ursprunget kan därför verifieras."
     }
   },
   "overall_assessment": {
@@ -157,14 +157,14 @@
     "confidence": 0.79,
     "critical_failures": [],
     "manual_review_triggers": [
-      "Consignee kan endast verifieras via Ship-To/leveransfält medan Buyer/Bill-To är en annan oberoende juridisk part."
+      "Kvantitetsuppgiften i certifikatet består av sex separata bruttovikter som inte kan identifieras var för sig i fakturan."
     ],
-    "decision_summary": "Dokumentparet är korrekt parat och consignor, varubeskrivning, kvantitet och ursprung kan verifieras mot fakturan. Mottagaren kräver dock manuell granskning eftersom certifikatets consignee återfinns i leveransfältet medan fakturans Buyer/Bill-To är en annan juridisk part utan styrkt samband. Därför blir totalresultatet MANUAL_REVIEW och inte IDENTICAL.",
-    "human_explanation": "Certifikatet anger mottagaren som SURESH GENERAL TRADING CO LLC i Förenade Arabemiraten. Fakturan har KASHA CO., LTD. i Japan som buyer/bill-to och SURESH GENERAL TRADING COMPANY LLC endast i ett separat leverans-/consigneefält, vilket kräver manuell bedömning av mottagarrollen. Övriga kontroller stämmer."
+    "decision_summary": "Consignor, consignee, goods description and origin can be verified against the invoice. Quantity cannot be verified automatically because the certificate lists six separate gross-weight values while the invoice provides one total gross weight and line-level net weights, without explicit matching gross weights per line.",
+    "human_explanation": "Avsändare, mottagare, varubeskrivning och ursprung kan verifieras mot fakturan. Certifikatet anger dock sex separata bruttovikter (3246, 4401, 1623, 2164, 1722 och 2705 kgs) medan fakturan bara visar en total bruttovikt 15861,0 och radvisa nettovikter, så mängduppgiften kan inte verifieras entydigt automatiskt. Ärendet behöver därför granskas manuellt."
   },
   "_meta": {
-    "tested_at": "2026-04-02T11:23:49.158474+00:00",
-    "prompt_hash": "f81eb9b0d2ea",
+    "tested_at": "2026-04-11T08:05:42.141175+00:00",
+    "prompt_hash": "de0d620a2b38",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P0191_MISMATCH",

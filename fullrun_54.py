@@ -51,7 +51,11 @@ CHUNK_SIZE       = 50
 
 # Filter to specific pairs, or None for all.
 # Example: ["P001", "P003", "P031"]
-ONLY_PAIRS       = ["P0178", "P0183", "P030", "P092", "P207", "P232", "P0148", "P082", "P020", "P0187", "P0100", "P096", "P0160", "P0180", "P031"]
+# Targeted re-test (Regelverk 5 prompt + 20 facit changes):
+#   - 20 pairs with new MISMATCH facit
+#   - P013: EU origin regression risk (cert lists specific EU countries, invoice has DE not listed)
+#   - P210: EU origin spot check (cert SE+DE, invoice matches — low risk)
+ONLY_PAIRS       = ["P015", "P0182", "P224"]
 
 # Max retries per pair when LLM returns unparseable/garbage JSON
 MAX_GARBAGE_RETRIES = 2

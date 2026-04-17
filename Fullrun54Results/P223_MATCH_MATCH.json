@@ -1,8 +1,8 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-04-02",
-    "document_pair_id": "P223_MATCH",
+    "verification_timestamp": "2026-04-11T00:00:00Z",
+    "document_pair_id": null,
     "certificate_issue_date": "2026-03-03",
     "source_documents_received": 2
   },
@@ -15,18 +15,18 @@
     "document_a": {
       "label": "Document A",
       "assumed_role": "certificate",
-      "document_type": "Certificate of Origin"
+      "document_type": "certificate of origin"
     },
     "document_b": {
-      "label": "P223_MATCH_invoice.pdf",
+      "label": "Document B",
       "assumed_role": "invoice",
-      "document_type": "Invoice"
+      "document_type": "invoice"
     }
   },
   "rule_activation": {
     "lc_exception_active": false,
     "lc_number_found": null,
-    "general_goods_description_with_invoice_reference_active": true,
+    "general_goods_description_with_invoice_reference_active": false,
     "mixed_origins_rule_active": false,
     "to_order_rule_active": false,
     "quantity_exception_applied": null,
@@ -34,19 +34,27 @@
     "activated_rules": [
       {
         "rule_id": "8.5.0",
-        "rule_name": "Filbaserad dokumentparning"
+        "rule_name": "Filbaserad dokumentparning – använd separat fakturafil, inte inbäddad fakturakopia i certifikatfil"
       },
       {
         "rule_id": "8.6",
         "rule_name": "Obligatorisk parningsvalidering"
       },
       {
-        "rule_id": "4.3.5",
-        "rule_name": "Generell varubeskrivning med fakturareferens"
+        "rule_id": "4.1.0",
+        "rule_name": "Consignor identifierad någonstans i fakturadokumentet"
       },
       {
-        "rule_id": "4.5.4.2.1",
-        "rule_name": "EU + ett specifikt EU-land täcks av explicit EU-ursprungsuttalande"
+        "rule_id": "4.2.0.2",
+        "rule_name": "Consignee får matcha mot något relevant mottagarfält i fakturan"
+      },
+      {
+        "rule_id": "4.3.2",
+        "rule_name": "Varubeskrivning verifieras primärt via artikelnummer"
+      },
+      {
+        "rule_id": "4.5.4.2",
+        "rule_name": "EU-medlemsland och EU-normalisering"
       }
     ]
   },
@@ -54,143 +62,127 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.93,
+      "confidence": 0.98,
       "certificate_value": "Emballator Mellerud AB\nIndustrigatan 6\n46433, MELLERUD\nSweden",
       "invoice_value": "Emballator Mellerud AB * Box 83 * Industrig. 6 * SE-464 22 Mellerud * Sweden",
       "rules_applied": [
         {
           "rule_id": "4.1.0",
-          "outcome": "MATCH via explicit occurrence of consignor name in invoice footer/header"
+          "outcome": "MATCH"
         },
         {
-          "rule_id": "4.1.2.1",
-          "outcome": "Country verified via explicit country text and SE VAT/IBAN context in invoice footer"
+          "rule_id": "4.1.2",
+          "outcome": "MATCH"
         },
         {
-          "rule_id": "4.1.5",
+          "rule_id": "4.1.4",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor är \"Emballator Mellerud AB\" i Sverige. I den separata fakturafilen framgår samma juridiska namn uttryckligen i sidfoten och samma land framgår som \"Sweden\". Skillnader i gatu-/postuppgifter (Industrigatan 6 / Industrig. 6 samt olika postnummerformat) påverkar inte bedömningen eftersom företagsnamn och land kan verifieras."
+      "motivation": "Certifikatets consignor \"Emballator Mellerud AB\" återfinns uttryckligen i fakturans footer på fakturafilen. Fakturan visar även svensk adress och land \"Sweden\", vilket verifierar samma juridiska part och land."
     },
     "consignee": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.92,
+      "confidence": 0.96,
       "certificate_value": "Jotun Abu Dhabi LLC factory\nMusaffah West 4\nMusaffah Industrial Area\n3714 ABU DHABI\nUTD.ARAB.EMIR",
       "invoice_value": "Consignee\nJotun Abu Dhabi LLC (factory)\nMusaffah Industrial Area\n3714 ABU DHABI\nFÖREN. ARABEMIR",
       "rules_applied": [
         {
-          "rule_id": "4.2.1",
-          "outcome": "Matched against explicit Consignee field in invoice"
+          "rule_id": "4.2.0.2",
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.2.2.1",
-          "outcome": "Allowed normalization of case, punctuation and company formatting"
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.2.3",
-          "outcome": "Country match after normalization of UAE wording"
-        },
-        {
-          "rule_id": "4.2.4",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets mottagare kan identifieras i fakturans uttryckliga fält \"Consignee\" som \"Jotun Abu Dhabi LLC (factory)\". Företagsnamnet matchar efter tillåten normalisering, och landangivelsen UTD.ARAB.EMIR / FÖREN. ARABEMIR avser samma land. Att certifikatet innehåller en extra adressrad \"Musaffah West 4\" medan fakturan inte gör det är inte i sig en avvikelse."
+      "motivation": "Mottagaren i certifikatet kan identifieras i fakturans uttryckliga consignee-fält. Skillnaden \"factory\" kontra \"(factory)\" är endast formatering, och landet Förenade Arabemiraten återfinns i fakturan som \"FÖREN. ARABEMIR\"."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.95,
+      "confidence": 0.97,
       "certificate_value": "48HU0155-280-300A & 49000215\n2 pallets plastic bottles, HU 1L/28\ncustoms tariff no 39233010\n1 box plastic caps, cap 28 mm\ncustoms tariff no 39235010\nsee attached invoice 95137957 dated 03.03.2026",
-      "invoice_value": "48HU0155-280-300A / 102204B  HU 1L/28 55g nature,tactilesymbol\nCustoms tariff no: 39233010\n49000215  Kapsyl 28 mm svart UN-godkänd\nCustoms tariff no: 39235010\nInvoice no 95137957\nDate 03.03.2026",
+      "invoice_value": "48HU0155-280-300A\nUN-approved round bottle 1L/28 55g nature,tactilesymbol\nCustoms tariff no: 39233010\n49000215\nKapsyl 28 mm svart UN-godkänd\nCustoms tariff no: 39235010",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "Primary verification by exact article number match"
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.3.6",
-          "outcome": "Article numbers 48HU0155-280-300A and 49000215 found exactly in invoice"
+          "outcome": "MATCH"
         },
         {
-          "rule_id": "4.3.5",
-          "outcome": "Supporting invoice reference/date also match"
-        },
-        {
-          "rule_id": "4.3.8",
+          "rule_id": "4.3.4",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Varubeskrivningen verifieras primärt via artikelnummer enligt prioritetsordningen. Båda artikelnumren i certifikatet, \"48HU0155-280-300A\" och \"49000215\", återfinns exakt i fakturan. Certifikatet hänvisar dessutom till faktura 95137957 daterad 03.03.2026, vilket också överensstämmer med fakturans nummer och datum."
+      "motivation": "Certifikatet anger artikelnumren 48HU0155-280-300A och 49000215. Båda artikelnumren kan identifieras exakt i fakturan, tillsammans med motsvarande tullnummer 39233010 och 39235010. Förpackningstillägg som \"2 pallets\" och \"1 box\" ändrar inte artikelidentiteten."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.97,
+      "confidence": 0.99,
       "certificate_value": "78,4 kg net weight",
       "invoice_value": "Net weight 78,4 KG",
       "rules_applied": [
         {
-          "rule_id": "4.4.1",
-          "outcome": "Exact numeric presence verified"
+          "rule_id": "4.4.2.2",
+          "outcome": "MATCH"
         },
         {
-          "rule_id": "4.4.2.2",
-          "outcome": "Single explicit net weight with weight category"
+          "rule_id": "4.4.3",
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.4.4",
-          "outcome": "Matched against total weight statement in invoice"
-        },
-        {
-          "rule_id": "4.4.6",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger ett enda explicit viktvärde: \"78,4 kg net weight\". Fakturans sida 2 anger \"Net weight 78,4 KG\". Numeriskt värde, viktenhet och viktkategori överensstämmer direkt utan behov av undantag eller beräkning."
+      "motivation": "Certifikatets box 7 anger numeriskt värde, enhet och viktkategori: \"78,4 kg net weight\". Fakturan anger uttryckligen samma totalvikt som \"Net weight 78,4 KG\". Värdet överensstämmer exakt."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.94,
+      "confidence": 0.96,
       "certificate_value": "EU: Sweden",
-      "invoice_value": "Country of origin: Sweden\nThe exporter of the products covered by this document declares that except where otherwise clearly indicated, these products are of EU preferential origin.",
+      "invoice_value": "Country of origin: SE\nCountry of origin: Sweden\nThe exporter of the products covered by this document declares that except where otherwise clearly indicated, these products are of EU preferential origin.",
       "rules_applied": [
         {
           "rule_id": "4.5.1",
-          "outcome": "Explicit origin statements identified in invoice"
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.5.4.1",
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.5.4.2",
-          "outcome": "Specific EU member state Sweden verified"
-        },
-        {
-          "rule_id": "4.5.4.2.1",
-          "outcome": "EU + one named EU country covered by explicit EU origin statement"
-        },
-        {
-          "rule_id": "4.5.5",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger ursprung \"EU: Sweden\". Fakturans sida 2 innehåller både ett explicit ursprungsfält \"Country of origin: Sweden\" och ett separat explicit EU-ursprungsuttalande om att produkterna är av EU-förmånsursprung. Därmed kan både \"Sweden\" och EU-delen verifieras uttryckligen i fakturan."
+      "motivation": "Certifikatet anger ursprung \"EU: Sweden\". Fakturan innehåller explicit ursprungsangivelse både som \"Country of origin: SE/Sweden\" och som ett uttryckligt EU-ursprungsuttalande. Därmed kan både Sweden och EU verifieras utan motsägelse."
     }
   },
   "overall_assessment": {
     "comparison_result": "IDENTICAL",
     "workflow_recommendation": "AUTO_APPROVAL_ELIGIBLE",
     "auto_approval_eligible": true,
-    "confidence": 0.94,
+    "confidence": 0.97,
     "critical_failures": [],
     "manual_review_triggers": [],
-    "decision_summary": "Det korrekta dokumentparet identifierades som originalcertifikatet i certifikatfilen och den separata fakturafilen med fakturanummer 95137957. Samtliga tillämpliga kontrollpunkter – consignor, consignee, varubeskrivning, kvantitet och ursprungsland – kunde verifieras som MATCH enligt regelverket.",
-    "human_explanation": "Certifikatet hänvisar till faktura 95137957 daterad 03.03.2026 och uppgifterna om avsändare, mottagare, varor, nettovikt 78,4 kg och ursprung Sverige/EU återfinns i fakturan. Dokumentparet stämmer därför överens och kan godkännas automatiskt."
+    "decision_summary": "Det identifierade dokumentparet består av originalcertifikatet i certifikatfilen och den separata fakturafilen med fakturanummer 95137957. Samtliga tillämpliga kontrollpunkter – consignor, consignee, varubeskrivning via artikelnummer, kvantitet och ursprung – kan verifieras enligt regelverket.",
+    "human_explanation": "Certifikatet kan verifieras mot fakturan. Avsändare, mottagare, artikelnummer/varor, nettovikt 78,4 kg och ursprung Sweden/EU framgår av den bifogade fakturan. Dokumentparet kan därför godkännas automatiskt."
   },
   "_meta": {
-    "tested_at": "2026-04-02T11:06:44.034437+00:00",
-    "prompt_hash": "f81eb9b0d2ea",
+    "tested_at": "2026-04-11T08:06:46.148645+00:00",
+    "prompt_hash": "de0d620a2b38",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P223_MATCH",

@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-04-02T00:00:00Z",
+    "verification_timestamp": "2026-04-11T00:00:00Z",
     "document_pair_id": null,
     "certificate_issue_date": "2026-01-09",
     "source_documents_received": 2
@@ -15,12 +15,12 @@
     "document_a": {
       "label": "Document A",
       "assumed_role": "certificate",
-      "document_type": "Certificate of Origin (certificate file contains embedded invoice copy on a later page; separate invoice file used for verification)"
+      "document_type": "Certificate of Origin (file contains certificate page and embedded invoice copy; certificate page used as certificate source)"
     },
     "document_b": {
       "label": "Document B",
       "assumed_role": "invoice",
-      "document_type": "Invoice"
+      "document_type": "Commercial Invoice"
     }
   },
   "rule_activation": {
@@ -34,31 +34,31 @@
     "activated_rules": [
       {
         "rule_id": "8.5.0",
-        "rule_name": "Filbaserad dokumentparning - använd certifikat från certifikatfilen och faktura från separat fakturafil"
+        "rule_name": "Filbaserad dokumentparning – certifikat hämtat från certifikatfilen och verifiering gjord mot separat fakturafil"
       },
       {
         "rule_id": "8.6",
-        "rule_name": "Obligatorisk parningsvalidering"
+        "rule_name": "Parningsvalidering passerad genom consignor- och consignee-träff i fakturan"
       },
       {
         "rule_id": "4.1.0",
-        "rule_name": "Consignor får verifieras om företagsnamnet förekommer uttryckligen i fakturan"
+        "rule_name": "Consignor identifierad uttryckligen i fakturans header/footer"
       },
       {
         "rule_id": "4.2.0.2",
-        "rule_name": "Prioritetsordning för consignee-identifiering"
+        "rule_name": "Consignee identifierad i relevant mottagarfält i fakturan"
       },
       {
         "rule_id": "4.3.4",
-        "rule_name": "Tillägg som inte påverkar produktidentitet"
+        "rule_name": "Tillägg som inte påverkar produktidentiteten accepterat för varubeskrivning"
       },
       {
-        "rule_id": "4.4.2.1",
-        "rule_name": "Box 7 är verifieringsgrundande för kvantitet"
+        "rule_id": "4.4.4",
+        "rule_name": "Total vikt i faktura använd för verifiering av certifikatets vikt"
       },
       {
         "rule_id": "4.5.1",
-        "rule_name": "Ursprungsland ska framgå uttryckligen i fakturan"
+        "rule_name": "Ursprungsland verifierat via explicit origin-text i fakturan"
       }
     ]
   },
@@ -71,6 +71,10 @@
       "invoice_value": "CellMark AB\nCELLMARK AB\nLilla Bommen 3C\nBOX 11927\n404 39 GOTHENBURG\nSWEDEN\nVAT No SE556244243301",
       "rules_applied": [
         {
+          "rule_id": "8.5.0",
+          "outcome": "MATCH"
+        },
+        {
           "rule_id": "4.1.0",
           "outcome": "MATCH"
         },
@@ -79,48 +83,44 @@
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.1.5",
+          "rule_id": "4.1.4",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor är \"Cellmark AB ... Sweden\". I den separata fakturafilen förekommer samma juridiska namn uttryckligen i fakturahuvud/footer som \"CELLMARK AB ... SWEDEN\" och landet bekräftas dessutom av adressen samt VAT-prefixet \"SE\". Därmed kan consignor identifieras i fakturan som samma juridiska part."
+      "motivation": "Certifikatets consignor 'Cellmark AB' återfinns uttryckligen i den separata fakturan som 'CellMark AB' i sidhuvud/branding och som 'CELLMARK AB' i footer med svensk adress. Landet Sverige verifieras både genom adressen 'SWEDEN' och VAT-prefixet 'SE'. Skillnaden i versalisering påverkar inte matchningen."
     },
     "consignee": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.98,
+      "confidence": 0.97,
       "certificate_value": "FOR/NOTIFY PARTY: ELITE PAPER INDUSTRY W.L.L BUILDING NO 84, PO BOX 24366 NEW INDUSTRIAL AREA, DOHA, QATAR\nFOR/CONSIGNEE: QATAR DEVELOPMENT BANK, GRAND HAMAD STR., DOHA QATAR\nQatar",
-      "invoice_value": "Buyer\nFOR/NOTIFY PARTY: ELITE PAPER INDUSTRY W.L.L., BUILDING NO 84, PO BOX 24366, STR 4F, ZONE 81, NEW INDUSTRIAL AREA, DOHA, QATAR\nFOR/CONSIGNEE: QATAR DEVELOPMENT BANK, GRAND HAMAD STR., DOHA, QATAR",
+      "invoice_value": "Buyer\nFOR/NOTIFY PARTY: ELITE PAPER INDUSTRY W.L.L., BUILDING NO 84, PO BOX 24366, STR 4F, ZONE 81, NEW INDUSTRIAL AREA, DOHA, QATAR\nFOR/CONSIGNEE: QATAR DEVELOPMENT BANK, GRAND HAMAD STR., DOHA, QATAR\nRemarks\nFOR/CONSIGNEE: QATAR DEVELOPMENT BANK, GRAND HAMAD STR., DOHA, QATAR",
       "rules_applied": [
         {
           "rule_id": "4.2.0.2",
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.2.2",
+          "rule_id": "4.2.1.1",
           "outcome": "MATCH"
         },
         {
           "rule_id": "4.2.3",
           "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.2.4",
-          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger mottagaren som \"FOR/CONSIGNEE: QATAR DEVELOPMENT BANK, GRAND HAMAD STR., DOHA QATAR\" och samma part återfinns uttryckligen i fakturans Buyer-block. Landet Qatar överensstämmer. Skillnaden att fakturan även innehåller notify party påverkar inte verifieringen eftersom certifikatets angivna consignee kan identifieras direkt i fakturan."
+      "motivation": "I certifikatets mottagarfält anges både notify party och den uttryckliga consignee-parten 'QATAR DEVELOPMENT BANK, GRAND HAMAD STR., DOHA QATAR'. Samma consignee återfinns i fakturans Buyer-block och upprepas i Remarks. Landet Qatar framgår uttryckligen i båda dokumenten."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.88,
-      "certificate_value": "195 UNITS / 1560 BALES\nSÖDRA BLUE - NORTHERN BLEACHED SOFTWOOD KRAFT PULP (ECF)\nHS CODE: 470321000000",
+      "certificate_value": "SÖDRA BLUE - NORTHERN BLEACHED SOFTWOOD KRAFT PULP (ECF)\nHS CODE: 470321000000",
       "invoice_value": "SÖDRA BLUE - NORTHERN BLEACHED SOFTWOOD KRAFT PULP\nHS Code: 47032100",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "ARTICLE_NUMBER_NOT_USED"
+          "outcome": "NOT_APPLICABLE_FOR_ARTICLE_NUMBER_PRIORITY"
         },
         {
           "rule_id": "4.3.3",
@@ -129,46 +129,38 @@
         {
           "rule_id": "4.3.4",
           "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.3.8",
-          "outcome": "MATCH"
         }
       ],
-      "motivation": "Den identitetsbärande huvudbeteckningen \"SÖDRA BLUE - NORTHERN BLEACHED SOFTWOOD KRAFT PULP\" förekommer uttryckligen i både certifikat och faktura. Certifikatet har ett efterföljande tillägg \"(ECF)\", men den exakta huvudbeteckningen kan ändå identifieras i fakturan och ingen alternativ produkt med liknande beteckning förekommer. Varubeskrivningen är därför verifierbar mot fakturan."
+      "motivation": "Den identitetsbärande huvudbeteckningen 'SÖDRA BLUE - NORTHERN BLEACHED SOFTWOOD KRAFT PULP' kan identifieras exakt i fakturan. Certifikatet har ett extra suffix '(ECF)', men fakturan innehåller ingen motsägande variant och kärnbeteckningen är identisk. HS-koden är förenlig även om fakturan använder kortare format."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.97,
       "certificate_value": "395.850 GROSS MT",
-      "invoice_value": "1560 BALES 395.850 GMT\n195 UNITS 390.000 ADMT\nTotals:\n195 UNITS\n1560 BALES\n390.000 ADMT\n395.850 GMT",
+      "invoice_value": "1560 BALES 395.850 GMT\nTotals:\n1560 BALES\n395.850",
       "rules_applied": [
         {
           "rule_id": "4.4.2.1",
-          "outcome": "BOX_7_SELECTED"
+          "outcome": "BOX_7_USED_AS_VERIFICATION_BASIS"
+        },
+        {
+          "rule_id": "4.4.3",
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.4.4",
           "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.4.3.1",
-          "outcome": "ADDITIONAL_QUANTITIES_NOT_CONTRADICTORY"
-        },
-        {
-          "rule_id": "4.4.6",
-          "outcome": "MATCH"
         }
       ],
-      "motivation": "Den verifieringsgrundande kvantiteten i certifikatets box 7 är \"395.850 GROSS MT\". Fakturan anger uttryckligen \"395.850 GMT\" i kvantitets-/totalraden, vilket bekräftar samma numeriska värde och samma grossvikt. Fakturan innehåller dessutom även \"195 UNITS\" och \"1560 BALES\", vilket överensstämmer med certifikatets övriga kvantitetsuppgifter och ger ingen motsägelse."
+      "motivation": "Certifikatets verifieringsgrundande kvantitet i box 7 är '395.850 GROSS MT'. Samma numeriska värde återfinns uttryckligen i fakturan som '395.850 GMT' för samma vara och även i totalsammanställningen. Detta utgör en verifierbar total bruttovikt för försändelsen."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.99,
+      "confidence": 0.98,
       "certificate_value": "SWEDEN",
-      "invoice_value": "Shipping mark\nMADE IN SWEDEN\nWE CERTIFY THAT THIS INVOICE IS TRUE AND CORRECT AND THAT THE GOODS ARE OF SWEDEN ORIGIN",
+      "invoice_value": "Shipping mark\nMADE IN SWEDEN\n...\nWE CERTIFY THAT THIS INVOICE IS TRUE AND CORRECT AND THAT THE GOODS ARE OF SWEDEN ORIGIN",
       "rules_applied": [
         {
           "rule_id": "4.5.1",
@@ -179,7 +171,7 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger ursprungsland \"SWEDEN\". Fakturan innehåller uttryckliga ursprungsangivelserna \"MADE IN SWEDEN\" och \"THE GOODS ARE OF SWEDEN ORIGIN\". Ursprungslandet kan därför identifieras explicit i fakturan."
+      "motivation": "Certifikatets ursprungsland är 'SWEDEN'. Fakturan innehåller två uttryckliga ursprungsangivelser: 'MADE IN SWEDEN' och 'THE GOODS ARE OF SWEDEN ORIGIN'. Ursprungslandet kan därför identifieras explicit i fakturan."
     }
   },
   "overall_assessment": {
@@ -189,12 +181,12 @@
     "confidence": 0.96,
     "critical_failures": [],
     "manual_review_triggers": [],
-    "decision_summary": "Dokumentparningen gjordes enligt filregeln: certifikatet hämtades från certifikatfilen och verifieringen utfördes mot den separata fakturafilen, inte mot den inbäddade fakturakopian i certifikatfilen. Parningsvalideringen passerades eftersom certifikatets consignor och consignee återfinns i fakturan. Samtliga tillämpliga kontrollpunkter bedöms som MATCH: consignor Cellmark AB/Sweden, consignee Qatar Development Bank/Qatar, varubeskrivningen SÖDRA BLUE - NORTHERN BLEACHED SOFTWOOD KRAFT PULP, kvantiteten 395.850 gross MT samt ursprungslandet Sweden kan alla verifieras i fakturan.",
-    "human_explanation": "Certifikatet och den separata fakturan avser samma sändning. Avsändare Cellmark AB, mottagare Qatar Development Bank i Qatar, varubeskrivning, mängd 395.850 gross MT och ursprung Sweden kan alla identifieras i fakturan. Dokumentparet kan därför godkännas automatiskt."
+    "decision_summary": "Dokumentparningen är konsistent enligt filregeln: certifikatet hämtades från certifikatfilen och verifieringen gjordes mot den separata fakturafilen, inte mot den inbäddade fakturakopian i certifikatfilen. Samtliga tillämpliga kontrollpunkter är MATCH: consignor Cellmark AB/Sweden, consignee Qatar Development Bank/Qatar, varubeskrivningen för SÖDRA BLUE pulp, kvantiteten 395.850 gross MT och ursprungslandet Sweden kan alla identifieras i fakturan. Samtliga tillämpliga kontrollpunkter har confidence på minst 0.85, vilket uppfyller kravet för IDENTICAL och automatisk hantering.",
+    "human_explanation": "Alla kontrollpunkter stämmer mellan certifikatet och den bifogade fakturan. Certifikatet anger Cellmark AB, Qatar Development Bank, varan SÖDRA BLUE - NORTHERN BLEACHED SOFTWOOD KRAFT PULP, 395.850 GROSS MT och ursprung Sweden, och dessa uppgifter återfinns i fakturan. Dokumentparet kan därför godkännas automatiskt."
   },
   "_meta": {
-    "tested_at": "2026-04-02T11:23:49.164378+00:00",
-    "prompt_hash": "f81eb9b0d2ea",
+    "tested_at": "2026-04-11T08:05:42.151493+00:00",
+    "prompt_hash": "de0d620a2b38",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P028_MATCH",

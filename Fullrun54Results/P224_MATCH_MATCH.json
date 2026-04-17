@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-04-02T00:00:00Z",
+    "verification_timestamp": "2026-04-17",
     "document_pair_id": null,
     "certificate_issue_date": "2025-05-15",
     "source_documents_received": 2
@@ -33,12 +33,16 @@
     "eu_origin_normalization_active": false,
     "activated_rules": [
       {
-        "rule_id": "4.2.2.2",
-        "rule_name": "To order-consignee; only country must be verified"
+        "rule_id": "4.1.0",
+        "rule_name": "Consignor found explicitly in invoice text"
       },
       {
-        "rule_id": "4.4.6.1",
-        "rule_name": "Manual review when invoice lacks comparable quantity/weight information"
+        "rule_id": "4.2.2.2",
+        "rule_name": "To order consignee rule"
+      },
+      {
+        "rule_id": "8.6",
+        "rule_name": "Document pair validation passed"
       }
     ]
   },
@@ -46,31 +50,31 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.98,
+      "confidence": 0.99,
       "certificate_value": "New Wave Mode AB\nSE-455 83, DINGLE\nSweden",
-      "invoice_value": "New Wave Mode AB\nÅkarevägen 18\n455 83 Dingle\nS-455 83 DINGLE\nSE556312577101",
+      "invoice_value": "New Wave Mode AB\nÅkarevägen 18\n455 83 Dingle\n... \nVat No SE556312577101",
       "rules_applied": [
         {
           "rule_id": "4.1.0",
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.1.2.1",
+          "rule_id": "4.1.2",
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.1.4",
+          "rule_id": "4.1.2.1",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger consignor som 'New Wave Mode AB' i Sverige. Fakturan visar uttryckligen 'New Wave Mode AB' som utställare i sidhuvud/footer med svensk adress i Dingle och VAT-prefix 'SE', vilket verifierar både juridisk part och land."
+      "motivation": "Certifikatets consignor är 'New Wave Mode AB' i Sverige. Samma företagsnamn förekommer uttryckligen i fakturan som utställare/header/footer, och Sverige verifieras via svensk adress i Dingle samt VAT-prefix 'SE'. Samma juridiska part och land kan därför identifieras i fakturan."
     },
     "consignee": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.93,
+      "confidence": 0.96,
       "certificate_value": "To order\nGermany",
-      "invoice_value": "Invoice address\nNew Wave GmbH\nGEIGELSTEINSTASSE 10\n83080 OBERAUDORF\nGermany\n\nDelivery address\nNew Wave GmbH\nInno Park\nAm Weingarten 7\n96160 Geiselwind\nDE\nGermany",
+      "invoice_value": "Invoice address: New Wave GmbH ... Germany\nDelivery address: New Wave GmbH ... Germany",
       "rules_applied": [
         {
           "rule_id": "4.2.2.2",
@@ -81,17 +85,21 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger mottagare som 'To order' och land 'Germany'. Vid 'To order' behöver inget företagsnamn verifieras; endast landet ska kunna identifieras i fakturan. Fakturan anger Tyskland i både invoice address och delivery address."
+      "motivation": "Certifikatet anger mottagare som 'To order', vilket innebär att företagsnamn inte ska verifieras. Endast landet ska styrkas, och Tyskland framgår uttryckligen i fakturans invoice address och delivery address. Därför är kontrollpunkten verifierad."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.88,
-      "certificate_value": "Utah Jacket W Reflective",
-      "invoice_value": "020943-949-4 Utah Jacket W Reflective S\n020943-949-5 Utah Jacket W Reflective M\n020943-949-6 Utah Jacket W Reflective L",
+      "certificate_value": "804 NE\nUtah Jacket W Reflective",
+      "invoice_value": "Utah Jacket W Reflective S\nUtah Jacket W Reflective M\nUtah Jacket W Reflective L",
       "rules_applied": [
         {
-          "rule_id": "4.3.3",
+          "rule_id": "4.3.2",
+          "outcome": "Priority 2 applied"
+        },
+        {
+          "rule_id": "4.3.3.2",
           "outcome": "MATCH"
         },
         {
@@ -99,65 +107,77 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Den identitetsbärande huvudbeteckningen 'Utah Jacket W Reflective' kan identifieras uttryckligen i fakturan på tre artikelrader. Tilläggen 'S', 'M' och 'L' är efterföljande storleksangivelser och motsäger inte den generella produktbeteckningen i certifikatet."
+      "motivation": "Den identitetsbärande huvudbeteckningen i certifikatet är 'Utah Jacket W Reflective'. Samma ordsekvens återfinns i fakturan i samma ordning på tre artikelrader, med tillägg av storleksangivelserna S, M och L, vilket inte bryter matchningen. Texten '804 NE' bedöms här som markering/nummer i box 6 och inte som ett verifieringsgrundande artikelnummer enligt prioritet 1."
     },
     "quantity": {
       "applicable": true,
-      "status": "MANUAL_REVIEW",
-      "confidence": 0.42,
+      "status": "MISMATCH",
+      "confidence": 0.97,
       "certificate_value": "Gr weight 371 kg",
-      "invoice_value": "Fakturan visar radkvantiteterna 145, 330 och 329 men ingen tydlig total gross weight 371 kg eller annan uttrycklig viktuppgift att jämföra med certifikatets vikt.",
+      "invoice_value": "Quantity 145 / 330 / 329; ingen explicit gross weight, net weight eller total weight identifierad i fakturan",
       "rules_applied": [
         {
-          "rule_id": "4.4.2.1",
-          "outcome": "BOX_7_SELECTED"
+          "rule_id": "4.4.2.2",
+          "outcome": "Formkrav uppfyllt i certifikatet"
+        },
+        {
+          "rule_id": "4.4.3",
+          "outcome": "No matching weight found"
+        },
+        {
+          "rule_id": "4.4.5.1",
+          "outcome": "No exception applicable"
         },
         {
           "rule_id": "4.4.6.1",
-          "outcome": "MANUAL_REVIEW"
+          "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Verifieringsgrundande kvantitet i certifikatet är box 7: 'Gr weight 371 kg'. Den bifogade fakturan innehåller styckantal per rad men ingen tydligt angiven total brutto-/grossvikt som motsvarar 371 kg. Eftersom fakturan inte uttryckligen bekräftar eller motsäger certifikatets vikt ska kontrollpunkten hanteras manuellt, inte som mismatch."
+      "motivation": "Certifikatet anger uttryckligen kvantiteten som bruttovikt 371 kg. Fakturan innehåller endast styckantal per rad (145, 330 och 329) och saknar explicit gross weight, net weight eller total weight som kan verifiera värdet 371 kg. Inget undantag i 3A-3E är tillämpligt, och den angivna vikten kan därför inte verifieras mot fakturan."
     },
     "origin": {
       "applicable": true,
-      "status": "MATCH",
-      "confidence": 0.86,
+      "status": "MISMATCH",
+      "confidence": 0.99,
       "certificate_value": "Myanmar",
-      "invoice_value": "Country of origin: MM",
+      "invoice_value": "Country of origin: CN",
       "rules_applied": [
         {
           "rule_id": "4.5.1",
-          "outcome": "MATCH"
+          "outcome": "Explicit origin found in invoice"
         },
         {
           "rule_id": "4.5.4",
-          "outcome": "MATCH"
+          "outcome": "Normalization applied"
+        },
+        {
+          "rule_id": "4.5.5",
+          "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Certifikatet anger ursprungsland Myanmar. I fakturans explicita origin-fält på artikelraderna framgår landskoden 'MM', vilket är vedertagen ISO-kod för Myanmar. Därmed kan certifikatets ursprungsland identifieras uttryckligen i fakturan."
+      "motivation": "Certifikatet anger ursprungsland Myanmar. Fakturan anger uttryckligen 'Country of origin: CN' på samtliga artikelrader, vilket efter normalisering avser Kina. Myanmar kan därför inte identifieras i fakturan, och fakturans ursprungsuppgift motsäger certifikatet."
     }
   },
   "overall_assessment": {
-    "comparison_result": "MANUAL_REVIEW",
+    "comparison_result": "NOT_IDENTICAL",
     "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
     "auto_approval_eligible": false,
-    "confidence": 0.78,
-    "critical_failures": [],
-    "manual_review_triggers": [
-      "Certifikatets kvantitet är 'Gr weight 371 kg', men fakturan visar ingen tydlig totalvikt eller annan jämförbar viktuppgift."
+    "confidence": 0.98,
+    "critical_failures": [
+      "Origin mismatch: certificate states Myanmar while the invoice states CN/China.",
+      "Quantity mismatch: certificate states gross weight 371 kg but the invoice contains no matching weight value."
     ],
-    "decision_summary": "Consignor, consignee-land, varubeskrivning och ursprungsland kan verifieras mot fakturan. Kvantitetskontrollpunkten kan däremot inte slutföras automatiskt eftersom certifikatets viktuppgift 371 kg inte återfinns uttryckligen i fakturan. Därför blir totalresultatet MANUAL_REVIEW.",
-    "human_explanation": "Avsändare, mottagarland, varubeskrivning och ursprungsland kan verifieras mot fakturan. Certifikatet anger dock 'Gr weight 371 kg', men den bifogade fakturan visar ingen tydlig totalvikt som kan jämföras med detta värde. Därför krävs manuell granskning."
+    "manual_review_triggers": [],
+    "decision_summary": "Dokumentparet kan pareras via consignoruppgiften och mottagarlandet Tyskland kan verifieras under 'To order'-undantaget. Varubeskrivningen 'Utah Jacket W Reflective' kan identifieras i fakturan. Däremot faller verifieringen på att certifikatet anger ursprung Myanmar medan fakturan anger CN samt att certifikatets bruttovikt 371 kg inte kan återfinnas i fakturan.",
+    "human_explanation": "Avsändaren stämmer och mottagarlandet Tyskland kan verifieras. Men certifikatet anger ursprung Myanmar medan fakturan anger CN/Kina, och certifikatets bruttovikt 371 kg saknar motsvarande viktuppgift i fakturan. Dokumenten är därför inte identiska och kräver manuell handläggning."
   },
   "_meta": {
-    "tested_at": "2026-04-02T11:06:44.035043+00:00",
-    "prompt_hash": "f81eb9b0d2ea",
+    "tested_at": "2026-04-17T04:10:30.127384+00:00",
+    "prompt_hash": "32b216f423f0",
     "model": "gpt-5.4",
-    "tier": 2,
     "pair": "P224_MATCH",
     "expected": "IDENTICAL",
-    "actual": "MANUAL_REVIEW",
-    "status": "REVIEW"
+    "actual": "NOT_IDENTICAL",
+    "status": "FAIL"
   }
 }

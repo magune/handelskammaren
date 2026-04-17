@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-04-02T00:00:00Z",
+    "verification_timestamp": "2026-04-11T00:00:00Z",
     "document_pair_id": null,
     "certificate_issue_date": "2026-03-04",
     "source_documents_received": 2
@@ -15,12 +15,12 @@
     "document_a": {
       "label": "Document A",
       "assumed_role": "certificate",
-      "document_type": "Certificate of Origin (original on page 1, copy on page 2, embedded invoice copy on page 3)"
+      "document_type": "certificate_of_origin"
     },
     "document_b": {
       "label": "Document B",
       "assumed_role": "invoice",
-      "document_type": "Commercial invoice / down payment invoice"
+      "document_type": "invoice"
     }
   },
   "rule_activation": {
@@ -34,11 +34,15 @@
     "activated_rules": [
       {
         "rule_id": "8.5.0",
-        "rule_name": "Filbaserad dokumentparning – använd separat fakturafil, ignorera inbäddad faktura i certifikatfilen"
+        "rule_name": "Filbaserad dokumentparning – använd certifikatet från certifikatfilen och fakturan från den separata fakturafilen"
+      },
+      {
+        "rule_id": "8.6",
+        "rule_name": "Obligatorisk parningsvalidering"
       },
       {
         "rule_id": "4.3.5",
-        "rule_name": "Generell varubeskrivning med fakturareferens och fakturadatum"
+        "rule_name": "Generell varubeskrivning med fakturareferens"
       }
     ]
   },
@@ -48,22 +52,26 @@
       "status": "MATCH",
       "confidence": 0.97,
       "certificate_value": "Poppels Bryggeri AB\nKanalstråket 5\n433 76, JONSERED\nSweden",
-      "invoice_value": "Poppels Bryggeri AB\nKanalstråket 5\n433 76 Jonsered\nSweden\nVAT Reg: SE556882241401",
+      "invoice_value": "Poppels Bryggeri AB\nKanalstråket 5\n433 76 Jonsered\nSweden",
       "rules_applied": [
         {
           "rule_id": "4.1.0",
-          "outcome": "MATCH"
+          "outcome": "CHECK_PASSED"
+        },
+        {
+          "rule_id": "4.1.2",
+          "outcome": "CHECK_PASSED"
         },
         {
           "rule_id": "4.1.2.1",
-          "outcome": "MATCH"
+          "outcome": "CHECK_PASSED"
         },
         {
           "rule_id": "4.1.4",
-          "outcome": "MATCH"
+          "outcome": "CHECK_PASSED"
         }
       ],
-      "motivation": "Certifikatets consignor 'Poppels Bryggeri AB' återfinns uttryckligen i den separata fakturafilen i footer/adressblocket. Landet Sverige framgår explicit i adressen och stöds även av VAT-prefix 'SE'. Samma juridiska part och samma land kan därför verifieras."
+      "motivation": "Originalcertifikatet anger consignor som 'Poppels Bryggeri AB ... Sweden'. I den separata fakturafilen återfinns samma företagsnamn uttryckligen i fakturans footer/adressblock som 'Poppels Bryggeri AB, Kanalstråket 5, 433 76 Jonsered, Sweden', och även i sidhuvudets branding 'POPPELS BRYGGERI'. Namn och land kan därför verifieras mot fakturan efter tillåten normalisering av kommatecken och radbrytningar."
     },
     "consignee": {
       "applicable": true,
@@ -74,83 +82,99 @@
       "rules_applied": [
         {
           "rule_id": "4.2.0.2",
-          "outcome": "MATCH"
+          "outcome": "CHECK_PASSED"
+        },
+        {
+          "rule_id": "4.2.2",
+          "outcome": "CHECK_PASSED"
         },
         {
           "rule_id": "4.2.3",
-          "outcome": "MATCH"
+          "outcome": "CHECK_PASSED"
+        },
+        {
+          "rule_id": "4.2.4",
+          "outcome": "CHECK_PASSED"
         }
       ],
-      "motivation": "Fakturan innehåller ett primärt faktureringsfält 'Bill to' och där står exakt samma mottagare som i certifikatet: 'DVG Tradex Private Limited' med samma adressort och land India. Enligt prioritetsordningen för consignee ska Bill-to-fältet användas och det ger direkt matchning."
+      "motivation": "Certifikatet anger mottagaren som 'DVG Tradex Private Limited, 117, 2nd Floor, CC Colony, Rajpura, Delhi 110007, India'. Fakturan innehåller samma part i mottagarfältet 'Bill to'. Att fakturan dessutom har ett separat 'Ship-to' på annan adress påverkar inte utfallet eftersom certifikatets mottagare kan identifieras i ett relevant mottagarfält och landet India överensstämmer."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.9,
+      "confidence": 0.89,
       "certificate_value": "General packing of cans/bottles, 2 pallets\nSee att invoice (DownPayment 450) dated 2026-03-04\nBeer with and without alcohol in different flavors",
-      "invoice_value": "Down Payment 450\nDate: 2026-03-04\nLine items: multiple beer products in cans and bottles, including alcoholic beers and one low-alcohol/non-alcohol product ('Hoppy AF Pale Ale 0,3% - Can 330ml')",
+      "invoice_value": "Down Payment 450\nDate: 2026-03-04\nDescription lines for multiple beer products, including both can and bottle items, among them 'Hoppy AF Pale Ale 0,3% - Can 330ml' and alcoholic beer products in different flavors",
       "rules_applied": [
         {
           "rule_id": "4.3.5",
-          "outcome": "MATCH"
+          "outcome": "CHECK_PASSED"
         },
         {
           "rule_id": "4.3.5.2",
-          "outcome": "MATCH"
+          "outcome": "CHECK_PASSED"
         }
       ],
-      "motivation": "Certifikatet innehåller en generell varubeskrivning men refererar samtidigt uttryckligen till 'invoice (DownPayment 450) dated 2026-03-04'. Den separata fakturafilen är märkt 'Down Payment 450' och daterad 2026-03-04. Fakturans varuinnehåll består av öl i burkar och flaskor i olika smaker, vilket är förenligt med certifikatets beskrivning 'Beer with and without alcohol in different flavors'."
+      "motivation": "Varubeskrivningen i certifikatet är generell men innehåller uttrycklig fakturareferens 'DownPayment 450' och datum '2026-03-04' i varubeskrivningsfältet. Den separata fakturan är rubricerad 'Down Payment 450' och daterad '2026-03-04'; skillnaden mellan 'DownPayment' och 'Down Payment' är en tillåten formateringsskillnad. Fakturans varuinnehåll består av flera ölsorter, inklusive både alkoholhaltiga och alkoholfri/alkoholsnål produkt, vilket är förenligt med certifikatets beskrivning 'Beer with and without alcohol in different flavors'."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.99,
+      "confidence": 0.95,
       "certificate_value": "4752 pcs",
       "invoice_value": "No. of units: 4752",
       "rules_applied": [
         {
-          "rule_id": "4.4.1",
-          "outcome": "MATCH"
+          "rule_id": "4.4.2",
+          "outcome": "CHECK_PASSED"
         },
         {
           "rule_id": "4.4.3",
-          "outcome": "MATCH"
+          "outcome": "CHECK_PASSED"
+        },
+        {
+          "rule_id": "4.4.6",
+          "outcome": "CHECK_PASSED"
         }
       ],
-      "motivation": "Certifikatet anger kvantiteten 4752 pcs i box 7. Fakturan anger uttryckligen 'No. of units: 4752'. Det numeriska värdet kan identifieras direkt i fakturan utan beräkning eller undantag."
+      "motivation": "Certifikatet anger en uttrycklig kvantitet med numeriskt värde och enhet: '4752 pcs'. Fakturan innehåller en explicit totaluppgift 'No. of units: 4752'. Det numeriska värdet 4752 kan därför identifieras direkt i fakturan för samma försändning, och ingen motsägande kvantitetsuppgift förekommer."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.98,
+      "confidence": 0.99,
       "certificate_value": "Sweden",
-      "invoice_value": "Country of origin: Sweden (repeated per article row) / exporter declaration that the products are of Sweden origin",
+      "invoice_value": "Country of origin\nSweden\n...\nthese products are of Sweden origin",
       "rules_applied": [
         {
           "rule_id": "4.5.1",
-          "outcome": "MATCH"
+          "outcome": "CHECK_PASSED"
         },
         {
           "rule_id": "4.5.2",
-          "outcome": "MATCH"
+          "outcome": "CHECK_PASSED"
+        },
+        {
+          "rule_id": "4.5.5",
+          "outcome": "CHECK_PASSED"
         }
       ],
-      "motivation": "Certifikatet anger ursprungsland Sweden. I fakturan anges 'Country of origin' som Sweden för artikelraderna och fakturan innehåller även en exportörsdeklaration om att produkterna är av Sweden origin. Ursprungslandet framgår därmed uttryckligen i fakturan."
+      "motivation": "Certifikatet anger ursprungsland 'Sweden'. Fakturan anger 'Country of origin' med värdet 'Sweden' på artikelraderna och innehåller dessutom exportörsuttalandet att produkterna är av svenskt ursprung. Ursprungslandet kan därför uttryckligen identifieras i fakturan."
     }
   },
   "overall_assessment": {
     "comparison_result": "IDENTICAL",
     "workflow_recommendation": "AUTO_APPROVAL_ELIGIBLE",
     "auto_approval_eligible": true,
-    "confidence": 0.96,
+    "confidence": 0.95,
     "critical_failures": [],
     "manual_review_triggers": [],
-    "decision_summary": "Korrekt dokumentpar identifierades enligt filregeln: certifikatet hämtades från certifikatfilen och verifieringen gjordes mot den separata fakturafilen 'Down Payment 450'. Certifikatets fakturareferens och datum matchar fakturafilen, consignor och consignee kan identifieras, och samtliga fem tillämpliga kontrollpunkter gav MATCH. Den inbäddade fakturasidan i certifikatfilen användes inte som verifieringsunderlag.",
-    "human_explanation": "Alla uppgifter i certifikatet kan verifieras mot den bifogade fakturan. Avsändare, mottagare, varubeskrivning, mängd 4752 och ursprungsland Sweden stämmer. Dokumentparet kan därför godkännas automatiskt."
+    "decision_summary": "Dokumentparningen validerades enligt tvåfilsregeln: originalcertifikatet valdes från certifikatfilen och verifieringen gjordes mot den separata fakturafilen, inte mot den inbäddade fakturasidan i certifikatfilen. Certifikatets consignor, consignee, generella varubeskrivning med fakturareferens 'Down Payment 450' daterad 2026-03-04, kvantiteten 4752 och ursprungslandet Sweden kan כולם verifieras mot fakturan. Samtliga tillämpliga kontrollpunkter gav MATCH.",
+    "human_explanation": "Certifikatet och den separata fakturan avser samma sändning från Poppels Bryggeri AB till DVG Tradex Private Limited. Fakturareferensen 'Down Payment 450' med datum 2026-03-04, kvantiteten 4752 och ursprungslandet Sweden stämmer med certifikatet. Alla kontrollpunkter kan verifieras och ärendet kan godkännas automatiskt."
   },
   "_meta": {
-    "tested_at": "2026-04-02T11:06:44.032369+00:00",
-    "prompt_hash": "f81eb9b0d2ea",
+    "tested_at": "2026-04-11T08:06:46.146744+00:00",
+    "prompt_hash": "de0d620a2b38",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P219_MATCH",

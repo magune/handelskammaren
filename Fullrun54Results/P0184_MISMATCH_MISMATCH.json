@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-04-02T00:00:00Z",
+    "verification_timestamp": "2026-04-11T00:00:00Z",
     "document_pair_id": null,
     "certificate_issue_date": "2026-01-07",
     "source_documents_received": 2
@@ -34,7 +34,7 @@
     "activated_rules": [
       {
         "rule_id": "8.5.0",
-        "rule_name": "Filbaserad dokumentparning: certifikat från certifikatfilen och faktura från separat fakturafil"
+        "rule_name": "Filbaserad dokumentparning"
       },
       {
         "rule_id": "8.6",
@@ -42,19 +42,27 @@
       },
       {
         "rule_id": "4.1.0",
-        "rule_name": "Consignor kan verifieras om företagsnamnet förekommer någonstans i fakturan"
+        "rule_name": "Consignor i fakturans text någonstans"
       },
       {
         "rule_id": "4.2.0.2",
-        "rule_name": "Prioritetsordning för consignee-identifiering"
+        "rule_name": "Consignee ska kunna identifieras i något mottagarfält"
       },
       {
         "rule_id": "4.3.2",
-        "rule_name": "Varubeskrivning ska primärt verifieras via artikelnummer"
+        "rule_name": "Varubeskrivning verifieras primärt via artikelnummer"
+      },
+      {
+        "rule_id": "4.4.3.1",
+        "rule_name": "Uttrycklig motsägelse i kvantitet ger MISMATCH"
+      },
+      {
+        "rule_id": "4.5.3",
+        "rule_name": "Blandade ursprung kräver tydlig verifiering"
       },
       {
         "rule_id": "4.5.5",
-        "rule_name": "Varje ursprungsland i certifikatet ska uttryckligen identifieras i fakturan"
+        "rule_name": "Varje ursprungsland i certifikatet måste kunna identifieras i fakturan"
       }
     ]
   },
@@ -62,128 +70,112 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.97,
+      "confidence": 0.93,
       "certificate_value": "Flexlink AB\nByfogdegatan 11\n415 05, Göteborg\nSweden",
-      "invoice_value": "FlexLink AB\nByfogdegatan 11\n415 05 Gothenburg\nSweden\nVAT No: PL5262834588",
+      "invoice_value": "FlexLink AB\nByfogdegatan 11\n415 05 Gothenburg\nSweden",
       "rules_applied": [
-        {
-          "rule_id": "8.6",
-          "outcome": "PASS"
-        },
         {
           "rule_id": "4.1.0",
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.1.0.2",
+          "rule_id": "4.1.2",
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.1.5",
+          "rule_id": "4.1.4",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor är 'Flexlink AB ... Sweden'. I fakturan förekommer samma juridiska namn och svensk adress uttryckligen i sidfot/sidhuvud på flera sidor: 'FlexLink AB, Byfogdegatan 11, 415 05 Gothenburg, Sweden'. Detta uppfyller koncernstrukturregeln eftersom consignor-namnet återfinns explicit i fakturadokumentet och land överensstämmer."
+      "motivation": "Certifikatets consignor är 'Flexlink AB ... Sweden'. Fakturan visar samma företagsnamn och svensk adress i sidfot/sidhuvud på flera sidor: 'FlexLink AB, Byfogdegatan 11, 415 05 Gothenburg, Sweden'. Detta uppfyller regeln att consignor får verifieras när företagsnamnet förekommer uttryckligen någonstans i fakturadokumentet och landet överensstämmer."
     },
     "consignee": {
       "applicable": true,
       "status": "MISMATCH",
-      "confidence": 0.99,
+      "confidence": 0.98,
       "certificate_value": "HOP LONG TECHNOLOGY JSC\n2nd Floor,\nTower A Mandarin Garden 2,\nNo 99 Tan Mai Street,\nTuong Mai Ward,\n10000 HA NOI CITY\nVIETNAM",
-      "invoice_value": "Invoice Address\nFLEXLINK ENGINEERING SDN BHD\nNO. 13, JALAN TIANG U8/93\nBUKIT JELUTONG INDUSTRIAL PARK,\nSHAH ALAM,\n40150 SELANGOR DARUL EHSAN\nMALAYSIA\n\nShipping Address\nMONDELEZ KINH DO VIET NAM JOINT STOCK COMPANY\nNO. 26 VSIP, STREET NO. 8,\n59000 HO CHI MINH CITY,\nVIETNAM",
+      "invoice_value": "Shipping Address MONDELEZ KINH DO VIET NAM JOINT STOCK COMPANY\nNO. 26 VSIP, STREET NO. 8,\nVIETNAM-SINGAPORE INDUSTRIAL PARK,\nBINH HOA WARD,\n59000 HO CHI MINH CITY,\nVIETNAM",
       "rules_applied": [
         {
           "rule_id": "4.2.0.2",
           "outcome": "MISMATCH"
         },
         {
-          "rule_id": "4.2.1",
-          "outcome": "MISMATCH"
-        },
-        {
           "rule_id": "4.2.1.1",
-          "outcome": "NOT_APPLICABLE"
+          "outcome": "MISMATCH"
         },
         {
           "rule_id": "4.2.4",
           "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Certifikatet anger mottagaren som 'HOP LONG TECHNOLOGY JSC' i Vietnam. Fakturan har ett tydligt faktureringsfält 'Invoice Address' för 'FLEXLINK ENGINEERING SDN BHD' i Malaysia och ett separat leveransfält 'Shipping Address' för 'MONDELEZ KINH DO VIET NAM JOINT STOCK COMPANY' i Vietnam. 'HOP LONG TECHNOLOGY JSC' kan inte identifieras i något relevant fakturafält; därför är mottagaren inte verifierad."
+      "motivation": "Certifikatet anger mottagaren som 'HOP LONG TECHNOLOGY JSC' i Vietnam. Fakturan anger mottagarrollen som 'MONDELEZ KINH DO VIET NAM JOINT STOCK COMPANY' och innehåller inte 'HOP LONG TECHNOLOGY JSC' i något mottagarfält. Samma land räcker inte när företagsnamnet avser en annan juridisk part."
     },
     "goods_description": {
       "applicable": true,
       "status": "MISMATCH",
       "confidence": 0.99,
-      "certificate_value": "CONVEYOR PARTS\nXBBP 45A180R10, Plain bend, PL\nXBCB 3A180, Conveyor beam, PL\nXBCB LA180, Conveyor beam, PL\nXBCR 25 H, Slide rail, DK\nXBEB A180 (FLXC4247801), End drive unit, SE\nXBEJ A180, Idler end unit, PL\nXBMR 170, Mounting tool, SE\nXBTP 3A180 K, Plain chain, PL\nXLAG 5, Plastic screw, DE\nXLRD 36 Q, Spacer, EE\nXLRE 15, End plug, SE\nXLRF 64 Q, Guide rail bracket support, EE\nXLRJ 100, Connecting sleeve, SE\nXLRK 65 HQ, Guide rail clamp, EE\nXLRL 110 VQ, Guide rail clamp support, EE\nXLRS 3X15, Straight guide rail, SE\nXLRT 3X33 D, Guide rail cover, SE\nXLRZ Q, Plug, EE\nXMMJ 6, Pin insert tool, CZ\nXSCJ 6X160, Connecting strip, CN\n3920500, Drill fixture, SE",
-      "invoice_value": "Representative invoice goods lines:\nXBCE 40 Clip\nXCAC 25 P Cover strip\nXLCB 3A65 Conveyor beam\nXLCR 25 Slide rail\nXLEJ A65 Idler end unit\nXLRF 64 Q Guide rail bracket support\nXLRZ Q Plug\nXLTP 5A65 Plain chain\n3923518 Clip tool",
+      "certificate_value": "CONVEYOR PARTS\nXBBP 45A180R10, Plain bend, PL\nXBCB 3A180, Conveyor beam, PL\nXBCB LA180, Conveyor beam, PL\nXBCR 25 H, Slide rail, DK\nXBEB A180 (FLXC4247801), End drive unit, SE\nXBEJ A180, Idler end unit, PL\nXBMR 170, Mounting tool, SE\nXBTP 3A180 K, Plain chain, PL\nXLAG 5,Plastic screw, DE\nXLRD 36 Q, Spacer, EE\nXLRE 15, End plug, SE\nXLRF 64 Q, Guide rail bracket support, EE\nXLRJ 100, Connecting sleeve, SE\nXLRK 65 HQ, Guide rail clamp, EE\nXLRL 110 VQ, Guide rail clamp support, EE\nXLRS 3X15, Straight guide rail, SE\nXLRT 3X33 D, Guide rail cover, SE\nXLRZ Q, Plug, EE\nXMMJ 6, Pin insert tool, CZ\nXSCJ 6X160, Connecting strip, CN\n3920500, Drill fixture, SE",
+      "invoice_value": "Invoice 1001719732 lists items such as:\nXBCE 40 Clip\nXCAC 25 P Cover strip\nXCBL 3X64 Support beam, light version\nXLBV 45A65R1000 Vertical bend\nXLCB 3A65 Conveyor beam\nXLEJ A65 Idler end unit\nXLRF 64 Q Guide rail bracket support\nXLRZ Q Plug\n3923518 Clip tool",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
           "outcome": "MISMATCH"
         },
         {
-          "rule_id": "4.3.2.3",
-          "outcome": "NOT_APPLICABLE"
-        },
-        {
-          "rule_id": "4.3.5",
-          "outcome": "NOT_APPLICABLE"
+          "rule_id": "4.3.6",
+          "outcome": "MISMATCH"
         },
         {
           "rule_id": "4.3.8",
           "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Certifikatet listar specifika artikelnummer och varor. Verifiering ska därför ske primärt via artikelnummer. Flera centrala certifikatrader saknas helt i fakturan, exempelvis 'XBBP 45A180R10', 'XBCB 3A180', 'XBCR 25 H', 'XBTP 3A180 K', '3920500' och många fler. Några enstaka liknande eller delvis närliggande varurader i fakturan räcker inte när flera certifikatartiklar inte kan identifieras exakt. Certifikatet saknar dessutom en verifierbar fakturahänvisning med fakturanummer och datum för att använda regeln om generell varubeskrivning."
+      "motivation": "Certifikatet innehåller uttryckliga artikelnummer, vilket aktiverar prioritet 1 med exakt artikelnummermatchning. Flera certifikatsartiklar, t.ex. 'XBBP 45A180R10', 'XBCB 3A180', 'XBEB A180 (FLXC4247801)', 'XLRJ 100', 'XLRS 3X15' och '3920500', kan inte identifieras exakt i fakturan, som i stället listar andra artikelnummer. Eftersom artikelnummer i certifikatet inte kan identifieras exakt i fakturan är kontrollpunkten MISMATCH."
     },
     "quantity": {
       "applicable": true,
       "status": "MISMATCH",
-      "confidence": 0.97,
+      "confidence": 0.99,
       "certificate_value": "2 PCS\n9 PCS\n7 PCS\n10 PCS\n3 PCS\n3 PCS\n1 PCS\n26 PCS\n250 PCS\n66 PCS\n20 PCS\n66 PCS\n28 PCS\n66 PCS\n66 PCS\n28 PCS\n28 PCS\n140 PCS\n1 PCS\n40 PCS\n1 PCS",
-      "invoice_value": "Representative invoice quantities:\n81 PC\n9 PC\n5 PC\n30 PC\n2 PC\n7 PC\n22 PC\n11 PC\n2 PC\n1 PC\n3 PC\n65 PC\n130 PC\n5 PC\n4 PC\n1 PC\nPackages: 3\nNet Weight: 315,046 KG",
+      "invoice_value": "Relevant invoice lines include:\n210 XLRF 64 Q Guide rail bracket support ... 65 PC\n240 XLRZ Q Plug ... 130 PC",
       "rules_applied": [
-        {
-          "rule_id": "4.4.1",
-          "outcome": "MISMATCH"
-        },
         {
           "rule_id": "4.4.3.1",
           "outcome": "MISMATCH"
         },
         {
-          "rule_id": "4.4.5.1",
-          "outcome": "NO_EXCEPTION_APPLIED"
+          "rule_id": "4.4.3.0b",
+          "outcome": "MISMATCH"
         },
         {
           "rule_id": "4.4.6",
           "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Certifikatet innehåller radvisa styckantal för de specificerade varorna. De motsvarande certifikatvarorna kan inte identifieras i fakturan i tillräcklig omfattning, och där verifierbara liknande rader finns avviker kvantiteterna, exempelvis 'XLRF 64 Q' är 66 PCS i certifikatet men 65 PC i fakturan och 'XLRZ Q' är 140 PCS i certifikatet men 130 PC i fakturan. Därmed finns uttryckliga numeriska avvikelser för identifierbara rader och övriga certifikatkvantiteter kan inte verifieras mot motsvarande fakturavaror."
+      "motivation": "För artikelnummer som förekommer i båda dokumenten finns uttryckliga kvantitetsmotsägelser. Certifikatet anger 'XLRF 64 Q' = 66 PCS medan fakturan anger 65 PC, och certifikatet anger 'XLRZ Q' = 140 PCS medan fakturan anger 130 PC. Detta är explicita numeriska avvikelser för samma artiklar och ska därför klassificeras som MISMATCH."
     },
     "origin": {
       "applicable": true,
       "status": "MISMATCH",
-      "confidence": 0.99,
+      "confidence": 0.98,
       "certificate_value": "Poland, Sweden, Germany, Denmark, Estonia, China, Czech Republic",
-      "invoice_value": "Explicit origins in invoice item lines: CoO: Poland; CoO: Sweden; CoO: China; CoO: Czech Republic; CoO: Estonia; CoO: Lithuania",
+      "invoice_value": "Invoice CoO entries include: Poland, Sweden, China, Czech Republic, Estonia, Lithuania",
       "rules_applied": [
         {
           "rule_id": "4.5.1",
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.5.4",
-          "outcome": "APPLIED"
+          "rule_id": "4.5.3",
+          "outcome": "MISMATCH"
         },
         {
           "rule_id": "4.5.5",
           "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Fakturan innehåller explicita origin-fält per rad ('CoO: ...'). Certifikatet anger sju ursprungsländer: Poland, Sweden, Germany, Denmark, Estonia, China och Czech Republic. I fakturan kan Poland, Sweden, China, Czech Republic och Estonia identifieras, men Germany och Denmark kan inte identifieras explicit. Eftersom varje ursprungsland i certifikatet måste kunna återfinnas i fakturan är ursprungskontrollen inte uppfylld."
+      "motivation": "Certifikatet anger flera ursprungsländer: Polen, Sverige, Tyskland, Danmark, Estland, Kina och Tjeckien. Fakturan anger uttryckliga CoO-rader för Polen, Sverige, Kina, Tjeckien, Estland och Litauen, men Tyskland och Danmark kan inte identifieras explicit i fakturan. När varje ursprungsland i certifikatet inte kan återfinnas i fakturan ska resultatet vara MISMATCH."
     }
   },
   "overall_assessment": {
@@ -192,18 +184,18 @@
     "auto_approval_eligible": false,
     "confidence": 0.98,
     "critical_failures": [
-      "Certifikatets consignee 'HOP LONG TECHNOLOGY JSC' kan inte identifieras i fakturan.",
-      "Certifikatets artikelnummer och varubeskrivning stämmer inte med fakturans varurader.",
-      "Kvantiteter för identifierbara rader avviker och övriga kvantiteter kan inte verifieras mot motsvarande varor.",
-      "Ursprungsländerna Germany och Denmark från certifikatet saknas i fakturans explicita origin-uppgifter."
+      "Consignee mismatch: certificate shows HOP LONG TECHNOLOGY JSC while invoice shows MONDELEZ KINH DO VIET NAM JOINT STOCK COMPANY.",
+      "Goods description mismatch: certificate article numbers do not match invoice article numbers.",
+      "Quantity mismatch: explicit contradictions for shared items XLRF 64 Q (66 vs 65) and XLRZ Q (140 vs 130).",
+      "Origin mismatch: certificate lists Germany and Denmark, but these origins are not explicitly present in the invoice."
     ],
     "manual_review_triggers": [],
-    "decision_summary": "Dokumentparet är inte identiskt. Consignor kan verifieras, men consignee, varubeskrivning, kvantitet och ursprungsland har konstaterade avvikelser mot den bifogade fakturan.",
-    "human_explanation": "Certifikatet anger mottagaren som HOP LONG TECHNOLOGY JSC, medan fakturan är ställd till Flexlink Engineering SDN BHD och skickad till Mondelez Kinh Do Vietnam Joint Stock Company. Certifikatet listar dessutom andra artikelnummer, andra kvantiteter och ursprungsländerna Germany och Denmark som inte finns i fakturan. Dokumentparet kan därför inte godkännas som identiskt."
+    "decision_summary": "Dokumentparet är inte identiskt. Consignor kan verifieras i fakturans footer/header, men consignee, varubeskrivning, kvantitet och ursprungsland avviker från certifikatet. Minst en tillämplig kontrollpunkt har status MISMATCH, därför är totalresultatet NOT_IDENTICAL.",
+    "human_explanation": "Certifikatet anger mottagaren som HOP LONG TECHNOLOGY JSC, men fakturan visar i stället MONDELEZ KINH DO VIET NAM JOINT STOCK COMPANY. Varorna och kvantiteterna stämmer inte heller överens, exempelvis XLRF 64 Q 66 st i certifikatet mot 65 st i fakturan och XLRZ Q 140 st mot 130 st. Ursprungsländerna Tyskland och Danmark i certifikatet kan dessutom inte återfinnas i fakturan."
   },
   "_meta": {
-    "tested_at": "2026-04-02T11:23:49.154739+00:00",
-    "prompt_hash": "f81eb9b0d2ea",
+    "tested_at": "2026-04-11T08:05:42.133166+00:00",
+    "prompt_hash": "de0d620a2b38",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P0184_MISMATCH",

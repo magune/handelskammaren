@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-04-02T00:00:00Z",
+    "verification_timestamp": "2026-04-17T00:00:00Z",
     "document_pair_id": null,
     "certificate_issue_date": "2026-01-30",
     "source_documents_received": 2
@@ -26,7 +26,7 @@
   "rule_activation": {
     "lc_exception_active": false,
     "lc_number_found": null,
-    "general_goods_description_with_invoice_reference_active": true,
+    "general_goods_description_with_invoice_reference_active": false,
     "mixed_origins_rule_active": false,
     "to_order_rule_active": false,
     "quantity_exception_applied": null,
@@ -34,15 +34,19 @@
     "activated_rules": [
       {
         "rule_id": "8.5.0",
-        "rule_name": "Filbaserad dokumentparning mellan certifikatfil och separat fakturafil"
+        "rule_name": "Filbaserad dokumentparning"
       },
       {
         "rule_id": "8.6",
         "rule_name": "Obligatorisk parningsvalidering"
       },
       {
-        "rule_id": "4.3.5.3",
-        "rule_name": "Ordernummer med fakturanummer utan datum"
+        "rule_id": "4.1.0",
+        "rule_name": "Consignor-sökning i hela fakturadokumentet"
+      },
+      {
+        "rule_id": "4.2.0.2",
+        "rule_name": "Consignee får identifieras i något mottagarfält"
       }
     ]
   },
@@ -50,135 +54,127 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.99,
+      "confidence": 0.97,
       "certificate_value": "Binar Handling AB\nHedekullevägen 24\n46138, Trollhättan\nSweden",
-      "invoice_value": "Binar Handling AB\nHedekullevägen 24\n461 38 Trollhättan\nSweden",
+      "invoice_value": "Binar Handling AB\nHedekullevägen 24\n461 38 Trollhättan\nSweden\nVAT: SE556439299001",
       "rules_applied": [
         {
-          "rule_id": "4.1.1",
-          "outcome": "issuer identified in invoice"
+          "rule_id": "4.1.0",
+          "outcome": "MATCH"
         },
         {
-          "rule_id": "4.1.2",
-          "outcome": "company name and country verified"
+          "rule_id": "4.1.2.1",
+          "outcome": "MATCH"
         },
         {
-          "rule_id": "4.1.4",
-          "outcome": "country matched"
+          "rule_id": "4.1.5",
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger consignor som \"Binar Handling AB\" i Sverige. Fakturan är utställd av \"Binar Handling AB\" och visar samma adress i Trollhättan, Sweden, i sidhuvud/sidfot. Namn och land kan identifieras direkt utan att särskilda undantag behöver användas."
+      "motivation": "Certifikatets consignor 'Binar Handling AB' återfinns uttryckligen i fakturans sidhuvud och footer på fakturans sidor. Landet Sverige verifieras via adressen 'Sweden' samt VAT-prefix 'SE'. Samma juridiska part kan därför identifieras entydigt i fakturan."
     },
     "consignee": {
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.97,
       "certificate_value": "Tecnoglass S.A.S 800.229.035-4\nAvenida Circunvalar a 100 Mts\nDe La Via 40 Las Flores\nBarranquilla-Colombia 80001\nColombia",
-      "invoice_value": "Invoice Address\nTecnoglass S.A.S\nArmando del Vecchio\nAvenida Circunvalar, a 100 Mts de la Via 40\nLas Flores - Colombia\nBarranquilla, 80001 CO\nColombia",
+      "invoice_value": "Delivery Address / Invoice Address:\nTecnoglass S.A.S\nAvenida Circunvalar, a 100 Mts de la Via 40\nLas Flores - Colombia\nBarranquilla, 80001 CO\nColombia\nYour VAT 800229035-4",
       "rules_applied": [
         {
           "rule_id": "4.2.0.2",
-          "outcome": "primary billing field used"
+          "outcome": "MATCH"
         },
         {
-          "rule_id": "4.2.2",
-          "outcome": "company name identified"
-        },
-        {
-          "rule_id": "4.2.3",
-          "outcome": "country matched"
+          "rule_id": "4.2.4",
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger consignee som Tecnoglass S.A.S i Colombia. Fakturan har ett primärt faktureringsfält \"Invoice Address\" för Tecnoglass S.A.S i Colombia, med samma huvudadress och samma VAT/registreringsnummer 800229035-4. Företagsnamn och land kan därför verifieras direkt mot fakturan."
+      "motivation": "Certifikatets mottagare 'Tecnoglass S.A.S' med colombiansk adress och VAT/ID '800229035-4' kan identifieras i både Delivery Address och Invoice Address i fakturan. Företagsnamn och land överensstämmer. Skillnader i interpunktion och radbrytning är tillåten normalisering."
     },
     "goods_description": {
       "applicable": true,
       "status": "MISMATCH",
-      "confidence": 0.93,
+      "confidence": 0.9,
       "certificate_value": "12 Packaging Qick-lift arm\n12 Packaging Pillar\n2 Cardboard Box Installation Kit\n10 pcs Quick-lift arm 200i, 4m\n2 pcs Quick-lift arm 300i, 4m\n12 pcs Installation Kit Pillar 013814/opt hight 013815\n12 pcs Pillar",
-      "invoice_value": "Order lines:\nQUICK-LIFT ARM 200i, 4m 10 PCS\nQUICK-LIFT ARM 300i, 4m 2 PCS\nPillar QLA 200 4 - 5m - 300i, L=4000 12 PCS\nAir Regulator ON/OFF Filter 5µm 12 PCS\nInstallation Kit to Pillar 013814/opt hight 013815 12 PCS\nTransport boxes for conatiner shipment. 24 PCS",
+      "invoice_value": "Order lines:\nQUICK-LIFT ARM 200i, 4m\nQUICK-LIFT ARM 300i, 4m\nPillar QLA 200 4 - 5m - 300i, L=4000\nInstallation Kit to Pillar 013814/opt hight 013815\nTransport boxes for conatiner shipment.\n\nProduction lines:\nContainer Box QLA200/300 4m\nPillar ECO BOX",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "no article-number-led match available from certificate"
+          "outcome": "Priority 2 used"
         },
         {
           "rule_id": "4.3.3",
-          "outcome": "main text match applied to item descriptions"
-        },
-        {
-          "rule_id": "4.3.5.3",
-          "outcome": "invoice number and order number matched, but goods content still had to be consistent"
+          "outcome": "PARTIAL_MATCH_ONLY"
         },
         {
           "rule_id": "4.3.8",
-          "outcome": "mismatch because not every certified goods line could be identified"
+          "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Flera huvudvaror kan verifieras: \"10 pcs Quick-lift arm 200i, 4m\", \"2 pcs Quick-lift arm 300i, 4m\" och \"12 pcs Installation Kit Pillar 013814/opt hight 013815\" återfinns i fakturan. Certifikatet innehåller dock även de uttryckliga varuraderna \"12 Packaging Qick-lift arm\", \"12 Packaging Pillar\" och särskilt \"2 Cardboard Box Installation Kit\". Fakturan innehåller i stället \"Transport boxes for conatiner shipment. 24 PCS\" samt detaljerade boxrader, men ingen exakt identifierbar uppgift för \"2 Cardboard Box Installation Kit\"; därför kan inte samtliga uppgifter i certifikatets varubeskrivning verifieras mot fakturan."
+      "motivation": "Flera av certifikatets huvudvaror kan identifieras i fakturan, exempelvis 'Quick-lift arm 200i, 4m', 'Quick-lift arm 300i, 4m' och 'Installation Kit ... 013814/opt hight 013815'. Däremot kan certifikatets separata förpackningsrader '12 Packaging Qick-lift arm', '12 Packaging Pillar' och '2 Cardboard Box Installation Kit' inte verifieras uttryckligen mot fakturans texter utan semantisk omtolkning till andra uttryck som 'Transport boxes for conatiner shipment', 'Container Box QLA200/300 4m' och 'Pillar ECO BOX'. Eftersom varje vara i certifikatet måste kunna återfinnas i fakturan blir kontrollpunkten MISMATCH."
     },
     "quantity": {
       "applicable": true,
-      "status": "MATCH",
-      "confidence": 0.96,
-      "certificate_value": "7898,2 GW",
-      "invoice_value": "Gross weight: 7898,2 kg",
+      "status": "MISMATCH",
+      "confidence": 0.93,
+      "certificate_value": "4005 kg\n802,2 kg\n31 kg\n3060 kg\n7898,2 GW",
+      "invoice_value": "Net weight: 4549,2 kg\nGross weight: 7898,2 kg",
       "rules_applied": [
         {
-          "rule_id": "4.4.2.1",
-          "outcome": "selected quantity from box 7"
-        },
-        {
-          "rule_id": "4.4.3.1",
-          "outcome": "at least one quantity verified"
+          "rule_id": "4.4.2.2",
+          "outcome": "MISMATCH"
         },
         {
           "rule_id": "4.4.4",
-          "outcome": "total weight matched to invoice total gross weight"
+          "outcome": "MISMATCH"
+        },
+        {
+          "rule_id": "4.4.6",
+          "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Certifikatet innehåller flera kvantitetsuppgifter i box 7. Den uttryckliga totalvikten \"7898,2 GW\" kan identifieras exakt i fakturan på sida 13 som \"Gross weight: 7898,2 kg\". Enligt reglerna räcker det att minst en kvantitetsuppgift verifieras när övriga inte uttryckligen motsägs i fakturan."
+      "motivation": "Certifikatets box 7 innehåller viktuppgifter. De fyra första raderna ('4005 kg', '802,2 kg', '31 kg', '3060 kg') saknar uttrycklig viktkategori som GW/NW/Gross/Net, och totalsiffran '7898,2 GW' saknar uttrycklig viktenhet i samma uppgift. Fakturan visar visserligen 'Gross weight: 7898,2 kg', men regelverket förbjuder att komplettera certifikatets saknade viktenhet från fakturan. Därför är kvantitetsfältet formellt inte verifierbart och ska klassificeras som MISMATCH."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.9,
+      "confidence": 0.96,
       "certificate_value": "Sweden",
-      "invoice_value": "Country of Origin: SE",
+      "invoice_value": "Country of Origin: SE\nExport statement: these products are EU preferential origin.",
       "rules_applied": [
         {
           "rule_id": "4.5.1",
-          "outcome": "explicit origin field identified in invoice"
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.5.4",
-          "outcome": "country name normalized against short code"
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.5.5",
-          "outcome": "origin verified"
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger ursprungsland \"Sweden\". Fakturan anger uttryckligen \"Country of Origin: SE\" på varuraderna, vilket är en tillåten normalisering mellan landsnamn och vedertagen kortform. Ursprungslandet kan därför verifieras explicit i fakturan."
+      "motivation": "Certifikatet anger ursprungsland 'Sweden'. Fakturan innehåller upprepade explicita origin-fält på radnivå med 'Country of Origin: SE', vilket är en tillåten landkod för Sverige. Ursprungslandet kan därför verifieras uttryckligen i fakturan."
     }
   },
   "overall_assessment": {
     "comparison_result": "NOT_IDENTICAL",
     "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
     "auto_approval_eligible": false,
-    "confidence": 0.92,
+    "confidence": 0.93,
     "critical_failures": [
-      "Goods description mismatch: the certificate line \"2 Cardboard Box Installation Kit\" cannot be explicitly identified in the invoice, and the packaging lines are not fully aligned with the invoice wording."
+      "Varubeskrivningen kan inte verifieras fullt ut eftersom certifikatets förpackningsrader inte kan identifieras uttryckligen i fakturan utan otillåten semantisk tolkning.",
+      "Kvantitetsfältet i certifikatet uppfyller inte formkraven för viktangivelser; flera viktvärden saknar viktkategori och totalsiffran saknar uttrycklig viktenhet."
     ],
     "manual_review_triggers": [],
-    "decision_summary": "Document pairing is valid because invoice number FFA252182, order reference 4501476280, consignor and consignee all align between certificate and invoice. Consignor, consignee, quantity and origin are verified. The overall result is NOT_IDENTICAL because the goods description in the certificate is more specific than the invoice and not all certified packaging lines can be explicitly identified in the invoice.",
-    "human_explanation": "Certifikatet och fakturan stämmer för avsändare, mottagare, mängd och ursprungsland. Däremot kan inte hela varubeskrivningen verifieras, eftersom certifikatet bland annat anger \"2 Cardboard Box Installation Kit\" medan motsvarande uppgift inte finns uttryckligen i fakturan. Därför ska ärendet hanteras manuellt."
+    "decision_summary": "Dokumentparet är korrekt parat och avsändare, mottagare samt ursprungsland kan verifieras. Minst två tillämpliga kontrollpunkter ger dock MISMATCH: varubeskrivning och kvantitet. Därför måste totalresultatet vara NOT_IDENTICAL.",
+    "human_explanation": "Avsändare, mottagare och ursprung kan verifieras mot fakturan. Varubeskrivningen stämmer inte fullt ut eftersom certifikatets förpackningsrader, bland annat 'Packaging Qick-lift arm', 'Packaging Pillar' och '2 Cardboard Box Installation Kit', inte kan identifieras uttryckligen i fakturan utan tolkning. Kvantitetsfältet i certifikatet innehåller dessutom viktuppgifter där de första fyra raderna saknar viktkategori och totalsiffran '7898,2 GW' saknar uttrycklig viktenhet."
   },
   "_meta": {
-    "tested_at": "2026-04-02T11:06:44.037465+00:00",
-    "prompt_hash": "f81eb9b0d2ea",
+    "tested_at": "2026-04-17T04:12:13.109092+00:00",
+    "prompt_hash": "32b216f423f0",
     "model": "gpt-5.4",
-    "tier": 2,
     "pair": "P230_MISMATCH",
     "expected": "NOT_IDENTICAL",
     "actual": "NOT_IDENTICAL",

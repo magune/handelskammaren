@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-04-02T00:00:00Z",
+    "verification_timestamp": "2026-04-11T00:00:00Z",
     "document_pair_id": null,
     "certificate_issue_date": "2026-02-26",
     "source_documents_received": 2
@@ -15,12 +15,12 @@
     "document_a": {
       "label": "Document A",
       "assumed_role": "certificate",
-      "document_type": "certificate of origin"
+      "document_type": "Certificate of Origin"
     },
     "document_b": {
       "label": "Document B",
       "assumed_role": "invoice",
-      "document_type": "invoice"
+      "document_type": "Invoice"
     }
   },
   "rule_activation": {
@@ -33,28 +33,16 @@
     "eu_origin_normalization_active": false,
     "activated_rules": [
       {
-        "rule_id": "8.6",
-        "rule_name": "Parningsvalidering"
-      },
-      {
         "rule_id": "4.1.0",
-        "rule_name": "Consignor via uttrycklig förekomst i fakturan"
-      },
-      {
-        "rule_id": "4.2.0.2",
-        "rule_name": "Prioritetsordning för consignee-identifiering"
-      },
-      {
-        "rule_id": "4.3.3",
-        "rule_name": "Kontrollerad textmatchning av varubeskrivning"
+        "rule_name": "Consignor identifierad någonstans i fakturadokumentet trots annan From-part"
       },
       {
         "rule_id": "4.4.3.4",
-        "rule_name": "Normalisering av blandade decimalseparatorer"
+        "rule_name": "Normalisering av blandade decimal- och tusentalsseparatorer"
       },
       {
-        "rule_id": "4.5.4",
-        "rule_name": "Normalisering av landsnamn och landskod"
+        "rule_id": "8.6",
+        "rule_name": "Parningsvalidering passerad via consignorträff i fakturan"
       }
     ]
   },
@@ -64,8 +52,12 @@
       "status": "MATCH",
       "confidence": 0.89,
       "certificate_value": "TETRA PAK INTERNATIONAL SA\nAV. GENERAL GUISAN 70\nPO BOX 446, 1009 PULLY\nSWITZERLAND",
-      "invoice_value": "Postal address:\nTetra Pak International SA\nP.O. Box 446\nCH - 1009 PULLY\n...\nVAT reg no: FR51431929470\nTetra Pak International SA\nAv. Général-Guisan 70, CH-1009 Pully\n...",
+      "invoice_value": "Postal address:\nTetra Pak International SA\nP.O. Box 446\nCH - 1009 PULLY\n\nVAT reg no:\nTetra Pak International SA\nAv. Général-Guisan 70, CH-1009 Pully",
       "rules_applied": [
+        {
+          "rule_id": "8.6",
+          "outcome": "MATCH"
+        },
         {
           "rule_id": "4.1.0",
           "outcome": "MATCH"
@@ -79,21 +71,21 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor \"TETRA PAK INTERNATIONAL SA\" återfinns uttryckligen i fakturans footer/adressblock på båda sidorna. Fakturan har även ett separat \"From\"-fält med \"Tetra Pak Closures France SNC\", men enligt koncernstrukturregeln räcker det att certifikatets consignor uttryckligen förekommer någonstans i fakturan. Landet stöds av den schweiziska adressen \"Av. Général-Guisan 70, CH-1009 Pully\" / \"P.O. Box 446, CH-1009 Pully\", vilket verifierar samma part som i certifikatet."
+      "motivation": "Certifikatets consignor 'TETRA PAK INTERNATIONAL SA' återfinns uttryckligen i fakturan i adress-/identifieringsblock på sida 1 och 2. Fakturan har även fältet 'From: Tetra Pak Closures France SNC', men enligt den ensidiga verifieringen och koncernstrukturregeln är det tillräckligt att certifikatets juridiska namn förekommer någonstans i fakturadokumentet. Landet kan verifieras genom den schweiziska adressen 'CH - 1009 PULLY'/'CH-1009 Pully', vilket stöder Schweiz för samma part."
     },
     "consignee": {
       "applicable": true,
       "status": "MISMATCH",
       "confidence": 0.99,
-      "certificate_value": "Asia Coconut Processing Joint Stock Company\nLo El-2, El-3, EI-4, Giao Long Industrial Zone, Phase II\nGiao Long Commune\nVINH LONG\nViet Nam",
-      "invoice_value": "Buyer 1150003\nTetra Pak Vietnam Joint Stock Co.\n235 Dong Khoi Street,\nSaigon Ward,\n700000 HO CHI MINH\nVIET NAM\n...\nConsignee 1150003\nTetra Pak Vietnam Joint Stock Co.\n235 Dong Khoi Street,\nSaigon Ward,\n700000 HO CHI MINH\nVIET NAM",
+      "certificate_value": "Asia Coconut Processing Joint Stock\nCompany\nLo El-2, El-3, EI-4, Giao Long\nIndustrial Zone, Phase II\nGiao Long Commune\nVINH LONG\nViet Nam",
+      "invoice_value": "Buyer 1150003\nTetra Pak Vietnam Joint Stock Co.\n235 Dong Khoi Street,\nSaigon Ward,\n700000 HO CHI MINH\nVIET NAM\n\nConsignee 1150003\nTetra Pak Vietnam Joint Stock Co.\n235 Dong Khoi Street,\nSaigon Ward,\n700000 HO CHI MINH\nVIET NAM\n\nShip to 10003420\nHO CHI MINH CITY PORT\nHO CHI MINH CITY\nVIET NAM",
       "rules_applied": [
         {
           "rule_id": "4.2.0.2",
           "outcome": "MISMATCH"
         },
         {
-          "rule_id": "4.2.1",
+          "rule_id": "4.2.1.1",
           "outcome": "MISMATCH"
         },
         {
@@ -101,25 +93,25 @@
           "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Fakturan innehåller tydliga primära mottagarfält: både \"Buyer\" och \"Consignee\" anger \"Tetra Pak Vietnam Joint Stock Co.\" i Vietnam. Certifikatets consignee \"Asia Coconut Processing Joint Stock Company\" kan inte identifieras i dessa fält, inte i Ship To-fältet och inte någon annanstans i fakturatexten. Detta är därför en direkt mottagarmismatch, inte bara ytterligare information."
+      "motivation": "Certifikatets mottagare är 'Asia Coconut Processing Joint Stock Company' i Viet Nam. Fakturans relevanta mottagarfält som Buyer, Consignee och Ship to visar i stället 'Tetra Pak Vietnam Joint Stock Co.' respektive 'HO CHI MINH CITY PORT'. Den mottagare som står i certifikatet kan inte identifieras i något mottagarfält i fakturan; gemensamt land (Viet Nam) räcker inte när företagsnamnet saknas och en annan part anges."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.97,
-      "certificate_value": "DreamCap26 Pro Red P1805C PA001\nDreamCap26 Pro White PA001\nHeliCap26 Pro White PA001\nHS CODE: 392350",
-      "invoice_value": "DreamCap26 Pro Red P1805C PA001\nDreamCap26 Pro White PA001\nHeliCap26 Pro White PA001\nTariff Code 39235090",
+      "certificate_value": "11 PALLET / 264 CARTONS\nGID 945096440\nCONTAINER: ONEU2755281\nDreamCap26 Pro Red P1805C PA001\nDreamCap26 Pro White PA001\nHeliCap26 Pro White PA001\nHS CODE: 392350\nFREIGHT PREPAID",
+      "invoice_value": "DreamCap26 Pro Red P1805C PA001\nDreamCap26 Pro White PA001\nHeliCap26 Pro White PA001\n\nGlobal Id: 945096440\nONEU275528/1 01939948\nTariff Code 39235090",
       "rules_applied": [
         {
-          "rule_id": "4.3.1",
-          "outcome": "MATCH"
-        },
-        {
           "rule_id": "4.3.2",
-          "outcome": "NOT_APPLICABLE"
+          "outcome": "TEXT_MATCH_APPLIED"
         },
         {
           "rule_id": "4.3.3",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.3.4",
           "outcome": "MATCH"
         },
         {
@@ -127,12 +119,12 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "De tre identitetsbärande produktbeteckningarna i certifikatet återfinns explicit som fakturarader med samma ordalydelse: \"DreamCap26 Pro Red P1805C PA001\", \"DreamCap26 Pro White PA001\" och \"HeliCap26 Pro White PA001\". Certifikatet innehåller inget separat artikelnummer som måste prioriteras enligt artikelnummerregeln. Varubeskrivningen kan därför verifieras genom kontrollerad textmatchning utan fri tolkning."
+      "motivation": "De tre identitetsbärande varubeskrivningarna i certifikatet kan identifieras uttryckligen i fakturans artikelrader: 'DreamCap26 Pro Red P1805C PA001', 'DreamCap26 Pro White PA001' och 'HeliCap26 Pro White PA001'. Ytterligare uppgifter som pall-/kartonguppgift, containerreferens och HS/tariffkod motsäger inte varubeskrivningen. Ingen otillåten semantisk tolkning behövs eftersom produkttexterna återfinns direkt."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.92,
+      "confidence": 0.94,
       "certificate_value": "GW 2899,860 KG",
       "invoice_value": "Gross weight\n2,899.860 KG",
       "rules_applied": [
@@ -147,14 +139,18 @@
         {
           "rule_id": "4.4.4",
           "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.4.6",
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger en enda uttrycklig viktuppgift med kategori och enhet: \"GW 2899,860 KG\". Fakturan anger total \"Gross weight 2,899.860 KG\". Efter tillåten normalisering av decimal- och tusentalsnotation avser båda samma numeriska värde 2899.860 KG och samma viktkategori (gross weight/GW)."
+      "motivation": "Certifikatets kvantitetsfält anger uttryckligen gross weight: 'GW 2899,860 KG'. Fakturan anger total 'Gross weight 2,899.860 KG'. Efter tillåten normalisering av decimal- och tusentalsseparatorer är värdena numeriskt identiska och avser samma viktkategori (gross weight)."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.98,
+      "confidence": 0.96,
       "certificate_value": "FRANCE",
       "invoice_value": "Country of origin of goods\nFR",
       "rules_applied": [
@@ -171,24 +167,24 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger ursprungsland \"FRANCE\". Fakturan anger explicit ett dedikerat ursprungsfält: \"Country of origin of goods FR\", och dessutom \"Origin FR\" på artikelraderna. Landsnamn och ISO-kod är tillåtna ekvivalenter, så ursprungslandet är verifierat."
+      "motivation": "Certifikatet anger ursprungsland 'FRANCE'. Fakturan innehåller ett explicit ursprungsfält: 'Country of origin of goods FR', och artikelraderna visar också 'Origin FR'. Normalisering mellan fullständigt landsnamn och landskod ger entydig verifiering av samma ursprungsland."
     }
   },
   "overall_assessment": {
     "comparison_result": "NOT_IDENTICAL",
     "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
     "auto_approval_eligible": false,
-    "confidence": 0.95,
+    "confidence": 0.96,
     "critical_failures": [
-      "Consignee mismatch: certificate names Asia Coconut Processing Joint Stock Company, while invoice names Tetra Pak Vietnam Joint Stock Co. in the authoritative buyer/consignee fields."
+      "Consignee mismatch: certifikatet anger 'Asia Coconut Processing Joint Stock Company' medan fakturan anger 'Tetra Pak Vietnam Joint Stock Co.' och ingen träff finns för certifikatets mottagare i fakturans mottagarfält."
     ],
     "manual_review_triggers": [],
-    "decision_summary": "Dokumentparet kan inte godkännas som identiskt eftersom kontrollpunkten för mottagare ger MISMATCH. Avsändare, varubeskrivning, kvantitet och ursprungsland kan verifieras mot fakturan, men certifikatets consignee återfinns inte i fakturans mottagarfält.",
-    "human_explanation": "Certifikatet anger mottagaren som Asia Coconut Processing Joint Stock Company i Vietnam, men fakturan anger mottagaren/köparen som Tetra Pak Vietnam Joint Stock Co. i Vietnam och nämner inte Asia Coconut Processing. Avsändare, varor, kvantitet och ursprungsland kan i övrigt verifieras mot fakturan. Därför är dokumentparet inte identiskt och kräver manuell hantering."
+    "decision_summary": "Dokumentparet kunde klassificeras och parningsvalideringen passerades via tydlig consignorträff i fakturan. LC-undantaget är inte tillämpligt. Consignor, varubeskrivning, kvantitet och ursprungsland kan verifieras mot fakturan, men consignee i certifikatet kan inte identifieras i fakturans mottagarfält. Eftersom minst en tillämplig kontrollpunkt är MISMATCH är totalresultatet NOT_IDENTICAL.",
+    "human_explanation": "Certifikatet anger mottagaren som Asia Coconut Processing Joint Stock Company i Viet Nam. Fakturan visar i stället mottagaren/köparen som Tetra Pak Vietnam Joint Stock Co., och certifikatets mottagare kan inte återfinnas i fakturans mottagarfält. Övriga kontroller för avsändare, varor, kvantitet och ursprung stämmer."
   },
   "_meta": {
-    "tested_at": "2026-04-02T11:23:49.168728+00:00",
-    "prompt_hash": "f81eb9b0d2ea",
+    "tested_at": "2026-04-11T08:05:42.159755+00:00",
+    "prompt_hash": "de0d620a2b38",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P040_MISMATCH",

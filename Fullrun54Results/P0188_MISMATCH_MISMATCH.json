@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-04-02T00:00:00Z",
+    "verification_timestamp": "2026-04-11T00:00:00Z",
     "document_pair_id": null,
     "certificate_issue_date": "2025-12-02",
     "source_documents_received": 2
@@ -15,12 +15,12 @@
     "document_a": {
       "label": "Document A",
       "assumed_role": "certificate",
-      "document_type": "Certificate of Origin"
+      "document_type": "certificate_of_origin"
     },
     "document_b": {
       "label": "Document B",
       "assumed_role": "invoice",
-      "document_type": "Collective Invoice"
+      "document_type": "collective_invoice"
     }
   },
   "rule_activation": {
@@ -33,12 +33,16 @@
     "eu_origin_normalization_active": false,
     "activated_rules": [
       {
-        "rule_id": "4.4.5.5",
-        "rule_name": "Summering av flera rader inom samma faktura prövad för generell/samlande varubeskrivning"
+        "rule_id": "8.5",
+        "rule_name": "Dokumentparning med certifikat i fil 1 och faktura i fil 2"
       },
       {
         "rule_id": "8.6",
-        "rule_name": "Obligatorisk parningsvalidering passerad via consignorträff i fakturan"
+        "rule_name": "Obligatorisk parningsvalidering"
+      },
+      {
+        "rule_id": "4.4.5.5.1",
+        "rule_name": "Summering av flera rader inom samma faktura för samlande varubeskrivning"
       }
     ]
   },
@@ -46,98 +50,94 @@
     "consignor": {
       "applicable": true,
       "status": "MISMATCH",
-      "confidence": 0.97,
-      "certificate_value": "Derome Timber AB behalf of Eagle Timber Oy Ltd\nMikonkatu 22B23\nVAT: FI16497381\n00100, Helsinki\nFinland",
+      "confidence": 0.94,
+      "certificate_value": "Derome Timber AB behalf of\nEagle Timber Oy Ltd\nMikonkatu 22B23\nVAT: FI16497381\n00100, Helsinki\nFinland",
       "invoice_value": "Derome Timber AB\nBjurumsvägen 14, 432 87 Veddige\nSverige\nVAT: SE556550696001",
       "rules_applied": [
         {
           "rule_id": "4.1.0",
-          "outcome": "NO_MATCH"
-        },
-        {
-          "rule_id": "4.1.0.2",
-          "outcome": "LAND_CONTRADICTION"
+          "outcome": "Invoice text contains 'Derome Timber AB', but the full consignor field from the certificate is not verified as the same legal party."
         },
         {
           "rule_id": "4.1.3.1",
-          "outcome": "MISMATCH"
+          "outcome": "Same juridical party not established; 'Eagle Timber Oy Ltd' is not identified in the invoice."
         },
         {
           "rule_id": "4.1.4",
-          "outcome": "MISMATCH"
+          "outcome": "Country mismatch: certificate consignor field points to Finland, invoice issuer is in Sweden."
         }
       ],
-      "motivation": "Certifikatet anger en consignor med finsk adress och finskt VAT-nummer (FI16497381) under texten \"Derome Timber AB behalf of Eagle Timber Oy Ltd ... Finland\". Fakturan identifierar utställaren som \"Derome Timber AB\" i Sverige med svensk adress och svenskt VAT-nummer (SE556550696001), och \"Eagle Timber Oy Ltd\" kan inte identifieras i fakturan. Därmed kan samma juridiska part och samma land inte verifieras mot fakturan."
+      "motivation": "Fakturan identifierar tydligt utställaren som Derome Timber AB i Sverige. Certifikatets consignor-fält innehåller däremot 'Derome Timber AB behalf of Eagle Timber Oy Ltd' med finsk adress och finskt VAT-nummer, vilket innebär att samma juridiska part inte kan verifieras mot fakturan. Eftersom Eagle Timber Oy Ltd inte återfinns i fakturan och landuppgiften i certifikatfältet är Finland medan fakturautställaren är Sverige blir resultatet MISMATCH."
     },
     "consignee": {
       "applicable": true,
       "status": "MISMATCH",
       "confidence": 0.99,
-      "certificate_value": "Mounzer Hazem Sammakieh EST\n31 Al Islam Street, Al Hamra, Jedda\nSaudi Arabia",
+      "certificate_value": "Mounzer Hazem Sammakieh EST\n31 Al Islam Street, Al Hamra, Jedda\nContact name: Mounzer Sammakieh\nContact number: +966565562780\nmounzersammakieh@gmail.com\nVAT: 312959310700003\nCR/LICENSE: 7049800498\nSaudi Arabia",
       "invoice_value": "BNBM Group Zhejiang Changxing Forestry Co., Ltd.\nNo.6, Ganquan Road, Lijiaxiang Town\nChangxing County, Huzhou City,\nZhejiang Province\n313102",
       "rules_applied": [
         {
           "rule_id": "4.2.0.2",
-          "outcome": "PRIMARY_BILL_TO_SELECTED"
+          "outcome": "Certificate consignee not identified in any invoice recipient field."
         },
         {
-          "rule_id": "4.2.1",
-          "outcome": "MISMATCH"
+          "rule_id": "4.2.1.1",
+          "outcome": "No alternative recipient field in the invoice contains the certificate consignee."
         },
         {
-          "rule_id": "4.2.4",
-          "outcome": "MISMATCH"
+          "rule_id": "4.2.3",
+          "outcome": "Country mismatch: Saudi Arabia in certificate versus China in invoice recipient fields."
         }
       ],
-      "motivation": "Certifikatets consignee är \"Mounzer Hazem Sammakieh EST\" i Saudiarabien. Fakturan är ställd till och levereras till \"BNBM Group Zhejiang Changxing Forestry Co., Ltd.\" i Kina; certifikatets mottagare förekommer inte i något relevant mottagarfält i fakturan. Uppgifterna kan därför inte kopplas till samma mottagare."
+      "motivation": "Certifikatet anger mottagaren som Mounzer Hazem Sammakieh EST i Saudiarabien. Fakturan anger mottagaren/delivery address som BNBM Group Zhejiang Changxing Forestry Co., Ltd. i Kina, och certifikatets mottagare kan inte identifieras i något mottagarfält i fakturan. Detta är en direkt avvikelse och därför MISMATCH."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.9,
+      "confidence": 0.88,
       "certificate_value": "Whitewood 74 Packages\nWhitewood",
-      "invoice_value": "Whitewood Sawn VI-VII 22x100; Whitewood Sawn board VII 22x100; Whitewood Sawn stud VII 47x250; Whitewood Planed beam VI-VII 72x95",
+      "invoice_value": "Whitewood Sawn VI-VII 22x100\nWhitewood Sawn board VII 22x100\nWhitewood Sawn board VI-VII 22x125\nWhitewood Sawn board VII 22x150\n... (flera Whitewood-rader i fakturan)",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "NO_ARTICLE_NUMBER_IN_CERTIFICATE"
+          "outcome": "No article number used in the certificate goods field; verification performed by controlled text match."
         },
         {
           "rule_id": "4.3.3",
-          "outcome": "MATCH"
+          "outcome": "The identity-bearing designation 'Whitewood' is explicitly present in multiple invoice line descriptions."
         },
         {
           "rule_id": "4.3.4",
-          "outcome": "EXTRA_SPECIFICATION_IGNORED"
+          "outcome": "Additional qualifiers in the invoice such as 'Sawn', dimensions and grades do not prevent identification of the certificate term 'Whitewood'."
         }
       ],
-      "motivation": "Den identitetsbärande huvudbeteckningen i certifikatet är \"Whitewood\". Fakturan innehåller flera varurader där \"Whitewood\" framgår uttryckligen i varubeskrivningen. De extra specifikationerna i fakturan (t.ex. dimensioner och kvalitetsgrader) motsäger inte certifikatets generella varubeskrivning."
+      "motivation": "Den identitetsbärande beteckningen i certifikatet är 'Whitewood'. Ordet 'Whitewood' förekommer uttryckligen i flera varurader i fakturan, vilket räcker för ensidig verifiering av certifikatets varubeskrivning. Därför bedöms varubeskrivningen som MATCH."
     },
     "quantity": {
       "applicable": true,
       "status": "MISMATCH",
-      "confidence": 0.95,
+      "confidence": 0.96,
       "certificate_value": "282,262m3",
-      "invoice_value": "Flera Whitewood-rader i fakturan med kvantiteter per rad, bl.a. 23.263 nm3, 9.598 nm3, 4.802 nm3 ... samt 11.926 am3; inget explicit värde 282,262m3 återfinns",
+      "invoice_value": "Flera radkvantiteter i fakturan, bl.a. 23.263 nm3, 9.598 nm3, 4.802 nm3, 13.552 nm3 ... samt 11.926 am3; ingen explicit total om 282.262 m3",
       "rules_applied": [
         {
           "rule_id": "4.4.2",
-          "outcome": "UNIT_PRESENT"
+          "outcome": "Certificate quantity contains explicit numeric value and unit."
         },
         {
-          "rule_id": "4.4.1",
-          "outcome": "NOT_FOUND_EXPLICITLY"
+          "rule_id": "4.4.3",
+          "outcome": "No explicit invoice quantity equal to 282.262 m3 was identified."
         },
         {
-          "rule_id": "4.4.5.1",
-          "outcome": "EXCEPTIONS_TESTED_IN_ORDER"
+          "rule_id": "4.4.5.5.1",
+          "outcome": "Summation of multiple invoice lines was tested because the certificate uses a broad goods description."
         },
         {
           "rule_id": "4.4.5.5",
-          "outcome": "MISMATCH"
+          "outcome": "Relevant invoice lines do not produce a matching total within tolerance, and units are not consistently identical across all potentially relevant rows."
         }
       ],
-      "motivation": "Certifikatet anger kvantiteten 282,262 m3. Detta numeriska värde kan inte identifieras uttryckligen i fakturan. Summering av flera rader inom samma faktura prövades för den generella varubeskrivningen \"Whitewood\", men de relevanta Whitewood-raderna ger inte certifikatets total 282,262 m3; därför är kvantiteten inte verifierad mot fakturan."
+      "motivation": "Certifikatet anger kvantiteten 282,262 m3. Fakturan innehåller många separata volymrader för Whitewood men ingen uttrycklig total om 282.262 m3. Summering inom samma faktura prövades enligt undantaget för flera rader, men de relevanta Whitewood-raderna ger inte certifikatets total inom tillåten tolerans, och en av de relevanta raderna använder dessutom annan angiven volymbeteckning ('am3') än övriga ('nm3'). Resultatet är därför MISMATCH."
     },
     "origin": {
       "applicable": true,
@@ -148,18 +148,14 @@
       "rules_applied": [
         {
           "rule_id": "4.5.1",
-          "outcome": "EXPLICIT_ORIGIN_FOUND"
-        },
-        {
-          "rule_id": "4.5.4",
-          "outcome": "NORMALIZED_MATCH"
+          "outcome": "Explicit origin field found in the invoice."
         },
         {
           "rule_id": "4.5.5",
-          "outcome": "MATCH"
+          "outcome": "Certificate origin 'SWEDEN' is explicitly identified in the invoice as 'Country of origin: Sweden'."
         }
       ],
-      "motivation": "Certifikatet anger ursprungsland \"SWEDEN\". Fakturan anger uttryckligen \"Country of origin: Sweden\" på sida 3. Ursprungslandet är därför verifierat utan tolkning."
+      "motivation": "Certifikatet anger ursprungsland SWEDEN. Fakturan innehåller en explicit ursprungsangivelse på sidan 3: 'Country of origin: Sweden'. Ursprungslandet kan därför verifieras entydigt och resultatet är MATCH."
     }
   },
   "overall_assessment": {
@@ -168,17 +164,17 @@
     "auto_approval_eligible": false,
     "confidence": 0.96,
     "critical_failures": [
-      "Consignor mismatch: certifikatet anger finsk consignor/Eagle Timber Oy Ltd medan fakturan visar Derome Timber AB i Sverige.",
-      "Consignee mismatch: certifikatet anger Mounzer Hazem Sammakieh EST i Saudiarabien medan fakturan är ställd till BNBM Group Zhejiang Changxing Forestry Co., Ltd.",
-      "Quantity mismatch: certifikatets 282,262 m3 kan inte identifieras eller verifieras mot fakturans kvantiteter."
+      "Consignor could not be verified as the same legal party; certificate consignor field points to Eagle Timber Oy Ltd/Finland while invoice issuer is Derome Timber AB/Sweden.",
+      "Consignee in the certificate (Mounzer Hazem Sammakieh EST, Saudi Arabia) does not appear in the invoice, which is addressed to BNBM Group Zhejiang Changxing Forestry Co., Ltd., China.",
+      "Certificate quantity 282,262 m3 could not be verified against the invoice quantities."
     ],
     "manual_review_triggers": [],
-    "decision_summary": "Dokumentparet passerar parningsvalideringen eftersom certifikatets consignor-namn delvis kan återfinnas i fakturan via Derome Timber AB, men den fullständiga verifieringen ger flera materiella avvikelser. Varubeskrivning och ursprungsland kan verifieras, men consignor, consignee och kvantitet kan inte verifieras enligt regelverket. Minst en tillämplig kontrollpunkt ger MISMATCH, därför är slutresultatet NOT_IDENTICAL.",
-    "human_explanation": "Certifikatet anger avsändaren som en finsk part kopplad till Eagle Timber Oy Ltd, medan fakturan visar Derome Timber AB i Sverige. Certifikatet anger mottagaren som Mounzer Hazem Sammakieh EST i Saudiarabien, men fakturan är ställd till BNBM Group Zhejiang Changxing Forestry Co., Ltd. i Kina. Dessutom kan certifikatets mängd 282,262 m3 inte återfinnas i fakturan."
+    "decision_summary": "Dokumentparet passerar parningsvalideringen endast genom att namnet Derome Timber AB förekommer i både certifikatet och fakturan, men kontrollpunkterna för avsändare, mottagare och kvantitet ger MISMATCH. Varubeskrivningen 'Whitewood' och ursprungslandet Sweden kan verifieras i fakturan, men minst en tillämplig kontrollpunkt har MISMATCH och därför är helhetsresultatet NOT_IDENTICAL.",
+    "human_explanation": "Certifikatet anger mottagaren som Mounzer Hazem Sammakieh EST i Saudiarabien, medan fakturan avser BNBM Group Zhejiang Changxing Forestry Co., Ltd. i Kina. Avsändaruppgiften i certifikatet innehåller Eagle Timber Oy Ltd/Finland, medan fakturan är utställd av Derome Timber AB i Sverige, och kvantiteten 282,262 m3 kan inte verifieras mot fakturan. Därför är dokumenten inte identiska och måste hanteras manuellt."
   },
   "_meta": {
-    "tested_at": "2026-04-02T11:23:49.156687+00:00",
-    "prompt_hash": "f81eb9b0d2ea",
+    "tested_at": "2026-04-11T08:05:42.138264+00:00",
+    "prompt_hash": "de0d620a2b38",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P0188_MISMATCH",

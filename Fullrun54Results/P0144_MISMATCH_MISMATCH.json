@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": null,
+    "verification_timestamp": "2026-04-11T00:00:00Z",
     "document_pair_id": null,
     "certificate_issue_date": "2026-03-03",
     "source_documents_received": 2
@@ -31,156 +31,159 @@
     "to_order_rule_active": false,
     "quantity_exception_applied": null,
     "eu_origin_normalization_active": false,
-    "activated_rules": [
-      {
-        "rule_id": "8.6",
-        "rule_name": "Parningsvalidering passerad via identifierbar consignee i fakturan"
-      },
-      {
-        "rule_id": "4.4.3",
-        "rule_name": "Tillåten trunkering/formatnormalisering av viktvärde"
-      },
-      {
-        "rule_id": "4.5.4",
-        "rule_name": "Landkod-normalisering för ursprungsland (SE ↔ Sweden)"
-      }
-    ]
+    "activated_rules": []
   },
   "control_points": {
     "consignor": {
       "applicable": true,
       "status": "MISMATCH",
-      "confidence": 0.91,
+      "confidence": 0.94,
       "certificate_value": "Tetra Pak Inventing AB\nTanumsvägen 4\nSE-457 40, FJÄLLBACKA\nSweden",
       "invoice_value": "Postal address:\nTetra Pak Global Supply SA\nPO Box 446\nCH / 1009 PULLY\n...\nFrom:\nInventing SE",
       "rules_applied": [
         {
+          "rule_id": "8.6",
+          "outcome": "Parningsvalidering passerad via identifierbar consignee i fakturan."
+        },
+        {
           "rule_id": "4.1.0",
-          "outcome": "Sökt i hela fakturan; certifikatets fullständiga consignor-namn kunde inte identifieras uttryckligen"
+          "outcome": "Certifikatets fullständiga consignor-namn kunde inte identifieras uttryckligen någonstans i fakturan."
         },
         {
           "rule_id": "4.1.0.1",
-          "outcome": "Delad varumärkesprefix/partiell namnlika uppgifter räcker inte"
+          "outcome": "Delad varumärkesprefix 'Tetra Pak' är inte tillräckligt när juridiskt entitetsnamn skiljer sig."
         },
         {
           "rule_id": "4.1.3.1",
-          "outcome": "Olika juridiska namn i certifikat och faktura/supporttext ger MISMATCH"
+          "outcome": "Fakturan identifierar annan juridisk part som utställare/säljarenhet."
         },
         {
-          "rule_id": "4.1.4",
-          "outcome": "Land för certifikatets consignor kan inte verifieras som samma part i fakturan"
+          "rule_id": "4.1.5",
+          "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Certifikatet anger consignor som \"Tetra Pak Inventing AB\" i Sverige. Vid sökning i hela fakturan återfinns inte detta fullständiga juridiska namn; de relevanta fakturatexterna är i stället \"Tetra Pak Global Supply SA\" samt \"From: Inventing SE\". Dessa är inte samma uttryckliga juridiska part som \"Tetra Pak Inventing AB\", och regeln om delad varumärkesprefix/partiell namnlikhet tillåter inte MATCH."
+      "motivation": "Certifikatet anger consignor som 'Tetra Pak Inventing AB' i Sverige. Vid sökning i hela fakturan identifieras 'Tetra Pak Global Supply SA' i adress-/issuerblock och 'From: Inventing SE', men inte det fullständiga juridiska namnet 'Tetra Pak Inventing AB'. Enligt reglerna räcker inte gemensamt varumärke eller delvis liknande namn för att styrka samma juridiska part, och fakturan visar dessutom en annan utställare. Därför kan consignor inte verifieras mot fakturan."
     },
     "consignee": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.96,
+      "confidence": 0.93,
       "certificate_value": "Tetra Pak Binh Duong Joint Stock Co\nNo. 12, VSIP II-A, Street No. 30\nVietnam – Singapore Industrial Park\nVinh Tan Ward,\nHo Chi Minh City\nVietnam",
-      "invoice_value": "Consignee 1150004\nTetra Pak Binh Duong JSC\nNo. 12, VSIP II-A, Street No. 30,\nVietnam-Singapore Industrial Park II-A\nVinh Tan Ward,\nHO CHI MINH CITY, VIETNAM\nVIET NAM",
+      "invoice_value": "Consignee 1150004\nTetra Pak Binh Duong JSC\nNo. 12, VSIP II-A, Street No. 30,\nVietnam-Singapore Industrial Park II-A\n Vinh Tan Ward,\nHO CHI MINH CITY, VIETNAM\nVIET NAM",
       "rules_applied": [
         {
           "rule_id": "4.2.0.2",
-          "outcome": "Auktoritativ consignee kunde identifieras i fakturans uttryckliga consignee-fält"
+          "outcome": "Mottagaren identifierades i fakturans Consignee-/Ship To-fält."
         },
         {
           "rule_id": "4.2.2.1",
-          "outcome": "Tillåten normalisering av versaler, radbrytningar och formatering användes"
+          "outcome": "Normalisering av versaler/gemener och mindre formateringsskillnader användes."
         },
         {
           "rule_id": "4.1.3.6",
-          "outcome": "JSC accepterat som förkortad juridisk bolagsform för Joint Stock Co"
+          "outcome": "JSC behandlades som förkortning av Joint Stock Co/Company."
         },
         {
           "rule_id": "4.2.3",
-          "outcome": "Land Vietnam/Viet Nam överensstämmer"
+          "outcome": "Vietnam och Viet Nam bedömdes som samma land efter normalisering."
+        },
+        {
+          "rule_id": "4.2.4",
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets mottagare kan identifieras direkt i fakturans uttryckliga consignee-fält. Företagsnamnet överensstämmer efter tillåten normalisering och förkortningen \"JSC\" mot \"Joint Stock Co\", och landet Vietnam/Viet Nam är samma."
+      "motivation": "Certifikatets mottagare 'Tetra Pak Binh Duong Joint Stock Co' återfinns i fakturan som 'Tetra Pak Binh Duong JSC' i både Ship To och Consignee. Skillnaden avser juridisk bolagsformsförkortning, vilket är tillåtet. Landet Vietnam framgår uttryckligen i fakturan och överensstämmer med certifikatet."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.99,
+      "confidence": 0.98,
       "certificate_value": "K40(Film LD/EAA 40my)width 1585mm\n14 Pallets film R3103-158",
-      "invoice_value": "10 R3103-158 K40(Film LD/EAA 40my)width 1585mm\nWidth 1585 mm\nCustomer Material No. R3103-158",
+      "invoice_value": "10 R3103-158 K40(Film LD/EAA 40my)width 1585mm\n...\nTotal Pallets Reels and Cartons\n14 Pallets",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "Artikelnummer i certifikatet matchar exakt mot fakturan"
+          "outcome": "Artikelnummer i certifikatet aktiverade prioritet 1."
         },
         {
-          "rule_id": "4.3.1",
-          "outcome": "Relevant varubeskrivning identifierad i fakturan"
+          "rule_id": "4.3.6",
+          "outcome": "Artikelnumret R3103-158 identifierades exakt i fakturan."
         },
         {
           "rule_id": "4.3.8",
-          "outcome": "Varubeskrivningen verifierad som MATCH"
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet innehåller artikelnumret \"R3103-158\" och produkttexten \"K40(Film LD/EAA 40my)width 1585mm\". Fakturan innehåller samma artikelnummer och samma identitetsbärande varubeskrivning, inklusive bredd 1585 mm. Därmed är varubeskrivningen verifierad enligt artikelnummer-prioritet."
+      "motivation": "Certifikatet innehåller artikelnumret 'R3103-158', vilket enligt prioriteringsregeln ska verifieras först. Fakturan innehåller exakt samma artikelnummer och samma varubeskrivning 'K40(Film LD/EAA 40my)width 1585mm'. Därmed är varubeskrivningen verifierad utan behov av vidare semantisk tolkning."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.93,
+      "confidence": 0.91,
       "certificate_value": "Gross 15999,86 kg",
       "invoice_value": "Gross weight\n15,999.868 KG",
       "rules_applied": [
         {
-          "rule_id": "4.4.2.1",
-          "outcome": "Verifieringsgrundande kvantitet hämtad från box 7 i certifikatet"
+          "rule_id": "4.4.2.2",
+          "outcome": "Certifikatet anger numeriskt värde, viktenhet och viktkategori uttryckligen."
+        },
+        {
+          "rule_id": "4.4.4",
+          "outcome": "Total gross weight i fakturan användes som jämförelsevärde."
         },
         {
           "rule_id": "4.4.3",
-          "outcome": "Numeriskt värde identifierat i fakturan med tillåten formatnormalisering"
+          "outcome": "Samma numeriska grossovikt identifierades i fakturan."
         },
         {
-          "rule_id": "4.4.2.2",
-          "outcome": "Viktkategori Gross/Gross weight överensstämmer"
+          "rule_id": "4.4.3",
+          "outcome": "Decimaltrunkering från 15,999.868 till 15,999.86 gav överensstämmelse med certifikatets precision."
+        },
+        {
+          "rule_id": "4.4.6",
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Den verifieringsgrundande kvantiteten i certifikatets box 7 är \"Gross 15999,86 kg\". Fakturan anger \"Gross weight 15,999.868 KG\". Efter tillåten normalisering av decimal-/tusentalsformat och trunkering till certifikatets precision motsvarar fakturavärdet 15999,86 kg, vilket ger MATCH."
+      "motivation": "Certifikatet anger 'Gross 15999,86 kg' i kvantitetsfältet. Fakturan anger 'Gross weight 15,999.868 KG'. Efter tillåten normalisering av decimalnotation och trunkering till certifikatets precision motsvarar fakturans värde 15999,86 kg, och både viktkategori (gross) och enhet (kg) överensstämmer."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.97,
       "certificate_value": "Sweden",
-      "invoice_value": "Country of origin of goods\nSE\n...\nOrigin SE",
+      "invoice_value": "Country of origin of goods\nSE",
       "rules_applied": [
         {
           "rule_id": "4.5.1",
-          "outcome": "Explicit ursprungsfält identifierat i fakturan"
+          "outcome": "Ursprungsland identifierades i ett explicit origin-fält i fakturan."
         },
         {
           "rule_id": "4.5.4",
-          "outcome": "ISO-landkod SE normaliserad mot Sweden"
+          "outcome": "Landnormalisering fullständigt namn mot vedertagen kortform/landkod användes."
         },
         {
           "rule_id": "4.5.5",
-          "outcome": "Ursprungslandet kan uttryckligen identifieras i fakturan"
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger ursprungsland \"Sweden\". Fakturan anger uttryckligen ursprung i dedikerat ursprungsfält som \"Country of origin of goods SE\" och även \"Origin SE\" på raden. SE är vedertagen landskod för Sweden, så ursprungslandet är verifierat."
+      "motivation": "Certifikatet anger ursprungsland 'Sweden'. Fakturan innehåller ett explicit ursprungsfält med 'Country of origin of goods SE'. 'SE' är vedertagen landskod för Sweden, så ursprungslandet kan uttryckligen verifieras."
     }
   },
   "overall_assessment": {
     "comparison_result": "NOT_IDENTICAL",
     "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
     "auto_approval_eligible": false,
-    "confidence": 0.94,
+    "confidence": 0.95,
     "critical_failures": [
-      "Consignor i certifikatet är \"Tetra Pak Inventing AB, Sweden\", men detta fullständiga juridiska namn kan inte identifieras uttryckligen i fakturan; fakturan visar i stället \"Tetra Pak Global Supply SA\" och \"From: Inventing SE\"."
+      "Consignor kunde inte verifieras som samma juridiska part: certifikatet anger 'Tetra Pak Inventing AB' medan fakturan identifierar 'Tetra Pak Global Supply SA' och endast 'From: Inventing SE'."
     ],
     "manual_review_triggers": [],
-    "decision_summary": "Fyra kontrollpunkter verifieras som MATCH: consignee, goods description, quantity och origin. Kontrollpunkten consignor är MISMATCH eftersom certifikatets fullständiga juridiska avsändarnamn inte kan återfinnas uttryckligen i fakturan. Minst en tillämplig kontrollpunkt är därmed MISMATCH och totalresultatet måste vara NOT_IDENTICAL.",
-    "human_explanation": "Mottagare, varubeskrivning, mängd och ursprungsland stämmer mellan dokumenten. Däremot anger certifikatet avsändaren som Tetra Pak Inventing AB i Sverige, medan fakturan i stället visar Tetra Pak Global Supply SA och texten \"From: Inventing SE\", så avsändaren kan inte verifieras som samma juridiska part."
+    "decision_summary": "Dokumentparet kunde paras via tydligt matchande consignee. Varubeskrivning, kvantitet och ursprungsland verifieras mot fakturan, men consignor i certifikatet kan inte styrkas som samma juridiska part som den som framgår av fakturan. Minst en tillämplig kontrollpunkt är därför MISMATCH och totalresultatet blir NOT_IDENTICAL.",
+    "human_explanation": "Certifikatet anger avsändaren som Tetra Pak Inventing AB, men fakturan identifierar Tetra Pak Global Supply SA och endast texten 'Inventing SE'. Därför kan avsändaren inte verifieras som samma juridiska part. Mottagare, varubeskrivning, kvantitet och ursprungsland stämmer i övrigt."
   },
   "_meta": {
-    "tested_at": "2026-04-02T11:21:38.816095+00:00",
-    "prompt_hash": "f81eb9b0d2ea",
+    "tested_at": "2026-04-11T08:05:06.159928+00:00",
+    "prompt_hash": "de0d620a2b38",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P0144_MISMATCH",

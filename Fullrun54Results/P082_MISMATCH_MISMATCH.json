@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-04-07T00:00:00Z",
+    "verification_timestamp": null,
     "document_pair_id": null,
     "certificate_issue_date": "2023-03-08",
     "source_documents_received": 2
@@ -15,12 +15,12 @@
     "document_a": {
       "label": "Document A",
       "assumed_role": "certificate",
-      "document_type": "Certificate of Origin"
+      "document_type": "certificate of origin"
     },
     "document_b": {
       "label": "Document B",
       "assumed_role": "invoice",
-      "document_type": "Invoice"
+      "document_type": "invoice"
     }
   },
   "rule_activation": {
@@ -34,11 +34,19 @@
     "activated_rules": [
       {
         "rule_id": "8.5.0",
-        "rule_name": "Filbaserad dokumentparning - använd certifikat från certifikatfilen och faktura från separat fakturafil"
+        "rule_name": "Filbaserad dokumentparning; certifikat hämtas från certifikatfilen och verifiering sker mot separat fakturafil"
       },
       {
         "rule_id": "8.6",
-        "rule_name": "Obligatorisk parningsvalidering"
+        "rule_name": "Obligatorisk parningsvalidering passerad genom matchande fakturanummer och identifierbar consignor/consignee"
+      },
+      {
+        "rule_id": "4.2.0.2",
+        "rule_name": "Consignee får verifieras mot valfritt relevant mottagarfält i fakturan"
+      },
+      {
+        "rule_id": "4.4.2.2",
+        "rule_name": "Vikt i certifikatet måste innehålla både viktenhet och viktkategori i samma uppgift"
       }
     ]
   },
@@ -46,12 +54,12 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.99,
+      "confidence": 0.98,
       "certificate_value": "Bulten Sweden AB\nBox 512\n734 27, Hallstahammar\nSweden",
       "invoice_value": "Bulten Sweden AB\nBox 512\nSE-734 27 Hallstahammar\nSweden\nOrg nr/VAT No: SE556078364801",
       "rules_applied": [
         {
-          "rule_id": "4.1.2",
+          "rule_id": "4.1.0",
           "outcome": "MATCH"
         },
         {
@@ -61,18 +69,14 @@
         {
           "rule_id": "4.1.4",
           "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.1.5",
-          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger consignor som \"Bulten Sweden AB\" i Sverige. Fakturan identifierar samma juridiska part uttryckligen som fakturautställare i sidhuvud/sidfot med samma företagsnamn, svensk adress och VAT-prefix SE, vilket verifierar landet Sverige. Företagsnamn och land kan därför verifieras entydigt mot fakturan."
+      "motivation": "Certifikatets consignor \"Bulten Sweden AB\" återfinns uttryckligen i fakturafilen, inklusive adressuppgift i Sverige. Landet verifieras både via adressen \"Sweden\" och VAT-prefixet \"SE\". Samma juridiska part kan därmed identifieras i fakturan."
     },
     "consignee": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.98,
+      "confidence": 0.97,
       "certificate_value": "ZJK Volvo Car Engine Mfg. Co., Ltd\nNo. 1 ZhongRui Street\nNanshan Industrial Cluster District\nZhang Jiakou City,\nHebei Province 076150\nCHINA",
       "invoice_value": "Delivery address\nZJK Volvo Car Engine Mfg. Co., Ltd\nNo.1 ZhongRui Street, (CHN08_137)\nNanshan Industry Cluster District\n076150 Zhangjiakou City,\nHebei Province P.R. China",
       "rules_applied": [
@@ -81,30 +85,22 @@
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.2.2",
-          "outcome": "MATCH"
-        },
-        {
           "rule_id": "4.2.3",
-          "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.2.4",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets mottagare kan identifieras i fakturans mottagarfält \"Delivery address\". Företagsnamnet \"ZJK Volvo Car Engine Mfg. Co., Ltd\" återfinns uttryckligen och landet är Kina/China. Att fakturan även innehåller en annan part som payer påverkar inte matchningen eftersom certifikatets mottagare får verifieras mot något relevant mottagarfält i fakturan."
+      "motivation": "Certifikatets mottagare kan identifieras i fakturans leveransadressfält. Att fakturan även visar en annan part som payer påverkar inte bedömningen, eftersom consignee får verifieras mot något relevant mottagarfält. Landet China/P.R. China överensstämmer."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.9,
-      "certificate_value": "ZJK Volvo Car Engine Mfg. Co., Ltd\n1 pallet fasteners",
+      "confidence": 0.88,
+      "certificate_value": "1 pallet fasteners",
       "invoice_value": "M12x12 PLUGG 5.8 ZN/NIC+PATC\nOther fasteners, threaded, steel",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "NOT_APPLICABLE_NO_ARTICLE_NUMBER_IN_CERTIFICATE"
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.3.3",
@@ -113,39 +109,27 @@
         {
           "rule_id": "4.3.4",
           "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.3.8",
-          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet innehåller ingen artikelnummerreferens som styr Prioritet 1. Den identitetsbärande huvudbeteckningen i certifikatet är \"fasteners\"; detta ord kan identifieras uttryckligen i fakturans varubeskrivning \"Other fasteners, threaded, steel\". Tillägget \"1 pallet\" i certifikatet är inte identitetsbärande för produkten och ändrar inte produktidentiteten. Varubeskrivningen kan därför verifieras genom kontrollerad textmatchning utan semantisk tolkning."
+      "motivation": "Den identitetsbärande huvudbeteckningen i certifikatet är \"fasteners\". Fakturan innehåller uttryckligen \"Other fasteners, threaded, steel\", vilket verifierar varutypen utan otillåten semantisk tolkning. Tillägget \"1 pallet\" är en förpacknings-/försändelseuppgift och motsäger inte fakturans varubeskrivning."
     },
     "quantity": {
       "applicable": true,
       "status": "MISMATCH",
       "confidence": 0.99,
       "certificate_value": "167kg",
-      "invoice_value": "Gross weight (kg) 167\nNet weight (kg) 149\nNo of pallets 1",
+      "invoice_value": "Gross weight (kg) 167\nNet weight (kg) 149",
       "rules_applied": [
-        {
-          "rule_id": "4.4.2.1",
-          "outcome": "BOX_7_IS_GOVERNING_VALUE"
-        },
         {
           "rule_id": "4.4.2.2",
           "outcome": "MISMATCH"
         },
         {
           "rule_id": "4.4.4",
-          "outcome": "INVOICE_HAS_WEIGHT_BUT_CANNOT_CURE_MISSING_CATEGORY"
-        },
-        {
-          "rule_id": "4.4.6",
           "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Certifikatets verifieringsgrundande kvantitet i box 7 är \"167kg\". Eftersom detta är en viktangivelse kräver regelverket att viktkategori framgår uttryckligen i samma uppgift, dvs. GW/NW/Gross/Net. Certifikatet anger endast \"167kg\" utan viktkategori. Fakturan innehåller både \"Gross weight (kg) 167\" och \"Net weight (kg) 149\", men viktkategori får inte härledas från fakturan när den saknas i certifikatet. Kontrollpunkten ska därför klassificeras som MISMATCH."
+      "motivation": "Certifikatets kvantitetsfält anger en vikt, \"167kg\", men saknar uttrycklig viktkategori i samma uppgift (GW/NW/Gross/Net). Detta är ett formkrav för viktangivelse i certifikatet. Fakturan visar både gross weight 167 och net weight 149, men fakturan får inte användas för att komplettera den saknade viktkategorin i certifikatet."
     },
     "origin": {
       "applicable": true,
@@ -161,30 +145,26 @@
         {
           "rule_id": "4.5.4",
           "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.5.5",
-          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger ursprungsland \"Sweden\". Fakturan anger ursprung uttryckligen i origin-fältet som \"SE\" för varuraden. ISO-landkod SE är en tillåten landnormalisering för Sverige, så ursprungslandet kan verifieras explicit i fakturan."
+      "motivation": "Certifikatet anger ursprungsland \"Sweden\". Fakturan innehåller ett explicit origin-fält med värdet \"SE\", vilket är en tillåten ISO-landkod för Sweden. Ursprungslandet kan därför verifieras uttryckligen i fakturan."
     }
   },
   "overall_assessment": {
     "comparison_result": "NOT_IDENTICAL",
     "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
     "auto_approval_eligible": false,
-    "confidence": 0.97,
+    "confidence": 0.98,
     "critical_failures": [
-      "Kvantiteten i certifikatet anges som \"167kg\" utan uttrycklig viktkategori (GW/NW/Gross/Net), vilket enligt regelverket ger MISMATCH."
+      "Kvantitetskontrollpunkten är MISMATCH eftersom certifikatet anger \"167kg\" utan uttrycklig viktkategori, medan viktkategori är ett obligatoriskt formkrav för viktangivelse."
     ],
     "manual_review_triggers": [],
-    "decision_summary": "Dokumentparet är korrekt parat via fakturanummer 754129 och uppgifterna för avsändare, mottagare, varubeskrivning och ursprungsland kan verifieras mot fakturan. Kvantitetskontrollpunkten faller dock på ett formkrav eftersom certifikatets box 7 endast anger \"167kg\" utan viktkategori. Minst en tillämplig kontrollpunkt har därför status MISMATCH och totalresultatet måste vara NOT_IDENTICAL.",
-    "human_explanation": "Certifikatet och fakturan stämmer överens för avsändare, mottagare, varubeskrivning och ursprungsland. Kvantiteten i certifikatet anges som \"167kg\" utan att det framgår om det är brutto- eller nettovikt, medan fakturan anger både gross weight 167 och net weight 149. Därför är dokumentparet inte identiskt och kräver manuell handläggning."
+    "decision_summary": "Dokumentparet har verifierats enligt standardparning med certifikatet från certifikatfilen och fakturan från den separata fakturafilen. Avsändare, mottagare, varubeskrivning och ursprungsland kan verifieras mot fakturan, och fakturanummer 754129 överensstämmer. Kontrollpunkten kvantitet ger dock MISMATCH eftersom certifikatet anger vikten 167kg utan att ange om detta avser gross- eller nettovikt; fakturans uppgifter kan inte användas för att komplettera denna brist. Minst en tillämplig kontrollpunkt är därför MISMATCH, vilket medför comparison_result NOT_IDENTICAL.",
+    "human_explanation": "Avsändare, mottagare, varubeskrivning och ursprungsland kan verifieras mot fakturan. Certifikatet anger dock mängden som \"167kg\" utan att ange om det avser brutto- eller nettovikt, medan fakturan redovisar både gross weight 167 kg och net weight 149 kg. Därför är dokumenten inte identiska och kräver manuell handläggning."
   },
   "_meta": {
-    "tested_at": "2026-04-07T10:42:41.325301+00:00",
-    "prompt_hash": "a85247cdbff7",
+    "tested_at": "2026-04-11T08:06:14.351813+00:00",
+    "prompt_hash": "de0d620a2b38",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P082_MISMATCH",

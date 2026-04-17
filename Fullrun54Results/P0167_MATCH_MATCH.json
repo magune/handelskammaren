@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-04-02T00:00:00Z",
+    "verification_timestamp": null,
     "document_pair_id": null,
     "certificate_issue_date": "2023-03-07",
     "source_documents_received": 2
@@ -20,7 +20,7 @@
     "document_b": {
       "label": "Document B",
       "assumed_role": "invoice",
-      "document_type": "invoice"
+      "document_type": "commercial invoice"
     }
   },
   "rule_activation": {
@@ -34,27 +34,15 @@
     "activated_rules": [
       {
         "rule_id": "4.1.0",
-        "rule_name": "Consignor identified anywhere in invoice/supporting invoice text"
+        "rule_name": "Consignor can be verified anywhere in the invoice documentation"
       },
       {
-        "rule_id": "4.3.3",
-        "rule_name": "Controlled text match for goods description"
-      },
-      {
-        "rule_id": "4.4.3.1",
-        "rule_name": "At least one quantity statement may be verified"
-      },
-      {
-        "rule_id": "4.4.3.4",
-        "rule_name": "Normalization of mixed decimal/thousand separators"
-      },
-      {
-        "rule_id": "4.5.4.1",
-        "rule_name": "EU origin normalization"
+        "rule_id": "4.2.0.2",
+        "rule_name": "Consignee may be verified in any relevant recipient field"
       },
       {
         "rule_id": "4.5.4.2",
-        "rule_name": "EU member state and EU are interchangeable for origin verification"
+        "rule_name": "EU and specific EU member state may verify each other"
       }
     ]
   },
@@ -62,16 +50,12 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.94,
-      "certificate_value": "Borealis AG c/o Borealis AB, Industrivägen 3, 444 86 STENUNGSUND, Sverige",
-      "invoice_value": "Exporter: Borealis AG, Vienna VAT ID No.: SE502065098101 c/o Borealis AB, SE - 444 86 STENUNGSUND, SWEDEN",
+      "confidence": 0.9,
+      "certificate_value": "Borealis AG c/o Borealis AB\nIndustrivägen 3\n444 86, STENUNGSUND\nSverige",
+      "invoice_value": "Exporter:\nBorealis AG, Vienna VAT ID No.: SE502065098101\nc/o Borealis AB\nSE - 444 86 STENUNGSUND, SWEDEN",
       "rules_applied": [
         {
           "rule_id": "4.1.0",
-          "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.1.2",
           "outcome": "MATCH"
         },
         {
@@ -79,25 +63,21 @@
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.1.4",
+          "rule_id": "4.1.5",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor kan identifieras uttryckligen i fakturan på sida 3 i exportörsblocket som 'Borealis AG ... c/o Borealis AB ... STENUNGSUND, SWEDEN'. Detta uppfyller regeln om identifiering någonstans i fakturadokumentet, och landet Sverige verifieras explicit i samma block."
+      "motivation": "Certifikatets consignor kan identifieras uttryckligen i fakturan via exportörsblocket på sida 3: \"Borealis AG ... c/o Borealis AB ... SWEDEN\". Detta styrker samma partnamnskärna som i certifikatet, och landet Sverige verifieras explicit i adressen samt stöds även av svensk VAT-kod med prefix SE. Skillnaden mot fakturans issuer-block i Wien hindrar inte MATCH eftersom consignorn återfinns någonstans i fakturaunderlaget."
     },
     "consignee": {
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.98,
-      "certificate_value": "DEMIRER KABLO TESISLERI SAN VE TIC A.S., BEYBI GIZ PLAZA N:1 K:30, 34398 SARIYER - ISTANBUL, Turkey",
-      "invoice_value": "Customer Name / Mailing address: Demirer Kablo Tesisleri San. ve Tic. A.S., Beybi Giz Plaza N:1 K:30, 34398 SARIYER ISTANBUL, TURKEY",
+      "certificate_value": "DEMIRER KABLO TESISLERI\nSAN VE TIC A.S.\nBEYBI GIZ PLAZA N:1 K:30\n34398 SARIYER - ISTANBUL\nTurkey",
+      "invoice_value": "Delivery address\nDemirer Kablo Tesisleri\nSan. ve Tic. A.S.\nBeybi Giz Plaza N:1 K:30\n34398 SARIYER ISTANBUL\nTURKEY",
       "rules_applied": [
         {
           "rule_id": "4.2.0.2",
-          "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.2.2",
           "outcome": "MATCH"
         },
         {
@@ -105,47 +85,43 @@
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.2.3",
+          "rule_id": "4.2.4",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets mottagare återfinns direkt i fakturans primära kund-/faktureringsfält som 'Customer Name / Mailing address' och även i övriga kund-/leveransfält. Företagsnamn och land överensstämmer efter tillåten normalisering av punktnotation och versaler/gemener."
+      "motivation": "Mottagaren i certifikatet återfinns uttryckligen i fakturans mottagarfält, inklusive Customer Name/Mailing address, Customer name/address och Delivery address. Företagsnamnet överensstämmer efter tillåten normalisering av versaler, punktnotation och mellanrum: \"SAN VE TIC A.S.\" motsvarar \"San. ve Tic. A.S.\". Landet Turkey/TURKEY överensstämmer."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.91,
-      "certificate_value": "100 OCT (1000 kg net) / LS4201H",
-      "invoice_value": "Borlink LS4201H Octabin LD Polyethylene; Total number of packages 100 OCT",
+      "confidence": 0.94,
+      "certificate_value": "100 OCT (1000 kg net)\nLS4201H",
+      "invoice_value": "Borlink LS4201H Octabin LD Polyethylene\n...\nTotal number of packages 100 OCT",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "NO_ARTICLE_NUMBER_PRIORITY_USED"
-        },
-        {
-          "rule_id": "4.3.3",
           "outcome": "MATCH"
         },
         {
           "rule_id": "4.3.4",
           "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.3.8",
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Den identitetsbärande huvudbeteckningen 'LS4201H' i certifikatet kan identifieras explicit i fakturans varurader som 'Borlink LS4201H Octabin LD Polyethylene'. Certifikatets uppgift '100 OCT' återfinns dessutom i fakturan som 'Total number of packages 100 OCT', och inga uppgifter i fakturan motsäger certifikatets varubeskrivning."
+      "motivation": "Certifikatets identitetsbärande beteckning \"LS4201H\" kan identifieras exakt i fakturans varubeskrivning \"Borlink LS4201H Octabin LD Polyethylene\" på flera rader. Certifikatets uppgift \"100 OCT\" stöds dessutom av fakturans totalsammanställning \"Total number of packages 100 OCT\". Den extra texten \"Borlink\" och \"Octabin LD Polyethylene\" i fakturan motsäger inte certifikatet och förändrar inte den verifierade huvudbeteckningen."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.97,
+      "confidence": 0.95,
       "certificate_value": "Gross 104.000kg",
       "invoice_value": "Total gross weight 104.000,00 KG",
       "rules_applied": [
         {
-          "rule_id": "4.4.2.1",
-          "outcome": "BOX_7_IDENTIFIED"
-        },
-        {
-          "rule_id": "4.4.4",
+          "rule_id": "4.4.2.2",
           "outcome": "MATCH"
         },
         {
@@ -153,21 +129,21 @@
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.4.3.1",
+          "rule_id": "4.4.4",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets verifieringsgrundande kvantitet i box 7 är 'Gross 104.000kg'. Fakturan anger på sida 3 'Total gross weight 104.000,00 KG'; efter tillåten normalisering av decimal-/tusentalsformat är värdet numeriskt identiskt. Certifikatet innehåller även '100 OCT', vilket också stöds av fakturans 'Total number of packages 100 OCT', men MATCH uppnås redan genom bruttovikten."
+      "motivation": "Kvantitetsfältet i certifikatet anger ett explicit viktvärde med viktkategori och enhet: \"Gross 104.000kg\". Fakturan anger en uttrycklig totalrad \"Total gross weight 104.000,00 KG\". Efter tillåten normalisering av numeriskt format och decimalseparatorer avser båda uppgifterna samma totalvikt, 104000 kg gross."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.9,
+      "confidence": 0.92,
       "certificate_value": "European Community; Sweden",
-      "invoice_value": "Country of origin: Sweden",
+      "invoice_value": "Country of origin Sweden",
       "rules_applied": [
         {
-          "rule_id": "4.5.4.1",
+          "rule_id": "4.5.1",
           "outcome": "MATCH"
         },
         {
@@ -179,7 +155,7 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger ursprung 'European Community; Sweden'. Fakturan anger för varuraderna 'Country of origin Sweden'. Sverige är därmed uttryckligen identifierat, och EU-/European Community-delen är verifierad genom att fakturan anger ett specifikt EU-medlemsland. Inga icke-EU-ursprung förekommer i fakturan som motsäger certifikatet."
+      "motivation": "Fakturan anger ursprung uttryckligen som \"Sweden\" på varuraderna under kolumnen \"Country of origin\". Certifikatets specifika land \"Sweden\" verifieras därmed direkt. Certifikatets samlingsangivelse \"European Community\" verifieras också eftersom Sweden är en EU-medlemsstat och EU-normalisering är tillåten i denna riktning."
     }
   },
   "overall_assessment": {
@@ -189,12 +165,12 @@
     "confidence": 0.94,
     "critical_failures": [],
     "manual_review_triggers": [],
-    "decision_summary": "Samtliga tillämpliga kontrollpunkter kan verifieras mot fakturan. Consignor stöds av exportörsblocket i fakturan, consignee matchar direkt i kundfältet, varubeskrivningen stöds av LS4201H/100 OCT, kvantiteten 104.000 kg gross matchar total gross weight, och ursprunget Sweden/European Community verifieras via fakturans origin-fält.",
-    "human_explanation": "Alla relevanta uppgifter i certifikatet kan verifieras mot fakturan. Avsändare, mottagare, varubeskrivning, kvantitet och ursprungsland stämmer överens. Dokumentparet kan därför godkännas automatiskt."
+    "decision_summary": "Samtliga tillämpliga kontrollpunkter kan verifieras mot den bifogade fakturan. Consignor och consignee återfinns i fakturaunderlaget, varubeskrivningen stöds av LS4201H och 100 OCT, total gross weight 104.000 kg matchar och ursprunget Sweden/European Community kan verifieras.",
+    "human_explanation": "Certifikatet kan verifieras mot fakturan på alla tillämpliga punkter. Avsändare, mottagare, varubeskrivning, mängd och ursprung stämmer överens. Dokumentparet kan därför godkännas automatiskt."
   },
   "_meta": {
-    "tested_at": "2026-04-02T11:21:38.829424+00:00",
-    "prompt_hash": "f81eb9b0d2ea",
+    "tested_at": "2026-04-11T08:05:06.170720+00:00",
+    "prompt_hash": "de0d620a2b38",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P0167_MATCH",

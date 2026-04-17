@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-04-02T00:00:00Z",
+    "verification_timestamp": "2026-04-11T00:00:00Z",
     "document_pair_id": null,
     "certificate_issue_date": "2026-02-27",
     "source_documents_received": 2
@@ -27,30 +27,30 @@
     "lc_exception_active": false,
     "lc_number_found": null,
     "general_goods_description_with_invoice_reference_active": false,
-    "mixed_origins_rule_active": false,
+    "mixed_origins_rule_active": true,
     "to_order_rule_active": false,
     "quantity_exception_applied": "3D",
     "eu_origin_normalization_active": true,
     "activated_rules": [
       {
         "rule_id": "4.1.0",
-        "rule_name": "Consignor may be verified via explicit occurrence anywhere in invoice documents"
-      },
-      {
-        "rule_id": "4.1.2.1",
-        "rule_name": "Consignor land may be verified via address or VAT prefix"
+        "rule_name": "Koncernstruktur / consignor får verifieras om namnet återfinns uttryckligen i fakturadokumentet"
       },
       {
         "rule_id": "4.4.5.5",
-        "rule_name": "Summation of multiple rows within same invoice"
+        "rule_name": "Summering av flera rader inom samma faktura"
+      },
+      {
+        "rule_id": "4.5.4.1",
+        "rule_name": "EU-normalisering"
       },
       {
         "rule_id": "4.5.4.1.1",
-        "rule_name": "Additional EU member states in invoice allowed when certificate includes EU and named EU country"
+        "rule_name": "Ytterligare EU-medlemsländer i fakturan vid namngivna länder i certifikatet"
       },
       {
         "rule_id": "4.5.4.2",
-        "rule_name": "EU and specific EU member state treated as equivalent for origin verification"
+        "rule_name": "EU-medlemsland och EU-samlingsbegrepp är verifierbara i båda riktningarna"
       }
     ]
   },
@@ -58,7 +58,7 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.88,
+      "confidence": 0.89,
       "certificate_value": "Borealis GmbH c/o Borealis AB\nIndustrivägen 3\n444 86, STENUNGSUND\nSweden",
       "invoice_value": "Exporter:\nBorealis GmbH, Vienna VAT ID No.: SE502065098101\nc/o Borealis AB\nSE - 444 86 STENUNGSUND, SWEDEN",
       "rules_applied": [
@@ -75,7 +75,7 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor återfinns uttryckligen i fakturans exportörsblock på sida 2 som \"Borealis GmbH ... c/o Borealis AB ... STENUNGSUND, SWEDEN\". Svenskt land styrks dessutom av adressen och VAT-prefixet \"SE\". Därmed kan certifikatets consignor verifieras mot fakturan."
+      "motivation": "Certifikatets consignor kan identifieras i fakturans exporter-block på sida 2: 'Borealis GmbH ... c/o Borealis AB ... SWEDEN'. Landet verifieras både genom explicit 'SWEDEN' och genom SE-prefix i VAT-numret. Därmed är consignor-uppgiften verifierad mot fakturan trots att fakturans huvudsakliga issuer-block också innehåller Wien/Austria."
     },
     "consignee": {
       "applicable": true,
@@ -89,11 +89,7 @@
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.2.2",
-          "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.2.3",
+          "rule_id": "4.2.2.1",
           "outcome": "MATCH"
         },
         {
@@ -101,18 +97,18 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Mottagaren i certifikatet motsvarar fakturans kund/faktureringspart. Företagsnamn, ort och land kan identifieras direkt i fakturan utan otillåten tolkning."
+      "motivation": "Mottagaren i certifikatet återfinns uttryckligen i flera mottagarfält i fakturan, bland annat Customer Name/Mailing address, Customer name/address och Delivery address. Företagsnamn och land överensstämmer efter tillåten normalisering av radbrytning och mindre formatvariationer."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.97,
+      "confidence": 0.96,
       "certificate_value": "Visico LE4423 Borealis Octabin LD Polyethylene\nAmbicat LE4476 Bag Catalyst masterbatch\nAmbicat LE4472 Bag Catalyst masterbatch",
       "invoice_value": "Visico LE4423 Borealis Octabin LD Polyethylene\nAmbicat LE4476 Bag Catalyst masterbatch\nAmbicat LE4476 Bag Catalyst masterbatch\nAmbicat LE4472 Bag Catalyst masterbatch",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "No article-number-led verification used"
+          "outcome": "Priority 2 applied"
         },
         {
           "rule_id": "4.3.3",
@@ -123,22 +119,22 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Samtliga tre varubeskrivningar i certifikatet återfinns explicit i fakturan. LE4476 förekommer på två rader i fakturan men med samma identitetsbärande huvudbeteckning som i certifikatet. Varubeskrivningen är därför verifierad."
+      "motivation": "Samtliga identitetsbärande varubenämningar i certifikatet kan identifieras explicit i fakturan. 'Ambicat LE4476 Bag Catalyst masterbatch' förekommer på två fakturarader men samma varubenämning är tydligt verifierad; detta motsäger inte certifikatet utan innebär endast uppdelning över flera rader."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.91,
       "certificate_value": "net 10.750,00KG\nnet 7.725,00 kg\nnet 2.500,00 kg",
-      "invoice_value": "10.750,00 KG\n6.225,00 KG\n1.500,00 KG\n2.500,00 KG",
+      "invoice_value": "Visico LE4423 Borealis Octabin LD Polyethylene — 10.750,00 KG\nAmbicat LE4476 Bag Catalyst masterbatch — 6.225,00 KG\nAmbicat LE4476 Bag Catalyst masterbatch — 1.500,00 KG\nAmbicat LE4472 Bag Catalyst masterbatch — 2.500,00 KG",
       "rules_applied": [
         {
-          "rule_id": "4.4.1",
-          "outcome": "Direct match found for 10.750,00 KG and 2.500,00 KG"
+          "rule_id": "4.4.2",
+          "outcome": "MATCH"
         },
         {
-          "rule_id": "4.4.5.1",
-          "outcome": "Exception sequence evaluated"
+          "rule_id": "4.4.3.1",
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.4.5.5",
@@ -149,44 +145,48 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets mängder 10.750,00 KG och 2.500,00 KG återfinns direkt i fakturan. Mängden 7.725,00 KG för Ambicat LE4476 verifieras genom tillåten summering av två fakturarader med samma vara: 6.225,00 KG + 1.500,00 KG = 7.725,00 KG. Kvantitetskontrollpunkten är därför uppfylld."
+      "motivation": "Certifikatet anger tre explicita net weights med enhet. I fakturan återfinns 10.750,00 KG och 2.500,00 KG direkt. Värdet 7.725,00 kg verifieras genom tillåten summering inom samma faktura av de två raderna för 'Ambicat LE4476 Bag Catalyst masterbatch' (6.225,00 KG + 1.500,00 KG = 7.725,00 KG)."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.89,
+      "confidence": 0.87,
       "certificate_value": "European Community; Sweden",
-      "invoice_value": "Country of origin:\nSweden\nFinland\nFinland",
+      "invoice_value": "Country of origin\nSweden\nFinland\nFinland",
       "rules_applied": [
         {
-          "rule_id": "4.5.4.2",
-          "outcome": "European Community verified via EU member state in invoice"
+          "rule_id": "4.5.4.1",
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.5.4.1.1",
-          "outcome": "Additional EU member state Finland accepted"
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.5.4.2",
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.5.5",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger \"European Community; Sweden\". Fakturan anger ursprung Sverige för en vara och Finland för två varor; båda länderna är EU-medlemsstater och Sverige återfinns dessutom uttryckligen. Certifikatets ursprungsuppgift kan därför verifieras mot fakturan efter tillåten EU-normalisering."
+      "motivation": "Certifikatet anger 'European Community; Sweden'. Fakturan anger ursprungsländerna Sweden och Finland per rad. Sweden finns uttryckligen i fakturan, och 'European Community' verifieras genom att fakturan endast innehåller EU-medlemsländer som ursprung. Det extra landet Finland är också EU-medlemsstat och utgör därför inte motsägelse."
     }
   },
   "overall_assessment": {
     "comparison_result": "IDENTICAL",
     "workflow_recommendation": "AUTO_APPROVAL_ELIGIBLE",
     "auto_approval_eligible": true,
-    "confidence": 0.93,
+    "confidence": 0.91,
     "critical_failures": [],
     "manual_review_triggers": [],
-    "decision_summary": "Alla tillämpliga kontrollpunkter är verifierade som MATCH. Kvantiteten för Ambicat LE4476 verifierades genom tillåten summering av två rader i samma faktura, och ursprunget verifierades genom EU-normalisering tillsammans med uttrycklig förekomst av Sverige i fakturan.",
-    "human_explanation": "Certifikatets avsändare, mottagare, varor, mängder och ursprung kan verifieras mot fakturan. Den delade mängden för Ambicat LE4476 i fakturan summerar till samma mängd som i certifikatet, och ursprungsuppgifterna är förenliga inom EU med Sverige uttryckligen angivet. Dokumentparet kan godkännas automatiskt."
+    "decision_summary": "Samtliga tillämpliga kontrollpunkter kan verifieras mot fakturan. Consignor verifieras via exporter-blocket i fakturan, consignee och varubeskrivning matchar explicit, kvantiteterna verifieras inklusive tillåten summering av två LE4476-rader, och ursprung verifieras via EU-normalisering samt explicit Sweden i fakturan.",
+    "human_explanation": "Alla tillämpliga uppgifter i ursprungscertifikatet kan verifieras mot den bifogade fakturan. Avsändare, mottagare, varor, mängder och ursprungsuppgift stämmer efter tillåten normalisering. Dokumentparet kan därför godkännas automatiskt."
   },
   "_meta": {
-    "tested_at": "2026-04-02T11:21:38.828613+00:00",
-    "prompt_hash": "f81eb9b0d2ea",
+    "tested_at": "2026-04-11T08:05:06.170342+00:00",
+    "prompt_hash": "de0d620a2b38",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P0166_MATCH",

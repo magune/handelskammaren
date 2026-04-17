@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-04-02T00:00:00Z",
+    "verification_timestamp": "2026-04-11T00:00:00Z",
     "document_pair_id": null,
     "certificate_issue_date": "2026-02-24",
     "source_documents_received": 2
@@ -15,17 +15,17 @@
     "document_a": {
       "label": "Document A",
       "assumed_role": "certificate",
-      "document_type": "Certificate of Origin"
+      "document_type": "certificate of origin"
     },
     "document_b": {
       "label": "Document B",
       "assumed_role": "invoice",
-      "document_type": "Commercial Invoice"
+      "document_type": "commercial invoice"
     }
   },
   "rule_activation": {
-    "lc_exception_active": true,
-    "lc_number_found": "002HMLC253600001",
+    "lc_exception_active": false,
+    "lc_number_found": null,
     "general_goods_description_with_invoice_reference_active": false,
     "mixed_origins_rule_active": false,
     "to_order_rule_active": false,
@@ -33,97 +33,141 @@
     "eu_origin_normalization_active": false,
     "activated_rules": [
       {
-        "rule_id": "2.2",
-        "rule_name": "LC-undantag aktiverat på grund av uttrycklig separat LC-hänvisning i certifikatet"
-      },
-      {
         "rule_id": "8.5.0",
-        "rule_name": "Fakturan för verifiering hämtad från separat fakturafil, inte från inbäddad fakturasida i certifikatfilen"
+        "rule_name": "Filbaserad dokumentparning - certifikat från fil 1 och faktura från fil 2"
       },
       {
         "rule_id": "8.6",
-        "rule_name": "Parningsvalidering passerad genom consignor/consignee-identifiering"
+        "rule_name": "Obligatorisk parningsvalidering"
+      },
+      {
+        "rule_id": "4.1.0",
+        "rule_name": "Consignor identifierad uttryckligen i fakturan"
+      },
+      {
+        "rule_id": "4.2.0.2",
+        "rule_name": "Consignee kan verifieras i mottagarfält i fakturan"
+      },
+      {
+        "rule_id": "4.3.3",
+        "rule_name": "Kontrollerad textmatchning av varubeskrivning"
+      },
+      {
+        "rule_id": "4.4.3",
+        "rule_name": "Numeriska kvantitetsvärden identifierade i fakturan"
+      },
+      {
+        "rule_id": "4.5.1",
+        "rule_name": "Explicit origin-fält i fakturan"
       }
     ]
   },
   "control_points": {
     "consignor": {
-      "applicable": false,
-      "status": "NOT_APPLICABLE",
-      "confidence": 0.99,
-      "certificate_value": "Esswell International AB, PO Box 11486, Södra Hamngatan 19-21, SE-40430 Göteborg, Sweden",
-      "invoice_value": "ESSWELL INTERNATIONAL AB, PO Box 11486, Södra Hamngatan 19-21, SE-404 30 Gothenburg, Sweden",
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.98,
+      "certificate_value": "Esswell International AB\nPO Box 11486\nSödra Hamngatan 19-21\nSE-40430, GÖTEBORG\nSweden",
+      "invoice_value": "ESSWELL INTERNATIONAL AB\nPO Box 11486, Södra Hamngatan 19-21, SE-404 30 Gothenburg, Sweden.\nVAT no. SE556522640301",
       "rules_applied": [
         {
-          "rule_id": "2.2",
-          "outcome": "LC-undantag aktivt; consignor verifieras inte"
+          "rule_id": "4.1.0",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.2.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.5",
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet innehåller den exakta strängen \"LC no. 002HMLC253600001 issued 251226\" i remarks-fältet som en separat LC-etikett, inte som del av ett vanligt referensnummer. Därför har LC-undantaget företräde och consignor-kontrollpunkten ska sättas till NOT_APPLICABLE."
+      "motivation": "Certifikatets consignor 'Esswell International AB' kan identifieras uttryckligen i den separata fakturafilen som 'ESSWELL INTERNATIONAL AB'. Fakturan innehåller även svensk adress och VAT-prefix 'SE', vilket verifierar landet Sverige. Namn och land avser samma juridiska part efter tillåten normalisering av versaler och formatering."
     },
     "consignee": {
-      "applicable": false,
-      "status": "NOT_APPLICABLE",
+      "applicable": true,
+      "status": "MATCH",
       "confidence": 0.99,
-      "certificate_value": "Burayu Development PLC SUB CITY: CITY,KIRKOS WOREDA:08, H.NO:902 TEL:+251911207028 ADDIS ABABA ETHIOPIA",
-      "invoice_value": "BURAYU DEVELOPMENT PLC SUB CITY: CITY,KIRKOS WOREDA:08, H.NO:902 TEL:+251911207028 ADDIS ABABA ETHIOPIA",
+      "certificate_value": "Burayu Development PLC SUB CITY:\nCITY,KIRKOS WOREDA:08, H.NO:902\nTEL:+251911207028 ADDIS ABABA\nETHIOPIA",
+      "invoice_value": "BURAYU DEVELOPMENT PLC SUB CITY:\nCITY,KIRKOS WOREDA:08, H.NO:902\nTEL:+251911207028 ADDIS ABABA\nETHIOPIA",
       "rules_applied": [
         {
-          "rule_id": "2.2",
-          "outcome": "LC-undantag aktivt; consignee verifieras inte"
+          "rule_id": "4.2.0.2",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.2.4",
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet innehåller den exakta strängen \"LC no. 002HMLC253600001 issued 251226\" i ett separat LC-fält. Vid aktivt LC-undantag ska mottagare inte verifieras och kontrollpunkten är därför NOT_APPLICABLE."
+      "motivation": "Certifikatets consignee återfinns direkt i fakturans mottagarfält 'Customer/Applicant' med samma företagsnamn, adressuppgifter och land Ethiopia. Ingen motsägande mottagaruppgift påverkar verifieringen."
     },
     "goods_description": {
-      "applicable": false,
-      "status": "NOT_APPLICABLE",
-      "confidence": 0.99,
-      "certificate_value": "DUPLEX BOARD GREY BACK 250GSM 70X100CM / DUPLEX BOARD GREY BACK 350 GSM 70X100CM / DUPLEX BOARD GREY BACK 400 GSM 70X100CM / AS PER PROFORMA INVOICE NO.511202 DATED 22/12/2025",
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.94,
+      "certificate_value": "DUPLEX BOARD GREY BACK 250GSM 70X100CM\nDUPLEX BOARD GREY BACK 350 GSM 70X100CM\nDUPLEX BOARD GREY BACK 400 GSM 70X100CM\nAS PER PROFORMA INVOICE NO.511202 DATED 22/12/2025",
       "invoice_value": "73,71 MT DUPLEX BOARD GREY BACK-250 GSM-70X100CM, 63,308 MT DUPLEX BOARD GREY BACK-350 GSM-70X100CM AND 22,96 MT DUPLEX BOARD GREY BACK-400 GSM-70X100CM AS PER PROFORMA INVOICE NO.511202 DATED 22/12/2025",
       "rules_applied": [
         {
-          "rule_id": "2.2",
-          "outcome": "LC-undantag aktivt; varubeskrivning verifieras inte"
+          "rule_id": "4.3.2",
+          "outcome": "PRIORITY_2_USED"
+        },
+        {
+          "rule_id": "4.3.3",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.3.8",
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "På grund av den uttryckliga LC-hänvisningen i certifikatet ska verifieringen enligt LC-undantaget begränsas till ursprungsland. Varubeskrivning är därför NOT_APPLICABLE."
+      "motivation": "Certifikatet anger inga artikelnummer, så verifieringen har skett genom kontrollerad textmatchning. Samtliga tre identitetsbärande produktbeteckningar i certifikatet kan identifieras i fakturans varubeskrivning efter tillåten normalisering av versaler, mellanslag och bindestreck. Referensen 'AS PER PROFORMA INVOICE NO.511202 DATED 22/12/2025' förekommer också i fakturans beskrivning."
     },
     "quantity": {
-      "applicable": false,
-      "status": "NOT_APPLICABLE",
+      "applicable": true,
+      "status": "MATCH",
       "confidence": 0.99,
-      "certificate_value": "73,710 MT net weight / 63,308 MT net weight / 22,960 MT net weight / Total net weight 159,978 MT / Total gross weight 164,9476 MT",
-      "invoice_value": "73,710 MT net weight / 63,308 MT net weight / 22,960 MT net weight / Total Quantity 159,978 MT / 164,9476 MT gross weight",
+      "certificate_value": "73,710 MT net weight\n63,308 MT net weight\n22,960 MT net weight\nTotal net weight 159,978 MT\nTotal gross weight 164,9476 MT",
+      "invoice_value": "73,710 MT net weight\n63,308 MT net weight\n22,960 MT net weight\nTotal Quantity 159,978 MT\n164,9476 MT gross weight",
       "rules_applied": [
         {
-          "rule_id": "2.2",
-          "outcome": "LC-undantag aktivt; kvantitet verifieras inte"
+          "rule_id": "4.4.2.2",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.4.3",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.4.4",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.4.6",
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet har en separat LC-hänvisning: \"LC no. 002HMLC253600001 issued 251226\". Därmed ska kvantitetskontrollen inte utföras inom denna verifiering och status sätts till NOT_APPLICABLE."
+      "motivation": "Certifikatets tre net weight-värden 73,710 MT, 63,308 MT och 22,960 MT återfinns explicit i fakturan. Certifikatets total net weight 159,978 MT motsvaras av fakturans 'Total Quantity 159,978 MT', och certifikatets total gross weight 164,9476 MT återfinns explicit som '164,9476 MT gross weight'. Numeriska värden, enhet och viktkategori är verifierbara utan undantagsregel."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.98,
+      "confidence": 0.99,
       "certificate_value": "India",
       "invoice_value": "Country of Origin\nIndia",
       "rules_applied": [
         {
-          "rule_id": "2.2",
-          "outcome": "LC-undantag aktiverat; endast ursprungsland verifieras"
-        },
-        {
           "rule_id": "4.5.1",
-          "outcome": "Ursprungslandet identifierat i explicit origin-fält i fakturan"
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.5.5",
-          "outcome": "Varje ursprungsland i certifikatet kan uttryckligen identifieras i fakturan"
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "LC-undantaget aktiveras eftersom certifikatet uttryckligen innehåller den separata textsträngen \"LC no. 002HMLC253600001 issued 251226\" i ruta 5 Remarks; detta är en LC-etikett och inte en del av ett annat referensnummer. Vid LC får endast ursprungsland verifieras. Certifikatet anger \"India\" i box 3 Country of origin. Fakturan i den separata fakturafilen anger uttryckligen \"Country of Origin\" följt av \"India\". Ursprungslandet finns alltså i ett dedikerat origin-fält i fakturan och matchar exakt."
+      "motivation": "Certifikatet anger ursprungsland 'India'. Fakturan innehåller ett explicit origin-fält med texten 'Country of Origin India'. Ursprungslandet kan därför identifieras direkt utan ytterligare tolkning."
     }
   },
   "overall_assessment": {
@@ -133,12 +177,12 @@
     "confidence": 0.97,
     "critical_failures": [],
     "manual_review_triggers": [],
-    "decision_summary": "LC-undantaget är tillämpligt eftersom certifikatet innehåller en uttrycklig separat hänvisning \"LC no. 002HMLC253600001 issued 251226\". Därför har endast ursprungsland verifierats. Certifikatets ursprung \"India\" återfinns uttryckligen i fakturans dedikerade fält \"Country of Origin\" som \"India\". Samtliga övriga kontrollpunkter är korrekt markerade som NOT_APPLICABLE enligt LC-regeln.",
-    "human_explanation": "Certifikatet innehåller en uttrycklig L/C-referens, vilket innebär att endast ursprungslandet ska kontrolleras. Ursprungslandet är India i både certifikatet och fakturan. Dokumentparet kan därför godkännas automatiskt."
+    "decision_summary": "Dokument A klassificerades som Certificate of Origin och Dokument B som Commercial Invoice. LC-hänvisningen i certifikatet förekommer i remarks-fältet och aktiverar därför inte LC-undantaget. Consignor, consignee, varubeskrivning, kvantitet och ursprungsland kunde alla verifieras mot den separata fakturafilen enligt tillåtna regler och normaliseringar.",
+    "human_explanation": "Alla tillämpliga kontrollpunkter stämmer mellan certifikatet och fakturan. Avsändare, mottagare, varor, kvantiteter och ursprungsland kan verifieras direkt i fakturan. Dokumentparet kan därför godkännas automatiskt."
   },
   "_meta": {
-    "tested_at": "2026-04-02T11:36:29.837643+00:00",
-    "prompt_hash": "f81eb9b0d2ea",
+    "tested_at": "2026-04-11T08:06:14.352567+00:00",
+    "prompt_hash": "de0d620a2b38",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P084_MATCH",

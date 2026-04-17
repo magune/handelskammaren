@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-04-07T00:00:00Z",
+    "verification_timestamp": "2026-04-11T00:00:00Z",
     "document_pair_id": null,
     "certificate_issue_date": "2025-12-18",
     "source_documents_received": 2
@@ -37,8 +37,8 @@
         "rule_name": "Normalisering av fakturanummer med ledande nollor"
       },
       {
-        "rule_id": "8.6",
-        "rule_name": "Obligatorisk parningsvalidering"
+        "rule_id": "4.4.3.1",
+        "rule_name": "Flera kvantitetsuppgifter i certifikatet"
       }
     ]
   },
@@ -51,112 +51,124 @@
       "invoice_value": "Issued by:\nSKF Sverige AB\nvon Utfallsgatan 4\n415 50 Göteborg\nSweden",
       "rules_applied": [
         {
+          "rule_id": "4.1.0",
+          "outcome": "MATCH"
+        },
+        {
           "rule_id": "4.1.2",
-          "outcome": "Company name and country identified in invoice"
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.1.5",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor 'SKF Sverige AB' kan identifieras direkt som fakturautställare i fakturan. Landet Sverige framgår uttryckligen i båda dokumenten. Skillnad i gatunamn påverkar inte utfallet när företagsnamn och land överensstämmer."
+      "motivation": "Certifikatets consignor 'SKF Sverige AB' återfinns uttryckligen i fakturans issuer-block och i sidhuvuden. Landet Sverige framgår explicit i fakturan. Skillnad i gatuadress påverkar inte bedömningen eftersom företagsnamn och land verifieras."
     },
     "consignee": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.96,
+      "confidence": 0.97,
       "certificate_value": "SKF Asia Pacific Pte. Ltd\n105 Ton Dat Tien,Tan Phu Ward\nc/o Schenker Logistics (M) S/B)\nNo D-08, Jalan Tanjung A/4\n81560 Tanjung Pelepas, Pelabuhan\nMalaysia",
-      "invoice_value": "Bill to / Sold to / Ship to:\nSKF Asia Pacific Pte. Ltd.\nc/o Schenker Logistics (M) S/B), No D-08, Jalan Tanjung A/4\n81560 Tanjung Pelepas, Pelabuhan\nMalaysia",
+      "invoice_value": "Ship to\nSKF Asia Pacific Pte. Ltd.\nc/o Schenker Logistics (M) S/B), No D-08, Jalan Tanjung A/4\n81560 Tanjung Pelepas, Pelabuhan\nMalaysia",
       "rules_applied": [
         {
           "rule_id": "4.2.0.2",
-          "outcome": "Consignee found in relevant recipient fields"
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.2.2.1",
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.2.4",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignee 'SKF Asia Pacific Pte. Ltd' återfinns i fakturans Bill to, Sold to och Ship to-fält. Landet Malaysia framgår uttryckligen i båda dokumenten. Små layoutskillnader i adressen förändrar inte att samma juridiska mottagare kan identifieras."
+      "motivation": "Certifikatets consignee kan identifieras i fakturans Ship-to-fält med samma företagsnamn och samma land. Mindre skillnader i interpunktion och radbrytning är tillåten normalisering. Därmed är mottagaren verifierad."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.92,
-      "certificate_value": "71 COLLIE\nDEEP GROOVE BALL BRG OD > 30 MM\nSPHERICAL ROLLER BRG",
+      "confidence": 0.96,
+      "certificate_value": "DEEP GROOVE BALL BRG OD > 30 MM\nSPHERICAL ROLLER BRG",
       "invoice_value": "DEEP GROOVE BALL BRG OD > 30 MM\nSPHERICAL ROLLER BRG",
       "rules_applied": [
         {
           "rule_id": "4.3.1",
-          "outcome": "Both certificate goods descriptions identified in invoice"
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.3.2",
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.3.8",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "De två varubeskrivningar som anges i certifikatet, 'DEEP GROOVE BALL BRG OD > 30 MM' och 'SPHERICAL ROLLER BRG', kan identifieras uttryckligen i fakturan. Den extra fakturaraden 'SELF-ALIGNING BALL BRG OD > 30 MM' är ytterligare information i fakturan och medför inte i sig MISMATCH enligt den ensidiga verifieringsprincipen."
+      "motivation": "Båda varubeskrivningarna som står i certifikatet återfinns uttryckligen i fakturan. Fakturan innehåller dessutom en extra rad 'SELF-ALIGNING BALL BRG OD > 30 MM', men ytterligare information i fakturan medför inte i sig avvikelse eftersom kontrollen är ensidig från certifikatet till fakturan."
     },
     "quantity": {
       "applicable": true,
       "status": "MISMATCH",
       "confidence": 0.98,
       "certificate_value": "635 pcs\n545 pcs",
-      "invoice_value": "DEEP GROOVE BALL BRG OD > 30 MM = 625\nSELF-ALIGNING BALL BRG OD > 30 MM = 10\nSPHERICAL ROLLER BRG = 545",
+      "invoice_value": "625\nDEEP GROOVE BALL BRG OD > 30 MM\n10\nSELF-ALIGNING BALL BRG OD > 30 MM\n545\nSPHERICAL ROLLER BRG",
       "rules_applied": [
         {
-          "rule_id": "4.4.3",
-          "outcome": "Quantity must be verified for the same goods as in control point 4.3"
-        },
-        {
           "rule_id": "4.4.3.1",
-          "outcome": "Explicit contradiction present for one quantity"
+          "outcome": "MISMATCH"
         },
         {
           "rule_id": "4.4.5.5.2",
-          "outcome": "Different product types may not be summed to reach certificate quantity"
+          "outcome": "MISMATCH"
         },
         {
           "rule_id": "4.4.6",
           "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Certifikatet anger två kvantiteter: 635 pcs och 545 pcs för de två varor som listas. Fakturan anger 545 för 'SPHERICAL ROLLER BRG', vilket stämmer, men för 'DEEP GROOVE BALL BRG OD > 30 MM' anger fakturan uttryckligen 625 och inte 635. De ytterligare 10 stycken i fakturan avser 'SELF-ALIGNING BALL BRG OD > 30 MM', vilket är en annan produkttyp och får därför inte summeras ihop med deep groove-raden för att nå 635. Detta är en uttrycklig motsägelse för samma vara och ger MISMATCH."
+      "motivation": "Certifikatet anger två kvantiteter: 635 pcs och 545 pcs, kopplade till de två varuslagen i certifikatet. Fakturan verifierar 545 pcs för 'SPHERICAL ROLLER BRG', men för 'DEEP GROOVE BALL BRG OD > 30 MM' visar fakturan uttryckligen 625 pcs, inte 635 pcs. De extra 10 pcs i fakturan avser 'SELF-ALIGNING BALL BRG OD > 30 MM', vilket är en annan produkttyp och får inte summeras med deep groove bearing för att nå 635. Det finns därför en uttrycklig motsägelse för en av certifikatets kvantiteter."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.99,
+      "confidence": 0.97,
       "certificate_value": "SWEDEN",
-      "invoice_value": "Country of origin\nSweden\nand line-level origin code 'SE'",
+      "invoice_value": "Country of origin\nSweden",
       "rules_applied": [
         {
           "rule_id": "4.5.1",
-          "outcome": "Explicit origin field identified in invoice"
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.5.2",
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.5.5",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger ursprungsland 'SWEDEN'. Fakturan innehåller ett explicit ursprungsfält med 'Country of origin Sweden' samt radnivåmarkeringar 'SE', vilket bekräftar samma ursprung. Ursprungslandet kan därför verifieras uttryckligen i fakturan."
+      "motivation": "Certifikatets ursprungsland 'SWEDEN' framgår uttryckligen i fakturans dedikerade origin-fält som 'Country of origin Sweden'. Ursprungslandet kan därför verifieras utan tolkning."
     }
   },
   "overall_assessment": {
     "comparison_result": "NOT_IDENTICAL",
     "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
     "auto_approval_eligible": false,
-    "confidence": 0.96,
+    "confidence": 0.97,
     "critical_failures": [
-      "Kvantiteten för 'DEEP GROOVE BALL BRG OD > 30 MM' motsäger certifikatet: certifikatet anger 635 pcs medan fakturan anger 625 pcs för samma vara."
+      "Kvantiteten för 'DEEP GROOVE BALL BRG OD > 30 MM' avviker: certifikatet anger 635 pcs medan fakturan uttryckligen anger 625 pcs för denna produkttyp."
     ],
     "manual_review_triggers": [],
-    "decision_summary": "Dokumentparet är korrekt parat genom fakturareferensen 9148083 ↔ 0009148083 efter normalisering av ledande nollor. Consignor, consignee, varubeskrivning och ursprungsland kan verifieras mot fakturan. Kvantitetskontrollpunkten ger dock MISMATCH eftersom certifikatets 635 pcs för 'DEEP GROOVE BALL BRG OD > 30 MM' inte överensstämmer med fakturans uttryckliga kvantitet 625 pcs för samma vara, och de extra 10 pcs i fakturan avser en annan produkt ('SELF-ALIGNING BALL BRG OD > 30 MM') som inte får summeras in. Minst en tillämplig kontrollpunkt har därför status MISMATCH, vilket kräver comparison_result = NOT_IDENTICAL.",
-    "human_explanation": "Avsändare, mottagare och ursprungsland kan verifieras mot fakturan, och fakturanummer 9148083 motsvarar faktura 0009148083. Certifikatet anger dock 635 pcs för 'DEEP GROOVE BALL BRG OD > 30 MM' medan fakturan anger 625 pcs för samma vara. Därför är dokumenten inte identiska och kräver manuell handläggning."
+    "decision_summary": "Document roles were identified as certificate and invoice. Consignor, consignee, goods description and origin are verified against the invoice, and the invoice reference 9148083 matches invoice 0009148083 after leading-zero normalization. The quantity control point fails because the certificate states 635 pcs for DEEP GROOVE BALL BRG OD > 30 MM while the invoice explicitly shows 625 pcs for that product type; the separate 10 pcs line is a different product and cannot be added. Because at least one applicable control point is MISMATCH, the overall result is NOT_IDENTICAL.",
+    "human_explanation": "Avsändare, mottagare, varubeskrivning och ursprungsland kan verifieras mot fakturan. Kvantiteten för 'DEEP GROOVE BALL BRG OD > 30 MM' avviker: certifikatet anger 635 pcs medan fakturan anger 625 pcs för denna varutyp. Därför är dokumenten inte identiska och kräver manuell hantering."
   },
   "_meta": {
-    "tested_at": "2026-04-07T10:42:41.327033+00:00",
-    "prompt_hash": "a85247cdbff7",
+    "tested_at": "2026-04-11T08:06:14.357185+00:00",
+    "prompt_hash": "de0d620a2b38",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P096_MISMATCH",

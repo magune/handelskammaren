@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": null,
+    "verification_timestamp": "2026-04-11T00:00:00Z",
     "document_pair_id": null,
     "certificate_issue_date": "2025-10-13",
     "source_documents_received": 2
@@ -15,12 +15,12 @@
     "document_a": {
       "label": "Document A",
       "assumed_role": "certificate",
-      "document_type": "certificate_of_origin"
+      "document_type": "Certificate of Origin"
     },
     "document_b": {
       "label": "Document B",
       "assumed_role": "invoice",
-      "document_type": "invoice"
+      "document_type": "Commercial Invoice"
     }
   },
   "rule_activation": {
@@ -33,16 +33,24 @@
     "eu_origin_normalization_active": false,
     "activated_rules": [
       {
+        "rule_id": "4.1.0",
+        "rule_name": "Consignor identifierad uttryckligen i fakturadokumentet"
+      },
+      {
+        "rule_id": "4.2.0.2",
+        "rule_name": "Consignee får identifieras i något relevant mottagarfält"
+      },
+      {
         "rule_id": "4.3.2",
-        "rule_name": "Artikelnummer används som primär verifieringsgrund för varubeskrivning"
+        "rule_name": "Varubeskrivning verifieras primärt via artikelnummer"
       },
       {
         "rule_id": "4.3.7",
-        "rule_name": "Flera ursprungsländer med koppling per artikel i certifikatet"
+        "rule_name": "Flera ursprung med koppling vara–ursprungsland i certifikatet"
       },
       {
-        "rule_id": "4.4.4",
-        "rule_name": "GW/NW i certifikatet bekräftas av totalvikter i fakturan trots att enhet står i fakturan"
+        "rule_id": "4.5.3",
+        "rule_name": "Blandade ursprung verifierade per artikel i fakturan"
       }
     ]
   },
@@ -50,156 +58,130 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.98,
+      "confidence": 0.99,
       "certificate_value": "Mölnlycke Health Care AB\nPO Box 6\n431 21, Mölndal\nSWEDEN",
       "invoice_value": "Mölnlycke Health Care AB\nPO Box 6\n431 21 Mölndal\nSweden\nOur VAT no: SE556547548901",
       "rules_applied": [
         {
           "rule_id": "4.1.0",
-          "outcome": "not_needed"
-        },
-        {
-          "rule_id": "4.1.2",
-          "outcome": "match"
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.1.2.1",
-          "outcome": "match"
-        },
-        {
-          "rule_id": "4.1.4",
-          "outcome": "match"
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.1.5",
-          "outcome": "match"
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor är Mölnlycke Health Care AB i Sverige. Fakturan identifierar samma juridiska part i sidfot/utställarinformation som 'Mölnlycke Health Care AB, PO Box 6, 431 21 Mölndal, Sweden' och VAT-prefix 'SE' bekräftar landet Sverige. Företagsnamn och land kan därmed verifieras direkt mot fakturan."
+      "motivation": "Certifikatets consignor 'Mölnlycke Health Care AB' återfinns uttryckligen i fakturans footer på samtliga sidor. Landet 'Sweden' framgår explicit i samma företagsblock och stöds även av VAT-prefix 'SE' i 'SE556547548901'. Uppgiften kan därför verifieras som samma juridiska part och samma land."
     },
     "consignee": {
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.99,
       "certificate_value": "Tamer Mölnlycke Care\n7511 Old Makkah Rd Unit 7522\n22237 JEDDAH\nSaudi Arabia",
-      "invoice_value": "Invoice Address\nTamer Mölnlycke Care\n7511 Old Makkah Rd Unit 7522\n22237 JEDDAH\nSAUDI ARABIA\nDelivery Address\nTamer Mölnlycke Care\n7511 Old Makkah Rd Unit 7522\n22237 JEDDAH\nSAUDI ARABIA",
+      "invoice_value": "Invoice Address\nTamer Mölnlycke Care\n7511 Old Makkah Rd Unit 7522\n22237 JEDDAH\nSAUDI ARABIA",
       "rules_applied": [
         {
           "rule_id": "4.2.0.2",
-          "outcome": "match"
-        },
-        {
-          "rule_id": "4.2.1",
-          "outcome": "match"
-        },
-        {
-          "rule_id": "4.2.2",
-          "outcome": "match"
-        },
-        {
-          "rule_id": "4.2.3",
-          "outcome": "match"
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.2.4",
-          "outcome": "match"
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignee återfinns exakt i fakturans primära faktureringsfält 'Invoice Address' och även i 'Delivery Address'. Företagsnamn, adress och land Saudi Arabia/SAUDI ARABIA överensstämmer efter tillåten normalisering. Därför är mottagaren verifierad."
+      "motivation": "Certifikatets consignee återfinns exakt i fakturans 'Invoice Address' och även i 'Delivery Address'. Företagsnamn och land ('Saudi Arabia' / 'SAUDI ARABIA') överensstämmer efter tillåten normalisering."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.97,
+      "confidence": 0.98,
       "certificate_value": "Medical Components,\n2314211-00, 2327922-00 Country of origin CN,\n5104038-00, 56200-00 Country of origin CZ\n2321573-00 Country of origin FR\n2324368-00, 2324839-00, 2324895-00, 2324912-00\n2324914-00, 2325244-00 Country of origin PK\n2324776-00 Country of origin PT\n904737-09 Country of origin TH",
-      "invoice_value": "Article Number 2314211-00 ... Origin: CN\nArticle Number 2327922-00 ... Origin: CN\nArticle Number 5104038-00 ... Origin: CZ\nArticle Number 56200-00 ... Origin: CZ\nArticle Number 2321573-00 ... Origin: FR\nArticle Number 2324368-00 ... Origin: PK\nArticle Number 2324839-00 ... Origin: PK\nArticle Number 2324895-00 ... Origin: PK\nArticle Number 2324912-00 ... Origin: PK\nArticle Number 2324914-00 ... Origin: PK\nArticle Number 2325244-00 ... Origin: PK\nArticle Number 2324776-00 ... Origin: PT\nArticle Number 904737-09 ... Origin: TH",
+      "invoice_value": "2314211-00 Tray 25x24x5cm 2700ml Polyprop\n2321573-00 Bulk Stockinette 15cm x 1m\n2324368-00 HALSEY NEEDLE HOLDER 130mm gre\n2324776-00 Forceps Mosquito Halsted cvd 1\n2324839-00 Forceps Tw.Tissue to.Adson-Bro\n2324895-00 Scissor IRIS AND LIGATURE CURV\n2324912-00 Scissor Dressing 14,5cm Sharp/\n2324914-00 Skin hook Gillies 18cm colour\n2325244-00 Scalpel handle size 3\n2327922-00 Gauze swab 10x10cm 17Th 8P Whi\n5104038-00 Brown Coded Label 191 x 39 mm\n56200-00 Reinforced Table Cover 100 x75\n904737-09 BNS Adhesive Aperture Drape 50",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "match"
+          "outcome": "MATCH"
         },
         {
-          "rule_id": "4.3.7",
-          "outcome": "match"
+          "rule_id": "4.3.6",
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.3.8",
-          "outcome": "match"
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger artikelnummer och varubeskrivningen ska därför primärt verifieras via artikelnummer. Samtliga artikelnummer i certifikatet (2314211-00, 2327922-00, 5104038-00, 56200-00, 2321573-00, 2324368-00, 2324839-00, 2324895-00, 2324912-00, 2324914-00, 2325244-00, 2324776-00, 904737-09) återfinns explicit i fakturan. Certifikatet kopplar dessutom respektive artikelgrupp till ursprungsland, vilket stöds av fakturans radnivåposter."
+      "motivation": "Certifikatet anger artikelnummer och enligt prioriteringsregeln ska verifiering ske primärt via artikelnummer. Samtliga artikelnummer i certifikatet (2314211-00, 2327922-00, 5104038-00, 56200-00, 2321573-00, 2324368-00, 2324839-00, 2324895-00, 2324912-00, 2324914-00, 2325244-00, 2324776-00, 904737-09) kan identifieras exakt i fakturans artikelrader på sidorna 1–3. Varubeskrivningen är därför verifierad utan semantisk tolkning."
     },
     "quantity": {
       "applicable": true,
-      "status": "MATCH",
-      "confidence": 0.96,
+      "status": "MISMATCH",
+      "confidence": 0.98,
       "certificate_value": "GW 985,030\nNW 827,525",
       "invoice_value": "Total gross weight: 985,030KG\nTotal net weight: 827,525KG",
       "rules_applied": [
         {
-          "rule_id": "4.4.2.1",
-          "outcome": "box_7_used"
+          "rule_id": "4.4.2.2",
+          "outcome": "MISMATCH"
         },
         {
           "rule_id": "4.4.4",
-          "outcome": "match"
-        },
-        {
-          "rule_id": "4.4.3.4",
-          "outcome": "match"
+          "outcome": "MISMATCH"
         },
         {
           "rule_id": "4.4.6",
-          "outcome": "match"
+          "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Verifieringsgrundande kvantitet är certifikatets box 7. Certifikatet anger GW 985,030 och NW 827,525, och fakturan anger exakt motsvarande totalvikter 'Total gross weight: 985,030KG' och 'Total net weight: 827,525KG'. Att enheten KG framgår i fakturan men inte upprepas i certifikatet medför inte avvikelse eftersom samma numeriska värden bekräftas uttryckligen i fakturan med enhet."
+      "motivation": "Certifikatets kvantitetsfält innehåller två viktvärden med viktkategori ('GW 985,030' och 'NW 827,525') men utan uttrycklig viktenhet i samma uppgift. Regelverket kräver att viktangivelse i certifikatet ska innehålla både numeriskt värde, viktkategori och uttrycklig viktenhet; viktenhet får inte härledas från fakturan. Fakturan visar visserligen '985,030KG' och '827,525KG', men detta kan inte reparera att certifikatet saknar enheten, därför är utfallet MISMATCH."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.98,
+      "confidence": 0.97,
       "certificate_value": "CN, CZ, FR, PK, PT, TH",
-      "invoice_value": "Origin: CN\nOrigin: FR\nOrigin: PK\nOrigin: PT\nOrigin: CZ\nOrigin: TH",
+      "invoice_value": "Origin: CN; Origin: FR; Origin: PK; Origin: PT; Origin: CN; Origin: CZ; Origin: CZ; Origin: TH",
       "rules_applied": [
         {
           "rule_id": "4.5.1",
-          "outcome": "match"
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.5.3",
-          "outcome": "match"
-        },
-        {
-          "rule_id": "4.5.4",
-          "outcome": "match"
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.5.5",
-          "outcome": "match"
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger sex ursprungsländer: CN, CZ, FR, PK, PT och TH. Fakturan anger ursprung explicit på radnivå för artiklarna och samtliga sex landskoder återfinns som 'Origin: CN', 'Origin: CZ', 'Origin: FR', 'Origin: PK', 'Origin: PT' och 'Origin: TH'. Därmed kan varje ursprungsland i certifikatet identifieras uttryckligen i fakturan."
+      "motivation": "Certifikatet anger flera ursprungsländer: CN, CZ, FR, PK, PT och TH. Fakturan anger ursprung explicit per artikelrad och samtliga dessa länder kan identifieras i fakturans 'Origin'-uppgifter. Varje ursprungsland i certifikatet är därför uttryckligen verifierat i fakturan."
     }
   },
   "overall_assessment": {
-    "comparison_result": "IDENTICAL",
-    "workflow_recommendation": "AUTO_APPROVAL_ELIGIBLE",
-    "auto_approval_eligible": true,
-    "confidence": 0.97,
-    "critical_failures": [],
+    "comparison_result": "NOT_IDENTICAL",
+    "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
+    "auto_approval_eligible": false,
+    "confidence": 0.98,
+    "critical_failures": [
+      "Kvantitetsfältet i certifikatet anger GW och NW utan uttrycklig viktenhet."
+    ],
     "manual_review_triggers": [],
-    "decision_summary": "Samtliga tillämpliga kontrollpunkter kan verifieras direkt mellan certifikatet och fakturan. Fakturanummer 18385210, consignor, consignee, samtliga artikelnummer, totalvikter och samtliga ursprungsländer överensstämmer enligt regelverket.",
-    "human_explanation": "Certifikatet och fakturan stämmer överens i alla kontrollerade delar. Avsändare, mottagare, fakturanummer, artikelnummer, totalvikter och ursprungsländer kan verifieras direkt mot fakturan. Dokumentparet är därmed lämpligt för automatiskt godkännande."
+    "decision_summary": "Fyra kontrollpunkter verifieras som MATCH (consignor, consignee, varubeskrivning och ursprungsland). Kontrollpunkten kvantitet ger MISMATCH eftersom certifikatet saknar uttrycklig viktenhet i box 7 trots att GW/NW anges. Minst en tillämplig kontrollpunkt har därför status MISMATCH, vilket ger totalresultatet NOT_IDENTICAL.",
+    "human_explanation": "Avsändare, mottagare, varor och ursprung stämmer mellan certifikatet och fakturan. Certifikatet anger dock vikterna som 'GW 985,030' och 'NW 827,525' utan att ange viktenhet i samma fält. Därför kan dokumentparet inte godkännas som identiskt."
   },
   "_meta": {
-    "tested_at": "2026-04-02T11:21:38.824861+00:00",
-    "prompt_hash": "f81eb9b0d2ea",
+    "tested_at": "2026-04-11T08:05:06.166432+00:00",
+    "prompt_hash": "de0d620a2b38",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P0158_MATCH",
     "expected": "IDENTICAL",
-    "actual": "IDENTICAL",
-    "status": "PASS"
+    "actual": "NOT_IDENTICAL",
+    "status": "FAIL"
   }
 }

@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-04-02T00:00:00Z",
+    "verification_timestamp": "2026-04-11T00:00:00Z",
     "document_pair_id": null,
     "certificate_issue_date": "2026-02-03",
     "source_documents_received": 2
@@ -15,12 +15,12 @@
     "document_a": {
       "label": "Document A",
       "assumed_role": "certificate",
-      "document_type": "certificate_of_origin"
+      "document_type": "Certificate of Origin"
     },
     "document_b": {
       "label": "Document B",
       "assumed_role": "invoice",
-      "document_type": "commercial_invoice"
+      "document_type": "Invoice"
     }
   },
   "rule_activation": {
@@ -33,20 +33,16 @@
     "eu_origin_normalization_active": false,
     "activated_rules": [
       {
-        "rule_id": "8.5.0",
-        "rule_name": "Filbaserad dokumentparning"
-      },
-      {
-        "rule_id": "8.6",
-        "rule_name": "Obligatorisk parningsvalidering"
-      },
-      {
         "rule_id": "4.3.5",
         "rule_name": "Generell varubeskrivning med fakturareferens"
       },
       {
-        "rule_id": "4.5.3",
-        "rule_name": "Blandade ursprung"
+        "rule_id": "4.3.7",
+        "rule_name": "Koppling vara–ursprungsland vid flera ursprung via fakturahänvisning"
+      },
+      {
+        "rule_id": "8.6",
+        "rule_name": "Obligatorisk parningsvalidering"
       }
     ]
   },
@@ -54,100 +50,104 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.92,
-      "certificate_value": "SKF Eurotrade \n415 50, GÖTEBORG\nSweden",
-      "invoice_value": "Issued by:\nSKF Eurotrade AB \n. \n415 50 Goteborg\nSweden",
+      "confidence": 0.94,
+      "certificate_value": "SKF Eurotrade\n415 50, GÖTEBORG\nSweden",
+      "invoice_value": "Issued by:\nSKF Eurotrade AB\n415 50 Goteborg\nSweden",
       "rules_applied": [
         {
           "rule_id": "4.1.0",
-          "outcome": "MATCH"
+          "outcome": "same consignor name found in invoice text"
         },
         {
-          "rule_id": "4.1.2",
-          "outcome": "MATCH"
+          "rule_id": "4.1.3.6",
+          "outcome": "legal form omission accepted (SKF Eurotrade vs SKF Eurotrade AB)"
+        },
+        {
+          "rule_id": "4.1.4",
+          "outcome": "country matches"
         }
       ],
-      "motivation": "Certifikatets consignor 'SKF Eurotrade' återfinns uttryckligen i fakturans issuer-block som 'SKF Eurotrade AB'. Skillnaden avser endast bolagsform och landet är Sweden i båda dokumenten."
+      "motivation": "Certifikatets avsändare 'SKF Eurotrade' kan identifieras i fakturan som 'SKF Eurotrade AB'. Skillnaden gäller endast juridisk bolagsform ('AB'), vilket är tillåten normalisering. Landet Sverige framgår uttryckligen i båda dokumenten."
     },
     "consignee": {
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.99,
       "certificate_value": "Intertrade and Service LLP\nYunusabad, Shuhrat str.15A\n100084 Tashkent\nUZBEKISTAN",
-      "invoice_value": "Bill to \nIntertrade and Service LLP \nYunusabad, Shuhrat str.15A \n100084 Tashkent\nUzbekistan",
+      "invoice_value": "Bill to / Sold to / Ship to:\nIntertrade and Service LLP\nYunusabad, Shuhrat str.15A\n100084 Tashkent\nUzbekistan",
       "rules_applied": [
         {
           "rule_id": "4.2.0.2",
-          "outcome": "MATCH"
+          "outcome": "consignee identified in invoice recipient fields"
         },
         {
-          "rule_id": "4.2.4",
-          "outcome": "MATCH"
+          "rule_id": "4.2.3",
+          "outcome": "country matches"
         }
       ],
-      "motivation": "Fakturan innehåller ett primärt faktureringsfält 'Bill to' med exakt samma mottagare som i certifikatet: Intertrade and Service LLP, Yunusabad, Shuhrat str.15A, 100084 Tashkent, Uzbekistan."
+      "motivation": "Mottagaren i certifikatet återfinns uttryckligen i fakturans Bill to-, Sold to- och Ship to-fält med samma företagsnamn och samma land. Ingen motsägelse förekommer."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.9,
-      "certificate_value": "Belts, roller chains, bearings refer to the inv 8500028962\ndated: 02.02.2026",
-      "invoice_value": "Invoice number 8500028962\nInvoice date 02.02.2026\nCountry of manufacturing Quantity Net kg Goods value\nAustria\n84821090 8 1,391 148,95\nBALL BRG OD > 30 MM\nBulgaria\n84821090 82 15,084 228,85\nDEEP GROOVE BALL BRG OD > 30 MM\nChina\n39269097 5 0,271 16,26\nOTHER BELTS\n73151190 1 5,750 31,30\nROLLER CHAINS",
+      "certificate_value": "9 cases: 445556655-445556657, 445556963, 445635864, 445669012, 445684602-445684603, 445693780\nBelts, roller chains, bearings refer to the inv 8500028962\ndated: 02.02.2026",
+      "invoice_value": "Invoice number 8500028962\nInvoice date 02.02.2026\nCountry of manufacturing / line descriptions include belts, roller chains and bearings; transport package number(s): 445556655-445556657, 445556963, 445635864, 445669012, 445684602-445684603, 445693780",
       "rules_applied": [
         {
           "rule_id": "4.3.5",
-          "outcome": "MATCH"
+          "outcome": "general goods description with invoice reference accepted"
         },
         {
           "rule_id": "4.3.5.2",
-          "outcome": "MATCH"
+          "outcome": "invoice content is compatible with the general goods categories"
+        },
+        {
+          "rule_id": "4.3.7",
+          "outcome": "multiple origins handled via explicit invoice reference"
         }
       ],
-      "motivation": "Certifikatet använder en generell varubeskrivning men anger samtidigt fakturanummer 8500028962 och datum 02.02.2026. Fakturan med exakt detta nummer och datum innehåller varor som är förenliga med beskrivningen: belts, roller chains och bearings."
+      "motivation": "Certifikatet innehåller en generell varubeskrivning med uttrycklig hänvisning till faktura 8500028962 daterad 02.02.2026. Fakturan har samma nummer och datum, och dess innehåll omfattar uttryckligen belts, roller chains och bearings. De angivna kolli-/paketnumren återfinns också i fakturans transportdel, vilket ytterligare stöder att samma försändning avses."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.89,
+      "confidence": 0.93,
       "certificate_value": "GW in KGS:\n421,80\nNETW in KGS:\n364,19",
       "invoice_value": "Total Gross Weight 421,800 KG\nTotal Net Weight 364,193 KG",
       "rules_applied": [
         {
-          "rule_id": "4.4.2.1",
-          "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.4.3",
-          "outcome": "MATCH"
+          "rule_id": "4.4.2.2",
+          "outcome": "weight category and unit explicitly stated in certificate"
         },
         {
           "rule_id": "4.4.4",
-          "outcome": "MATCH"
+          "outcome": "verified against invoice total weight fields"
+        },
+        {
+          "rule_id": "4.4.3",
+          "outcome": "same numeric values identified after normalization"
         }
       ],
-      "motivation": "Verifieringsgrundande kvantitet finns i box 7 på certifikatet. Fakturans totalvikter på sida 20 bekräftar både GW 421,800 KG och NW 364,193 KG; certifikatets 421,80 och 364,19 matchar efter tillåten trunkering av ytterligare decimaler."
+      "motivation": "Certifikatet anger både GW och NETW i KGS. Fakturan anger Total Gross Weight 421,800 KG och Total Net Weight 364,193 KG. GW matchar efter normalisering av decimalformat, och NETW matchar efter tillåten trunkering från 364,193 till 364,19."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.97,
-      "certificate_value": "Austria, Bulgaria, China, Czech Republic,\nFrance, India, Italy, Japan, Malaysia,\nSlovakia",
-      "invoice_value": "Country of manufacturing\nAustria\nBulgaria\nChina\nCzech Republic\nFrance\nIndia\nItaly\nJapan\nMalaysia\nSlovakia",
+      "confidence": 0.98,
+      "certificate_value": "Austria, Bulgaria, China, Czech Republic, France, India, Italy, Japan, Malaysia, Slovakia",
+      "invoice_value": "Country of manufacturing:\nAustria, Bulgaria, China, Czech Republic, France, India, Italy, Japan, Malaysia, Slovakia",
       "rules_applied": [
         {
           "rule_id": "4.5.1",
-          "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.5.3",
-          "outcome": "MATCH"
+          "outcome": "explicit origin field identified in invoice"
         },
         {
           "rule_id": "4.5.5",
-          "outcome": "MATCH"
+          "outcome": "every origin country in certificate found explicitly in invoice"
         }
       ],
-      "motivation": "Samtliga ursprungsländer i certifikatet återfinns uttryckligen i fakturans fält/sektion 'Country of manufacturing' på sidorna 1–2. Fakturan visar tydlig koppling mellan ursprungsland och varurader."
+      "motivation": "Samtliga ursprungsländer som anges i certifikatet återfinns uttryckligen i fakturans fält 'Country of manufacturing'. Ingen ursprungsuppgift i fakturan motsäger certifikatets lista."
     }
   },
   "overall_assessment": {
@@ -157,12 +157,12 @@
     "confidence": 0.93,
     "critical_failures": [],
     "manual_review_triggers": [],
-    "decision_summary": "Dokumentparet är giltigt parat via identiskt fakturanummer 8500028962. Samtliga fem tillämpliga kontrollpunkter verifieras som MATCH: consignor, consignee, generell varubeskrivning med fakturareferens, box 7-vikter samt samtliga ursprungsländer.",
-    "human_explanation": "Alla kontrollerbara uppgifter i ursprungscertifikatet kan verifieras mot fakturan 8500028962. Avsändare, mottagare, varubeskrivning, viktuppgifter och ursprungsländer stämmer. Dokumentparet kan därför godkännas automatiskt."
+    "decision_summary": "Alla fem tillämpliga kontrollpunkter är verifierade som MATCH. Dokumentparningen är stark eftersom certifikatets fakturanummer 8500028962, consignor och consignee återfinns i fakturan. Ingen kontrollpunkt har confidence under 0.85.",
+    "human_explanation": "Certifikatet och fakturan avser samma avsändare, mottagare och faktura 8500028962 daterad 02.02.2026. Varubeskrivningen i certifikatet hänvisar till fakturan och är förenlig med fakturans innehåll, och både ursprungsländerna samt vikterna 421,80/364,19 kan verifieras mot fakturan. Alla kontrollpunkter stämmer och dokumentparet kan godkännas automatiskt."
   },
   "_meta": {
-    "tested_at": "2026-04-02T11:23:49.167085+00:00",
-    "prompt_hash": "f81eb9b0d2ea",
+    "tested_at": "2026-04-11T08:05:42.156145+00:00",
+    "prompt_hash": "de0d620a2b38",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P035_MATCH",

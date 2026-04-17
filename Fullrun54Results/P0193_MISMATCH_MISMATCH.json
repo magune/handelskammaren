@@ -1,9 +1,9 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-04-02T00:00:00Z",
+    "verification_timestamp": "2026-04-11T00:00:00Z",
     "document_pair_id": null,
-    "certificate_issue_date": "2023-03-28",
+    "certificate_issue_date": null,
     "source_documents_received": 2
   },
   "task": {
@@ -33,20 +33,20 @@
     "eu_origin_normalization_active": true,
     "activated_rules": [
       {
-        "rule_id": "8.5.0",
-        "rule_name": "Filbaserad dokumentparning"
+        "rule_id": "4.1.0",
+        "rule_name": "Consignor uttryckligen identifierbar någonstans i fakturan"
       },
       {
-        "rule_id": "8.6",
-        "rule_name": "Obligatorisk parningsvalidering"
+        "rule_id": "4.2.0.2",
+        "rule_name": "Consignee får verifieras i något mottagarfält"
       },
       {
-        "rule_id": "4.2.0.3.1",
-        "rule_name": "Ship-To-regeln ger MANUAL_REVIEW vid oberoende Bill-To-part"
+        "rule_id": "4.3.2",
+        "rule_name": "Varubeskrivning verifieras primärt via artikelnummer"
       },
       {
-        "rule_id": "4.5.4.1",
-        "rule_name": "EU-normalisering"
+        "rule_id": "4.5.4.2",
+        "rule_name": "EU ↔ specifikt EU-medlemsland"
       }
     ]
   },
@@ -56,113 +56,115 @@
       "status": "MATCH",
       "confidence": 0.98,
       "certificate_value": "Skylotec Nordic AB\nSagbäcksvägen 13\nSE-437 31 , LINDOME\nSweden",
-      "invoice_value": "Skylotec Nordic AB\nSagbäcksvägen 13\nSE43731 Lindome\nSWEDEN\nVAT No SE556996439701\nIBAN SE97 9500 0099 6018 1847 9964",
+      "invoice_value": "Skylotec Nordic AB\nSagbäcksvägen 13\nSE43731 Lindome\nSWEDEN",
       "rules_applied": [
         {
           "rule_id": "4.1.0",
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.1.2.1",
+          "rule_id": "4.1.2",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.4",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor 'Skylotec Nordic AB' återfinns uttryckligen flera gånger i fakturan, inklusive adressblocket med 'Sagbäcksvägen 13 ... SWEDEN'. Landet verifieras även indirekt genom VAT-prefix 'SE' och IBAN-prefix 'SE'."
+      "motivation": "Certifikatets consignor 'Skylotec Nordic AB' återfinns uttryckligen i fakturan, inklusive adressen 'Sagbäcksvägen 13' och landet Sweden/SWEDEN. Samma juridiska part och samma land kan verifieras utan tolkning."
     },
     "consignee": {
       "applicable": true,
-      "status": "MANUAL_REVIEW",
-      "confidence": 0.66,
+      "status": "MATCH",
+      "confidence": 0.97,
       "certificate_value": "PARAMAHANSA DEFENCE LLP\nD-34/2 INDUSTRIAL AREA\nSECTOR 2, NOIDA\n201301\nUTTAR PRADESH\nINDIA",
-      "invoice_value": "Delivery to *New Delhi Airport for:\nPARAMAHANSA DEFENCE LLP\nD 34/2 Industrial Area,\nSector-2, Noida 201301,\nUttar Pradesh\nINDIA\n\nBill to:\nVigneshwar Aero Marine Pvt Ltd\nCC 32/2625, D4, Salwa Square,\n... INDIA",
+      "invoice_value": "Delivery to *New Delhi Airport for:\nPARAMAHANSA DEFENCE LLP\nD 34/2 Industrial Area,\nSector-2, Noida 201301,\nUttar Pradesh\nINDIA",
       "rules_applied": [
         {
           "rule_id": "4.2.0.2",
-          "outcome": "Bill-to field found"
+          "outcome": "MATCH"
         },
         {
-          "rule_id": "4.2.0.3",
-          "outcome": "Ship-To exception considered"
-        },
-        {
-          "rule_id": "4.2.0.3.1",
-          "outcome": "MANUAL_REVIEW"
+          "rule_id": "4.2.3",
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignee återfinns exakt i fakturans leveransfält ('Delivery to ... for'). Fakturan har dock ett separat Bill-to-fält för 'Vigneshwar Aero Marine Pvt Ltd', vilket är en annan juridisk part utan styrkt koppling till certifikatets consignee. Därför leder Ship-To-scenariot till MANUAL_REVIEW och inte MATCH."
+      "motivation": "Mottagaren i certifikatet kan identifieras i fakturans 'Delivery to ... for'-block. Enligt reglerna räcker det att consignee återfinns i något mottagarfält även om 'Bill to' anger en annan part."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.97,
-      "certificate_value": "POA-010-EU, TCX ASCENDER, 7 PCS\nNET WEIGHT 28 KG\n\nMAT-POA-101, SPARE/PART/MAINTENANCE WAREHOUSE KIT, 1 PCS\nNET WEIGHT 17 KG",
-      "invoice_value": "POA-010-EU TCX Ascender 7,00 pcs ...\nMAT-POA-101 Spare Part/Maintenance Warehouse kit, containing: ... 1,00 pcs ...",
+      "confidence": 0.98,
+      "certificate_value": "POA-010-EU, TCX ASCENDER, 7 PCS\nNET WEIGHT 28 KG\nMAT-POA-101, SPARE/PART/MAINTENANCE WAREHOUSE KIT, 1 PCS\nNET WEIGHT 17 KG",
+      "invoice_value": "POA-010-EU TCX Ascender 7,00 pcs ... Net weight 28 kg\nMAT-POA-101 Spare Part/Maintenance Warehouse kit ... 1,00 pcs ... Net weight 16,38 kg",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "Article-number priority applied"
+          "outcome": "MATCH"
         },
         {
-          "rule_id": "4.3.8",
+          "rule_id": "4.3.6",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Båda artikelnumren i certifikatet, 'POA-010-EU' och 'MAT-POA-101', kan identifieras exakt i fakturan. De tillhörande produktnamnen 'TCX Ascender' respektive 'Spare Part/Maintenance Warehouse kit' återfinns också i fakturan. Extra raden 'FV-002 Freight & Handling cost' i fakturan påverkar inte den ensidiga verifieringen."
+      "motivation": "Certifikatet innehåller artikelnumren POA-010-EU och MAT-POA-101. Båda artikelnumren kan identifieras exakt i fakturan, vilket enligt prioritet 1 verifierar varubeskrivningen."
     },
     "quantity": {
       "applicable": true,
       "status": "MISMATCH",
-      "confidence": 0.95,
-      "certificate_value": "Box 7 Quantity:\n196\n17",
-      "invoice_value": "7,00 pcs / Net weight 28 kg\n1,00 pcs / Net weight 16,38 kg\nPallet 1: ... total weight 220 kg",
+      "confidence": 0.96,
+      "certificate_value": "196\n17",
+      "invoice_value": "POA-010-EU ... 7,00 pcs ... Net weight 28 kg\nMAT-POA-101 ... 1,00 pcs ... Net weight 16,38 kg\nPallet 1: 124x80x130, total weight 220 kg",
       "rules_applied": [
-        {
-          "rule_id": "4.4.2.1",
-          "outcome": "Box 7 treated as verification-grounding quantity"
-        },
         {
           "rule_id": "4.4.2",
           "outcome": "MISMATCH"
+        },
+        {
+          "rule_id": "4.4.2.1",
+          "outcome": "BOX_7_GOVERNS"
+        },
+        {
+          "rule_id": "4.4.5.7",
+          "outcome": "NOT_APPLICABLE_FOR_MATCH"
         }
       ],
-      "motivation": "Enligt reglerna ska kvantitetsverifieringen utgå från box 7. Certifikatets box 7 innehåller de uttryckliga värdena '196' och '17' utan enhet. Dessa värden kan inte verifieras mot fakturan, som i stället visar 7,00 pcs och 1,00 pcs samt vikter 28 kg, 16,38 kg och total weight 220 kg. Det är inte tillåtet att byta verifieringsgrund till kvantiteter i box 6 när box 7 innehåller egna värden."
+      "motivation": "Kvantitetsfältet i certifikatet (box 7) innehåller de extraherade värdena '196' och '17' utan uttrycklig enhet. Box 7 är verifieringsgrundande och får inte ersättas med 7 PCS och 1 PCS från box 6. Undantaget för flera numeriska värden utan enhet prövades, men fakturan innehåller inte motsvarande värden 196 och 17 per rad med enhet; därför kan certifikatets kvantitetsuppgift inte verifieras mot fakturan och resultatet är MISMATCH."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.91,
       "certificate_value": "EUROPEAN COMMUNITY",
-      "invoice_value": "(origin SE)\n(HS-code 84253100) (origin SE)\n(HS-code 84311000) (origin SE)",
+      "invoice_value": "Country of Origin **see below\n(HS-code 84253100) (origin SE)\n(HS-code 84311000) (origin SE)",
       "rules_applied": [
         {
-          "rule_id": "4.5.4.1",
-          "outcome": "EU-normalisering applied"
+          "rule_id": "4.5.1",
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.5.4.2",
-          "outcome": "EU-member-state equivalence"
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger ursprungsland 'EUROPEAN COMMUNITY'. Fakturan anger explicit ursprung per artikellinje som '(origin SE)'. Sverige är en EU-medlemsstat och verifierar därför certifikatets EU-angivelse."
+      "motivation": "Certifikatet anger ursprung 'EUROPEAN COMMUNITY'. Fakturan anger explicit '(origin SE)' för båda varuraderna. Sverige är EU-medlemsstat och certifikatets EU-angivelse är därför verifierad via EU-normalisering."
     }
   },
   "overall_assessment": {
     "comparison_result": "NOT_IDENTICAL",
     "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
     "auto_approval_eligible": false,
-    "confidence": 0.87,
+    "confidence": 0.95,
     "critical_failures": [
-      "Kvantitetsfältet i certifikatets box 7 anger '196' och '17', men dessa värden kan inte verifieras i fakturan."
+      "Kvantitetsfältet i certifikatet visar '196' och '17' utan enhet och dessa värden kan inte verifieras mot fakturans kvantiteter eller vikter."
     ],
-    "manual_review_triggers": [
-      "Consignee finns i leveransfältet men fakturan är ställd till en annan oberoende juridisk part."
-    ],
-    "decision_summary": "Dokumentparet kan inte godkännas som identiskt eftersom kvantitetsuppgiften i certifikatets box 7 inte matchar fakturan. Consignor, varubeskrivning och ursprungsland kan verifieras. Consignee-frågan kräver dessutom manuell bedömning på grund av separat Bill-to-part.",
-    "human_explanation": "Kvantitetsfältet i certifikatet anger '196' och '17', men fakturan visar 7 pcs, 1 pcs, 28 kg, 16,38 kg och totalvikt 220 kg; värdena kan därför inte verifieras. Certifikatet anger mottagaren som PARAMAHANSA DEFENCE LLP medan fakturan är ställd till Vigneshwar Aero Marine Pvt Ltd och visar PARAMAHANSA endast som leveransmottagare. Avsändare, varor och ursprung stämmer i övrigt."
+    "manual_review_triggers": [],
+    "decision_summary": "Avsändare, mottagare, varubeskrivning och ursprung kan verifieras mot fakturan. Kvantiteten kan inte verifieras eftersom certifikatets box 7 innehåller värdena '196' och '17' utan enhet, och motsvarande uppgifter saknas i fakturan. Minst en tillämplig kontrollpunkt är därför MISMATCH.",
+    "human_explanation": "Avsändare, mottagare, varubeskrivning och ursprung kan verifieras mot fakturan. Kvantitetsfältet i certifikatet innehåller '196' och '17' utan enhet, medan fakturan anger 7 pcs och 1 pcs samt vikter 28 kg, 16,38 kg och totalvikt 220 kg. Därför kan mängduppgiften i certifikatet inte verifieras mot fakturan."
   },
   "_meta": {
-    "tested_at": "2026-04-02T13:04:51.285819+00:00",
-    "prompt_hash": "3a9306fb8539",
+    "tested_at": "2026-04-11T08:05:42.142613+00:00",
+    "prompt_hash": "de0d620a2b38",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P0193_MISMATCH",

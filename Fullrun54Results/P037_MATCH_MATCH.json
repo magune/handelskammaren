@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-04-02T00:00:00Z",
+    "verification_timestamp": "2026-04-11T00:00:00Z",
     "document_pair_id": null,
     "certificate_issue_date": "2026-03-02",
     "source_documents_received": 2
@@ -34,15 +34,23 @@
     "activated_rules": [
       {
         "rule_id": "4.1.0",
-        "rule_name": "Consignor identifierad någonstans i fakturan"
+        "rule_name": "Consignor may be verified anywhere in the invoice document set"
+      },
+      {
+        "rule_id": "4.2.0.2",
+        "rule_name": "Consignee may be verified in any relevant receiver field"
+      },
+      {
+        "rule_id": "4.3.3",
+        "rule_name": "Controlled text match for goods description"
       },
       {
         "rule_id": "4.4.3.4",
-        "rule_name": "Normalisering av blandade decimalseparatorer"
+        "rule_name": "Normalization of mixed decimal/thousand separators"
       },
       {
-        "rule_id": "8.6",
-        "rule_name": "Parningsvalidering passerad via consignor och consignee"
+        "rule_id": "4.5.4",
+        "rule_name": "Origin country normalization"
       }
     ]
   },
@@ -50,9 +58,9 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.89,
-      "certificate_value": "TETRA PAK INTERNATIONAL SA\nAV. GENERAL GUISAN 70\nON BEHALF OF\nTETRA PAK SOUTH EAST ASIA PTE LTD\n1009, PULLY\nSWITZERLAND",
-      "invoice_value": "Postal address:\nTetra Pak International SA\nP.O. Box 446\nCH - 1009 PULLY\n...\nVAT reg no:\nTetra Pak International SA\nAv. Général-Guisan 70, CH-1009 Pully",
+      "confidence": 0.91,
+      "certificate_value": "TETRA PAK INTERNATIONAL SA AV. GENERAL GUISAN 70 ON BEHALF OF TETRA PAK SOUTH EAST ASIA PTE LTD 1009, PULLY SWITZERLAND",
+      "invoice_value": "Postal address: Tetra Pak International SA P.O. Box 446 CH - 1009 PULLY / VAT reg no: Tetra Pak International SA Av. Général-Guisan 70, CH-1009 Pully",
       "rules_applied": [
         {
           "rule_id": "4.1.0",
@@ -63,84 +71,88 @@
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.1.4",
+          "rule_id": "4.1.5",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor-kärna 'TETRA PAK INTERNATIONAL SA' återfinns uttryckligen i fakturans footer/VAT-block på sida 1 och 2. Fakturan innehåller även adressuppgiften 'Av. Général-Guisan 70, CH-1009 Pully', vilket styrker samma juridiska part och samma land (Switzerland/CH) efter tillåten land- och formatnormalisering. Att fakturan även visar 'From: Tetra Pak Closures France SNC' hindrar inte MATCH eftersom certifikatets consignor uttryckligen förekommer någonstans i fakturadokumentet enligt koncernstrukturregeln."
+      "motivation": "Certifikatets consignor-namn \"TETRA PAK INTERNATIONAL SA\" kan identifieras uttryckligen i fakturan i postal-/VAT-blocket på sida 1–2. Landet verifieras som Schweiz genom adressen \"CH-1009 Pully\". Att fakturan även visar \"From: Tetra Pak Closures France SNC\" hindrar inte match enligt regeln om uttrycklig förekomst någonstans i fakturadokumentet."
     },
     "consignee": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.98,
-      "certificate_value": "Silvermill Natural Beverages\n(PVT) LTD.\n148/1 Kynsey Road\nCOLOMBO 08\nSri Lanka",
-      "invoice_value": "Consignee 980048\nSilvermill Natural Beverages (Pvt)\nLtd\n148/1 Kynsey Road,\n0000980048 COLOMBO 08\nSRI LANKA",
+      "confidence": 0.99,
+      "certificate_value": "Silvermill Natural Beverages (PVT) LTD. 148/1 Kynsey Road COLOMBO 08 Sri Lanka",
+      "invoice_value": "Consignee 980048 Silvermill Natural Beverages (Pvt) Ltd 148/1 Kynsey Road, 0000980048 COLOMBO 08 SRI LANKA",
       "rules_applied": [
         {
-          "rule_id": "4.2.1",
+          "rule_id": "4.2.0.2",
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.2.2",
+          "rule_id": "4.2.2.1",
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.2.3",
+          "rule_id": "4.2.4",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Fakturan innehåller ett explicit fält 'Consignee' med samma mottagare som i certifikatet: Silvermill Natural Beverages (Pvt) Ltd, 148/1 Kynsey Road, Colombo 08, Sri Lanka. Skillnaden i versaler och interpunktion är tillåten normalisering. Landet överensstämmer exakt."
+      "motivation": "Mottagaren i certifikatet kan identifieras direkt i fakturans explicita Consignee-fält. Företagsnamn, adresskärna och land Sri Lanka överensstämmer efter tillåten normalisering av versaler/gemener och bolagsform."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.96,
-      "certificate_value": "576 CARTONS PLASTIC CAPS\nDreamCap26 Pro Blue P2945C PA001\nNet weight: 4,968 kgs\nHS CODE:392350",
-      "invoice_value": "DreamCap26 Pro Blue P2945C PA001\nProduct code: C262-488-00\nProduct description: DreamCap Pro 26 mm\nOrigin FR  Tariff Code 39235090  Net 4,968 KG",
+      "certificate_value": "576 CARTONS PLASTIC CAPS DreamCap26 Pro Blue P2945C PA001",
+      "invoice_value": "DreamCap26 Pro Blue P2945C PA001 / Product description: DreamCap Pro 26 mm",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "Article number not separately used; continued to text match"
+          "outcome": "Priority 2 used"
         },
         {
           "rule_id": "4.3.3",
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.3.4",
+          "rule_id": "4.3.8",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Den identitetsbärande huvudbeteckningen 'DreamCap26 Pro Blue P2945C PA001' återfinns exakt i fakturans varurad. Certifikatets tillägg '576 CARTONS PLASTIC CAPS', nettovikt och HS-kod motsäger inte fakturans varuinnehåll. Varubeskrivningen kan därför verifieras direkt utan semantisk tolkning."
+      "motivation": "Den identitetsbärande huvudbeteckningen i certifikatet, \"DreamCap26 Pro Blue P2945C PA001\", återfinns exakt i fakturans varurad. Certifikatets generella tillägg \"576 CARTONS PLASTIC CAPS\" motsägs inte av fakturan, som även visar 576 cartons och avser plastkapslar. Därför är varubeskrivningen verifierad utan semantisk omtolkning."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.93,
       "certificate_value": "6239,520 kgs gross",
-      "invoice_value": "Gross weight\n6,239.520 KG",
+      "invoice_value": "Gross weight 6,239.520 KG",
       "rules_applied": [
         {
           "rule_id": "4.4.2.1",
-          "outcome": "Box 7 selected as controlling quantity"
+          "outcome": "Box 7 selected as governing quantity"
         },
         {
-          "rule_id": "4.4.4",
+          "rule_id": "4.4.3",
           "outcome": "MATCH"
         },
         {
           "rule_id": "4.4.3.4",
           "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.4.6",
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Den verifieringsgrundande kvantiteten i certifikatets box 7 är bruttovikten '6239,520 kgs gross'. Fakturan anger total 'Gross weight 6,239.520 KG'. Efter normalisering av komma/punkt som decimal- och tusentalsseparatorer är värdet numeriskt identiskt, och båda uppgifterna avser gross/bruttovikt."
+      "motivation": "Verifieringsgrundande kvantitet är box 7 i certifikatet: \"6239,520 kgs gross\". Fakturan anger \"Gross weight 6,239.520 KG\". Efter tillåten normalisering av blandade decimal- och tusentalsavskiljare är värdet numeriskt identiskt, enheten är KG och viktkategorin gross/gross weight överensstämmer."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.97,
+      "confidence": 0.98,
       "certificate_value": "FRANCE",
-      "invoice_value": "Country of origin of goods\nFR\n...\nOrigin FR",
+      "invoice_value": "Country of origin of goods FR / Origin FR",
       "rules_applied": [
         {
           "rule_id": "4.5.1",
@@ -149,9 +161,13 @@
         {
           "rule_id": "4.5.4",
           "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.5.5",
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger ursprungsland 'FRANCE'. Fakturan innehåller explicit ursprungsangivelse både som 'Country of origin of goods FR' och på varuraden som 'Origin FR'. FR är vedertagen landskod för France och uppfyller kravet på uttrycklig ursprungsangivelse i fakturan."
+      "motivation": "Certifikatet anger ursprungsland \"FRANCE\". Fakturan innehåller explicit origin-fält både som \"Country of origin of goods FR\" och på varuraden som \"Origin FR\". FR är vedertagen landskod för France, så ursprungslandet är uttryckligen verifierat."
     }
   },
   "overall_assessment": {
@@ -161,12 +177,12 @@
     "confidence": 0.95,
     "critical_failures": [],
     "manual_review_triggers": [],
-    "decision_summary": "Alla fem tillämpliga kontrollpunkter verifieras som MATCH. Dokumentparningen är giltig genom att både consignor och consignee kan identifieras i fakturan. Ingen LC-regel är tillämplig och inga tekniska läsbarhetsproblem blockerar verifieringen.",
-    "human_explanation": "Alla tillämpliga kontrollpunkter stämmer mellan ursprungsintyget och fakturan. Avsändare, mottagare, varubeskrivning, bruttovikt 6,239.520 KG och ursprung FR/France kan identifieras i fakturan. Dokumentparet kan därför godkännas automatiskt."
+    "decision_summary": "Samtliga fem tillämpliga kontrollpunkter är verifierade som MATCH. LC-undantaget är inte tillämpligt. Dokumentparet uppfyller därmed kraven för IDENTICAL.",
+    "human_explanation": "Alla kontrollpunkter stämmer mellan certifikatet och fakturan. Avsändare, mottagare, varubeskrivning, bruttovikt 6 239,520 kg och ursprung Frankrike kan identifieras i fakturan. Dokumentparet kan därför godkännas automatiskt."
   },
   "_meta": {
-    "tested_at": "2026-04-02T11:23:49.167817+00:00",
-    "prompt_hash": "f81eb9b0d2ea",
+    "tested_at": "2026-04-11T08:05:42.157257+00:00",
+    "prompt_hash": "de0d620a2b38",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P037_MATCH",

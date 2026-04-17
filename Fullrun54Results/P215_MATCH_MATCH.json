@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-04-02T00:00:00Z",
+    "verification_timestamp": "2026-04-11T00:00:00Z",
     "document_pair_id": null,
     "certificate_issue_date": "2026-03-11",
     "source_documents_received": 2
@@ -15,12 +15,12 @@
     "document_a": {
       "label": "Document A",
       "assumed_role": "certificate",
-      "document_type": "Certificate of Origin"
+      "document_type": "certificate_of_origin"
     },
     "document_b": {
       "label": "Document B",
       "assumed_role": "invoice",
-      "document_type": "Invoice"
+      "document_type": "commercial_invoice"
     }
   },
   "rule_activation": {
@@ -31,20 +31,7 @@
     "to_order_rule_active": false,
     "quantity_exception_applied": null,
     "eu_origin_normalization_active": false,
-    "activated_rules": [
-      {
-        "rule_id": "8.5.0",
-        "rule_name": "Filbaserad dokumentparning"
-      },
-      {
-        "rule_id": "8.6",
-        "rule_name": "Obligatorisk parningsvalidering"
-      },
-      {
-        "rule_id": "4.4.4",
-        "rule_name": "Total vikt i faktura"
-      }
-    ]
+    "activated_rules": []
   },
   "control_points": {
     "consignor": {
@@ -55,85 +42,85 @@
       "invoice_value": "Elof Hansson Trade AB\nFörsta Långgatan 17\nSE-413 80 Göteborg,Sweden\nVAT No. SE556088563301",
       "rules_applied": [
         {
+          "rule_id": "4.1.0",
+          "outcome": "MATCH"
+        },
+        {
           "rule_id": "4.1.2",
-          "outcome": "certificate consignor name and country identified in invoice issuer block"
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.1.4",
-          "outcome": "country Sweden matched explicitly"
-        },
-        {
-          "rule_id": "4.1.5",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger consignor som ELOF HANSSON TRADE AB i Sweden. Fakturan är utställd av Elof Hansson Trade AB med adress i Göteborg, Sweden, och VAT-prefix SE styrker samma land. Företagsnamn och land kan identifieras direkt utan otillåten tolkning."
+      "motivation": "Certifikatet anger consignor som \"ELOF HANSSON TRADE AB\" i Sverige. Samma företagsnamn återfinns uttryckligen i fakturans header/footer och adressblock som \"Elof Hansson Trade AB\" med adress i Göteborg, Sweden. Landet verifieras också av adressen och VAT-prefixet \"SE\". Därmed kan samma juridiska part identifieras i fakturan."
     },
     "consignee": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.98,
+      "confidence": 0.97,
       "certificate_value": "ASD Laminat A.Ş.\nYeşilköy Mah. Atatürk Cad.\nİDTM Blokları A1\nBlok N:10/1 Kat:16 Ofis\nNo: 463-465-466 34149\nYEŞILKÖY-BAKIRKÖY\nIstanbul\nTürkiye",
       "invoice_value": "BUYER\nASD Laminat A.Ş.\nYeşilköy Mah. Atatürk Cad. İDTM Blokları A1\nBlok N:10/1 Kat:16 Ofis No: 463-465-466 34149\nYEŞILKÖY-BAKIRKÖY Istanbul\nTurkey",
       "rules_applied": [
         {
           "rule_id": "4.2.0.2",
-          "outcome": "authoritative consignee taken from primary billing field BUYER"
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.2.2",
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.2.3",
-          "outcome": "country Türkiye/Turkey matched after allowed normalization"
-        },
-        {
-          "rule_id": "4.2.4",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets mottagare ASD Laminat A.Ş. återfinns direkt i fakturans primära faktureringsfält BUYER. Namn, adresskärna och land överensstämmer; Türkiye och Turkey är samma land efter normalisering. Ingen annan auktoritativ köparpart motsäger detta."
+      "motivation": "Certifikatet anger mottagaren som \"ASD Laminat A.Ş.\" med adress i Istanbul, Türkiye. Fakturan anger samma företag i BUYER-fältet med samma adress och land angivet som Turkey. Företagsnamnet kan identifieras direkt och landangivelsen är förenlig efter normalisering av landsnamn."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.97,
-      "certificate_value": "MF Unbleached Kraft Paper",
-      "invoice_value": "MF Unbleached Kraft Paper",
+      "certificate_value": "Total: 240 reels - 97,740 mt\nMF Unbleached Kraft Paper",
+      "invoice_value": "MF Unbleached Kraft Paper\nTotal: 240 reels - 97,740 mt",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "no certificate article number used for primary matching"
+          "outcome": "Priority 2 applied"
         },
         {
           "rule_id": "4.3.3",
-          "outcome": "controlled text match on identity-bearing main designation"
+          "outcome": "MATCH"
         },
         {
-          "rule_id": "4.3.8",
+          "rule_id": "4.3.4",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Den identitetsbärande huvudbeteckningen i certifikatet är MF Unbleached Kraft Paper. Samma ordsekvens återfinns explicit i fakturans beskrivningsrad utan behov av semantisk tolkning. Tillägg i fakturan som FSC MIX CREDIT och specifikationer ändrar inte att certifikatets beskrivning kan verifieras direkt."
+      "motivation": "Certifikatets varubeskrivning innehåller den identitetsbärande huvudbeteckningen \"MF Unbleached Kraft Paper\" samt totalangivelsen \"Total: 240 reels - 97,740 mt\". Fakturan innehåller samma varubeskrivning och samma totalangivelse. Varubeskrivningen kan därför verifieras direkt utan semantisk tolkning."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.88,
+      "confidence": 0.91,
       "certificate_value": "G/W 97,74 MT",
-      "invoice_value": "97,74 MT",
+      "invoice_value": "Quantity 97,74 MT\nTotal qty 97,74 MT",
       "rules_applied": [
         {
-          "rule_id": "4.4.2.2",
-          "outcome": "single weight value with stated category in certificate"
+          "rule_id": "4.4.2.1",
+          "outcome": "Box 7 selected as governing quantity"
+        },
+        {
+          "rule_id": "4.4.3",
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.4.4",
-          "outcome": "certificate shipment weight verified against total weight/quantity stated in invoice"
-        },
-        {
-          "rule_id": "4.4.6",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger kvantiteten som G/W 97,74 MT. Fakturan anger 97,74 MT både i varuraden och som Total qty 97,74 MT, samt beskriver samma försändelse med Total: 240 reels - 97,740 mt. Det numeriska värdet och enheten överensstämmer; skillnaden att fakturan använder total quantity i stället för explicit G/W accepteras enligt regeln för total vikt i faktura."
+      "motivation": "Den verifieringsgrundande kvantiteten i certifikatets box 7 är \"G/W 97,74 MT\". Fakturan innehåller samma numeriska värde och enhet som \"Quantity 97,74 MT\" och även \"Total qty 97,74 MT\". Enligt reglerna får total vikt i certifikatet verifieras mot total vikt/quantity i fakturan när numeriskt värde och enhet överensstämmer. Ingen uttrycklig motsägelse förekommer."
     },
     "origin": {
       "applicable": true,
@@ -144,18 +131,18 @@
       "rules_applied": [
         {
           "rule_id": "4.5.1",
-          "outcome": "explicit origin field identified in invoice"
+          "outcome": "Explicit origin field identified"
         },
         {
-          "rule_id": "4.5.4",
-          "outcome": "country name normalization not materially needed"
+          "rule_id": "4.5.2",
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.5.5",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger ursprungsland SWEDEN. Fakturan innehåller ett explicit origin-fält med texten COUNTRY OF ORIGIN Sweden. Ursprungslandet kan därför verifieras direkt och uttryckligen i fakturan."
+      "motivation": "Certifikatet anger ursprungsland som \"SWEDEN\". Fakturan innehåller ett explicit ursprungsfält \"COUNTRY OF ORIGIN\" med värdet \"Sweden\". Ursprungslandet kan därför identifieras uttryckligen i fakturan."
     }
   },
   "overall_assessment": {
@@ -165,12 +152,12 @@
     "confidence": 0.96,
     "critical_failures": [],
     "manual_review_triggers": [],
-    "decision_summary": "Dokumentparet är konsekvent parat: certifikatets consignor, consignee och referensen SI0071744/CA0050948 återfinns i den bifogade fakturan. Samtliga tillämpliga kontrollpunkter—consignor, consignee, varubeskrivning, kvantitet och ursprungsland—har verifierats som MATCH. Ingen LC-regel, ingen blockerande läsbarhetsrisk och ingen motsägelse har identifierats.",
-    "human_explanation": "Alla relevanta uppgifter i ursprungscertifikatet kan återfinnas i fakturan: avsändare Elof Hansson Trade AB, mottagare ASD Laminat A.Ş., varan MF Unbleached Kraft Paper, mängden 97,74 MT och ursprungsland Sweden. Dokumentparet kan därför godkännas automatiskt."
+    "decision_summary": "Samtliga fem tillämpliga kontrollpunkter kan verifieras mot fakturan: consignor, consignee, varubeskrivning, kvantitet och ursprungsland. Ingen LC-regel eller annat undantag ändrar verifieringsomfånget. Dokumentparet uppfyller därmed kraven för IDENTICAL.",
+    "human_explanation": "Alla kontrollpunkter stämmer mellan ursprungscertifikatet och fakturan. Avsändare, mottagare, varubeskrivning, mängd 97,74 MT och ursprungsland Sweden kan verifieras direkt. Dokumentparet kan därför godkännas automatiskt."
   },
   "_meta": {
-    "tested_at": "2026-04-02T11:06:44.030968+00:00",
-    "prompt_hash": "f81eb9b0d2ea",
+    "tested_at": "2026-04-11T08:06:46.144987+00:00",
+    "prompt_hash": "de0d620a2b38",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P215_MATCH",

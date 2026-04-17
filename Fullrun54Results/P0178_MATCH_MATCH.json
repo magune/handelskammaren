@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-04-07T00:00:00Z",
+    "verification_timestamp": "2026-04-11T00:00:00Z",
     "document_pair_id": null,
     "certificate_issue_date": "2026-02-24",
     "source_documents_received": 2
@@ -34,19 +34,19 @@
     "activated_rules": [
       {
         "rule_id": "4.1.0",
-        "rule_name": "Consignor may be verified anywhere in invoice documents"
+        "rule_name": "Consignor identified somewhere in the invoice document"
       },
       {
         "rule_id": "4.2.0.2",
-        "rule_name": "Consignee may be identified in any recipient field"
+        "rule_name": "Consignee may be identified in any relevant recipient field in the invoice"
       },
       {
         "rule_id": "4.3.2",
-        "rule_name": "Goods verification by article number has priority"
+        "rule_name": "Goods description verified primarily by article number"
       },
       {
-        "rule_id": "4.4.2.1",
-        "rule_name": "Box 7 quantity is verification-grounding quantity"
+        "rule_id": "8.6",
+        "rule_name": "Document pairing sanity check passed"
       }
     ]
   },
@@ -54,7 +54,7 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.92,
+      "confidence": 0.91,
       "certificate_value": "Swedish Oat Fiber AB\nBåtafjordsvägen 12\n432 63, BUA\nSweden",
       "invoice_value": "Swedish Oat Fiber AB\nAddress: Båtafjordsvägen 12, 432 63 Bua Sweden - Corporate Identity No: 556509-0148\nVAT No: SE556509014801",
       "rules_applied": [
@@ -63,20 +63,16 @@
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.1.0.2",
-          "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.1.2.1",
+          "rule_id": "4.1.2",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor \"Swedish Oat Fiber AB\" återfinns uttryckligen i fakturans sidfot med svensk adress och SE-prefix i VAT-nummer. Detta uppfyller den särskilda regeln om koncernstruktur/sökning i hela fakturadokumentet även om fakturans huvudsakliga issuer-block visar \"Givaudan International AG (EUR)\". Landet Sweden verifieras både genom adressen \"432 63 Bua Sweden\" och VAT-prefix \"SE\"."
+      "motivation": "Certifikatets consignor \"Swedish Oat Fiber AB\" med land Sweden kan identifieras uttryckligen i fakturans footerblock, trots att fakturans huvudutställare är \"Givaudan International AG (EUR)\". Samma juridiska namn förekommer i fakturan och landet Sweden framgår uttryckligen i adressen, vilket uppfyller kraven för MATCH."
     },
     "consignee": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.98,
+      "confidence": 0.97,
       "certificate_value": "Tianjin Yujiu International\nTrade Co., Ltd\nUnit1-801-2,Building1,No2\nGonghua Road Huayuan Industrial\nZone, Binhai High-tech Zone\n300392 Tianjin\nChina",
       "invoice_value": "Delivery address\nTianjin Yujiu International Trade Co., Ltd\nUnit1-801-2,Building1,No.2 Gonghua Road\nHuayuan Industrial Zone,Binhai High - tech Zone, Tianjin\nTianjin 300392\nCHINA",
       "rules_applied": [
@@ -85,45 +81,37 @@
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.2.1.1",
-          "outcome": "MATCH"
-        },
-        {
           "rule_id": "4.2.4",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignee kan identifieras i fakturans mottagarfält \"Delivery address\" på sida 1. Företagsnamnet matchar efter tillåten normalisering av radbrytning och interpunktion, och landet China/CHINA överensstämmer. Fakturan innehåller även ett separat \"CONSIGNEE AS PER SHIP TO\"-block med samma mottagare, vilket ytterligare stödjer matchningen."
+      "motivation": "Mottagaren i certifikatet kan identifieras i fakturans Delivery address-fält. Företagsnamnet överensstämmer efter tillåten normalisering av radbrytningar och interpunktion, och landet China/CHINA överensstämmer."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.93,
+      "confidence": 0.96,
       "certificate_value": "300 x 18 kg paperbags\nOatWell Bran BG22 OI012B22",
-      "invoice_value": "Product: OATWELL® Bran BG22 - paper bag\nRef.: OI012B22",
+      "invoice_value": "OATWELL® Bran BG22 - paper bag OI012B22",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.3.8",
+          "rule_id": "4.3.4",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet innehåller artikel-/referensnumret \"OI012B22\" tillsammans med produktbeteckningen \"OatWell Bran BG22\". Fakturan innehåller exakt samma referensnummer \"OI012B22\" på produktraden samt motsvarande produktnamn \"OATWELL® Bran BG22 - paper bag\". Enligt prioritetsordningen för varubeskrivning räcker den exakta artikelnummerträffen för MATCH; produktnamnet stödjer samma slutsats."
+      "motivation": "Certifikatet innehåller artikelnumret \"OI012B22\", som kan identifieras exakt i fakturans produktrad. Den identitetsbärande huvudbeteckningen \"OatWell Bran BG22\" återfinns också i fakturan; skillnaderna \"paperbags\"/\"paper bag\" avser förpackningsform och ändrar inte produktidentiteten när artikelnumret matchar exakt."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.97,
       "certificate_value": "Net weight 5400 kg",
-      "invoice_value": "Net Weight 5400.0000 Kg",
+      "invoice_value": "5400.0000 Kg",
       "rules_applied": [
-        {
-          "rule_id": "4.4.2.1",
-          "outcome": "APPLIED"
-        },
         {
           "rule_id": "4.4.2.2",
           "outcome": "MATCH"
@@ -133,12 +121,12 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Verifieringsgrundande kvantitet är box 7 i certifikatet: \"Net weight 5400 kg\". Fakturan anger på produktraden \"Net Weight 5400.0000 Kg\" för samma vara. Numeriskt värde, viktenhet och viktkategori (Net) överensstämmer; decimalerna i fakturan ändrar inte värdet."
+      "motivation": "Certifikatet anger uttryckligen numeriskt värde, enhet och viktkategori: \"Net weight 5400 kg\". Fakturan anger för samma vara \"5400.0000 Kg\" under Net Weight; värdet överensstämmer exakt efter normalisering av decimalformat."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.99,
+      "confidence": 0.98,
       "certificate_value": "Sweden",
       "invoice_value": "COUNTRY OF ORIGIN SWEDEN",
       "rules_applied": [
@@ -151,7 +139,7 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger ursprungsland \"Sweden\" i box 3. Fakturan innehåller en explicit ursprungsangivelse \"COUNTRY OF ORIGIN SWEDEN\". Detta är en direkt och entydig positiv verifiering i ett dedikerat origin-fält."
+      "motivation": "Certifikatets ursprungsland \"Sweden\" återfinns uttryckligen i fakturan i ett dedikerat ursprungsfält: \"COUNTRY OF ORIGIN SWEDEN\". Ingen tolkning eller indirekt härledning behövs."
     }
   },
   "overall_assessment": {
@@ -161,12 +149,12 @@
     "confidence": 0.96,
     "critical_failures": [],
     "manual_review_triggers": [],
-    "decision_summary": "All five applicable control points are verified as MATCH. LC exception is not active. Pairing validation passed via explicit consignor and consignee identification in the invoice.",
-    "human_explanation": "Certifikatet kan verifieras mot fakturan. Avsändaren Swedish Oat Fiber AB finns i fakturans sidfot, mottagaren Tianjin Yujiu International Trade Co., Ltd finns i leveransadressen, och vara, nettovikt 5400 kg samt ursprung Sverige stämmer. Dokumentparet kan därför godkännas automatiskt."
+    "decision_summary": "Dokumentparet är giltigt parat och samtliga tillämpliga kontrollpunkter kan verifieras mot fakturan. Consignor styrks via uttrycklig förekomst i fakturans footer, consignee återfinns i delivery address, varubeskrivningen verifieras via artikelnummer OI012B22, nettovikten 5400 kg matchar fakturans Net Weight och ursprungslandet Sweden framgår uttryckligen i fakturan.",
+    "human_explanation": "Alla relevanta uppgifter i certifikatet kan återfinnas i fakturan: avsändare, mottagare, varan OatWell Bran BG22 OI012B22, nettovikt 5400 kg och ursprung Sweden. Dokumenten stämmer därför överens och kan godkännas automatiskt."
   },
   "_meta": {
-    "tested_at": "2026-04-07T10:42:41.320301+00:00",
-    "prompt_hash": "a85247cdbff7",
+    "tested_at": "2026-04-11T08:05:06.175409+00:00",
+    "prompt_hash": "de0d620a2b38",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P0178_MATCH",

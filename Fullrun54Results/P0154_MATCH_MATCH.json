@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-04-02T00:00:00Z",
+    "verification_timestamp": null,
     "document_pair_id": null,
     "certificate_issue_date": "2026-02-02",
     "source_documents_received": 2
@@ -33,32 +33,8 @@
     "eu_origin_normalization_active": false,
     "activated_rules": [
       {
-        "rule_id": "8.5.0",
-        "rule_name": "Filbaserad dokumentparning"
-      },
-      {
-        "rule_id": "8.6",
-        "rule_name": "Obligatorisk parningsvalidering"
-      },
-      {
         "rule_id": "4.1.3.3",
         "rule_name": "Kommersiell förkortning av consignor-namn"
-      },
-      {
-        "rule_id": "4.2.0.2",
-        "rule_name": "Prioritetsordning för consignee-identifiering"
-      },
-      {
-        "rule_id": "4.3.3",
-        "rule_name": "Kontrollerad textmatchning av varubeskrivning"
-      },
-      {
-        "rule_id": "4.4.4",
-        "rule_name": "Verifiering mot total vikt i faktura"
-      },
-      {
-        "rule_id": "4.5.1",
-        "rule_name": "Explicit ursprungsangivelse i faktura"
       }
     ]
   },
@@ -68,22 +44,34 @@
       "status": "MATCH",
       "confidence": 0.88,
       "certificate_value": "Berg Prop Prod. AB\nTärnvägen 15\nSE-475 40, HÖNÖ\nSweden",
-      "invoice_value": "Berg Propulsion Production AB\nAndvagen 26,\nSE-47540\nHono Sweden",
+      "invoice_value": "Berg Propulsion Production AB\nAndvagen 26,\nSE-47540\nHono Sweden\nVAT Number SE556568305801",
       "rules_applied": [
+        {
+          "rule_id": "4.1.0",
+          "outcome": "NOT_MATCHED_IN_FULL_TEXT"
+        },
+        {
+          "rule_id": "4.1.3.1",
+          "outcome": "NAME_NOT_IDENTICAL"
+        },
+        {
+          "rule_id": "4.1.3.2",
+          "outcome": "NOT_APPLICABLE"
+        },
         {
           "rule_id": "4.1.3.3",
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.1.4",
-          "outcome": "MATCH"
+          "rule_id": "4.1.2.1",
+          "outcome": "COUNTRY_VERIFIED"
         },
         {
           "rule_id": "4.1.5",
-          "outcome": "MATCH"
+          "outcome": "ADDRESS_DIFFERENCE_NOT_DECISIVE"
         }
       ],
-      "motivation": "Certifikatet anger consignor som \"Berg Prop Prod. AB ... Sweden\". Fakturan identifierar utställaren som \"Berg Propulsion Production AB ... Hono Sweden\" med svensk adress och VAT-prefix \"SE\". Skillnaden består av vedertagna förkortningar av orden Propulsion/Production och juridisk part kan identifieras i fakturan; land överensstämmer. Skillnad i gatadress medför inte avvikelse."
+      "motivation": "Certifikatet anger \"Berg Prop Prod. AB\" medan fakturan anger \"Berg Propulsion Production AB\". Detta kan verifieras som en tillåten kommersiell förkortning av samma företagsnamn; fullständigt namn framgår uttryckligen i fakturan och landet Sverige verifieras både i adressen och via VAT-prefixet \"SE\". Skillnaden i gatuadress medför inte avvikelse."
     },
     "consignee": {
       "applicable": true,
@@ -98,54 +86,54 @@
         },
         {
           "rule_id": "4.2.3",
-          "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.2.4",
-          "outcome": "MATCH"
+          "outcome": "COUNTRY_MATCH"
         }
       ],
-      "motivation": "Certifikatets consignee återfinns exakt i fakturans primära faktureringsfält \"Invoice to\" med samma företagsnamn, samma adresslinje och samma land Turkiye/TURKIYE. Därmed är mottagaren verifierad utan behov av fallback till leveransadress."
+      "motivation": "Mottagaren i certifikatet kan identifieras direkt i fakturans \"Invoice to\"-fält med samma företagsnamn, samma adressblock och samma land (Turkiye/TURKIYE efter normalisering)."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.98,
+      "confidence": 0.97,
       "certificate_value": "One shipset of Twin Berg Propulsion\nPropeller Equipment type MPP690F\nwith Accessories\nPart 2/2 - 21 cases\nOne shipset of Single Berg Propulsion\nMTT113FP with Accessories\nPart 2/2 - 3 cases\nOrder 7654M&T1",
       "invoice_value": "One shipset of Twin Berg Propulsion\nPropeller Equipment type MPP690F\nwith Accessories\nPart 2/2\n21 cases / 9.660,00 kg\nOne shipset of Single Berg Propulsion\nMTT113FP with Accessories\nPart 2/2\n3 cases / 1.480,00 kg",
       "rules_applied": [
+        {
+          "rule_id": "4.3.2",
+          "outcome": "NO_ARTICLE_NUMBER_PRIORITY_USED"
+        },
         {
           "rule_id": "4.3.3",
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.3.8",
-          "outcome": "MATCH"
+          "rule_id": "4.3.4",
+          "outcome": "ADDITIONAL_NON_IDENTITY_TEXT_ACCEPTED"
         }
       ],
-      "motivation": "Den identitetsbärande huvudbeteckningen i certifikatet kan identifieras direkt i fakturan för båda varuposterna: \"Twin Berg Propulsion Propeller Equipment type MPP690F with Accessories Part 2/2\" och \"Single Berg Propulsion MTT113FP with Accessories Part 2/2\". Fakturan visar samma två poster och motsvarande kolliantal. Ingen otillåten semantisk tolkning krävs."
+      "motivation": "Den identitetsbärande varubeskrivningen i certifikatet återfinns uttryckligen i fakturan: \"One shipset of Twin Berg Propulsion Propeller Equipment type MPP690F with Accessories Part 2/2\" samt \"One shipset of Single Berg Propulsion MTT113FP with Accessories Part 2/2\". Tilläggen med vikt per rad i fakturan ändrar inte varuidentiteten."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.99,
+      "confidence": 0.96,
       "certificate_value": "24: GW 11.140,00kg",
       "invoice_value": "Totally\n24 cases / 11.140,00 kg",
       "rules_applied": [
         {
-          "rule_id": "4.4.2.1",
-          "outcome": "MATCH"
+          "rule_id": "4.4.2.2",
+          "outcome": "WEIGHT_REQUIREMENTS_MET"
+        },
+        {
+          "rule_id": "4.4.3",
+          "outcome": "NUMERIC_VALUE_IDENTIFIED"
         },
         {
           "rule_id": "4.4.4",
           "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.4.6",
-          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets verifieringsgrundande kvantitetsfält (box 7) anger bruttovikt \"GW 11.140,00kg\" och även totalantal 24. Fakturan anger totalen \"24 cases / 11.140,00 kg\". Det numeriska viktvärdet och enheten överensstämmer exakt på totalnivå, vilket är tillräckligt för MATCH."
+      "motivation": "Certifikatets kvantitetsfält innehåller ett explicit viktvärde med viktkategori och enhet: \"GW 11.140,00kg\". Fakturan anger totalen \"24 cases / 11.140,00 kg\" för samma försändning. Samma numeriska värde och enhet kan identifieras i fakturan, och skillnaden att fakturan skriver totalvikt utan uttryckligt \"GW\" medför inte avvikelse."
     },
     "origin": {
       "applicable": true,
@@ -156,14 +144,14 @@
       "rules_applied": [
         {
           "rule_id": "4.5.1",
-          "outcome": "MATCH"
+          "outcome": "EXPLICIT_ORIGIN_FOUND"
         },
         {
           "rule_id": "4.5.5",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger ursprungsland \"Sweden\". Fakturan innehåller ett explicit origin-fält: \"Country of origin: Sweden\". Ursprungslandet kan därför identifieras uttryckligen i fakturan."
+      "motivation": "Ursprungslandet i certifikatet är \"Sweden\" och fakturan innehåller en uttrycklig ursprungsangivelse: \"Country of origin: Sweden\". Därmed är ursprungslandet verifierat utan tolkning."
     }
   },
   "overall_assessment": {
@@ -173,12 +161,12 @@
     "confidence": 0.95,
     "critical_failures": [],
     "manual_review_triggers": [],
-    "decision_summary": "Dokumentparet är korrekt parat via fakturanummer 7654M&T1. Consignor, consignee, varubeskrivning, kvantitet och ursprungsland kan verifieras mot fakturan enligt tillåtna regler och normaliseringar. Ingen tillämplig kontrollpunkt gav MISMATCH eller MANUAL_REVIEW.",
-    "human_explanation": "Certifikatet kan verifieras mot fakturan. Avsändare, mottagare, varubeskrivning, kvantitet (24 kolli / 11.140,00 kg) och ursprungsland Sweden stämmer överens. Dokumentparet kan därför godkännas automatiskt."
+    "decision_summary": "Samtliga tillämpliga kontrollpunkter kan verifieras mot fakturan. Consignor-namnet verifieras genom tillåten kommersiell förkortning, consignee matchar direkt, varubeskrivning och totalvikt 11.140,00 kg återfinns i fakturan, och ursprungslandet Sweden anges uttryckligen i båda dokumenten.",
+    "human_explanation": "Alla kontrollpunkter stämmer mellan certifikatet och fakturan, inklusive att \"Berg Prop Prod. AB\" kan verifieras mot fakturans \"Berg Propulsion Production AB\", mottagaren, varorna, vikten 11.140,00 kg och ursprungslandet Sweden. Dokumentparet kan godkännas automatiskt."
   },
   "_meta": {
-    "tested_at": "2026-04-02T11:21:38.823450+00:00",
-    "prompt_hash": "f81eb9b0d2ea",
+    "tested_at": "2026-04-11T08:05:06.164908+00:00",
+    "prompt_hash": "de0d620a2b38",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P0154_MATCH",

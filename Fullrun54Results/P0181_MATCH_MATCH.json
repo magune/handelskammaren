@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-04-02T00:00:00Z",
+    "verification_timestamp": "2026-04-11T00:00:00Z",
     "document_pair_id": null,
     "certificate_issue_date": "2026-03-03",
     "source_documents_received": 2
@@ -15,12 +15,12 @@
     "document_a": {
       "label": "Document A",
       "assumed_role": "certificate",
-      "document_type": "Certificate of Origin (original and copy in same file)"
+      "document_type": "Certificate of Origin"
     },
     "document_b": {
       "label": "Document B",
       "assumed_role": "invoice",
-      "document_type": "Invoice file containing 9 separate invoices (F549422-F549430)"
+      "document_type": "Invoice bundle"
     }
   },
   "rule_activation": {
@@ -29,7 +29,7 @@
     "general_goods_description_with_invoice_reference_active": true,
     "mixed_origins_rule_active": true,
     "to_order_rule_active": false,
-    "quantity_exception_applied": "3E",
+    "quantity_exception_applied": null,
     "eu_origin_normalization_active": false,
     "activated_rules": [
       {
@@ -37,20 +37,28 @@
         "rule_name": "Filbaserad dokumentparning"
       },
       {
+        "rule_id": "8.5.0.1",
+        "rule_name": "Flera fakturor i fakturafilen beaktas gemensamt"
+      },
+      {
         "rule_id": "8.6",
         "rule_name": "Obligatorisk parningsvalidering"
+      },
+      {
+        "rule_id": "4.2.2.1.1",
+        "rule_name": "Layoutavkortning av mottagarnamn i certifikatet"
       },
       {
         "rule_id": "4.3.5",
         "rule_name": "Generell varubeskrivning med fakturareferens"
       },
       {
-        "rule_id": "4.3.7",
-        "rule_name": "Koppling vara–ursprungsland vid flera ursprung"
+        "rule_id": "4.3.5.4",
+        "rule_name": "Flera fakturor vid generell varubeskrivning"
       },
       {
-        "rule_id": "4.4.5.6",
-        "rule_name": "Summering av radvikter när totalrad saknas"
+        "rule_id": "4.3.7",
+        "rule_name": "Koppling vara–ursprungsland vid flera ursprung via fakturahänvisning"
       }
     ]
   },
@@ -60,22 +68,26 @@
       "status": "MATCH",
       "confidence": 0.98,
       "certificate_value": "AB Regin\nBox 116\nSE-428 22, KÅLLERED\nSweden",
-      "invoice_value": "AB Regin\nBox 116\nSE-428 22 Kållered\nSweden",
+      "invoice_value": "AB Regin\nBox 116\nSE-428 22 Kållered\nSweden\nVAT No. SE556414545501",
       "rules_applied": [
         {
-          "rule_id": "4.1.2",
-          "outcome": "MATCH"
+          "rule_id": "4.1.1",
+          "outcome": "issuer identified"
         },
         {
-          "rule_id": "4.1.4",
-          "outcome": "MATCH"
+          "rule_id": "4.1.2",
+          "outcome": "name and country verified"
+        },
+        {
+          "rule_id": "4.1.2.1",
+          "outcome": "country corroborated by address, VAT prefix SE and IBAN prefix SE"
         },
         {
           "rule_id": "4.1.5",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger consignor som AB Regin i Sweden. Samtliga fakturor i fakturafilen är utställda av AB Regin med adress Box 116, SE-428 22 Kållered, Sweden. Företagsnamn och land kan identifieras direkt i fakturorna utan behov av fri tolkning."
+      "motivation": "Certifikatet anger consignor som \"AB Regin ... Sweden\". Fakturorna F549422-F549430 är utställda av \"AB Regin\" och innehåller samma adressland i footer på samtliga sidor samt VAT-nr med SE-prefix. Företagsnamn och land kan därför verifieras entydigt mot fakturaunderlaget."
     },
     "consignee": {
       "applicable": true,
@@ -86,112 +98,130 @@
       "rules_applied": [
         {
           "rule_id": "4.2.0.2",
-          "outcome": "MATCH"
+          "outcome": "consignee identified in delivery/invoice address fields"
         },
         {
-          "rule_id": "4.2.2.1.3",
-          "outcome": "MATCH"
+          "rule_id": "4.2.2.1.1",
+          "outcome": "certificate name accepted as layout-truncated prefix of invoice name"
         },
         {
           "rule_id": "4.2.3",
-          "outcome": "MATCH"
+          "outcome": "country verified after normalization Turkey/Türkiye"
         },
         {
           "rule_id": "4.2.4",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Fakturorna innehåller ett tydligt faktureringsfält \"Invoice address\" med mottagaren Regin Controls Otomasyon Sanayi ve Ticaret A.S., Turkey. Certifikatets mottagarnamn är en strikt delmängd av fakturans namn i samma ordningsföljd och fakturans extra ord \"Ticaret A.S.\" är verksamhets-/bolagsformstillägg. Adress och land överensstämmer i sak med certifikatet."
+      "motivation": "Certifikatet anger mottagaren som \"Regin Controls Otomasyon Sanayi ve\" med adress i Istanbul, Türkiye. Fakturorna anger \"Regin Controls Otomasyon Sanayi ve Ticaret A.S.\" på samma adress i Turkey. Certifikatets namn är en exakt inledande del av fakturans fullständiga namn och land/adress pekar på samma mottagare, vilket ger MATCH."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.89,
-      "certificate_value": "Thermometers, Electronic modules, Thermostat electronics.\nAccording to the attached invoices F549422-F549430\ndated 2026-03-03",
-      "invoice_value": "Invoices F549422-F549430 dated 2026-03-03 containing items such as duct sensors, clamp-on sensors, connection units, expansion units, EXOcompact controllers, electrical heating controllers and fan-coil controller",
+      "confidence": 0.88,
+      "certificate_value": "2 pallets, gw 386 kg , nw 214,845 kg\nThermometers, Electronic modules, Thermostat electronics\n.\nAccording to the attached invoices F549422-F549430\ndated 2026-03-03",
+      "invoice_value": "Invoices F 549422-F 549430 dated 2026-03-03 containing goods such as duct sensors, clamp-on sensors, connection units, expansion units, electrical heating controllers, EXOcompact modules and fan-coil controller.",
       "rules_applied": [
         {
           "rule_id": "4.3.5",
-          "outcome": "MATCH"
+          "outcome": "general goods description with invoice reference applicable"
+        },
+        {
+          "rule_id": "4.3.5.4",
+          "outcome": "multiple invoices explicitly identified and same date verified"
         },
         {
           "rule_id": "4.3.5.2",
+          "outcome": "invoice contents assessed as compatible with the broad categories in certificate"
+        },
+        {
+          "rule_id": "4.3.8",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet använder en generell varubeskrivning men hänvisar uttryckligen till de bifogade fakturorna F549422-F549430 med datum 2026-03-03. Fakturafilen innehåller just dessa nio fakturor med samma datum. Varuinnehållet är förenligt med certifikatets breda kategorier: sensorer/termometrar samt elektroniska moduler och regulator-/termostatrelaterad elektronik."
+      "motivation": "Varubeskrivningen i certifikatet är generell och hänvisar uttryckligen till de bifogade fakturorna F549422-F549430, daterade 2026-03-03. Samtliga dessa fakturor finns i fakturafilen med samma datum. Fakturornas innehåll består av sensorer/termometrar samt olika elektroniska moduler och regulatorer, vilket är förenligt med certifikatets breda kategorier \"Thermometers, Electronic modules, Thermostat electronics\"."
     },
     "quantity": {
       "applicable": true,
-      "status": "MATCH",
-      "confidence": 0.88,
+      "status": "MANUAL_REVIEW",
+      "confidence": 0.64,
       "certificate_value": "214,845 kg\nNW",
-      "invoice_value": "Line weights across invoices F549422-F549430: 1.52, 0.76, 1.114, 2.82, 2.5, 3.75, 4.485, 14.35, 1.114, 0.87, 20.86, 72.6, 0.032, 11.48, 2.99, 73.6",
+      "invoice_value": "Per-line weights on invoices F549422-F549430 sum numerically to 214.845, but the invoice rows state only \"Weight: [number]\" without explicit weight unit.",
       "rules_applied": [
         {
           "rule_id": "4.4.2.1",
-          "outcome": "MATCH"
+          "outcome": "box 7 quantity selected as verification basis"
+        },
+        {
+          "rule_id": "4.4.2.2",
+          "outcome": "certificate weight value is formally valid as NW in kg"
         },
         {
           "rule_id": "4.4.5.1",
-          "outcome": "SEQUENTIAL_EVALUATION_PERFORMED"
+          "outcome": "exceptions evaluated sequentially"
+        },
+        {
+          "rule_id": "4.4.5.2",
+          "outcome": "not applicable for MATCH because invoices do not provide explicit total NW rows"
         },
         {
           "rule_id": "4.4.5.6",
-          "outcome": "MATCH"
+          "outcome": "not applicable for MATCH because included invoice row weights lack explicit unit"
         },
         {
-          "rule_id": "4.4.5.6.5",
-          "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.4.6",
-          "outcome": "MATCH"
+          "rule_id": "4.4.3.0b",
+          "outcome": "no explicit contradiction found; unresolved verification leads to MANUAL_REVIEW"
         }
       ],
-      "motivation": "Verifieringsgrundande kvantitet är box 7 i certifikatet: 214,845 kg NW. Fakturorna saknar totalrad för vikt men innehåller uttryckliga radvikter, vilket gör undantag 3E tillämpligt. Summering av samtliga relevanta radvikter i de refererade fakturorna F549422-F549430 ger exakt 214.845 kg, och ingen annan viktkategori i fakturorna motsäger att dessa vikter används för verifieringen av certifikatets nettovikt."
+      "motivation": "Certifikatets verifieringsgrundande mängd i box 7 är \"214,845 kg NW\". Fakturabunten innehåller radvikter som numeriskt summerar till 214.845, men respektive fakturarad anger endast \"Weight:\" följt av ett tal och saknar uttrycklig viktenhet, vilket gör att undantaget för summering av radvikter inte kan användas fullt ut enligt regelverket. Eftersom fakturorna inte uttryckligen motsäger certifikatets NW-värde men inte heller verifierar det med tillräcklig formell säkerhet, blir utfallet MANUAL_REVIEW."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.94,
+      "confidence": 0.92,
       "certificate_value": "China, Sweden",
-      "invoice_value": "Country of origin: China / Country of origin: Sweden",
+      "invoice_value": "Country of origin: China (e.g. invoices F549422, F549426, F549428, F549430) and Country of origin: Sweden (e.g. invoices F549423, F549424, F549425, F549427, F549429)",
       "rules_applied": [
         {
           "rule_id": "4.5.1",
-          "outcome": "MATCH"
+          "outcome": "explicit origin fields identified in invoice lines"
         },
         {
           "rule_id": "4.5.3",
-          "outcome": "MATCH"
+          "outcome": "mixed origins handled through explicit invoice linkage"
+        },
+        {
+          "rule_id": "4.3.7",
+          "outcome": "certificate references attached invoices, establishing item-origin linkage"
         },
         {
           "rule_id": "4.5.5",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger två ursprungsländer: China och Sweden. Fakturorna anger ursprung explicit per artikelrad med texten \"Country of origin: China\" respektive \"Country of origin: Sweden\". Båda ursprungsländerna från certifikatet kan därför identifieras uttryckligen i fakturafilen."
+      "motivation": "Certifikatet anger två ursprungsländer: China och Sweden. Fakturorna innehåller explicita originfält per rad, där flera artiklar anges med \"Country of origin: China\" och flera andra med \"Country of origin: Sweden\". Eftersom certifikatet samtidigt hänvisar uttryckligen till de bifogade fakturorna är kopplingen mellan varor och blandade ursprung tillräcklig, och varje land i certifikatet kan identifieras i fakturaunderlaget."
     }
   },
   "overall_assessment": {
-    "comparison_result": "IDENTICAL",
-    "workflow_recommendation": "AUTO_APPROVAL_ELIGIBLE",
-    "auto_approval_eligible": true,
-    "confidence": 0.92,
+    "comparison_result": "MANUAL_REVIEW",
+    "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
+    "auto_approval_eligible": false,
+    "confidence": 0.78,
     "critical_failures": [],
-    "manual_review_triggers": [],
-    "decision_summary": "Det identifierade dokumentparet består av ett Certificate of Origin utfärdat 2026-03-03 och en separat fakturafil med nio fakturor F549422-F549430. Certifikatets consignor och consignee kan verifieras mot fakturorna, den generella varubeskrivningen stöds av uttrycklig fakturareferens och korrekt datum, nettovikten 214,845 kg kan verifieras genom summering av fakturornas radvikter enligt undantag 3E, och ursprungsländerna China och Sweden framgår explicit i fakturorna. Alla tillämpliga kontrollpunkter ger MATCH.",
-    "human_explanation": "Alla uppgifter i certifikatet kan verifieras mot de bifogade fakturorna. Avsändare och mottagare stämmer, varubeskrivningen hänvisar uttryckligen till fakturorna F549422-F549430 daterade 2026-03-03, nettovikten 214,845 kg kan summeras exakt från fakturaraderna och ursprungsländerna China och Sweden framgår i fakturorna. Dokumentparet kan därför godkännas automatiskt."
+    "manual_review_triggers": [
+      "Kvantitetskontrollen kan inte slutföras automatiskt eftersom certifikatets box 7 anger 214,845 kg NW medan fakturorna endast visar radvikter utan uttrycklig viktenhet."
+    ],
+    "decision_summary": "Dokumentparet passerar parningskontrollen och avsändare, mottagare, varubeskrivning samt ursprungsland kan verifieras. Endast kvantitetskontrollen återstår som osäker eftersom fakturornas radvikter saknar uttrycklig enhet trots att den numeriska totalsumman motsvarar certifikatets NW-värde.",
+    "human_explanation": "Avsändare, mottagare, varubeskrivning och ursprung kan verifieras mot fakturorna F549422-F549430. Certifikatet anger mängden 214,845 kg NW och samma siffersumma kan räknas fram från fakturornas radvikter, men radvikterna saknar uttrycklig viktenhet i fakturorna. Därför krävs manuell granskning av mängduppgiften."
   },
   "_meta": {
-    "tested_at": "2026-04-02T11:21:38.836047+00:00",
-    "prompt_hash": "f81eb9b0d2ea",
+    "tested_at": "2026-04-11T08:05:06.176934+00:00",
+    "prompt_hash": "de0d620a2b38",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P0181_MATCH",
     "expected": "IDENTICAL",
-    "actual": "IDENTICAL",
-    "status": "PASS"
+    "actual": "MANUAL_REVIEW",
+    "status": "REVIEW"
   }
 }

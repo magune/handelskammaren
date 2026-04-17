@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-04-02T00:00:00Z",
+    "verification_timestamp": null,
     "document_pair_id": null,
     "certificate_issue_date": "2023-03-15",
     "source_documents_received": 2
@@ -20,7 +20,7 @@
     "document_b": {
       "label": "Document B",
       "assumed_role": "invoice",
-      "document_type": "Invoice"
+      "document_type": "Commercial Invoice"
     }
   },
   "rule_activation": {
@@ -34,19 +34,23 @@
     "activated_rules": [
       {
         "rule_id": "8.6",
-        "rule_name": "Parningsvalidering passerad via consignor och consignee i fakturan"
+        "rule_name": "Parningsvalidering passerad genom att consignor och consignee kan identifieras i fakturan"
       },
       {
-        "rule_id": "4.4.3.1",
-        "rule_name": "Minst en kvantitetsuppgift räcker om övriga inte motsägs"
-      },
-      {
-        "rule_id": "4.4.3.2",
-        "rule_name": "Försändelse-/paketkvantitet i certifikat kan verifieras mot faktura"
+        "rule_id": "4.2.0.2",
+        "rule_name": "Consignee får identifieras i något relevant mottagarfält i fakturan"
       },
       {
         "rule_id": "4.3.3",
-        "rule_name": "Kontrollerad textmatchning för varubeskrivning"
+        "rule_name": "Kontrollerad textmatchning av identitetsbärande huvudbeteckning"
+      },
+      {
+        "rule_id": "4.4.3.0b",
+        "rule_name": "Om koppling till samma vara inte kan fastställas ska kvantitet sättas till MANUAL_REVIEW"
+      },
+      {
+        "rule_id": "4.5.5",
+        "rule_name": "Ursprungsland ska kunna identifieras uttryckligen i fakturan"
       }
     ]
   },
@@ -59,97 +63,89 @@
       "invoice_value": "Seller\nGösta Jacobsson & Co AB\nStora Åvägen 21\nSE 436 34 Askim\nSweden",
       "rules_applied": [
         {
-          "rule_id": "4.1.3.1",
-          "outcome": "direct_legal_name_match"
-        },
-        {
-          "rule_id": "4.1.4",
-          "outcome": "country_match"
+          "rule_id": "4.1.2",
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.1.5",
-          "outcome": "match"
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger consignor som \"Gösta Jacobsson & Co AB ... Sweden\". Fakturan anger samma juridiska namn i säljarfältet: \"Gösta Jacobsson & Co AB ... Sweden\". Namn och land kan identifieras direkt utan otillåten tolkning."
+      "motivation": "Certifikatets consignor-namn 'Gösta Jacobsson & Co AB' återfinns uttryckligen som seller i fakturan. Landet är uttryckligen 'Sweden' i båda dokumenten. Ingen avvikelse i juridisk part eller land har identifierats."
     },
     "consignee": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.98,
+      "confidence": 0.99,
       "certificate_value": "Captravo Maroc\n30 rue Raphael Mariscal\nAin Borja\n20320 Casablanca\nMaroc",
       "invoice_value": "Buyer\nCaptravo Maroc\n30 rue Raphaël Mariscal\nAïn Borja\n203 20 Casablanca\nMaroc",
       "rules_applied": [
         {
           "rule_id": "4.2.0.2",
-          "outcome": "bill_to_buyer_field_used"
-        },
-        {
-          "rule_id": "4.2.2",
-          "outcome": "name_identified"
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.2.3",
-          "outcome": "country_match"
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.2.4",
-          "outcome": "match"
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignee återfinns i fakturans primära faktureringsfält \"Buyer\" som \"Captravo Maroc ... Maroc\". Små skillnader i accenter och postnummerformat påverkar inte bedömningen. Företagsnamn och land överensstämmer."
+      "motivation": "Mottagaren i certifikatet kan identifieras direkt i fakturans Buyer-fält. Namn, stad och land överensstämmer efter tillåten normalisering av accenter och mellanrum. Ingen annan mottagaruppgift motsäger att det rör sig om samma juridiska part."
     },
     "goods_description": {
       "applicable": true,
       "status": "MISMATCH",
       "confidence": 0.94,
       "certificate_value": "Swedish Redwood, 22 pkgs\nSwedish Whitewood, 7 pkgs",
-      "invoice_value": "Description of goods: Bois rouge et bois blanc VII eme\n47 x 150 mm blanc 3,6 m VII\n47 x 150 mm blanc 4,8 m VII\n47 x 150 mm rouge 3,6 m VII\n47 x 150 mm rouge 4,8 m VII\n40 x 145 mm rouge TP VII",
+      "invoice_value": "Description of goods\nBois rouge et bois blanc VII eme\n\n47 x 150 mm blanc 3,6 m VII\n47 x 150 mm blanc 4,8 m VII\n47 x 150 mm rouge 3,6 m VII\n47 x 150 mm rouge 4,8 m VII\n40 x 145 mm rouge TP VII",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "no_article_numbers_in_certificate"
+          "outcome": "No article numbers in certificate; proceeded to controlled text match"
         },
         {
           "rule_id": "4.3.3",
-          "outcome": "controlled_text_match_failed"
+          "outcome": "MISMATCH"
         },
         {
           "rule_id": "4.3.4",
-          "outcome": "additional_text_rule_not_sufficient"
+          "outcome": "Not applicable"
         },
         {
           "rule_id": "4.3.5",
-          "outcome": "not_applicable_no_invoice_number_and_date_in_certificate"
+          "outcome": "Not applicable"
         },
         {
           "rule_id": "4.3.8",
-          "outcome": "mismatch"
+          "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Certifikatet beskriver varorna som \"Swedish Redwood\" och \"Swedish Whitewood\". Fakturan anger i stället \"Bois rouge et bois blanc VII eme\" samt franska radbeskrivningar med dimensioner. Det finns inga artikelnummer i certifikatet och ingen giltig generell fakturareferens med fakturanummer och fakturadatum i certifikatet som kan ersätta textmatchning. En matchning skulle därför kräva otillåten språklig/semantisk översättning mellan engelska och franska, vilket reglerna förbjuder."
+      "motivation": "Certifikatet anger varorna som 'Swedish Redwood' och 'Swedish Whitewood'. Fakturan anger i stället 'Bois rouge et bois blanc' samt radtexter med 'blanc' och 'rouge'. Det finns inga artikelnummer i certifikatet och ingen generell fakturahänvisning med fakturanummer och fakturadatum i varubeskrivningsfältet. En verifiering skulle därför kräva språklig/semantisk översättning mellan engelska och franska, vilket inte är tillåtet enligt reglerna för varubeskrivning."
     },
     "quantity": {
       "applicable": true,
-      "status": "MATCH",
-      "confidence": 0.87,
-      "certificate_value": "Total 29 pkgs, 122,116 m3\n90,552 m3\n31,564 m3",
-      "invoice_value": "Packages (nos): 29\nTotal M3: 122,116",
+      "status": "MANUAL_REVIEW",
+      "confidence": 0.72,
+      "certificate_value": "90,552 m3\n31,564 m3",
+      "invoice_value": "47 x 150 mm blanc 3,6 m VII 6,219\n47 x 150 mm blanc 4,8 m VII 25,345\n47 x 150 mm rouge 3,6 m VII 26,398\n47 x 150 mm rouge 4,8 m VII 5,211\n40 x 145 mm rouge TP VII 58,943\nTotal M3: 122,116",
       "rules_applied": [
         {
-          "rule_id": "4.4.3.1",
-          "outcome": "at_least_one_quantity_verified"
+          "rule_id": "4.4.3",
+          "outcome": "Could not verify against same goods with sufficient certainty"
         },
         {
-          "rule_id": "4.4.3.2",
-          "outcome": "shipment_package_quantity_verified"
+          "rule_id": "4.4.3.0b",
+          "outcome": "MANUAL_REVIEW"
         },
         {
-          "rule_id": "4.4.6",
-          "outcome": "match"
+          "rule_id": "4.4.5.5",
+          "outcome": "Not applied because secure same-goods linkage was not established"
         }
       ],
-      "motivation": "Certifikatet innehåller flera kvantitetsuppgifter. Minst en får verifieras om övriga inte uttryckligen motsägs. I certifikatet anges \"Total 29 pkgs\" och fakturan anger uttryckligen \"Packages (nos): 29\". Därmed är minst en kvantitetsuppgift verifierad. Fakturan motsäger inte certifikatets övriga kvantitetsuppgifter."
+      "motivation": "De numeriska värdena 90,552 och 31,564 kan rekonstrueras genom summering av fakturarader, men kontrollpunkten kräver att kvantiteten avser samma vara som identifierats enligt varubeskrivningen. Eftersom varukopplingen mellan certifikatets engelska benämningar och fakturans franska benämningar inte kan verifieras utan otillåten semantisk tolkning, kan kvantitetskopplingen inte fastställas entydigt. Fakturan motsäger inte certifikatets värden uttryckligen, därför blir utfallet MANUAL_REVIEW och inte MISMATCH."
     },
     "origin": {
       "applicable": true,
@@ -160,31 +156,33 @@
       "rules_applied": [
         {
           "rule_id": "4.5.1",
-          "outcome": "explicit_origin_field_found"
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.5.5",
-          "outcome": "match"
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger ursprungsland \"Sweden\". Fakturan innehåller ett explicit origin-fält: \"Country of origin Sweden\". Ursprungslandet kan därför identifieras direkt i fakturan."
+      "motivation": "Certifikatet anger ursprungsland 'Sweden'. Fakturan innehåller ett uttryckligt origin-fält med 'Country of origin Sweden'. Ursprungslandet kan därför verifieras direkt utan tolkning."
     }
   },
   "overall_assessment": {
     "comparison_result": "NOT_IDENTICAL",
     "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
     "auto_approval_eligible": false,
-    "confidence": 0.95,
+    "confidence": 0.9,
     "critical_failures": [
-      "Varubeskrivningen i certifikatet kan inte verifieras explicit mot fakturan utan otillåten semantisk översättning."
+      "Varubeskrivningen i certifikatet kan inte verifieras mot fakturan utan otillåten semantisk översättning mellan 'Swedish Redwood / Swedish Whitewood' och 'Bois rouge et bois blanc'."
     ],
-    "manual_review_triggers": [],
-    "decision_summary": "Consignor, consignee, quantity and origin were verified, but the goods description was not. The certificate states \"Swedish Redwood\" and \"Swedish Whitewood\", while the invoice uses French goods descriptions and line texts that cannot be matched under the allowed normalization rules. Because at least one applicable control point is MISMATCH, the overall result is NOT_IDENTICAL.",
-    "human_explanation": "Avsändare, mottagare, kvantitet och ursprungsland stämmer mellan dokumenten. Däremot kan varubeskrivningen i certifikatet, \"Swedish Redwood\" och \"Swedish Whitewood\", inte verifieras mot fakturans franska varubeskrivning. Dokumentparet kan därför inte godkännas automatiskt."
+    "manual_review_triggers": [
+      "Kvantitetsvärdena kan återfinnas numeriskt i fakturan, men säker koppling till samma vara kan inte fastställas entydigt."
+    ],
+    "decision_summary": "Consignor, consignee och origin matchar. Goods description ger MISMATCH eftersom certifikatets engelska produktbenämningar inte kan identifieras explicit i fakturans franska varubeskrivning enligt tillåtna regler. Därmed måste totalresultatet vara NOT_IDENTICAL.",
+    "human_explanation": "Avsändare, mottagare och ursprungsland kan verifieras mot fakturan. Varubeskrivningen i certifikatet är 'Swedish Redwood / Swedish Whitewood' medan fakturan anger 'Bois rouge et bois blanc' och franska radtexter, vilket inte kan verifieras med tillåten normalisering utan översättning. Därför är dokumenten inte identiska och ska hanteras manuellt."
   },
   "_meta": {
-    "tested_at": "2026-04-02T11:21:38.813612+00:00",
-    "prompt_hash": "f81eb9b0d2ea",
+    "tested_at": "2026-04-11T08:05:06.156830+00:00",
+    "prompt_hash": "de0d620a2b38",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P0139_MISMATCH",

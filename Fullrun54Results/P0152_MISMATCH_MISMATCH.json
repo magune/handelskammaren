@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-04-02T00:00:00Z",
+    "verification_timestamp": null,
     "document_pair_id": null,
     "certificate_issue_date": "2023-03-15",
     "source_documents_received": 2
@@ -20,7 +20,7 @@
     "document_b": {
       "label": "Document B",
       "assumed_role": "invoice",
-      "document_type": "commercial invoice with embedded packing list"
+      "document_type": "commercial invoice with packing list"
     }
   },
   "rule_activation": {
@@ -34,19 +34,27 @@
     "activated_rules": [
       {
         "rule_id": "8.5.0",
-        "rule_name": "Filbaserad dokumentparning: certifikat från fil 1 och verifiering mot fakturafil fil 2"
+        "rule_name": "Verifiering mot separat fakturafil"
       },
       {
         "rule_id": "8.6",
-        "rule_name": "Parningsvalidering passerad via consignor/consignee/orderreferenser i fakturafilen"
+        "rule_name": "Parningsvalidering godkänd via consignor/consignee/orderreferens"
       },
       {
-        "rule_id": "4.2.0.3.1",
-        "rule_name": "Ship-To-regeln ger MANUAL_REVIEW när Bill-To är oberoende juridisk entitet"
+        "rule_id": "4.1.3.3",
+        "rule_name": "Kommersiell förkortning av consignor-namn"
+      },
+      {
+        "rule_id": "4.2.0.2",
+        "rule_name": "Consignee får identifieras i något mottagarfält"
+      },
+      {
+        "rule_id": "4.3.3",
+        "rule_name": "Kontrollerad textmatchning för varubeskrivning"
       },
       {
         "rule_id": "4.5.3",
-        "rule_name": "Blandade ursprung i fakturan med explicit per-rad-origin"
+        "rule_name": "Blandade ursprung verifierade i fakturan"
       }
     ]
   },
@@ -54,14 +62,10 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.86,
+      "confidence": 0.88,
       "certificate_value": "Berg Prop Prod. AB\nTärnvägen 15\nSE-475 40, HÖNÖ\nSweden",
       "invoice_value": "Berg Propulsion Production AB\nLångesand 1, Box 1005\nSE-475 22 ÖCKERÖ\nOrg.nr: 556568-3058",
       "rules_applied": [
-        {
-          "rule_id": "4.1.0",
-          "outcome": "NO_MATCH_DIRECT_EXACT_NAME_IN_ALL_PAGES_SEARCH"
-        },
         {
           "rule_id": "4.1.3.3",
           "outcome": "MATCH"
@@ -71,116 +75,100 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor är angiven som \"Berg Prop Prod. AB ... Sweden\". I fakturafilen förekommer på sida 11 den uttryckliga svenska juridiska parten \"Berg Propulsion Production AB ... SE-475 22 ÖCKERÖ\". Skillnaden mellan \"Prop Prod.\" och \"Propulsion Production\" bedöms som en tillåten kommersiell förkortning av samma företagsnamn, och landet verifieras som Sverige via den svenska adressen."
+      "motivation": "Certifikatet anger den förkortade formen \"Berg Prop Prod. AB\". I fakturafilen framgår på sida 11 den fullständiga juridiska parten \"Berg Propulsion Production AB\" i Sverige. Förkortningarna \"Prop.\" och \"Prod.\" kan verifieras som kommersiella förkortningar av ord i det fullständiga namnet, och landet Sverige kan identifieras i fakturans adressblock."
     },
     "consignee": {
       "applicable": true,
-      "status": "MANUAL_REVIEW",
-      "confidence": 0.63,
+      "status": "MATCH",
+      "confidence": 0.98,
       "certificate_value": "HALUL OFFSHORE SERVICES COMPANY W.L\nMSM - Workshop\nBuilding Number- 56\nStreet Number -- 3019, Zone - 91\nBirkat Al Awamer\nCity- Doha,\nPIC: Vinu Vijayan Pillai - Workshop\nQatar",
-      "invoice_value": "Mailing address\nMILAHA SHIP MANAGEMENT W.L.L.\nUm Al Saneem, Street #523\nZone 56, Bldg. #149\nP.O. Box:153\nDoha\nQATAR\n\nDelivery address\nHALUL OFFSHORE SERVICES COMPANY W.L.L\nMSM - Workshop\nBuilding Number – 56\nStreet Number – 3019, Zone – 91\nBirkat Al Awamer\nCity- Doha, Qatar",
+      "invoice_value": "HALUL OFFSHORE SERVICES COMPANY W.L.L.\nMSM - Workshop\nBuilding Number -- 56\nStreet Number -- 3019, Zone - 91\nBirkat Al Awamer\nCity- Doha, Qatar\nPIC: Vinu Vijayan Pillai - Workshop Coordinator",
       "rules_applied": [
         {
           "rule_id": "4.2.0.2",
-          "outcome": "PRIMARY_BILL_TO_IDENTIFIED_AS_MILAHA_SHIP_MANAGEMENT_W.L.L."
+          "outcome": "MATCH"
         },
         {
-          "rule_id": "4.2.0.3",
-          "outcome": "CERTIFICATE_CONSIGNEE_MATCHES_SHIP_TO_DELIVERY_ADDRESS"
-        },
-        {
-          "rule_id": "4.2.0.3.1",
-          "outcome": "MANUAL_REVIEW"
+          "rule_id": "4.2.3",
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignee kan identifieras tydligt i fakturans delivery address som \"HALUL OFFSHORE SERVICES COMPANY W.L.L ... Qatar\". Fakturan har dock samtidigt ett separat faktureringsfält/mailing address för \"MILAHA SHIP MANAGEMENT W.L.L., Qatar\", vilket är en annan juridisk entitet. Eftersom certifikatets mottagare endast matchar Ship-To medan Bill-To är en oberoende part ska kontrollpunkten eskaleras till manuell bedömning."
+      "motivation": "Mottagaren i certifikatet kan identifieras i fakturans Delivery address-fält. Företagsnamnet och adressblocket överensstämmer tydligt, och landet Qatar framgår uttryckligen i fakturan."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.88,
+      "confidence": 0.86,
       "certificate_value": "4 Cases\nCase 1: 80*60*35 cm / 106 Kg\nCase 2: 120*80*35 cm / 282 Kg\nCase 3: 120*80*35 cm / 315 Kg\nCase 4: 80*60*55 cm / 120 Kg",
-      "invoice_value": "Kolli 1: 80*60*35 cm/ 106 Kg\nKolli 2: 120*80*35 cm/ 282 Kg\nKolli 3: 120*80*35 cm/ 315 Kg\n80*60*55cm/ 120 Kg",
+      "invoice_value": "Packing List page 5/5:\nKolli 1: 80*60*35 cm / 106 Kg\nKolli 2: 120*80*35 cm / 282 Kg\nKolli 3: 120*80*35 cm / 315 Kg\n80*60*55 cm / 120 Kg",
       "rules_applied": [
         {
-          "rule_id": "4.3.1",
-          "outcome": "RELEVANT_GOODS_TEXT_IDENTIFIED_IN_PACKING_LIST_PAGES_12_16"
-        },
-        {
           "rule_id": "4.3.3",
-          "outcome": "MATCH_AFTER_NORMALIZATION_OF_LINE_BREAKS_AND_SPACING"
+          "outcome": "MATCH"
         },
         {
-          "rule_id": "2.1",
-          "outcome": "UNILATERAL_VERIFICATION_APPLIED"
+          "rule_id": "8.1.2",
+          "outcome": "SUPPORTING_DOCUMENT_USED"
         }
       ],
-      "motivation": "Certifikatet beskriver försändelsen genom fyra kolli med exakta mått och vikter. I fakturafilen, på packing list-sidorna, återfinns samma fyra paketuppgifter med samma numeriska dimensioner och vikter: 80*60*35/106 Kg, 120*80*35/282 Kg, 120*80*35/315 Kg och 80*60*55/120 Kg. Efter normalisering av radbrytningar och mellanrum kan den uppgift som faktiskt anges i certifikatet verifieras mot fakturaunderlaget."
+      "motivation": "Certifikatets varubeskrivning består av fyra kolli-/case-specifikationer med exakta mått och vikter. Samma fyra specifikationer kan identifieras i packlistdelen av fakturafilen på sida 16. De numeriska och textuella kärnuppgifterna (4 kollin samt mått/vikt per kolli) överensstämmer."
     },
     "quantity": {
       "applicable": true,
-      "status": "MATCH",
-      "confidence": 0.85,
-      "certificate_value": "106 Kg\n282 Kg\n315 Kg\n120 Kg",
-      "invoice_value": "106 Kg\n282 Kg\n315 Kg\n120 Kg",
+      "status": "NOT_FOUND",
+      "confidence": 0.24,
+      "certificate_value": null,
+      "invoice_value": null,
       "rules_applied": [
         {
           "rule_id": "4.4.1",
-          "outcome": "NUMERICAL_VALUES_IDENTIFIED"
+          "outcome": "NOT_FOUND"
         },
         {
-          "rule_id": "4.4.3.1",
-          "outcome": "AT_LEAST_ONE_QUANTITY_VERIFIED_AND_NO_CONTRADICTING_QUANTITY_FOUND"
-        },
-        {
-          "rule_id": "4.4.3.4",
-          "outcome": "MATCH_AFTER_NORMALIZATION_OF_SPACING_ONLY"
+          "rule_id": "4.4.2.1",
+          "outcome": "BOX_7_BLANK_CANNOT_USE_BOX_6_AS_VERIFICATION_QUANTITY"
         }
       ],
-      "motivation": "Certifikatet innehåller flera uttryckliga viktvärden med enhet i paketuppställningen: 106 Kg, 282 Kg, 315 Kg och 120 Kg. Samma värden återfinns i packing list-delen av fakturafilen för motsvarande kollin. Minst en kvantitetsuppgift måste kunna verifieras, och här kan samtliga fyra identifieras utan motstridiga värden."
+      "motivation": "Ruta 7 (Quantity/Mängd) i certifikatet är tom. Enligt reglerna får mängduppgifter i varubeskrivningen/ruta 6 inte användas som verifieringsgrundande kvantitet när ruta 7 saknar uppgift. Därför kan kvantitetskontrollen inte slutföras från certifikatets kvantitetsfält."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.94,
+      "confidence": 0.97,
       "certificate_value": "SE, DE, GB, CH, IT, ES, TW, AT",
-      "invoice_value": "COO: Sweden; Country of origin: Germany; COO: United Kingdom; Country of origin: Switzerland; Country of origin: Italy; Country of origin: Spain; Country of origin: Taiwan; Country of origin: Austria",
+      "invoice_value": "Invoice pages 1-11 contain explicit origin statements including Sweden, Germany, United Kingdom, Switzerland, Italy, Spain, Taiwan and Austria.",
       "rules_applied": [
         {
-          "rule_id": "4.5.1",
-          "outcome": "EXPLICIT_ORIGIN_FIELDS_FOUND_IN_INVOICE_LINES"
-        },
-        {
           "rule_id": "4.5.3",
-          "outcome": "MIXED_ORIGINS_LINKED_PER_ARTICLE_IN_INVOICE"
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.5.4",
-          "outcome": "ISO_CODE_TO_COUNTRY_NAME_NORMALIZATION_APPLIED"
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.5.5",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger åtta ursprungsländer: SE, DE, GB, CH, IT, ES, TW och AT. I kommersiella fakturans artikelrader framgår explicit origin per artikel, inklusive Sweden, Germany, United Kingdom, Switzerland, Italy, Spain, Taiwan och Austria. Varje land i certifikatet kan därför identifieras uttryckligen i fakturan efter normalisering av ISO-koder mot landsnamn."
+      "motivation": "Certifikatet anger åtta ursprungsländer: SE, DE, GB, CH, IT, ES, TW och AT. Samtliga dessa kan identifieras uttryckligen i fakturans origin/COO-angivelser på artikelraderna: Sweden, Germany, United Kingdom, Switzerland, Italy, Spain, Taiwan och Austria."
     }
   },
   "overall_assessment": {
     "comparison_result": "MANUAL_REVIEW",
     "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
     "auto_approval_eligible": false,
-    "confidence": 0.72,
+    "confidence": 0.76,
     "critical_failures": [],
     "manual_review_triggers": [
-      "Certifikatets mottagare matchar leveransadressen, men fakturans faktureringspart är en annan juridisk entitet: MILAHA SHIP MANAGEMENT W.L.L."
+      "Certifikatets mängdfält (ruta 7) är tomt och kvantiteten kan därför inte verifieras mot fakturan."
     ],
-    "decision_summary": "Dokumentparet kunde paras mot varandra genom gemensamma orderreferenser (S6597MU501 och S6739TR508) samt genom att både consignor och consignee kan identifieras i fakturafilen. Consignor, goods description, quantity and origin kan verifieras. Det övergripande resultatet blir ändå MANUAL_REVIEW eftersom consignee endast återfinns i Ship-To/Delivery address medan fakturans separata Bill-To/Mailing address avser en annan juridisk part.",
-    "human_explanation": "Avsändare, godsuppgifter, mängdangivelser och ursprung kan verifieras mot fakturaunderlaget. Certifikatet anger mottagaren som HALUL OFFSHORE SERVICES COMPANY W.L, men fakturans faktureringspart är MILAHA SHIP MANAGEMENT W.L.L. Eftersom certifikatets mottagare bara återfinns i leveransadressen behövs manuell bedömning av mottagarrollen."
+    "decision_summary": "Dokumentparet kan paras ihop och avsändare, mottagare, varubeskrivning samt ursprungsländer kan verifieras mot fakturafilen. Automatisk identisk-bedömning kan dock inte ges eftersom certifikatets kvantitetsfält är tomt och den verifieringsgrundande mängduppgiften därför saknas.",
+    "human_explanation": "Certifikatet och fakturan stämmer för avsändare, mottagare, varubeskrivning och ursprungsländer. Däremot är mängdfältet i certifikatet tomt, så kvantiteten kan inte verifieras mot fakturan. Ärendet behöver därför manuell granskning."
   },
   "_meta": {
-    "tested_at": "2026-04-02T11:21:38.822051+00:00",
-    "prompt_hash": "f81eb9b0d2ea",
+    "tested_at": "2026-04-11T08:05:06.163997+00:00",
+    "prompt_hash": "de0d620a2b38",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P0152_MISMATCH",

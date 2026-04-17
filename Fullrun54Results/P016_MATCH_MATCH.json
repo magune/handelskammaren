@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-04-02T00:00:00Z",
+    "verification_timestamp": "2026-04-11T00:00:00Z",
     "document_pair_id": null,
     "certificate_issue_date": "2026-03-02",
     "source_documents_received": 2
@@ -33,20 +33,24 @@
     "eu_origin_normalization_active": false,
     "activated_rules": [
       {
-        "rule_id": "8.6",
-        "rule_name": "Parningsvalidering passerad via consignor och consignee"
+        "rule_id": "4.1.0",
+        "rule_name": "Consignor explicitly found in invoice documents"
+      },
+      {
+        "rule_id": "4.2.0.2",
+        "rule_name": "Consignee identified in a relevant invoice recipient field"
       },
       {
         "rule_id": "4.3.3.1",
-        "rule_name": "Enstaka teckenavvikelse i varubeskrivning"
+        "rule_name": "Single-character typo/OCR difference in goods description"
       },
       {
-        "rule_id": "4.4.2.1",
-        "rule_name": "Box 7 är verifieringsgrundande kvantitet"
+        "rule_id": "4.4.4",
+        "rule_name": "Total shipment weight in invoice used for quantity verification"
       },
       {
         "rule_id": "4.5.4",
-        "rule_name": "Landnormalisering med ISO-landkod"
+        "rule_name": "Country name versus ISO code normalization"
       }
     ]
   },
@@ -54,9 +58,9 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.97,
+      "confidence": 0.99,
       "certificate_value": "ERICSSON AB\nTORSHAMNSGATAN 21-23\n164 83, STOCKHOLM\nSweden",
-      "invoice_value": "Ericsson AB\nMail: SE-164 83 STOCKHOLM VAT no: SE556056625801\nSweden Registration no: 556056-6258 Stockholm\nOffice : Torshamnsgatan 21-23",
+      "invoice_value": "Ericsson AB\nMail: SE-164 83 STOCKHOLM\nSweden\nVAT no: SE556056625801\nOffice : Torshamnsgatan 21-23",
       "rules_applied": [
         {
           "rule_id": "4.1.0",
@@ -71,7 +75,7 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor 'ERICSSON AB' återfinns uttryckligen i fakturans footer. Landet 'Sweden' verifieras både genom explicit landangivelse och VAT-prefixet 'SE'. Samma juridiska part kan identifieras utan behov av fri tolkning."
+      "motivation": "Certifikatets consignor 'ERICSSON AB' återfinns uttryckligen i fakturan på sida 1 och 2 i footer/identifieringsblock som 'Ericsson AB'. Landet Sverige framgår explicit i adressblocket och stärks även av VAT-prefix 'SE' och IBAN-prefix 'SE'. Ingen uppgift i fakturan motsäger att det är samma juridiska part."
     },
     "consignee": {
       "applicable": true,
@@ -93,18 +97,18 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignee matchar fakturans primära faktureringsfält 'Invoice address'. Företagsnamn, tidigare namn-rad, adress och land 'India' överensstämmer direkt."
+      "motivation": "Certifikatets consignee återfinns ordagrant i fakturans 'Invoice address' och även i 'Customer'-blocket på sida 1. Företagsnamn, tidigare namnshänvisning och land Indien överensstämmer. Därmed är mottagaren verifierad utan behov av vidare normalisering."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.88,
+      "confidence": 0.9,
       "certificate_value": "TELEOM EQUIPMENT",
       "invoice_value": "Information\nTelecom equipment",
       "rules_applied": [
         {
-          "rule_id": "4.3.3",
-          "outcome": "APPLIED"
+          "rule_id": "4.3.2",
+          "outcome": "Priority 2 applied"
         },
         {
           "rule_id": "4.3.3.1",
@@ -115,18 +119,18 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger 'TELEOM EQUIPMENT' medan fakturan anger 'Telecom equipment'. Skillnaden är ett enstaka saknat tecken 'c', vilket är förenligt med stav-/OCR-fel. Ingen annan produkt med liknande beteckning förekommer i fakturan, så varubeskrivningen kan verifieras."
+      "motivation": "Certifikatet innehåller inget artikelnummer, så verifieringen sker enligt Prioritet 2 med textmatchning. Certifikatets 'TELEOM EQUIPMENT' och fakturans 'Telecom equipment' skiljer sig endast genom ett saknat enstaka tecken ('c'), vilket är ett sannolikt skriv- eller OCR-fel enligt regeln för enstaka teckenavvikelse. Fakturan innehåller dessutom samma övergripande varukontext på sida 1 och ingen annan liknande varubeskrivning som skapar oklarhet."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.96,
+      "confidence": 0.97,
       "certificate_value": "1507 KG GW",
       "invoice_value": "Total gross weight Kg\n1,507.000",
       "rules_applied": [
         {
-          "rule_id": "4.4.2.1",
-          "outcome": "BOX_7_SELECTED"
+          "rule_id": "4.4.2.2",
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.4.4",
@@ -135,20 +139,24 @@
         {
           "rule_id": "4.4.3.4",
           "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.4.6",
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Den verifieringsgrundande kvantiteten i certifikatets box 7 är '1507 KG GW'. Fakturan anger 'Total gross weight Kg 1,507.000'. Efter tillåten normalisering av tusentalsavskiljare och decimalformat är värdet numeriskt identiskt och avser gross weight."
+      "motivation": "Certifikatets box 7 anger ett uttryckligt viktvärde med numeriskt värde, enhet och viktkategori: '1507 KG GW'. Fakturan anger på sida 1 'Total gross weight Kg 1,507.000'. Efter tillåten normalisering av tusentalsavskiljare och decimalformat är värdet numeriskt identiskt och avser samma typ av vikt (gross weight)."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.95,
+      "confidence": 0.96,
       "certificate_value": "Czech Republic",
       "invoice_value": "Line Item COO Product No. HS Code Description Type Quantity,Unit UnitPrice Currency Amount\n000100 CZ BFM8010061 84715000 EQUIPPED CABINET/RackServerTPS-W027-IVAN HW 2.00 PC 233,378.42 466,756.84",
       "rules_applied": [
         {
           "rule_id": "4.5.1",
-          "outcome": "EXPLICIT_ORIGIN_FOUND"
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.5.4",
@@ -159,22 +167,22 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger ursprungsland 'Czech Republic'. Fakturan har en explicit COO-kolumn på radnivå och artikelraden visar 'CZ'. ISO-landkoden CZ är en tillåten normalisering av Czech Republic."
+      "motivation": "Certifikatet anger ursprungsland 'Czech Republic'. Fakturan anger ett explicit ursprungsfält per rad i kolumnen 'COO' med värdet 'CZ'. 'CZ' är en vedertagen ISO-landkod för Czech Republic, vilket uppfyller kravet på uttrycklig ursprungsangivelse efter normalisering."
     }
   },
   "overall_assessment": {
     "comparison_result": "IDENTICAL",
     "workflow_recommendation": "AUTO_APPROVAL_ELIGIBLE",
     "auto_approval_eligible": true,
-    "confidence": 0.95,
+    "confidence": 0.96,
     "critical_failures": [],
     "manual_review_triggers": [],
-    "decision_summary": "Samtliga fem tillämpliga kontrollpunkter verifieras mot fakturan. Consignor och consignee återfinns explicit, varubeskrivningen matchar efter tillåten enstaka tecken-normalisering, kvantiteten 1507 KG GW matchar fakturans total gross weight 1,507.000 Kg och ursprungslandet Czech Republic verifieras via explicit COO-kod CZ i fakturan.",
-    "human_explanation": "Alla relevanta uppgifter i ursprungscertifikatet kan verifieras mot fakturan. Avsändare, mottagare, mängd och ursprungsland stämmer, och varubeskrivningen matchar trots ett uppenbart skriv-/OCR-fel i certifikatet ('TELEOM' mot 'Telecom'). Dokumentparet kan därför godkännas automatiskt."
+    "decision_summary": "Alla fem tillämpliga kontrollpunkter kan verifieras mot fakturan. LC-undantaget är inte tillämpligt. Dokumentparet uppfyller kraven för IDENTICAL och kan routas till automatiskt godkännande.",
+    "human_explanation": "Certifikatets avsändare Ericsson AB, mottagaren Ericsson India Private Ltd., varubeskrivningen, mängden 1507 kg brutto och ursprungslandet Tjeckien kan samtliga verifieras i den bifogade fakturan. Den enda textskillnaden i varubeskrivningen är 'TELEOM' i certifikatet mot 'Telecom' i fakturan, vilket framstår som ett enstaka skriv- eller OCR-fel. Dokumentparet kan därför godkännas automatiskt."
   },
   "_meta": {
-    "tested_at": "2026-04-02T11:21:38.830514+00:00",
-    "prompt_hash": "f81eb9b0d2ea",
+    "tested_at": "2026-04-11T08:05:06.171951+00:00",
+    "prompt_hash": "de0d620a2b38",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P016_MATCH",

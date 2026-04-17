@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-04-02T00:00:00Z",
+    "verification_timestamp": "2026-04-11T00:00:00Z",
     "document_pair_id": null,
     "certificate_issue_date": "2026-03-05",
     "source_documents_received": 2
@@ -33,28 +33,16 @@
     "eu_origin_normalization_active": false,
     "activated_rules": [
       {
-        "rule_id": "8.5.0",
-        "rule_name": "Filbaserad dokumentparning: certifikat från fil 1 och faktura från fil 2"
-      },
-      {
-        "rule_id": "8.6",
-        "rule_name": "Obligatorisk parningsvalidering"
-      },
-      {
         "rule_id": "4.2.2.1.3",
-        "rule_name": "Certifikatets mottagarnamn som strikt delmängd av fakturans namn"
+        "rule_name": "Certifikatets mottagarnamn som strikt delmängd av fakturans mottagarnamn"
       },
       {
         "rule_id": "4.3.2",
-        "rule_name": "Varubeskrivning verifierad primärt via artikelnummer"
+        "rule_name": "Prioritet 1 artikelnummermatchning för varubeskrivning"
       },
       {
         "rule_id": "4.4.3.1",
-        "rule_name": "Flera kvantitetsuppgifter: minst en ska verifieras utan uttrycklig motsägelse"
-      },
-      {
-        "rule_id": "4.5.4",
-        "rule_name": "Landnormalisering inklusive fullständigt namn och ISO-kod"
+        "rule_name": "Flera kvantitetsuppgifter – minst en ska verifieras och övriga får inte motsägas"
       }
     ]
   },
@@ -63,115 +51,123 @@
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.99,
-      "certificate_value": "BOLON AB\nIndustrivägen 12\nSE-523 90, ULRICEHAMN\nSweden",
-      "invoice_value": "Bolon AB, Industrivägen 12\nSE-523 90 Ulricehamn, Sweden",
+      "certificate_value": "BOLON AB, Industrivägen 12, SE-523 90, ULRICEHAMN, Sweden",
+      "invoice_value": "Bolon AB, Industrivägen 12, SE-523 90 Ulricehamn, Sweden / Sender: Bolon AB, Industrivägen 12, 523 90 Ulricehamn, SWEDEN",
       "rules_applied": [
         {
-          "rule_id": "4.1.2",
-          "outcome": "MATCH"
+          "rule_id": "4.1.1",
+          "outcome": "Invoice issuer identified as Bolon AB."
         },
         {
-          "rule_id": "4.1.4",
-          "outcome": "MATCH"
+          "rule_id": "4.1.2",
+          "outcome": "Same legal party name and country identified in invoice."
+        },
+        {
+          "rule_id": "4.1.2.1",
+          "outcome": "Country verified explicitly in address as Sweden/SWEDEN."
         },
         {
           "rule_id": "4.1.5",
-          "outcome": "MATCH"
+          "outcome": "MATCH."
         }
       ],
-      "motivation": "Certifikatet anger consignor som \"BOLON AB ... Sweden\". Fakturan är utställd av \"Bolon AB, Industrivägen 12, SE-523 90 Ulricehamn, Sweden\" i sidhuvudet och footer. Företagsnamn och land kan identifieras direkt utan behov av specialundantag; därför MATCH."
+      "motivation": "Certifikatet anger consignor som BOLON AB i Sverige. Fakturan är utställd av Bolon AB med samma adress i Ulricehamn, Sweden/SWEDEN. Företagsnamn och land kan därför verifieras direkt utan särskild undantagsregel."
     },
     "consignee": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.9,
-      "certificate_value": "MTR Squared Tiles & Flooring\nPo Box 450016\nWarehouse No. 4, Plot 71\n24B Street, Al Quoz Ind. Area\nDubai\nUnited Arab Emirates",
-      "invoice_value": "Invoice Address / Customer Address / Delivery Address:\nMTR Squared Tiles & Flooring\nMaterials Trading LLC\nPO Box 450016\nWarehouse No. 4, Plot 71\n24B Street, Al Quoz Ind. Area\nAE- Dubai\nUnited Arab Emirates",
+      "confidence": 0.91,
+      "certificate_value": "MTR Squared Tiles & Flooring, Po Box 450016, Warehouse No. 4, Plot 71, 24B Street, Al Quoz Ind. Area, Dubai, United Arab Emirates",
+      "invoice_value": "Invoice Address / Delivery Address: MTR Squared Tiles & Flooring Materials Trading LLC, PO Box 450016, Warehouse No. 4, Plot 71, 24B Street, Al Quoz Ind. Area, AE-Dubai, United Arab Emirates",
       "rules_applied": [
         {
           "rule_id": "4.2.0.2",
-          "outcome": "MATCH"
+          "outcome": "Consignee identified in invoice recipient fields."
         },
         {
           "rule_id": "4.2.2.1.3",
-          "outcome": "MATCH"
+          "outcome": "Certificate consignee name is a strict ordered subset of invoice consignee name; added words are business-form descriptors."
         },
         {
           "rule_id": "4.2.3",
-          "outcome": "MATCH"
+          "outcome": "Country matches as United Arab Emirates."
         },
         {
           "rule_id": "4.2.4",
-          "outcome": "MATCH"
+          "outcome": "MATCH."
         }
       ],
-      "motivation": "Certifikatets consignee återfinns i fakturans primära adressfält. Certifikatets namn \"MTR Squared Tiles & Flooring\" är en strikt delmängd av fakturans \"MTR Squared Tiles & Flooring Materials Trading LLC\" i samma ordning, medan tillägget \"Materials Trading LLC\" är ett affärsform-/verksamhetstillägg. Adressen och landet United Arab Emirates överensstämmer; därför MATCH."
+      "motivation": "Certifikatet anger mottagaren som \"MTR Squared Tiles & Flooring\" på adress i Dubai, United Arab Emirates. Fakturan anger samma mottagare i Invoice Address och Delivery Address som \"MTR Squared Tiles & Flooring Materials Trading LLC\" på samma postbox, lager- och gatadress i Dubai, United Arab Emirates. Certifikatets namn kan identifieras som en strikt delmängd i samma ordning och landet överensstämmer."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.96,
-      "certificate_value": "Art nr 102768 Silver Now 200 cm\nArt nr 117340 Solid Tin Area rug",
-      "invoice_value": "102768 Silver\nNow 200 cm\n...\n117340 Solid Tin\nArea rug – trimming 50 mm",
+      "confidence": 0.98,
+      "certificate_value": "Art nr 102768 Silver Now 200 cm; Art nr 117340 Solid Tin Area rug",
+      "invoice_value": "102768 Silver / Now 200 cm; 117340 Solid Tin / Area rug – trimming 50 mm",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "MATCH"
+          "outcome": "Article numbers 102768 and 117340 matched exactly in invoice."
         },
         {
           "rule_id": "4.3.4",
-          "outcome": "MATCH"
+          "outcome": "Additional invoice text \"trimming 50 mm\" does not override the exact product identification."
         },
         {
           "rule_id": "4.3.8",
-          "outcome": "MATCH"
+          "outcome": "MATCH."
         }
       ],
-      "motivation": "Certifikatet innehåller artikelnummer 102768 och 117340. Fakturan innehåller exakt samma artikelnummer. För artikel 102768 återfinns produkttexten \"Silver Now 200 cm\" direkt. För artikel 117340 återfinns \"Solid Tin Area rug\" i fakturan med tillägget \"– trimming 50 mm\", vilket är ytterligare beskrivning som inte ändrar den identifierande huvudbeteckningen. Varubeskrivningen kan därför verifieras mot fakturan."
+      "motivation": "Certifikatet innehåller artikelnummer för båda varorna. Fakturan innehåller exakt samma artikelnummer 102768 och 117340 samt motsvarande benämningar \"Silver / Now 200 cm\" och \"Solid Tin / Area rug\". Den extra fakturatexten \"trimming 50 mm\" utgör ett tillägg efter den identifierbara huvudbeteckningen och motsäger inte certifikatets uppgift."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.88,
-      "certificate_value": "3,5 lm / 7 m²\n6 lm / 1 kg",
-      "invoice_value": "102768 ... 3,5 lm ... 7,00 m²\n117340 ... 6,0 lm",
+      "confidence": 0.87,
+      "certificate_value": "3,5 lm / 7 m²; 6 lm / 1 kg",
+      "invoice_value": "102768: 3,5 lm and 7,00 m²; 117340: 6,0 lm",
       "rules_applied": [
         {
-          "rule_id": "4.4.2",
-          "outcome": "APPLIED"
+          "rule_id": "4.4.1",
+          "outcome": "Quantity field in box 7 used as verification basis."
+        },
+        {
+          "rule_id": "4.4.3",
+          "outcome": "Certificate numeric values 3,5 lm, 7 m² and 6 lm identified in invoice."
         },
         {
           "rule_id": "4.4.3.1",
-          "outcome": "MATCH"
+          "outcome": "At least one quantity must be verified; matched values are sufficient where no explicit contradiction exists for the remaining value."
         },
         {
-          "rule_id": "4.4.6.1",
-          "outcome": "NOT_APPLICABLE"
+          "rule_id": "4.4.6",
+          "outcome": "MATCH."
         }
       ],
-      "motivation": "Certifikatets kvantitetsfält innehåller flera kvantitetsuppgifter. Fakturan verifierar uttryckligen \"3,5 lm\" och \"7,00 m²\" för artikel 102768 samt \"6,0 lm\" för artikel 117340. Uppgiften \"1 kg\" kan inte identifieras i fakturan, men fakturan innehåller ingen uttrycklig motsägelse mot denna del. Enligt regeln om flera kvantitetsuppgifter räcker det att minst en kvantitetsuppgift verifieras, och här verifieras flera; därför MATCH."
+      "motivation": "I certifikatets kvantitetsfält kan värdena 3,5 lm och 7 m² verifieras mot fakturaraden för artikel 102768, och 6,0 lm kan verifieras mot fakturaraden för artikel 117340. Fakturan innehåller ingen uttrycklig uppgift som motsäger certifikatets återstående \"1 kg\"-del. Enligt regeln för flera kvantitetsuppgifter räcker det att minst en kvantitet verifieras när övriga inte uttryckligen motsägs."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.98,
       "certificate_value": "Sweden",
-      "invoice_value": "Country of Origin SE\nThe exporter ... declares that ... these products are of EU preferential origin.",
+      "invoice_value": "Country of Origin SE (for both invoice lines)",
       "rules_applied": [
         {
           "rule_id": "4.5.1",
-          "outcome": "MATCH"
+          "outcome": "Explicit origin field identified in invoice."
         },
         {
           "rule_id": "4.5.4",
-          "outcome": "MATCH"
+          "outcome": "Country normalized from Sweden to ISO code SE."
         },
         {
           "rule_id": "4.5.5",
-          "outcome": "MATCH"
+          "outcome": "MATCH."
         }
       ],
-      "motivation": "Certifikatet anger ursprungsland \"Sweden\". Fakturan anger per artikel \"Country of Origin SE\", där SE är vedertagen ISO-kod för Sverige. Fakturan innehåller dessutom ett generellt uttalande om EU-preferensursprung, men den positiva verifieringen uppnås redan genom den explicita ursprungsangivelsen \"SE\". Därför MATCH."
+      "motivation": "Certifikatet anger ursprungsland som Sweden. Fakturan anger uttryckligen \"Country of Origin SE\" på båda artikelraderna. Sweden och SE är samma land efter tillåten landnormalisering."
     }
   },
   "overall_assessment": {
@@ -181,12 +177,12 @@
     "confidence": 0.94,
     "critical_failures": [],
     "manual_review_triggers": [],
-    "decision_summary": "Dokumentparet är konsekvent identifierat via fakturareferensen 157794 samt matchande consignor och consignee. Samtliga tillämpliga kontrollpunkter kan verifieras mot fakturan: consignor, consignee, varubeskrivning, kvantitet och ursprungsland. Ingen tillämplig kontrollpunkt gav MISMATCH eller MANUAL_REVIEW, och samtliga MATCH-bedömningar ligger på minst 0,85 i confidence.",
-    "human_explanation": "Alla relevanta uppgifter i certifikatet kan verifieras mot fakturan. Fakturanummer 157794, avsändare Bolon AB, mottagare MTR Squared Tiles & Flooring, varorna 102768 och 117340 samt ursprung Sweden stämmer. Dokumentparet kan därför godkännas automatiskt."
+    "decision_summary": "Dokumentparningen är giltig genom uttrycklig fakturareferens 157794 och samstämmig consignor/consignee. Samtliga tillämpliga kontrollpunkter har verifierats som MATCH: consignor Bolon AB Sweden, consignee MTR Squared Tiles & Flooring i UAE, varor via artikelnummer 102768 och 117340, kvantitet via identifierade värden i box 7, samt ursprung Sweden/SE.",
+    "human_explanation": "Avsändare, mottagare, varubeskrivning, kvantitet och ursprungsland i certifikatet kan verifieras mot fakturan. Fakturanummer 157794, artiklarna 102768 och 117340 samt ursprung Sverige/SE stämmer, och mottagaren kan identifieras på samma adress i Dubai. Dokumentparet kan därför godkännas automatiskt."
   },
   "_meta": {
-    "tested_at": "2026-04-02T11:36:29.852568+00:00",
-    "prompt_hash": "f81eb9b0d2ea",
+    "tested_at": "2026-04-11T08:06:14.358537+00:00",
+    "prompt_hash": "de0d620a2b38",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P196_MATCH",

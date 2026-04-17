@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-04-02",
+    "verification_timestamp": "2026-04-11T00:00:00Z",
     "document_pair_id": null,
     "certificate_issue_date": "2025-09-30",
     "source_documents_received": 2
@@ -15,12 +15,12 @@
     "document_a": {
       "label": "Document A",
       "assumed_role": "certificate",
-      "document_type": "Certificate of Origin"
+      "document_type": "certificate_of_origin"
     },
     "document_b": {
       "label": "Document B",
       "assumed_role": "invoice",
-      "document_type": "Invoice"
+      "document_type": "invoice"
     }
   },
   "rule_activation": {
@@ -33,28 +33,24 @@
     "eu_origin_normalization_active": true,
     "activated_rules": [
       {
-        "rule_id": "8.5.0",
-        "rule_name": "Filbaserad dokumentparning: certifikat från certifikatfil, faktura från separat fakturafil"
+        "rule_id": "8.5",
+        "rule_name": "Certifikatet hämtades från certifikatfilen och fakturan från separat fakturafil; originalcertifikatet på sida 1 användes för verifiering."
       },
       {
         "rule_id": "8.6",
-        "rule_name": "Obligatorisk parningsvalidering"
-      },
-      {
-        "rule_id": "4.1.0",
-        "rule_name": "Consignor kan verifieras var som helst i fakturatexten"
+        "rule_name": "Parningsvalidering passerad genom att certifikatets consignor och consignee kunde identifieras i fakturan."
       },
       {
         "rule_id": "4.2.2.1.1",
-        "rule_name": "Layoutavkortning i certifikatet för consignee"
+        "rule_name": "Layoutavkortning av mottagarnamn i certifikatet accepterad eftersom certifikatets text är prefix av fakturans fullständiga namn."
       },
       {
         "rule_id": "4.3.4",
-        "rule_name": "Tillägg som inte påverkar produktidentitet"
+        "rule_name": "Ytterligare tillägg i varubeskrivningen påverkar inte matchning när huvudbeteckningen identifieras exakt."
       },
       {
         "rule_id": "4.5.4.2",
-        "rule_name": "EU-medlemsland och EU är verifierbara i båda riktningarna"
+        "rule_name": "Specifikt EU-medlemsland i certifikatet verifieras av generellt EU-ursprungsuttalande i fakturan."
       }
     ]
   },
@@ -64,10 +60,14 @@
       "status": "MATCH",
       "confidence": 0.98,
       "certificate_value": "Marten AB\nFlöjelbergsgatan 18\n43173, Mölndal\nSweden",
-      "invoice_value": "Marten AB\nFlöjelbergsgatan 18\n43137 Mölndal\nSWEDEN",
+      "invoice_value": "Marten AB\nFlöjelbergsgatan 18\n43137 Mölndal\nSWEDEN\nVAT reg. no.:SE556830055101",
       "rules_applied": [
         {
           "rule_id": "4.1.0",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.2",
           "outcome": "MATCH"
         },
         {
@@ -79,14 +79,14 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor är 'Marten AB' i Sweden. Fakturan identifierar samma juridiska part uttryckligen i fakturatexten genom branding 'MARTEN' samt adressblock 'Marten AB ... SWEDEN'. Landet verifieras explicit i adressblocket och stöds även av VAT-prefix 'SE' och IBAN som börjar med 'SE'. Skillnaden i postnummer (43173 i certifikatet, 43137 i fakturan) påverkar inte bedömningen eftersom företagsnamn och land överensstämmer och adressavvikelser inte i sig ger mismatch."
+      "motivation": "Certifikatets consignor är 'Marten AB ... Sweden'. Samma juridiska namn förekommer uttryckligen flera gånger i fakturan, inklusive issuer-/sidfotsblock. Landet verifieras genom fakturans adress 'SWEDEN' och stöds även av VAT-prefix 'SE'. Skillnaden i postnummer (43173 vs 43137) medför inte avvikelse eftersom företagsnamn och land överensstämmer."
     },
     "consignee": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.93,
+      "confidence": 0.89,
       "certificate_value": "Can Elektronik Ses Ve Goruntu Siste\nAbbasağa Mahallesi Yıldız Caddesi N\nSungurlar İş Merkezi Beşiktaş\n343 53 Istanbul\nTurkiye",
-      "invoice_value": "Can Elektronik Ses Ve Goruntu Sistemleri San. Ve\nTic. Ltd. Sti.\nAbbasağa Mahallesi Yıldız Caddesi No:45\nSungurlar İş Merkezi Beşiktaş\n343 53 Istanbul\nTÜRKIYE",
+      "invoice_value": "Can Elektronik Ses Ve Goruntu Sistemleri San. Ve Tic. Ltd. Sti.\nAbbasağa Mahallesi Yıldız Caddesi No:45\nSungurlar İş Merkezi Beşiktaş\n343 53 Istanbul\nTÜRKIYE",
       "rules_applied": [
         {
           "rule_id": "4.2.0.2",
@@ -105,15 +105,19 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignee återfinns i fakturans primära faktureringsfält 'Invoice address' och även i 'Delivery address'. Namnet i certifikatet är avkortat till '... Siste', vilket utgör en exakt inledande del av fakturans fullständiga namn 'Can Elektronik Ses Ve Goruntu Sistemleri San. Ve Tic. Ltd. Sti.' och framstår som layoutavkortning i certifikatet. Landet överensstämmer som Turkey/Turkiye/TÜRKIYE efter tillåten normalisering av versaler och diakritiska skillnader."
+      "motivation": "Certifikatets mottagarnamn är avkortat till 'Can Elektronik Ses Ve Goruntu Siste', medan fakturan anger 'Can Elektronik Ses Ve Goruntu Sistemleri San. Ve Tic. Ltd. Sti.' i både Delivery address och Invoice address. Certifikatets text utgör en exakt inledande del av fakturans fullständiga namn och avkortningen framstår som fält-/layoutbegränsning. Landet Turkiye/TÜRKIYE överensstämmer och adresskärnan (Abbasağa Mahallesi, Yıldız Caddesi, Sungurlar İş Merkezi, Beşiktaş, 343 53 Istanbul) stöder att det är samma mottagare."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.91,
+      "confidence": 0.93,
       "certificate_value": "Mingus Septet, Black Piano, Zebrano\nLoudspeakers",
-      "invoice_value": "Mingus Septet, Black\nPiano, Zebrano",
+      "invoice_value": "Mingus Septet, Black Piano, Zebrano",
       "rules_applied": [
+        {
+          "rule_id": "4.3.2",
+          "outcome": "Priority 2 applied"
+        },
         {
           "rule_id": "4.3.3",
           "outcome": "MATCH"
@@ -127,12 +131,12 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Den identitetsbärande huvudbeteckningen 'Mingus Septet, Black Piano, Zebrano' kan identifieras exakt i fakturans varurad efter normalisering av radbrytning. Ordet 'Loudspeakers' i certifikatet fungerar här som ett generiskt tillägg som inte ändrar produktidentiteten när huvudbeteckningen redan matchar exakt och ingen annan liknande produkt förekommer i fakturan."
+      "motivation": "Den identitetsbärande huvudbeteckningen 'Mingus Septet, Black Piano, Zebrano' kan identifieras exakt i fakturans varurad. Ordet 'Loudspeakers' i certifikatet är ett ytterligare generiskt produktkategori-tillägg och motsäger inte fakturans beskrivning när huvudbeteckningen redan matchar. Ingen annan konkurrerande produkt med liknande beteckning förekommer i fakturan."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.9,
+      "confidence": 0.97,
       "certificate_value": "1 pair",
       "invoice_value": "1 pr.",
       "rules_applied": [
@@ -149,14 +153,14 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger kvantiteten '1 pair'. Fakturan anger kvantiteten som '1 pr.' för samma vara och dessutom '1,00 pr.' i totalraden per CN-kod. Enligt huvudregeln avser verifieringen i första hand det numeriska värdet; värdet 1 kan identifieras uttryckligen i fakturan för motsvarande varurad och ingen motstridig kvantitet förekommer."
+      "motivation": "Certifikatets kvantitetsfält anger uttryckligen '1 pair'. Fakturan anger kvantiteten för samma vara som '1 pr.' samt i totalraden '1,00 pr.'. Det numeriska värdet 1 kan identifieras direkt i fakturan för samma varurad och ingen motstridig kvantitetsuppgift förekommer."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.88,
       "certificate_value": "Sweden",
-      "invoice_value": "The exporter of the products covered by this document (customs authorization No. SE/TTA/001884) declares that, except where otherwise clearly indicated, these products are of European Union preferential origin.",
+      "invoice_value": "these products are of European Union preferential origin.",
       "rules_applied": [
         {
           "rule_id": "4.5.1",
@@ -171,7 +175,7 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger ursprungsland 'Sweden'. Fakturan innehåller ett uttryckligt ursprungsuttalande i ett dedikerat exportörs-/ursprungsavsnitt: produkterna är av 'European Union preferential origin'. Sweden är ett specifikt EU-medlemsland, och ett specifikt EU-medlemsland är verifierat när fakturan anger 'European Union'."
+      "motivation": "Certifikatet anger ursprungslandet 'Sweden'. Fakturan innehåller en explicit ursprungsangivelse i exportörsdeklarationen: 'these products are of European Union preferential origin.' Enligt EU-normaliseringen är ett specifikt EU-medlemsland i certifikatet verifierat när fakturan anger 'European Union', och Sweden är en EU-medlemsstat."
     }
   },
   "overall_assessment": {
@@ -181,12 +185,12 @@
     "confidence": 0.92,
     "critical_failures": [],
     "manual_review_triggers": [],
-    "decision_summary": "Samtliga tillämpliga kontrollpunkter kan verifieras mot den separata fakturan. Certifikatet matchar fakturan för consignor, consignee, varubeskrivning, kvantitet och ursprungsland efter tillåten regelbaserad normalisering.",
-    "human_explanation": "Certifikatet anger Marten AB som avsändare, Can Elektronik som mottagare, varan 'Mingus Septet, Black Piano, Zebrano Loudspeakers', kvantiteten 1 pair och ursprung Sweden. Fakturan visar samma avsändare, samma mottagare, samma produkt med kvantiteten 1 pr. samt ett uttryckligt ursprungsuttalande om European Union, vilket täcker Sweden. Alla kontrollpunkter stämmer och dokumentparet kan godkännas automatiskt."
+    "decision_summary": "Dokument A klassificerades som Certificate of Origin och innehöll både ORIGINAL (sida 1) och COPY (sida 2); originalcertifikatet användes. Dokument B klassificerades som faktura. LC-undantaget var inte tillämpligt. Parningsvalideringen passerade eftersom både consignor 'Marten AB' och consignee kunde identifieras i fakturan. Samtliga tillämpliga kontrollpunkter verifierades som MATCH: consignor matchar direkt mot fakturautställaren i Sverige, consignee matchar via tillåten layoutavkortning, varubeskrivningen matchar via exakt huvudbeteckning, kvantiteten 1 pair motsvaras av 1 pr., och ursprungslandet Sweden verifieras av fakturans uttryckliga EU-origin-uttalande enligt EU-normalisering. Ingen tillämplig kontrollpunkt har confidence under 0.85.",
+    "human_explanation": "Samtliga kontrollpunkter kan verifieras mot fakturan. Avsändare Marten AB, mottagare Can Elektronik Ses Ve Goruntu Sistemleri, varan Mingus Septet, Black Piano, Zebrano, kvantiteten 1 pair/1 pr. och ursprunget Sweden/European Union stämmer efter tillåten normalisering. Dokumentparet kan därför godkännas automatiskt."
   },
   "_meta": {
-    "tested_at": "2026-04-02T11:06:44.036043+00:00",
-    "prompt_hash": "f81eb9b0d2ea",
+    "tested_at": "2026-04-11T08:06:46.150294+00:00",
+    "prompt_hash": "de0d620a2b38",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P227_MATCH",
