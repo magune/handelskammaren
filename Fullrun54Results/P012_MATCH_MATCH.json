@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-04-02T00:00:00Z",
+    "verification_timestamp": null,
     "document_pair_id": null,
     "certificate_issue_date": "2026-02-27",
     "source_documents_received": 2
@@ -15,12 +15,12 @@
     "document_a": {
       "label": "Document A",
       "assumed_role": "certificate",
-      "document_type": "Certificate of Origin"
+      "document_type": "certificate_of_origin"
     },
     "document_b": {
       "label": "Document B",
       "assumed_role": "invoice",
-      "document_type": "Invoice"
+      "document_type": "invoice"
     }
   },
   "rule_activation": {
@@ -34,23 +34,15 @@
     "activated_rules": [
       {
         "rule_id": "8.5.0",
-        "rule_name": "Filbaserad dokumentparning: certifikat från fil 1 och faktura från fil 2"
+        "rule_name": "Filbaserad dokumentparning: certifikat från certifikatfilen och faktura från separat fakturafil"
       },
       {
         "rule_id": "8.6",
-        "rule_name": "Parningsvalidering"
+        "rule_name": "Parningsvalidering passerad via fakturanummer, consignor och consignee"
       },
       {
         "rule_id": "4.3.5",
         "rule_name": "Generell varubeskrivning med fakturareferens"
-      },
-      {
-        "rule_id": "4.4.2.1",
-        "rule_name": "Box 7 är verifieringsgrundande kvantitet"
-      },
-      {
-        "rule_id": "4.5.2",
-        "rule_name": "Enhetligt ursprungsland / radnivåursprung i faktura"
       }
     ]
   },
@@ -58,76 +50,80 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.99,
+      "confidence": 0.93,
       "certificate_value": "AB Volvo Penta\nGropegårdsgatan 11\nSE-405 08, Gothenburg\nSweden",
       "invoice_value": "AB Volvo Penta\nGropegårdsgatan 11\n40508 Göteborg\nSweden",
       "rules_applied": [
         {
-          "rule_id": "4.1.0",
-          "outcome": "not_applicable_needed"
+          "rule_id": "4.1.2",
+          "outcome": "Företagsnamn och land identifierade i fakturan"
         },
         {
-          "rule_id": "4.1.2",
-          "outcome": "match"
+          "rule_id": "4.1.3.1",
+          "outcome": "Samma juridiska part identifierad direkt i fakturautställaren"
         },
         {
           "rule_id": "4.1.4",
-          "outcome": "match"
+          "outcome": "Land matchar: Sweden ↔ Sweden"
         },
         {
           "rule_id": "4.1.5",
-          "outcome": "match"
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger consignor som \"AB Volvo Penta\" i Sverige. Fakturan identifierar fakturautställaren som \"AB Volvo Penta, Gropegårdsgatan 11, 40508 Göteborg, Sweden\" i sidhuvud och företagsblock. Företagsnamn och land överensstämmer direkt; skillnaden \"Gothenburg\"/\"Göteborg\" påverkar inte eftersom land och juridisk part är samma."
+      "motivation": "Certifikatets consignor \"AB Volvo Penta\" återfinns uttryckligen som fakturautställare i fakturan. Landet är Sweden i båda dokumenten. Skillnader i postnummerformat och stadsstavning (Gothenburg/Göteborg) påverkar inte bedömningen eftersom företagsnamn och land kan verifieras entydigt."
     },
     "consignee": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.93,
-      "certificate_value": "Khonaysser Motors Sarl\nP.O. Box 702\nANTELIAS\nLebanon\n0000\nLebanon",
+      "confidence": 0.91,
+      "certificate_value": "Khonaysser Motors Sarl\nP.O. Box 702\nANTELIAS\nLebanon",
       "invoice_value": "Consignee\nKhonaysser Motors Sarl\nP.O. Box 70268\nANTELIAS 0000\nLebanon",
       "rules_applied": [
         {
           "rule_id": "4.2.0.2",
-          "outcome": "match"
+          "outcome": "Mottagaren identifierad i fakturans Consignee-fält"
         },
         {
-          "rule_id": "4.2.2",
-          "outcome": "match"
+          "rule_id": "4.2.2.1",
+          "outcome": "Tillåten normalisering av bolagsform och formatering använd"
         },
         {
           "rule_id": "4.2.3",
-          "outcome": "match"
+          "outcome": "Land matchar: Lebanon ↔ Lebanon"
         },
         {
           "rule_id": "4.2.4",
-          "outcome": "match"
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger consignee som \"Khonaysser Motors Sarl\" i Lebanon. Fakturan innehåller ett explicit fält \"Consignee\" med samma företagsnamn och samma land. Skillnaden i postboxnummer (702 vs 70268) medför inte avvikelse eftersom företagsnamn och land är verifierade och adresskillnader i sig inte ska ge MISMATCH."
+      "motivation": "Certifikatets consignee \"Khonaysser Motors Sarl\" återfinns i fakturans mottagarfält som \"Khonaysser Motors Sarl\". Landet är Lebanon i båda dokumenten. Skillnader i postboxnummer och mer fullständig adress i fakturan utgör inte motsägelse enligt reglerna, eftersom samma företag och land kan identifieras."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.97,
+      "confidence": 0.96,
       "certificate_value": "18 THU\nOrder 60366192 18 Pallets\nIndustrial Diesel Engine & Accessories\nSee attached invoice 61622310/1S, dated 2026-02-26",
-      "invoice_value": "Description of Goods\nIndustrial Diesel Engine & Accessories\nInvoice No/Type 61622310/1S\nInvoice Date 2026-02-26\nVP Sales Order No/Type 60366192 SO",
+      "invoice_value": "Description of Goods\nIndustrial Diesel Engine & Accessories\nInvoice No/Type 61622310/1S\nInvoice Date 2026-02-26",
       "rules_applied": [
         {
           "rule_id": "4.3.5",
-          "outcome": "match"
+          "outcome": "Generell varubeskrivning med fakturareferens aktiverad"
+        },
+        {
+          "rule_id": "4.3.5.1",
+          "outcome": "Fakturadatum matchar exakt"
         },
         {
           "rule_id": "4.3.5.2",
-          "outcome": "compatible_goods_content"
+          "outcome": "Fakturans varuinnehåll är förenligt med certifikatets beskrivning"
         },
         {
           "rule_id": "4.3.8",
-          "outcome": "match"
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet innehåller en generell varubeskrivning, \"Industrial Diesel Engine & Accessories\", samt uttrycklig fakturareferens \"See attached invoice 61622310/1S, dated 2026-02-26\". Fakturan visar exakt samma fakturanummer och datum samt samma huvudbeskrivning \"Industrial Diesel Engine & Accessories\". Därmed är varubeskrivningen verifierad enligt regeln för generell varubeskrivning med fakturareferens."
+      "motivation": "Certifikatet innehåller uttrycklig hänvisning i varubeskrivningsfältet: \"See attached invoice 61622310/1S, dated 2026-02-26\". Fakturans nummer är 61622310/1S och fakturadatum är 2026-02-26, vilket överensstämmer exakt. Fakturan anger dessutom varubeskrivningen \"Industrial Diesel Engine & Accessories\", vilket är förenligt med certifikatets uppgift."
     },
     "quantity": {
       "applicable": true,
@@ -137,56 +133,60 @@
       "invoice_value": "Total Gross Weight 13937.00 KG",
       "rules_applied": [
         {
-          "rule_id": "4.4.2.1",
-          "outcome": "box_7_selected"
+          "rule_id": "4.4.2.2",
+          "outcome": "Viktkategori och enhet framgår uttryckligen i certifikatet"
         },
         {
           "rule_id": "4.4.4",
-          "outcome": "match"
+          "outcome": "Total vikt i faktura får användas för verifiering"
         },
         {
           "rule_id": "4.4.6",
-          "outcome": "match"
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Den verifieringsgrundande kvantiteten i certifikatet är box 7: \"G.W 13937.00 KG\". Fakturan anger uttryckligen \"Total Gross Weight 13937.00 KG\". Numeriskt värde, viktkategori och enhet överensstämmer exakt."
+      "motivation": "Certifikatets kvantitetsfält anger explicit gross weight: \"G.W 13937.00 KG\". Fakturan anger på totalsnivå \"Total Gross Weight 13937.00 KG\". Numeriskt värde, viktkategori och enhet överensstämmer exakt."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.96,
+      "confidence": 0.92,
       "certificate_value": "Sweden",
-      "invoice_value": "Origin: SE (item rows on invoice pages 2-3)",
+      "invoice_value": "Origin\nSE",
       "rules_applied": [
         {
           "rule_id": "4.5.1",
-          "outcome": "explicit_origin_found"
+          "outcome": "Ursprung identifierat i explicit origin-fält på radnivå i fakturan"
         },
         {
           "rule_id": "4.5.4",
-          "outcome": "country_code_normalization"
+          "outcome": "Landnormalisering tillämpad"
+        },
+        {
+          "rule_id": "4.5.4",
+          "outcome": "ISO-landkod SE behandlad som ekvivalent med Sweden"
         },
         {
           "rule_id": "4.5.5",
-          "outcome": "match"
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger ursprungsland \"Sweden\". Fakturan visar explicit ursprungsangivelse på radnivå i kolumnen \"Origin\" med värdet \"SE\" för varorna. ISO-koden \"SE\" motsvarar Sweden, så ursprungslandet är uttryckligen verifierat i fakturan."
+      "motivation": "Certifikatet anger ursprungsland \"Sweden\" i box 3. Fakturan innehåller en explicit kolumn \"Origin\" med värdet \"SE\" för varorna. ISO-koden SE är ekvivalent med Sweden, och ursprungslandet kan därför verifieras uttryckligen i fakturan."
     }
   },
   "overall_assessment": {
     "comparison_result": "IDENTICAL",
     "workflow_recommendation": "AUTO_APPROVAL_ELIGIBLE",
     "auto_approval_eligible": true,
-    "confidence": 0.97,
+    "confidence": 0.95,
     "critical_failures": [],
     "manual_review_triggers": [],
-    "decision_summary": "Certifikatet kan verifieras mot den bifogade fakturan. Consignor, consignee, varubeskrivning, kvantitet och ursprungsland är alla verifierade med uttryckligt stöd i fakturan.",
-    "human_explanation": "Alla kontrollerbara uppgifter i certifikatet stämmer mot fakturan. Avsändare, mottagare, varubeskrivning, bruttovikt 13937.00 KG och ursprungsland Sverige kan identifieras i fakturan. Dokumentparet kan därför godkännas automatiskt."
+    "decision_summary": "Dokumentparet har kunnat paras entydigt via fakturanummer 61622310/1S och datum 2026-02-26. Certifikatets Original i certifikatfilen verifieras mot den separata fakturafilen. Samtliga tillämpliga kontrollpunkter—consignor, consignee, varubeskrivning, kvantitet och ursprungsland—är MATCH enligt regelverket.",
+    "human_explanation": "Alla tillämpliga uppgifter i ursprungscertifikatet kan verifieras mot fakturan. Fakturanummer 61622310/1S och datum 2026-02-26 stämmer, och även avsändare, mottagare, varubeskrivning, bruttovikt 13937.00 KG och ursprung Sweden/SE överensstämmer. Dokumentparet kan därför godkännas automatiskt."
   },
   "_meta": {
-    "tested_at": "2026-04-02T11:22:43.076819+00:00",
-    "prompt_hash": "f81eb9b0d2ea",
+    "tested_at": "2026-04-24T09:14:16.739185+00:00",
+    "prompt_hash": "10954622b12c",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P012_MATCH",

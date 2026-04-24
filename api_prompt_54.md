@@ -163,10 +163,20 @@ Vid LC-undantag ska alla icke-verifierade kontrollpunkter sättas till status "N
 
 - Systemet ska kunna hantera uppgifter OAVSETT SPRÅK. Dokument kan vara skrivna på vilket språk som helst — inklusive men inte begränsat till engelska, svenska, tyska, franska, nederländska, spanska, italienska, turkiska, kinesiska etc.
 - Fakturan och certifikatet behöver INTE vara upprättade på samma språk. En faktura på nederländska och ett certifikat på engelska är ett helt giltigt dokumentpar.
-- Certifikatet ska vara huvudsakligen skrivet på ett och samma språk.
-- Förekomst av enstaka ord, egennamn eller standardiserade tvåspråkiga rubriker ska inte i sig medföra avvikelse.
-- Dokumentets språk ska ALDRIG i sig utgöra grund för MISMATCH eller MANUAL_REVIEW.
-- Om språklig blandning påverkar möjligheten att verifiera uppgifter ska ärendet skickas till manuell handläggning (MANUAL_REVIEW).
+- Certifikatet ska vara skrivet på ett och samma språk i samtliga kontrollpunkter (4.1–4.5).
+
+**Konsekvensspråkkrav:**
+Samma språk ska användas konsekvent för uppgifter inom kontrollpunkterna avsändare (4.1), mottagare (4.2), varubeskrivning (4.3) och ursprungsland (4.5). Förekomst av avvikande språk i någon av dessa kontrollpunkter ska leda till MISMATCH.
+
+**Avgränsning:**
+Språkkravet omfattar endast text med språklig betydelse. Artikelnummer, tekniska beteckningar och enhetsangivelser (t.ex. PCS, KG, MT) ska inte betraktas som språk i detta sammanhang.
+
+**Undantag från språkkravet:**
+- Egennamn (t.ex. företagsnamn, ortsnamn)
+- Standardiserade rubriker eller förtryckt formulärtext
+- Produktbeteckningar och varunamn på annat alfabet (t.ex. kyrilliska, arabiska, kinesiska) som utgör produktens officiella beteckning och kan identifieras exakt i fakturan. En produkt vars officiella beteckning är på kyrilliska medför inte språkbrott om den förekommer som komplement till en varubeskrivning på det dominerande certifikatsspråket.
+
+Om språklig avvikelse gör att det inte entydigt går att avgöra om uppgifterna är på samma språk → MANUAL_REVIEW.
 
 ## 4. Tillåten normalisering – central regel
 
@@ -857,8 +867,12 @@ Begränsningen om delad varumärkesprefix (4.1.0.1) och landöverensstämmelse (
 - Importer / Importer ref
 - Consignee (om fakturan själv har ett sådant fält)
 
-Företagsnamnet ska vara exakt identifierbart i fakturatexten.
-Om consignee inte kan återfinnas uttryckligen i något av ovanstående fält/avsnitt → MISMATCH.
+Företagsnamnet ska vara exakt identifierbart i fakturatexten. Ingen tolkning av koncernrelationer, förkortningar eller handelsnamn får göras. En delad namnprefix (t.ex. "Domasco" i certifikatet vs "DOHA MARKETING SERVICES CO WLL" i fakturan) räcker INTE — det juridiska företagsnamnet måste kunna identifieras explicit.
+
+**KRITISK BEGRÄNSNING – Cargospec och fraktdokument är inte fakturor:**
+Vid multi-faktura-par kan stöddokument såsom cargospecifikationer, fraktlistor eller packlistor ingå bland de bifogade filerna. Dessa dokument får INTE användas som verifieringsunderlag för consignee. Consignee-verifieringen ska enbart baseras på dokument som är fakturor (invoice/commercial invoice). Om certifikatets consignee enbart kan identifieras i en cargospec men INTE i någon bifogad faktura → MISMATCH.
+
+Om consignee inte kan återfinnas uttryckligen i något av ovanstående fält/avsnitt i en faktura → MISMATCH.
 
 ### 4.2.1 Identifiering i fakturan
 Systemet ska identifiera uppgifter om mottagande part i fakturan.
@@ -949,6 +963,7 @@ Systemet får INTE:
 
 ### 4.2.3 Landkontroll
 Land som anges för mottagaren i certifikatet ska överensstämma med det land som anges för motsvarande part i fakturan efter normalisering av landsnamn.
+Normalisering inkluderar: versaler/gemener, fullständigt namn vs kortform, ISO-kod, samt officiellt landsnamn på landets eget språk (t.ex. Türkiye = Turkey, Deutschland = Germany).
 Om land inte överensstämmer → MISMATCH.
 
 ### 4.2.4 MATCH / MISMATCH
@@ -972,6 +987,27 @@ Systemet får INTE göra semantisk tolkning eller sannolikhetsbedömning.
 Systemet ska identifiera relevant varubeskrivning i fakturan.
 Om flera varor förekommer ska systemet säkerställa att varje vara i certifikatet kan återfinnas i fakturan.
 
+**FÖRTYDLIGANDE – Envägsverifiering (avsnitt 4.3.1.1):**
+Verifieringen är ensidig: certifikatets varor ska kunna återfinnas i fakturan. Fakturan får innehålla fler varor än certifikatet täcker — detta utgör INTE en avvikelse. Att fakturan innehåller varor som certifikatet inte nämner är irrelevant för bedömningen, så länge certifikatets egna varor kan verifieras.
+
+**FÖRTYDLIGANDE – Tillägg som inte påverkar produktidentitet (avsnitt 4.3.4):**
+Vid kontrollerad textmatchning ska systemet identifiera produktens identitetsbärande huvudbeteckning. Om certifikatet eller fakturan innehåller ytterligare tillägg före eller efter huvudbeteckningen ska sådana tillägg INTE i sig medföra MISMATCH när följande villkor är uppfyllda:
+- den identitetsbärande huvudbeteckningen kan identifieras exakt i båda dokumenten efter tillåten normalisering
+- tillägget inte ändrar produktens modell, variant, kvalitet, artikelidentitet eller försäljningsenhet
+- ingen annan produkt med liknande beteckning förekommer i fakturan på ett sätt som skapar oklarhet
+
+Tilläggen får exempelvis avse:
+- interna referenser
+- artikel- eller identifieringskoder (t.ex. EAN, REF, ITEM, CODE)
+- förpackningsangivelse
+- partimarkeringar
+- landsbeteckningar (SE, EU)
+- processkvalifikationer (t.ex. ECF, FSC) som beskriver tillverkningsprocess eller standard utan att ändra produktens identitet
+
+Sådana tillägg ska betraktas som icke identitetsbärande text. Den identitetsbärande huvudbeteckningen ska dock kunna identifieras exakt i fakturan efter tillåten normalisering. Förekomst av icke identitetsbärande tillägg före eller efter huvudbeteckningen ska inte i sig medföra MISMATCH.
+
+Exempel MATCH: Certifikat "SÖDRA BLUE - NORTHERN BLEACHED SOFTWOOD KRAFT PULP (ECF)" och faktura "SÖDRA BLUE - NORTHERN BLEACHED SOFTWOOD KRAFT PULP" → huvudbeteckningen kan identifieras exakt; "(ECF)" är en processkvalifikation som inte ändrar produktens identitet → MATCH.
+
 ### 4.3.2 Obligatorisk prioritetsordning
 
 Verifiering ska ske i exakt denna prioritetsordning. Prioritetsordningen ska redovisas i rule_path.
@@ -986,7 +1022,7 @@ Om artikelnummer anges i certifikatet ska matchning PRIMÄRT ske via artikelnumm
 **KRITISK BEGRÄNSNING – Vad som utgör ett artikelnummer (avsnitt 4.3.2.1):**
 Systemet ska INTE automatiskt behandla alla numeriska värden eller koder i certifikatets varubeskrivning (box 6) som artikelnummer. Ett artikelnummer är en produkt-/varuidentifierare som entydigt pekar ut en specifik artikel i ett sortiment.
 
-Numeriska värden i kombination med enhetskoder eller interna koder (t.ex. "804 NE", "150 PCS", "3 CTN") är INTE artikelnummer — de är kvantitets- eller förpackningsuppgifter. Systemet ska identifiera om ett värde är ett artikelnummer eller en kvantitets-/koduppgift baserat på kontexten:
+Numeriska värden i kombination med enhetskoder eller förpackningskoder (t.ex. ett tal följt av PCS, KG, CTN, SET eller liknande enhet) är INTE artikelnummer — de är kvantitets- eller förpackningsuppgifter. Systemet ska identifiera om ett värde är ett artikelnummer eller en kvantitets-/koduppgift baserat på kontexten:
 - Om ett numeriskt värde följs av en enhetskod (PCS, NE, CTN, KG, m.fl.) är det en kvantitets- eller klassificeringsuppgift — INTE ett artikelnummer.
 - Artikelnummer saknar normalt enhetsbeteckning och är produktspecifika identifierare (t.ex. "ABC-1234", "P0042", "7001-X").
 
@@ -1126,23 +1162,22 @@ Systemet ska verifiera att:
 Denna regel innebär att en generell varubeskrivning (t.ex. "Industrial components according to invoice no. 1418") godkänns NÄR fakturans varuinnehåll är förenligt med certifikatets beskrivning. Regeln tillåter INTE att certifikatet godkänns enbart för att det nämner ett fakturanummer — om certifikatets beskrivning är så vag att den inte kan kopplas till något specifikt i fakturan (t.ex. "spare parts" utan vidare specifikation), och fakturan innehåller varor som INTE är förenliga med certifikatets beskrivning, ska resultatet vara MISMATCH. Referensen till fakturan ersätter inte kravet på att varorna faktiskt stämmer överens.
 
 **FÖRTYDLIGANDE – Vad innebär "förenligt" vid generell varubeskrivning (avsnitt 4.3.5.2):**
-Vid bedömning av om fakturans varuinnehåll är "förenligt" med certifikatets generella varubeskrivning ska systemet tillämpa en RIMLIGHETSKONTROLL — inte en strikt textmatchning. Certifikatets generella varubeskrivning är avsiktligt bred (t.ex. "Electronic Components", "Industrial Machinery", "Chemical Products", "Textile Goods") och ska INTE verifieras som en exakt textsträng.
+Verifieringen är ENSIDIG: systemet ska kontrollera att de varor certifikatet anger kan identifieras i fakturan — inte att fakturans samtliga varor täcks av certifikatets beskrivning.
 
 Fakturans varuinnehåll anses FÖRENLIGT med certifikatets generella beskrivning när:
-1. Fakturans varor RIMLIGEN faller inom den produktkategori som certifikatets beskrivning anger.
-2. Inget i fakturans varuinnehåll MOTSÄGER certifikatets beskrivning (t.ex. certifikatet anger "Electronic Components" men fakturan innehåller enbart livsmedel).
+1. De varor som certifikatets beskrivning namnger RIMLIGEN kan identifieras bland fakturans varor.
+2. Fakturan får innehålla YTTERLIGARE varor utöver vad certifikatet anger — detta är INTE ett fel. Förekomst av extra varor i fakturan som saknar motsvarighet i certifikatets beskrivning ska INTE leda till MISMATCH.
 
-Fakturans varuinnehåll anses INTE FÖRENLIGT när:
-1. Fakturans varor uppenbart tillhör en HELT ANNAN produktkategori.
+Fakturans varuinnehåll anses INTE FÖRENLIGT ENBART när:
+1. Fakturans varor uppenbart tillhör en HELT ANNAN produktkategori och ingenting i fakturan svarar mot certifikatets beskrivning.
 2. Certifikatets beskrivning och fakturans varor saknar varje rimlig koppling.
 
 Exempel på FÖRENLIGA kombinationer:
+- Certifikat: "Bearings and components, chains, lubricators, measuring equipment" — Faktura: kullager, kedjor, en lubricator PLUS lubricants, induction heaters, tool-set → FÖRENLIGT (certifikatets varor finns i fakturan; att fakturan dessutom innehåller annat är inte ett fel)
 - Certifikat: "Electronic Components" — Faktura: kretskort, kondensatorer, reläer → FÖRENLIGT
 - Certifikat: "Industrial Machinery" — Faktura: pumpar, ventiler, kompressorer → FÖRENLIGT
-- Certifikat: "Chemical Products" — Faktura: lösningsmedel, tillsatser → FÖRENLIGT
-- Certifikat: "Textile Goods" — Faktura: tyger, garner, etiketter → FÖRENLIGT
 
-Om fakturanummer och fakturadatum matchar OCH varuinnehållet är förenligt → MATCH.
+Om fakturanummer och fakturadatum matchar OCH certifikatets varor kan identifieras i fakturan → MATCH.
 Strikt textmatchning av den generella varubeskrivningen krävs INTE — regeln med generell varubeskrivning och fakturareferens ersätter kravet på exakt textmatchning.
 
 **Datumformatnormalisering (avsnitt 4.3.5):**
@@ -1208,6 +1243,9 @@ Denna bestämmelse gäller ENDAST när certifikatet innehåller flera ursprungsl
 - fakturareferens, datum eller uttrycklig fakturahänvisning saknas eller inte överensstämmer (Prioritet 3)
 - artikelnummer i certifikatet inte kan identifieras exakt i fakturan (Prioritet 1)
 
+**FÖRTYDLIGANDE – Kategoritext och viktangivelser i varubeskrivningsfältet (avsnitt 4.3.8.1):**
+Certifikatets varubeskrivningsfält (box 6) kan innehålla dels konkreta varunamn/artikelnummer, dels kompletterande text såsom kategorirubriker, förklaringstexter eller viktangivelser per varugrupp (t.ex. "Friction Spray in Sport - 1006KG Gross Weight"). Sådan kompletterande text som tydligt är en beskrivning eller viktangivelse kopplad till redan identifierade varunamn ovan utgör INTE en separat vara som kräver egen verifiering i fakturan. Systemet ska identifiera de konkreta varunamnen/artikelnumren och verifiera dessa — kompletterande kategori- och vikttexter ska inte behandlas som ytterligare varuposter.
+
 ---
 
 ## 4.4 Kontrollpunkt: Kvantitet / Mängd
@@ -1235,11 +1273,16 @@ Om kvantitetsenhet saknas → MISMATCH.
 
 #### 4.4.2.2b Förtydligande – kvantitetsenhet
 En kvantitetsenhet ska ange mängd, exempelvis:
-- vikt (KG, MT)
-- antal (PCS, UNITS)
-- förpackning (BOXES, PACKAGES)
+- vikt (KG, MT, LB)
+- antal (PCS, PC, UNITS, SETS)
+- förpackning (BOXES, PACKAGES, CARTONS)
+- yta (M2, m²) — godkänd enhet för textil, golv och liknande varutyper
 
-Måttenheter som anger storlek eller dimension (cm, mm, m, m²) är INTE kvantitetsenheter. Om certifikatets kvantitetsfält enbart innehåller dimensioner (t.ex. "46 × 33 × 22 cm") ska detta klassificeras som MISMATCH — uppgiften utgör inte en kvantitet utan en storleksangivelse.
+Längdmått är INTE kvantitetsenheter. Följande är ogiltiga kvantitetsenheter → MISMATCH:
+- Längdmått: cm, mm, m, lm (löpmeter), ft
+- Vaga beteckningar: "item", "items" (utan numerisk enhet som PCS eller UNITS)
+
+Om certifikatets kvantitetsfält enbart innehåller sådana ogiltiga enheter ska kontrollpunkten klassificeras som MISMATCH.
 
 #### 4.4.2.1 Flera kvantitetsuppgifter i certifikatet
 Om flera olika kvantitetsuppgifter förekommer i certifikatet ska verifieringen utgå UTESLUTANDE från den kvantitetsuppgift som är placerad i fältet "Quantity / Mängd" (box 7).
@@ -1254,26 +1297,24 @@ Om box 7-värdet inte kan identifieras i fakturan → MANUAL_REVIEW eller MISMAT
 Om kvantiteten anges i viktenhet (t.ex. KG, MT, LB) ska även viktkategori framgå uttryckligen i certifikatet.
 Godkända viktkategoribenämningar:
 – Gross / Gross weight / GW / G/W
-– Net / Net weight / NW / N/W
-Viktkategori ska vara uttryckligen angiven i certifikatet.
-Om viktkategori saknas → MISMATCH.
-Verifiering mot fakturan får inte användas för att komplettera eller fastställa saknad uppgift.
+– Net / Net weight / NW / N/W / ADMT (Air-Dry Metric Ton, används som Net-kategori i pappersindustrin) / GMT (Gross Metric Ton)
 
-**FÖRTYDLIGANDE – Viktkategori i box 6 räcker:**
-Viktkategorin behöver inte stå i box 7 — det räcker att den framgår uttryckligen i varubeskrivningsfältet (box 6) i direkt anslutning till eller som en benämning av viktvärdet. Om certifikatet i box 6 anger t.ex. "Gross and Net Weight: 47802 KG" eller "Gross Weight: 1729 KGS" ska viktkategorin anses uttryckligen angiven och formkravet uppfyllt.
+Viktkategori kan framgå antingen i box 7 eller i box 6, förutsatt att den är direkt och entydigt kopplad till det specifika viktvärdet.
 
-Exempel PASS: Box 7 anger "47802 KG" och box 6 anger "Gross and Net Weight: 47802 KG" → viktkategori framgår av box 6 → formkravet är uppfyllt.
-Exempel FAIL: Box 7 anger "47802 KG" och varken box 7 eller box 6 anger GW/NW → MISMATCH.
+**Godkänt – viktkategori i box 6 som fristående viktuppgift:**
+Viktkategori i box 6 accepteras ENBART när den förekommer som en fristående viktuppgift med format "Kategori: värde enhet" (t.ex. "Gross Weight: 131,600 KG", "Net Weight: 123,300 KG", "Gross and Net Weight: 47802 KG").
+Villkor: box 6:s viktkategori-uppgift måste vara fristående och direkt associera kategorin med ett specifikt numeriskt värde som exakt matchar box 7.
 
-**KRITISK PÅMINNELSE – Formkravet är absolut:**
-Kravet på viktkategori är ett FORMKRAV som ska prövas INNAN verifiering mot fakturan sker. Om viktkategori saknas i certifikatet ska resultatet vara MISMATCH oavsett om:
-- det numeriska värdet kan matchas mot fakturan via summering eller direkt
-- fakturan uttryckligen anger viktkategori
-- övriga kontrollpunkter (parter, varubeskrivning, ursprung) alla stämmer
+Viktkategori som är inbäddad i en varubeskrivningstext räknas INTE. Exempel: box 6 innehåller "Testliner 2 FSC / NET WEIGHT: 189.048 MT" som del av en varubeskrivning — detta är varubeskrivningstext, inte en fristående viktuppgift → formkravet är INTE uppfyllt → MISMATCH.
 
-Att det numeriska värdet kan verifieras eller att fakturan anger GW/NW räcker INTE för att kompensera ett saknat formkrav i certifikatet.
+**MISMATCH – viktkategori saknas eller är inbäddad i varubeskrivning:**
+Om varken box 7 eller box 6 anger viktkategori som fristående viktuppgift → MISMATCH. Formkravet är absolut.
 
-Exempel MISMATCH: Certifikatet box 7 anger "22.946 MT" och "26.969 MT" utan GW/NW. Fakturans rader summerar korrekt till dessa värden och fakturan anger "GROSS WEIGHT" explicit. Formkravet i certifikatet är inte uppfyllt → MISMATCH, även om det numeriska värdet matchar.
+Exempel MATCH: Box 7 "131,600 KG / 123,300 KG", box 6 innehåller fristående rader "Gross Weight: 131,600 KG" och "Net Weight: 123,300 KG" → MATCH.
+Exempel MATCH: Box 7 "325987 KG", box 6 fristående "Gross and Net Weight: 325987 KG" → MATCH.
+Exempel MISMATCH: Box 7 "189.048 MT", box 6 varubeskrivningstext innehåller "NET WEIGHT: 189.048 MT" → viktkategori inbäddad i varubeskrivning → MISMATCH.
+Exempel MISMATCH: Box 7 "208,874 MT", varken box 6 eller box 7 anger kategori → MISMATCH.
+Exempel MISMATCH: Box 7 "20000 KG", varken box 6 eller box 7 anger GW/NW → MISMATCH.
 
 ### 4.4.3 Verifiering mot faktura
 Vid verifiering ska systemet kontrollera att det numeriska värdet som anges i certifikatet kan identifieras i fakturan.
@@ -1388,13 +1429,35 @@ Vid kvantitets- och viktverifiering kan certifikatet och fakturan använda OLIKA
 Exempel MATCH: Certifikat "7801.920 G.W." och faktura "Gross Weight 7.801,920 KG" → normaliserat 7801.920 = 7801.920 → MATCH (samma siffror, bara annorlunda formatering).
 Exempel MISMATCH: Certifikat "635 pcs" och faktura "625 pcs" → 635 ≠ 625 → MISMATCH (faktisk sifferskillnad, inte formatskillnad).
 
-**KRITISK BEGRÄNSNING – Tvetydiga värden får INTE normaliseras:**
-Om det är oklart om en punkt är decimaltecken eller tusentalsavskiljare ska normalisering INTE ske. Normalisering enligt 4.4.3.3 och 4.4.3.4 kräver att tolkningen är ENTYDIG.
+#### 4.4.4.1 Förtydligande – punkt- och kommatecken i numeriska värden
 
-En punkt i ett värde på formen "X.YYY" (t.ex. "1.729") är TVETYDIG — det kan vara decimaltecken (värdet 1,729) eller tusentalsavskiljare (värdet 1729). Tvetydigheten löses inte av kontexten "det borde vara ett rimligt värde" — det är en affärsmässig bedömning som systemet inte får göra.
+Vid jämförelse av kvantiteter får systemet tolka punkt (.) och komma (,) som tusentalsavskiljare eller decimaltecken endast när formatet är entydigt enligt följande:
 
-Exempel MISMATCH: Certifikat "1729 KGS" och faktura "1.729 kg" → tolkningen av punkt i "1.729" är tvetydig (decimaltecken eller tusentalsavskiljare?), normalisering är förbjuden → MISMATCH.
-Exempel MISMATCH: Certifikat "1769 KGS" och faktura "1.769 kg" → samma situation → MISMATCH.
+**Kombination av punkt och komma i samma tal** ska tolkas enligt standardiserat format:
+- 1.000,50 → tusental + decimal (EU-format)
+- 1,000.50 → tusental + decimal (US-format)
+
+**Enskild punkt eller komma får tolkas som tusentalsavskiljare när:** värdet består av tre siffror efter separatorn.
+
+Exempel:
+- 3.267 → 3267
+- 17.640 → 17640
+- 104.000 → 104000
+
+**Enskild punkt eller komma får tolkas som decimaltecken när:** värdet innehåller högst två siffror efter separatorn.
+
+Exempel:
+- 3.2 → 3,2
+- 3.25 → 3,25
+
+**KRITISK BEGRÄNSNING – Tolkningen kräver bekräftelse mot certifikatet:**
+Tolkning som tusentalsavskiljare får endast göras när det normaliserade värdet överensstämmer med certifikatets angivna kvantitet. Om tolkningen leder till ett värde som inte motsvarar certifikatets uppgift ska ingen sådan tolkning göras. I sådana fall ska resultatet vara MANUAL_REVIEW.
+
+Vid avvikande eller otydligt format ska ingen tolkning göras. I sådana fall ska resultatet vara MANUAL_REVIEW.
+
+Exempel MATCH: Certifikat "3267 kg net" och faktura "3.267 Kg" → fakturans "3.267" har 3 siffror efter punkten → tolkas som tusentalsavskiljare → 3267 = 3267 → MATCH.
+Exempel MATCH: Certifikat "17640 kg net" och faktura "17.640 Kg" → fakturans "17.640" har 3 siffror efter punkten → tolkas som tusentalsavskiljare → 17640 = 17640 → MATCH.
+Exempel MATCH: Certifikat "Gross 104.000kg" och faktura "104.000,00 KG" → certifikatets "104.000" har 3 siffror efter punkten → tolkas som tusentalsavskiljare → 104000; fakturan har kombination punkt+komma (EU-format) → 104000,00 → 104000 = 104000 → MATCH.
 
 ### 4.4.4 Total vikt i faktura
 När certifikatet anger vikt för hela försändelsen (t.ex. Gross Weight eller Net Weight) får denna uppgift verifieras mot en total vikt som anges i fakturan, exempelvis:
@@ -1495,10 +1558,9 @@ Ingen annan enhetsomräkning är tillåten.
 
 Omräkning får ENDAST ske när:
 - både numeriskt värde och enhet uttryckligen framgår i certifikatet OCH i fakturan, OCH
-- viktkategori är verifierbar ELLER certifikatet har ett enda viktvärde utan GW/NW-kategori (i vilket fall 4.4.2.2 punkt 2 tillämpas och resultatet blir MANUAL_REVIEW efter omräkning, inte MISMATCH).
+- viktkategori är verifierbar enligt 4.4.2.2.
 
-**Tillämpning vid saknad viktkategori i certifikatet:**
-Om certifikatet anger ett enda viktvärde i KG utan GW/NW-kategori och fakturan anger motsvarande värde i MT (eller vice versa), och omräkning 1 MT = 1000 KG ger matchande värde: tillämpa 4.4.2.2 punkt 2 — om fakturan inte innehåller ett motstridigt alternativt viktvärde → MATCH. Om fakturan anger ytterligare ett viktvärde av annan kategori → MANUAL_REVIEW.
+Om viktkategori saknas i certifikatet → MISMATCH redan vid formkravskontrollen. Omräkning får inte tillämpas för att kompensera saknad viktkategori.
 
 **Normalisering av decimalnotation vid MT-omräkning (avsnitt 4.4.5.3.1):**
 Vid omräkning mellan MT och KG får systemet normalisera notationen för det numeriska värdet i fakturan om SAMTLIGA villkor är uppfyllda:
@@ -1677,7 +1739,11 @@ Inför jämförelse får systemet normalisera:
 - versaler/gemener
 - mindre stavningsvariationer
 - fullständigt landsnamn vs vedertagen kortform (t.ex. United States / USA, Sweden / Kingdom of Sweden, Mexico / MX)
+- officiellt landsnamn på landets eget språk vs engelska (t.ex. Türkiye / Turkey, Deutschland / Germany, Polska / Poland)
 - ISO-landkoder (alfa-2, alfa-3)
+
+**KRITISK REGEL – ISO-landskoder är ekvivalenta med landsnamn:**
+ISO alfa-2-landskoder ska alltid anses motsvara respektive landsnamn. Exempel: SE = Sweden, DE = Germany, FR = France, GB = United Kingdom, CN = China. Om certifikatet anger ett landsnamn och fakturan anger motsvarande ISO-kod (eller vice versa) ska detta anses verifierat utan semantisk tolkning.
 
 Dock får INGEN semantisk tolkning göras.
 
@@ -1695,8 +1761,20 @@ Om certifikatets utfärdandedatum avser period då UK var medlem, inkludera UK.
 
 EU ska betraktas som en samlingsbeteckning för samtliga EU-medlemsstater. När certifikatet anger "EU", "European Union" eller "European Community" ska varje EU-medlemsstat som förekommer som ursprung i fakturan anses ingå — under förutsättning att certifikatet INTE uttryckligen namnger specifika EU-länder.
 
+**FÖRTYDLIGANDE – "EU; [land]" verifieras av enbart "[land]" i fakturan (avsnitt 4.5.4.1.1):**
+När certifikatet anger EU-samlingsbegreppet kombinerat med ett specifikt EU-medlemsland (t.ex. "European Community; Sweden") och fakturan anger ENBART det specifika EU-landet (t.ex. "Sweden") utan att nämna EU-begreppet, ska detta anses verifierat:
+- "[land]" i certifikatet verifieras av "[land]" i fakturan — direkt textmatchning.
+- "EU/European Community/European Union" i certifikatet verifieras av "[land]" i fakturan via regel 4.5.4.2 — EU-samlingsbegreppet anses uppfyllt när fakturan innehåller ett EU-medlemsland.
+- Båda ursprungskomponenterna är därmed verifierade → MATCH.
+
+Detta är ett uttryckligt undantag från principen om att ingen semantisk tolkning får göras. Regeln är avsiktligt konstruerad för att acceptera att EU-begreppet inte behöver förekomma ordagrant i fakturan när ett EU-medlemsland finns angivet.
+
+Exempel: Certifikatet anger "European Community; [EU-land X]". Fakturan anger "Country of origin: [EU-land X]". Landet X verifierar "[EU-land X]" direkt, och landet X (EU-land) verifierar "European Community" via 4.5.4.2 → MATCH.
+
+OBS: Denna regel gäller INTE om fakturan innehåller ursprungsländer som INTE finns i certifikatet. Sådana extra ursprungsländer i fakturan medför MISMATCH per 4.5.4.1.
+
 **KRITISK REGEL – Namngivna EU-länder i certifikatet:**
-Om certifikatet uttryckligen namnger specifika EU-länder (t.ex. "European Community; Sweden") gäller certifikatets specifika lista. Fakturan får då INTE innehålla EU-ursprungsländer som saknas i certifikatets lista. Om fakturan anger ett EU-land (t.ex. Finland) som INTE nämns i certifikatet → MISMATCH. Det räcker inte att certifikatet anger "European Community" — varje ursprungsland som faktiskt förekommer i fakturan måste antingen vara täckt av en generell EU-beteckning UTAN specificerade länder, eller finnas uttryckligen namngivet i certifikatet.
+Om certifikatet uttryckligen namnger specifika EU-länder (t.ex. "European Community; [land X]") gäller certifikatets specifika lista. Fakturan får då INTE innehålla EU-ursprungsländer som saknas i certifikatets lista. Om fakturan anger ett EU-land som INTE nämns i certifikatet → MISMATCH. Det räcker inte att certifikatet anger "European Community" — varje ursprungsland som faktiskt förekommer i fakturan måste antingen vara täckt av en generell EU-beteckning UTAN specificerade länder, eller finnas uttryckligen namngivet i certifikatet.
 
 **Asterisk eller okänt suffix på ursprungskod – MANUAL_REVIEW:**
 Om fakturan anger ett ursprungsland som ett landskod med ett okänt suffix eller kvalificeringstecken (t.ex. "DE*", "CH*", "CN**") och dokumentet INTE innehåller en förklaring eller legend som definierar vad suffixet innebär, ska ursprunget INTE automatiskt tolkas som ett motstridigt ursprung. I stället ska resultatet vara MANUAL_REVIEW för ursprungskontrollpunkten, eftersom suffixet kan avse preferensursprung, REX-registrering, GSP-förmånskod eller annan kvalificering som kräver mänsklig bedömning.
@@ -1890,7 +1968,7 @@ Inputregler:
 - Outputen MÅSTE validera mot JSON Schema-filen `schema_strict.json`.
 - Sätt `schema_version` till `"3.0"`.
 - Sätt `prompt_version` till `"coo_verification_api_1.0"`.
-- Sätt `ruleset_version` till exakt `"Regelverk 5 - Operativt verifieringsregelverk för Certificate of Origin"`.
+- Sätt `ruleset_version` till exakt `"Regelverk 10 - Operativt verifieringsregelverk för Certificate of Origin"`.
 - Alla nycklar som krävs av schemat ska alltid finnas.
 - Om uppgift saknas: använd `null`, tom lista eller status `NOT_FOUND` enligt schema.
 - Alla confidence-värden ska vara numeriska (0.00–1.00).

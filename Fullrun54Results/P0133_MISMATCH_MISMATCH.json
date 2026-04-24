@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-04-16T00:00:00Z",
+    "verification_timestamp": "2026-04-24T00:00:00Z",
     "document_pair_id": null,
     "certificate_issue_date": "2025-07-30",
     "source_documents_received": 2
@@ -33,24 +33,20 @@
     "eu_origin_normalization_active": false,
     "activated_rules": [
       {
-        "rule_id": "4.1.0",
-        "rule_name": "Consignor found explicitly in invoice documents"
+        "rule_id": "2.2",
+        "rule_name": "LC-undantag prövat men inte aktiverat eftersom \"L/C NO. 733301LC25000099\" finns i remarks/box 5 och inte i varubeskrivningsfältet/box 6"
+      },
+      {
+        "rule_id": "8.6",
+        "rule_name": "Parningsvalidering passerad via consignorträff i fakturan"
       },
       {
         "rule_id": "8.5.2.1",
-        "rule_name": "Certificate invoice reference differs completely from invoice file number"
+        "rule_name": "Certifikatet refererar faktura 10998 medan fakturafilen innehåller faktura 11030; helt avvikande fakturanummer"
       },
       {
-        "rule_id": "4.3.3.4",
-        "rule_name": "Identity-bearing goods qualifier mismatch"
-      },
-      {
-        "rule_id": "4.4.3.1",
-        "rule_name": "Explicit quantity contradiction"
-      },
-      {
-        "rule_id": "4.5.5",
-        "rule_name": "Origin explicitly identified in invoice"
+        "rule_id": "4.1.0",
+        "rule_name": "Consignor återfunnen uttryckligen i fakturan"
       }
     ]
   },
@@ -58,7 +54,7 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.97,
+      "confidence": 0.99,
       "certificate_value": "GLOBAL FOREST PRODUCTS SWEDEN AB\nSTORA BADHUSGATAN 18-20\nTEL: 46 73 1526315\n411 21, GOTHENBURG\nSWEDEN",
       "invoice_value": "GLOBAL FOREST PRODUCTS SWEDEN AB\nGLOBAL FOREST PRODUCTS SWEDEN AB\nSTORA BADHUSGATAN 18-20\n411 21 GOTEBORG, SWEDEN\nTEL: 46 73 1526315\nVAT NO. SE559374366801",
       "rules_applied": [
@@ -73,9 +69,13 @@
         {
           "rule_id": "4.1.2.1",
           "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.4",
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor 'GLOBAL FOREST PRODUCTS SWEDEN AB' återfinns uttryckligen i fakturans footer och issuer-information. Landet verifieras som Sverige genom explicit adress 'SWEDEN' och VAT-prefix 'SE'. Stavningsskillnaden GOTHENBURG/GOTEBORG påverkar inte eftersom endast företagsnamn och land är avgörande."
+      "motivation": "Certifikatets consignor \"GLOBAL FOREST PRODUCTS SWEDEN AB\" återfinns uttryckligen i fakturan i utställar-/footerblocket. Landet verifieras som \"SWEDEN\" både via adressen och via VAT-prefixet \"SE\". Smärre ortsstavning (GOTHENBURG/GOTEBORG) påverkar inte bedömningen eftersom företagsnamn och land är verifierade."
     },
     "consignee": {
       "applicable": true,
@@ -89,22 +89,30 @@
           "outcome": "MISMATCH"
         },
         {
+          "rule_id": "4.2.1",
+          "outcome": "MISMATCH"
+        },
+        {
+          "rule_id": "4.2.2",
+          "outcome": "MISMATCH"
+        },
+        {
           "rule_id": "4.2.4",
           "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Certifikatet anger mottagaren som 'MINFENG SPECIAL PAPER CO.,LTD.' i Jiaxing, Zhejiang, China. Fakturan innehåller mottagarrollen Buyer som 'SHANDONG PUBLISHING FOREIGN TRADE COMPANY LIMITED' i Jinan, Shandong, China, och ingen annan mottagarroll i fakturan identifierar Minfeng Special Paper Co., Ltd. Samma land räcker inte när företagsnamnet avser en annan juridisk part."
+      "motivation": "Certifikatet anger mottagaren som \"MINFENG SPECIAL PAPER CO.,LTD.\" i Jiaxing, Zhejiang, China. Fakturan identifierar mottagarparten som \"SHANDONG PUBLISHING FOREIGN TRADE COMPANY LIMITED\" i Jinan, Shandong, China, och någon träff på \"MINFENG SPECIAL PAPER\" kan inte identifieras i buyer-, consignee-, ship-to- eller annat mottagarfält. Samma land räcker inte när företagsnamnet avser en annan juridisk part."
     },
     "goods_description": {
       "applicable": true,
       "status": "MISMATCH",
-      "confidence": 0.94,
-      "certificate_value": "58 X 40' CONTAINER, SODRA BLUE Z\nSODRA BLUE Z BLEACHED SOFTWOOD KRAFT PULP\nNO. OF BALES\nNO. OF UNITS\nGROSS WEIGHT\nNET/ AIRDRY WEIGHT",
-      "invoice_value": "COMMODITY: SODRA BLUE SOFTWOOD KRAFT PULP\nL/C NO. 151591LC25000008\nCONTRACT NO.:2025SDP0423\nETA: 2025-09-21\nCOUNTRY OF ORIGIN: SWEDEN\nMANUFACTURER: SODRA CELL AB",
+      "confidence": 0.96,
+      "certificate_value": "58 X 40' CONTAINER, SODRA BLUE Z\nSODRA BLUE Z BLEACHED SOFTWOOD KRAFT PULP",
+      "invoice_value": "COMMODITY: SODRA BLUE SOFTWOOD KRAFT PULP",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "Priority 2 applied"
+          "outcome": "NO_ARTICLE_NUMBER_IN_CERTIFICATE"
         },
         {
           "rule_id": "4.3.3",
@@ -115,18 +123,22 @@
           "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Artikelnummer saknas i certifikatet, därför används kontrollerad textmatchning. Certifikatet anger den identitetsbärande beteckningen 'SODRA BLUE Z BLEACHED SOFTWOOD KRAFT PULP', medan fakturan anger 'SODRA BLUE SOFTWOOD KRAFT PULP'. Tilläggen 'Z' och särskilt 'BLEACHED' är identitetsbärande kvalifikatorer som inte får ignoreras, så varubeskrivningen kan inte verifieras."
+      "motivation": "Certifikatet använder den identitetsbärande beteckningen \"SODRA BLUE Z BLEACHED SOFTWOOD KRAFT PULP\" medan fakturan anger \"SODRA BLUE SOFTWOOD KRAFT PULP\". Certifikatets tillägg \"Z\" och särskilt kvalifikatorn \"BLEACHED\" kan inte ignoreras, eftersom material-/specifikationskvalifikatorer är identitetsbärande. Varubeskrivningen kan därför inte verifieras utan otillåten omtolkning."
     },
     "quantity": {
       "applicable": true,
       "status": "MISMATCH",
       "confidence": 0.99,
       "certificate_value": "6032\n754\n1526.850 TON\n1508 ADMT",
-      "invoice_value": "1014 ADMT 4056 Bales\n39 X 40' CONTAINERS\nNO. OF BALES: 4056\nNO. OF UNITS: 507\nGROSS WEIGHT: 1026.675 TON\nNET/ AIRDRY WEIGHT: 1014 ADMT",
+      "invoice_value": "1014 ADMT 4056 Bales\n39 X 40' CONTAINERS\nNO. OF BALES: 4056\nNO. OF UNITS: 507\nGROSS WEIGHT: 1026.675 TON\nNET/AIRDRY WEIGHT: 1014 ADMT",
       "rules_applied": [
         {
           "rule_id": "4.4.2.1",
-          "outcome": "Box 7 values selected as verification basis"
+          "outcome": "BOX_7_VALUES_SELECTED"
+        },
+        {
+          "rule_id": "4.4.2.2",
+          "outcome": "WEIGHT_CATEGORY_IDENTIFIABLE_VIA_BOX6_LABELS"
         },
         {
           "rule_id": "4.4.3.1",
@@ -137,46 +149,47 @@
           "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Certifikatets verifieringsgrundande mängder i box 7 är 6032 balar, 754 enheter, 1526.850 TON gross weight och 1508 ADMT net/airdry weight. Fakturan anger istället 4056 balar, 507 enheter, 1026.675 TON gross weight och 1014 ADMT net/airdry weight. Detta är uttryckliga numeriska motsägelser för samma kvantitetstyper och ger därför MISMATCH."
+      "motivation": "Certifikatets kvantitetsfält anger 6032 balar, 754 enheter, 1526.850 TON gross weight och 1508 ADMT net/airdry weight. Fakturan anger uttryckligen andra värden för samma kvantitetstyper: 4056 balar, 507 enheter, 1026.675 TON gross weight och 1014 ADMT net/airdry weight. Detta är uttryckliga motsägelser för samma kvantitetstyper och ger därför MISMATCH."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.98,
+      "confidence": 0.99,
       "certificate_value": "SWEDEN",
       "invoice_value": "COUNTRY OF ORIGIN: SWEDEN",
       "rules_applied": [
         {
           "rule_id": "4.5.1",
-          "outcome": "Origin field identified"
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.5.5",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger ursprungsland 'SWEDEN'. Fakturan innehåller en explicit ursprungsangivelse 'COUNTRY OF ORIGIN: SWEDEN'. Ursprungslandet kan därför verifieras entydigt."
+      "motivation": "Certifikatet anger ursprungsland \"SWEDEN\". Fakturan innehåller ett explicit origin-fält med texten \"COUNTRY OF ORIGIN: SWEDEN\". Ursprungslandet är därför direkt verifierat."
     }
   },
   "overall_assessment": {
     "comparison_result": "NOT_IDENTICAL",
     "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
     "auto_approval_eligible": false,
-    "confidence": 0.98,
+    "confidence": 0.99,
     "critical_failures": [
-      "Certifikatet hänvisar till 'COMMERCIAL INVOICE NO. 10998' medan den bifogade fakturan är 'No. 11030'.",
-      "Consignee i certifikatet är 'MINFENG SPECIAL PAPER CO.,LTD.' men fakturan identifierar mottagande part som 'SHANDONG PUBLISHING FOREIGN TRADE COMPANY LIMITED'.",
-      "Varubeskrivningen skiljer sig: certifikatet anger 'SODRA BLUE Z BLEACHED SOFTWOOD KRAFT PULP' medan fakturan anger 'SODRA BLUE SOFTWOOD KRAFT PULP'.",
-      "Kvantiteterna motsäger varandra uttryckligen, bl.a. 6032/754/1526.850 TON/1508 ADMT i certifikatet mot 4056/507/1026.675 TON/1014 ADMT i fakturan."
+      "8.5.2.1: Certifikatet refererar \"COMMERCIAL INVOICE NO. 10998\" medan fakturafilen innehåller \"No. 11030\"; inget matchande fakturanummer finns i fakturafilen.",
+      "4.2.4: Consignee i certifikatet (MINFENG SPECIAL PAPER CO.,LTD.) kan inte identifieras i fakturan, som i stället anger SHANDONG PUBLISHING FOREIGN TRADE COMPANY LIMITED.",
+      "4.3.3.4: Varubeskrivningen skiljer sig i identitetsbärande delar (\"SODRA BLUE Z BLEACHED SOFTWOOD KRAFT PULP\" vs \"SODRA BLUE SOFTWOOD KRAFT PULP\").",
+      "4.4.3.1: Kvantiteterna motsägs uttryckligen av fakturan (6032/754/1526.850 TON/1508 ADMT vs 4056/507/1026.675 TON/1014 ADMT)."
     ],
     "manual_review_triggers": [],
-    "decision_summary": "Dokumentparet kunde paras via consignor, men certifikatets egen fakturareferens avser faktura 10998 medan den separata fakturafilen är faktura 11030. Därutöver föreligger tydliga avvikelser i consignee, varubeskrivning och kvantitet. Endast ursprungslandet SWEDEN stämmer mellan dokumenten.",
-    "human_explanation": "Certifikatet hänvisar till Commercial Invoice No. 10998 medan den bifogade fakturan är No. 11030. Mottagaren skiljer sig också (Minfeng Special Paper Co., Ltd. respektive Shandong Publishing Foreign Trade Company Limited), och kvantiteterna stämmer inte överens. Därför kan certifikatet inte verifieras mot fakturan."
+    "decision_summary": "Dokumentparet är inte identiskt. LC-undantaget aktiveras inte eftersom L/C-numret endast står i remarks-fältet på certifikatet. Consignor och ursprungsland kan verifieras, men certifikatet refererar en annan faktura än den bifogade, mottagaren stämmer inte, varubeskrivningen stämmer inte och kvantiteterna motsägs uttryckligen av fakturan.",
+    "human_explanation": "Certifikatet hänvisar till faktura 10998, men den bifogade fakturan är nummer 11030. Mottagaren, varubeskrivningen och kvantiteterna i certifikatet stämmer inte med uppgifterna i fakturan. Därför kan dokumentparet inte godkännas automatiskt."
   },
   "_meta": {
-    "tested_at": "2026-04-16T17:20:47.677379+00:00",
-    "prompt_hash": "985b0b3297bd",
+    "tested_at": "2026-04-24T09:14:16.741093+00:00",
+    "prompt_hash": "10954622b12c",
     "model": "gpt-5.4",
+    "tier": 2,
     "pair": "P0133_MISMATCH",
     "expected": "NOT_IDENTICAL",
     "actual": "NOT_IDENTICAL",

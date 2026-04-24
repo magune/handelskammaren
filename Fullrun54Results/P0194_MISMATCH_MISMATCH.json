@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-04-11T00:00:00Z",
+    "verification_timestamp": "2026-04-24T00:00:00Z",
     "document_pair_id": null,
     "certificate_issue_date": "2026-02-27",
     "source_documents_received": 2
@@ -15,7 +15,7 @@
     "document_a": {
       "label": "Document A",
       "assumed_role": "certificate",
-      "document_type": "certificate of origin"
+      "document_type": "certificate_of_origin"
     },
     "document_b": {
       "label": "Document B",
@@ -42,11 +42,23 @@
       },
       {
         "rule_id": "4.1.0",
-        "rule_name": "Consignor-sökning i hela fakturan"
+        "rule_name": "Consignor identifierad i fakturan"
+      },
+      {
+        "rule_id": "4.1.2.1",
+        "rule_name": "Landverifiering via indirekta identifierare"
       },
       {
         "rule_id": "4.2.0.2",
-        "rule_name": "Consignee kan verifieras i något mottagarfält"
+        "rule_name": "Consignee får identifieras i något mottagarfält"
+      },
+      {
+        "rule_id": "4.4.3.1",
+        "rule_name": "Flera kvantitetsuppgifter"
+      },
+      {
+        "rule_id": "4.5.4",
+        "rule_name": "Landnormalisering inklusive ISO-kod"
       }
     ]
   },
@@ -54,9 +66,9 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.93,
+      "confidence": 0.91,
       "certificate_value": "HydraSpecma AB\nBox 164\n40122, Göteborg\nSweden",
-      "invoice_value": "HydraSpecma AB\nBox 164\nSE-401 22 GÖTEBORG\nVAT.no SE556089955001\nHydra Specma",
+      "invoice_value": "HydraSpecma\nHydraSpecma AB\nBox 164\nSE-401 22 GÖTEBORG\nVAT.no SE556089955001\nIBAN (SEK): SE 66 1200 0000 0241 7010 9090",
       "rules_applied": [
         {
           "rule_id": "4.1.0",
@@ -71,14 +83,14 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor är \"HydraSpecma AB\" i Sverige. Samma företagsnamn återfinns uttryckligen i fakturans footer på alla sidor och i sidhuvudets branding \"Hydra Specma\". Landet Sverige verifieras genom adressen \"SE-401 22 GÖTEBORG\" samt VAT-prefix \"SE\". Därmed kan samma juridiska part identifieras i fakturan."
+      "motivation": "Certifikatets consignor 'HydraSpecma AB' återfinns uttryckligen i fakturans sidfot och HydraSpecma-branding syns i sidhuvudet. Landet Sweden kan styrkas via svenska identifierare i fakturan, särskilt VAT-prefix 'SE' och svensk IBAN-prefix 'SE'. Därmed är företagsnamn och land verifierade."
     },
     "consignee": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.95,
+      "confidence": 0.97,
       "certificate_value": "Ergun Hidrolik San. Tic A.S\nAkhisar Organize Sanayi Bölgesi\nAkhisar-Manisa Yolu7km;5.\nCadde No33\n45230. Akhisar\nTurkiet",
-      "invoice_value": "Customer Address / Delivery Address / Customer:\nErgun Hidrolik San. Tic A.S.\nAkhisar Organize Sanayi Bölgesi\nAkhisar-Manisa Yolu7km;5.Cadde No33\n45230 AKHISAR\nTURKIET",
+      "invoice_value": "Customer Address\nErgun Hidrolik San. Tic A.S.\nAkhisar Organize Sanayi Bölgesi\nAkhisar-Manisa Yolu7km;5.Cadde No33\n45230 AKHISAR\nTURKIET\n\nDelivery Address\nErgun Hidrolik San. Tic A.S.\nAkhisar Organize Sanayi Bölgesi\nAkhisar-Manisa Yolu7km;5.Cadde No33\n45230. AKHISAR\nTURKIET",
       "rules_applied": [
         {
           "rule_id": "4.2.0.2",
@@ -93,66 +105,66 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Mottagaren i certifikatet kan identifieras direkt i flera mottagarfält i fakturan: Customer Address, Delivery Address och Customer. Företagsnamnet överensstämmer efter normalisering av punktuation och landet är Turkiet/TURKIET i båda dokumenten. Skillnader i radbrytning och formatering påverkar inte matchningen."
+      "motivation": "Certifikatets mottagare återfinns ordagrant i fakturans både Customer Address- och Delivery Address-block. Företagsnamn, adresskärna och land 'Turkiet/TURKIET' överensstämmer utan motstridighet. Kontrollpunkten är därför verifierad."
     },
     "goods_description": {
       "applicable": true,
       "status": "MISMATCH",
-      "confidence": 0.9,
+      "confidence": 0.93,
       "certificate_value": "2 pallets\n980pcs, Rubberhose & Hose Plastic w or wo fittings\n900pcs, Rubberhose & Hose Plastic w or wo fittings",
-      "invoice_value": "401249 / Hydraulic hose High Pressure\n132122-900 / Rubberhose\n132130-900 / Rubberhose\n132131-900 / Rubberhose\n132132-900 / Rubberhose",
+      "invoice_value": "401249 ... /Hydraulic hose High Pressure\n132122-900 ... /Rubberhose\n132130-900 ... /Rubberhose\n132131-900 ... /Rubberhose\n132132-900 ... /Rubberhose",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "No article numbers available in certificate; moved to text comparison"
+          "outcome": "NO_CERTIFICATE_ARTICLE_NUMBER_USED"
+        },
+        {
+          "rule_id": "4.3.5",
+          "outcome": "NOT_APPLICABLE"
         },
         {
           "rule_id": "4.3.3",
           "outcome": "MISMATCH"
         },
         {
-          "rule_id": "4.3.5",
-          "outcome": "Not applicable for MATCH; explicit invoice-reference conditions in goods field not fulfilled"
-        },
-        {
           "rule_id": "4.3.8",
           "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Certifikatet anger varubeskrivningen \"Rubberhose & Hose Plastic w or wo fittings\". Fakturan innehåller dels \"Rubberhose\" på flera rader, dels en separat rad \"Hydraulic hose High Pressure\". Certifikatets fulla identitetsbärande text, särskilt delen \"Hose Plastic w or wo fittings\", kan inte identifieras uttryckligen i fakturan utan otillåten semantisk tolkning. Certifikatet uppfyller inte heller villkoren för generell varubeskrivning med fakturareferens i varubeskrivningsfältet, eftersom fakturadatum och uttrycklig hänvisning där saknas."
+      "motivation": "Certifikatet saknar verifierbar artikelnummerreferens i varubeskrivningsfältet och box 6 innehåller inte den fakturahänvisning med fakturadatum som krävs för generell varubeskrivning. Kontrollerad textmatchning misslyckas eftersom certifikatets huvudtext är 'Rubberhose & Hose Plastic w or wo fittings', medan fakturan visar 'Hydraulic hose High Pressure' och flera rader med endast 'Rubberhose'. Den fulla identitetsbärande beteckningen från certifikatet, inklusive 'Hose Plastic w or wo fittings', kan inte identifieras i fakturan utan otillåten semantisk tolkning."
     },
     "quantity": {
       "applicable": true,
       "status": "MANUAL_REVIEW",
-      "confidence": 0.66,
+      "confidence": 0.56,
       "certificate_value": "148,9kg\n107,1kg\nGW",
-      "invoice_value": "(kg) 176.64\n(kg) 256.08\nNo of Pallets: 2",
+      "invoice_value": "Line weights: 14.60 kg, 20.10 kg, 73.44 kg, 33.50 kg, 35.00 kg\nTotals page 3: (kg) 176.64\n(kg) 256.08\nNo of Pallets: 2",
       "rules_applied": [
         {
+          "rule_id": "4.4.2.2",
+          "outcome": "FORM_REQUIREMENT_PASSED"
+        },
+        {
           "rule_id": "4.4.2.1",
-          "outcome": "Box 7 identified as verification basis"
+          "outcome": "BOX_7_GOVERNS"
+        },
+        {
+          "rule_id": "4.4.3.2.1",
+          "outcome": "PALLET_COUNT_CANNOT_OVERRIDE_BOX7_WEIGHT"
         },
         {
           "rule_id": "4.4.3.0b",
           "outcome": "MANUAL_REVIEW"
-        },
-        {
-          "rule_id": "4.4.3.2.1",
-          "outcome": "Box 7 weight must be verified; shipment quantity alone cannot be used"
-        },
-        {
-          "rule_id": "4.4.6.1",
-          "outcome": "Not applied because invoice contains weight information"
         }
       ],
-      "motivation": "Certifikatets kvantitetsfält innehåller två viktvärden: 148,9 kg och 107,1 kg med viktkategori GW. Fakturan innehåller viktuppgifter, men de explicit läsbara värdena är 176.64 kg och 256.08 kg samt 2 pallar. De två individuella certifikatvikterna kan inte identifieras uttryckligen i fakturan, och fakturan visar inte tydligt motsvarande per-pall-GW för 148,9 kg respektive 107,1 kg. Eftersom fakturan innehåller viktinformation men kopplingen till certifikatets två separata värden inte kan fastställas entydigt blir utfallet manuell granskning."
+      "motivation": "Certifikatets verifieringsgrundande kvantitet är box 7 med två explicita GW-värden: 148,9 kg och 107,1 kg. I den skannade fakturan kan läsas radvikter samt två totalvikter 176.64 kg och 256.08 kg, men inget av certifikatets två box 7-värden kan identifieras direkt. Det är inte tillåtet att ersätta box 7 med '2 pallets' från box 6 eller att summera de två certifikatvikterna till ett enda fakturavärde. Eftersom viktinformation finns i fakturan men inte ger en entydig direkt verifiering av de två separata box 7-värdena sätts kontrollpunkten till MANUAL_REVIEW."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.96,
+      "confidence": 0.98,
       "certificate_value": "Sweden",
-      "invoice_value": "Country Of Origin\nSE",
+      "invoice_value": "Country Of Origin SE",
       "rules_applied": [
         {
           "rule_id": "4.5.1",
@@ -167,26 +179,26 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger ursprungsland \"Sweden\". Fakturan anger uttryckligen \"Country Of Origin SE\" på artikelraderna. Landsnamn och ISO-kod är tillåten normalisering av samma ursprungsland, vilket verifierar certifikatets uppgift."
+      "motivation": "Certifikatet anger ursprungsland 'Sweden'. Fakturans varurader anger uttryckligen 'Country Of Origin SE', och ISO-koden SE är ekvivalent med Sweden. Ursprungslandet är därför verifierat."
     }
   },
   "overall_assessment": {
     "comparison_result": "NOT_IDENTICAL",
     "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
     "auto_approval_eligible": false,
-    "confidence": 0.9,
+    "confidence": 0.88,
     "critical_failures": [
-      "Varubeskrivningen i certifikatet kan inte verifieras mot fakturans faktiska varubeskrivningar utan otillåten semantisk tolkning."
+      "Varubeskrivningen i certifikatet kan inte verifieras mot fakturans varurader."
     ],
     "manual_review_triggers": [
-      "Kvantitetsfältets två viktvärden 148,9 kg och 107,1 kg kan inte entydigt återfinnas som separata värden i fakturan."
+      "Kvantitetsfältet i certifikatet innehåller två GW-värden som inte kan identifieras entydigt i den skannade fakturan."
     ],
-    "decision_summary": "Dokumentparet kunde paras via fakturanummer CD711895, consignor och consignee. Avsändare, mottagare och ursprungsland kan verifieras mot fakturan. Varubeskrivningen i certifikatet kan däremot inte verifieras fullt ut mot fakturans radbeskrivningar, vilket medför NOT_IDENTICAL. Kvantiteten kräver dessutom manuell granskning eftersom certifikatets två separata GW-värden inte kan återfinnas entydigt i fakturan.",
-    "human_explanation": "Certifikatet anger varubeskrivningen \"Rubberhose & Hose Plastic w or wo fittings\", men fakturan visar artiklarna \"Hydraulic hose High Pressure\" och \"Rubberhose\", vilket inte kan verifieras som samma varubeskrivning. Avsändare, mottagare och ursprungsland stämmer, men vikterna 148,9 kg och 107,1 kg i certifikatet kan inte entydigt återfinnas i fakturan. Ärendet behöver därför hanteras manuellt."
+    "decision_summary": "Dokumentparet är korrekt parat via fakturanummer CD711895. Consignor, consignee och ursprungsland kan verifieras, men varubeskrivningen kan inte verifieras enligt regelverket. Därför är jämförelseresultatet NOT_IDENTICAL.",
+    "human_explanation": "Varubeskrivningen stämmer inte mellan dokumenten. Certifikatet anger 'Rubberhose & Hose Plastic w or wo fittings', medan fakturan visar varuraderna 'Hydraulic hose High Pressure' och 'Rubberhose' utan att hela certifikatets varubeteckning kan återfinnas. Kvantitetsuppgiften 148,9 kg och 107,1 kg GW kan dessutom inte verifieras entydigt i den skannade fakturan."
   },
   "_meta": {
-    "tested_at": "2026-04-11T08:05:42.143719+00:00",
-    "prompt_hash": "de0d620a2b38",
+    "tested_at": "2026-04-24T09:51:07.280257+00:00",
+    "prompt_hash": "10954622b12c",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P0194_MISMATCH",

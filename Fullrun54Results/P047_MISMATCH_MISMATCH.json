@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": null,
+    "verification_timestamp": "2026-04-24T00:00:00Z",
     "document_pair_id": null,
     "certificate_issue_date": "2026-02-24",
     "source_documents_received": 2
@@ -15,12 +15,12 @@
     "document_a": {
       "label": "Document A",
       "assumed_role": "certificate",
-      "document_type": "Certificate of Origin"
+      "document_type": "Certificate of Origin (page 1) with embedded support pages/invoice copy afterwards"
     },
     "document_b": {
       "label": "Document B",
       "assumed_role": "invoice",
-      "document_type": "Invoice"
+      "document_type": "Commercial invoice"
     }
   },
   "rule_activation": {
@@ -34,23 +34,19 @@
     "activated_rules": [
       {
         "rule_id": "8.5.0",
-        "rule_name": "Filbaserad dokumentparning"
+        "rule_name": "Filbaserad dokumentparning - certificate from file 1, invoice from file 2"
       },
       {
         "rule_id": "8.6",
-        "rule_name": "Obligatorisk parningsvalidering"
+        "rule_name": "Parningsvalidering"
       },
       {
         "rule_id": "4.3.5",
         "rule_name": "Generell varubeskrivning med fakturareferens"
       },
       {
-        "rule_id": "4.3.7",
-        "rule_name": "Koppling vara–ursprungsland vid flera ursprung"
-      },
-      {
-        "rule_id": "4.5.4.1",
-        "rule_name": "Asterisk/suffix på ursprungskod"
+        "rule_id": "4.5.6",
+        "rule_name": "Fullständighet vid generell varubeskrivning"
       }
     ]
   },
@@ -58,24 +54,28 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.99,
+      "confidence": 0.98,
       "certificate_value": "Volvo Car Corporation\nRB building\nSE-405 31, GÖTEBORG\nSWEDEN",
-      "invoice_value": "Volvo Car Corporation\n405 31 Gothenburg\nSWEDEN\nReg.No. 556074-3089\nSE556074308901",
+      "invoice_value": "Volvo Car Corporation\nPostal address\n405 31 Gothenburg\nSWEDEN\nReg.No. 556074-3089\nSE556074308901",
       "rules_applied": [
         {
           "rule_id": "4.1.0",
-          "outcome": "MATCH"
+          "outcome": "matched - consignor name found explicitly in invoice file"
+        },
+        {
+          "rule_id": "4.1.2",
+          "outcome": "matched - same legal entity identified"
         },
         {
           "rule_id": "4.1.2.1",
-          "outcome": "MATCH"
+          "outcome": "matched - country verified via address and VAT prefix"
         },
         {
-          "rule_id": "4.1.4",
+          "rule_id": "4.1.5",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor \"Volvo Car Corporation\" återfinns uttryckligen i fakturans header/issueruppgifter. Landet verifieras som Sverige genom adressen \"405 31 Gothenburg SWEDEN\" och VAT-prefixet \"SE\" i \"SE556074308901\". Samma juridiska part och samma land kan därför identifieras i fakturan."
+      "motivation": "Certifikatets consignor 'Volvo Car Corporation' återfinns uttryckligen i fakturans header/seller-information. Landet Sverige verifieras i fakturans adressblock ('405 31 Gothenburg SWEDEN') och stöds även av VAT-numret 'SE556074308901'. Samma juridiska part och land kan därför verifieras entydigt."
     },
     "consignee": {
       "applicable": true,
@@ -86,107 +86,126 @@
       "rules_applied": [
         {
           "rule_id": "4.2.0.2",
-          "outcome": "MATCH"
+          "outcome": "matched - consignee identified in invoice recipient/customer block"
         },
         {
           "rule_id": "4.2.2.1",
-          "outcome": "MATCH"
+          "outcome": "matched - allowed normalization of punctuation/corporate suffix"
         },
         {
           "rule_id": "4.2.3",
+          "outcome": "matched - country Ukraine corresponds"
+        },
+        {
+          "rule_id": "4.2.4",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Mottagaren i certifikatet kan identifieras i fakturans buyer/financial customer-fält som \"WINNER IMPORTS UKRAINE LTD.\". Skillnaderna avser endast formatering och adressförkortningar (t.ex. \"5A\" vs \"5-A\", \"STREET\" vs \"STR.\"). Landet Ukraina framgår uttryckligen i båda dokumenten."
+      "motivation": "Certifikatets mottagare kan identifieras i fakturans kund-/mottagarblock som 'WINNER IMPORTS UKRAINE LTD.'. Skillnaderna mellan 'LTD' och 'LTD.' samt '5A' och '5-A' är tillåten normalisering och ändrar inte den juridiska parten. Landet Ukraina överensstämmer uttryckligen i båda dokumenten."
     },
     "goods_description": {
       "applicable": true,
       "status": "MISMATCH",
-      "confidence": 0.98,
+      "confidence": 0.99,
       "certificate_value": "CASES 13\nAutoparts,See attached inv: 2602763\ndated 20260223 Grossweight refers to CMR and cargospec",
-      "invoice_value": "Invoice date 20260219  Invoice No. 2602763",
+      "invoice_value": "Invoice No. 2602763\nInvoice date 20260219",
       "rules_applied": [
         {
           "rule_id": "4.3.5",
-          "outcome": "MISMATCH"
+          "outcome": "active - general goods description with invoice reference detected"
+        },
+        {
+          "rule_id": "4.3.5",
+          "outcome": "invoice number matched - 2602763 found in invoice"
         },
         {
           "rule_id": "4.3.5.1",
-          "outcome": "REJECTED"
+          "outcome": "failed - certificate invoice date 20260223 does not match invoice date 20260219"
+        },
+        {
+          "rule_id": "4.3.8",
+          "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Certifikatet använder generell varubeskrivning med fakturareferens och anger uttryckligen \"inv: 2602763 dated 20260223\". Den separata fakturan bär nummer 2602763 men fakturadatumet är 20260219. Datumavvikelsen är fyra dagar, vilket inte omfattas av endagsundantaget; därför ska kontrollpunkten klassificeras som MISMATCH."
+      "motivation": "Varubeskrivningen i certifikatet är generell och hänvisar uttryckligen till faktura 2602763 daterad 20260223. Den bifogade fakturafilen innehåller faktura 2602763, men fakturadatumet i fakturan är 20260219. Eftersom fakturanummer och fakturadatum båda är obligatoriska formkrav vid generell varubeskrivning leder datumdiskrepansen direkt till MISMATCH."
     },
     "quantity": {
       "applicable": true,
-      "status": "MANUAL_REVIEW",
-      "confidence": 0.72,
-      "certificate_value": "Box 7: 399,2 Gross KG\nBox 6: CASES 13",
-      "invoice_value": "Case No. Shipping No. Item reference Part No. Part description Q.REQ Q.DEL Unit price Discount % Net price Net value VAT % Commodity code Origin",
+      "status": "MISMATCH",
+      "confidence": 0.92,
+      "certificate_value": "399,2 Gross KG",
+      "invoice_value": null,
       "rules_applied": [
         {
           "rule_id": "4.4.2.2",
-          "outcome": "PASS"
+          "outcome": "passed - certificate quantity has value, unit and weight category"
+        },
+        {
+          "rule_id": "4.4.4",
+          "outcome": "failed - no total gross weight found in separate invoice file"
+        },
+        {
+          "rule_id": "4.4.5.1",
+          "outcome": "exceptions 3A-3E reviewed sequentially and not applicable"
         },
         {
           "rule_id": "4.4.3.2",
-          "outcome": "REJECTED"
+          "outcome": "shipment quantity in box 6 not accepted because verifierbar fakturareferens enligt 4.3.5 is not fulfilled due date mismatch"
         },
         {
           "rule_id": "4.4.6.1",
-          "outcome": "MANUAL_REVIEW"
-        },
-        {
-          "rule_id": "8.5.0",
-          "outcome": "APPLIED"
+          "outcome": "MISMATCH - invoice lacks corresponding verifiable weight information"
         }
       ],
-      "motivation": "Certifikatets kvantitetsfält anger \"399,2 Gross KG\", men den separata fakturafilen innehåller ingen explicit totalvikt eller gross weight som kan jämföras med detta värde. Certifikatet innehåller också \"CASES 13\" i varubeskrivningen, men den verifieringen kan inte bäras av 4.4.3.2 här eftersom den generella fakturareferensen i samma text inte är fullt verifierad enligt 4.3.5 på grund av datumavvikelsen. Den inbäddade cargo specification i certifikatfilen får inte användas som oberoende verifieringsunderlag. Avsaknad av jämförbar vikt i den separata fakturan leder därför till MANUAL_REVIEW, inte MISMATCH."
+      "motivation": "Certifikatet anger kvantiteten som '399,2 Gross KG'. Den separata fakturafilen innehåller radkvantiteter och artikeluppgifter men ingen uttrycklig total gross weight eller total weight som motsvarar 399,2 KG. Inbäddad cargospec i certifikatfilen får inte användas som verifieringsunderlag, och försändelsekvantiteten 'CASES 13' i box 6 kan inte rädda matchningen här eftersom den generella fakturareferensen i box 6 inte är verifierbar enligt 4.3.5 när fakturadatumet är fel. Därför kan kvantiteten inte verifieras mot fakturan."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.93,
+      "confidence": 0.94,
       "certificate_value": "CN MX SE DE FR CA HU CZ US SK PL GB JP MA IT MK ES NO NL KR",
-      "invoice_value": "Origin column across invoice lines: CN *, MX *, SE, DE, FR *, CA *, HU, CZ, US *, SK, PL, GB *, JP *, MA *, IT *, MK *, ES, NO *, NL *, KR *",
+      "invoice_value": "Origin column across invoice pages 1-5: CN *, MX *, SE, DE, FR *, CA *, HU, CZ, US *, SK, PL, GB *, JP *, MA *, IT *, MK *, ES, NO *, NL *, KR *",
       "rules_applied": [
         {
-          "rule_id": "4.5.3",
-          "outcome": "MATCH"
+          "rule_id": "4.5.1",
+          "outcome": "matched - explicit origin field/column found in invoice"
         },
         {
           "rule_id": "4.5.4",
-          "outcome": "MATCH"
+          "outcome": "matched - ISO country codes compared directly"
         },
         {
           "rule_id": "4.5.4.1",
-          "outcome": "MATCH"
+          "outcome": "matched - simple asterisk suffixes on invoice origin codes disregarded where base country code matches"
+        },
+        {
+          "rule_id": "4.5.6",
+          "outcome": "passed - under general goods description, invoice origins are fully covered by certificate origin list"
         },
         {
           "rule_id": "4.5.5",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Samtliga ursprungsländer som anges i certifikatet kan identifieras uttryckligen i fakturans origin-kolumn på radnivå. Flera fakturarader använder landskod med enkel asterisk, t.ex. \"CN *\", \"FR *\" och \"NO *\"; enligt regeln för enkel asterisk ändrar detta inte landskoden när koden i sig matchar certifikatet. Ingen certifikatangiven landskod saknas i fakturan."
+      "motivation": "Certifikatet anger en lista med ursprungsländer som ISO-koder. Fakturan har en explicit origin-kolumn på artikelraderna, och varje kod i certifikatet kan identifieras där. De enkla asteriskerna i fakturan (t.ex. 'CN *', 'MX *', 'GB *') ändrar inte landskoden när baskoden exakt matchar certifikatet. Något extra ursprungsland i fakturan utanför certifikatets lista har inte identifierats."
     }
   },
   "overall_assessment": {
     "comparison_result": "NOT_IDENTICAL",
     "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
     "auto_approval_eligible": false,
-    "confidence": 0.96,
+    "confidence": 0.97,
     "critical_failures": [
-      "Varubeskrivningen verifieras via generell fakturareferens, men certifikatet anger faktura 2602763 daterad 20260223 medan den separata fakturan 2602763 är daterad 20260219."
+      "Varubeskrivningen använder generell fakturahänvisning men certifikatet anger fakturadatum 20260223 medan den bifogade fakturan 2602763 är daterad 20260219.",
+      "Kvantiteten 399,2 Gross KG kan inte verifieras i den separata fakturafilen; embedded cargospec i certifikatfilen får inte användas som verifieringsunderlag."
     ],
-    "manual_review_triggers": [
-      "Kvantitet/vikt kan inte verifieras fullt ut mot den separata fakturafilen eftersom explicit gross weight saknas där."
-    ],
-    "decision_summary": "Dokumentparet är inte identiskt. Consignor, consignee och ursprung kan verifieras, men varubeskrivningskontrollen ger MISMATCH eftersom certifikatets refererade fakturadatum inte överensstämmer med fakturans datum. Kvantiteten kräver dessutom manuell granskning eftersom viktuppgiften inte återfinns i den separata fakturan.",
-    "human_explanation": "Certifikatet hänvisar till faktura 2602763 daterad 20260223, men den bifogade fakturan 2602763 är daterad 20260219. Därför stämmer inte varubeskrivningsreferensen mellan dokumenten. Dessutom går viktuppgiften 399,2 Gross KG inte att verifiera i den separata fakturan och måste granskas manuellt."
+    "manual_review_triggers": [],
+    "decision_summary": "Dokumentparet är korrekt parat via fakturanummer 2602763 och både consignor, consignee samt ursprungsländer kan verifieras mot den separata fakturafilen. Däremot faller varubeskrivningen på obligatoriskt formkrav eftersom certifikatets fakturadatum i den generella fakturahänvisningen inte överensstämmer med fakturans datum. Kvantiteten 399,2 Gross KG kan inte heller verifieras i den separata fakturafilen.",
+    "human_explanation": "Certifikatet hänvisar till faktura 2602763 daterad 2026-02-23, men den bifogade fakturan 2602763 är daterad 2026-02-19. Dessutom kan vikten 399,2 Gross KG inte återfinnas i den separata fakturafilen. Avsändare, mottagare och ursprungsländer stämmer, men dokumenten är ändå inte identiska."
   },
   "_meta": {
-    "tested_at": "2026-04-11T08:05:42.164253+00:00",
-    "prompt_hash": "de0d620a2b38",
+    "tested_at": "2026-04-24T09:51:07.297680+00:00",
+    "prompt_hash": "10954622b12c",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P047_MISMATCH",

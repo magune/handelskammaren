@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-04-02T00:00:00Z",
+    "verification_timestamp": "2026-04-24T00:00:00Z",
     "document_pair_id": null,
     "certificate_issue_date": "2023-03-07",
     "source_documents_received": 2
@@ -33,12 +33,12 @@
     "eu_origin_normalization_active": false,
     "activated_rules": [
       {
-        "rule_id": "8.5.2.1",
-        "rule_name": "Certifikatet refererar ett helt annat fakturanummer än fakturafilen"
+        "rule_id": "8.5.0",
+        "rule_name": "Standardregel för filbaserad dokumentparning"
       },
       {
         "rule_id": "8.6",
-        "rule_name": "Parningsvalidering misslyckad"
+        "rule_name": "Obligatorisk parningsvalidering"
       }
     ]
   },
@@ -46,100 +46,116 @@
     "consignor": {
       "applicable": true,
       "status": "MISMATCH",
-      "confidence": 0.99,
-      "certificate_value": "Korab International AB, Mårten Krakowgatan 2, SE411 04, GÖTEBORG, Sweden",
-      "invoice_value": "KorCo AB, Mårten Krakowgatan 2, 411 04 Göteborg, Sweden",
+      "confidence": 0.98,
+      "certificate_value": "Korab International AB\nMårten Krakowgatan 2\nSE411 04, GÖTEBORG\nSweden",
+      "invoice_value": "KorCo AB\nMårten Krakowgatan 2\n411 04 Göteborg, Sweden",
       "rules_applied": [
         {
           "rule_id": "4.1.0",
-          "outcome": "Consignor-namnet från certifikatet kunde inte identifieras uttryckligen någonstans i fakturan"
+          "outcome": "consignor_name_not_found_anywhere_in_invoice"
         },
         {
           "rule_id": "4.1.3.1",
-          "outcome": "Olika juridiska företagsnamn"
+          "outcome": "different_legal_entity_name"
+        },
+        {
+          "rule_id": "4.1.3.4.1",
+          "outcome": "rejected_shared_address_without_name_match"
         },
         {
           "rule_id": "4.1.5",
-          "outcome": "MISMATCH"
+          "outcome": "mismatch"
         }
       ],
-      "motivation": "Certifikatet anger consignor som \"Korab International AB\" medan fakturan är utställd av \"KorCo AB\". Trots gemensam adress i Göteborg är företagsnamnen olika juridiska namn och certifikatets consignor kan inte identifieras uttryckligen i fakturan. Landet Sverige är förenligt, men namnkravet för samma juridiska part är inte uppfyllt."
+      "motivation": "Certifikatet anger avsändaren som \"Korab International AB\" i Sverige. Fakturan anger utställaren som \"KorCo AB\" i Sverige, och en teckensträngssökning i hela fakturatexten visar inte att \"Korab International AB\" förekommer någonstans. Delad adress räcker inte när certifikatets bolagsnamn inte kan identifieras i fakturan; därför är avsändaren inte verifierad."
     },
     "consignee": {
       "applicable": true,
       "status": "MISMATCH",
-      "confidence": 1,
-      "certificate_value": "Jamana Printers Limited, Plot No. 9 Nyerere Road, Pugu Road, P.O Box 5584, Dar es Salaam, Tanzania",
-      "invoice_value": "SOLD TO: Graftek Matbaa Ve Ambalaj San.Tic.Ltd.Sti., Akçaburgaz Mah. 3437 Sok No:28/2, Esenyurt / Istanbul, Turkey",
+      "confidence": 0.99,
+      "certificate_value": "Jamana Printers Limited\nPlot No. 9 Nyerere Road, Pugu Road\nP.O Box 5584\nDar es Salaam\nTanzania",
+      "invoice_value": "SOLD TO: Graftek Matbaa Ve Ambalaj\nSan.Tic.Ltd.Sti.\nAkçaburgaz Mah. 3437 Sok No:28/2\nEsenyurt / Istanbul\nTurkey",
       "rules_applied": [
         {
           "rule_id": "4.2.0.2",
-          "outcome": "Primärt faktureringsfält identifierat som SOLD TO"
+          "outcome": "certificate_consignee_not_found_in_any_invoice_recipient_field"
+        },
+        {
+          "rule_id": "4.2.3",
+          "outcome": "country_differs_tanzania_vs_turkey"
         },
         {
           "rule_id": "4.2.4",
-          "outcome": "MISMATCH"
+          "outcome": "mismatch"
         }
       ],
-      "motivation": "Certifikatet anger consignee \"Jamana Printers Limited\" i Tanzania. Fakturans auktoritativa mottagarfält är \"SOLD TO\" och anger \"Graftek Matbaa Ve Ambalaj San.Tic.Ltd.Sti.\" i Turkiet. Certifikatets consignee återfinns inte i fakturan och både namn och land avviker."
+      "motivation": "Certifikatet anger mottagaren som \"Jamana Printers Limited\" i Tanzania. Fakturans mottagarfält visar \"Graftek Matbaa Ve Ambalaj San.Tic.Ltd.Sti.\" i Turkiet, och \"Jamana Printers Limited\" kan inte identifieras i något mottagarfält i fakturan. Företagsnamn och land överensstämmer därför inte."
     },
     "goods_description": {
       "applicable": true,
       "status": "MISMATCH",
-      "confidence": 0.98,
-      "certificate_value": "756 Reels / Newsprint",
-      "invoice_value": "25 Reels: Fully Bleached Liner Subs 90gsm, RW 840~1100mm",
+      "confidence": 0.99,
+      "certificate_value": "756 Reels\nNewsprint",
+      "invoice_value": "25 Reels: Fully Bleached Liner\nSubs 90gsm, RW 840~1100mm",
       "rules_applied": [
         {
+          "rule_id": "4.3.2",
+          "outcome": "no_article_number_match_path_available"
+        },
+        {
           "rule_id": "4.3.3",
-          "outcome": "Identitetsbärande huvudbeteckning kunde inte identifieras i fakturan"
+          "outcome": "identity_bearing_main_designation_not_found"
+        },
+        {
+          "rule_id": "4.3.5",
+          "outcome": "general_goods_description_with_invoice_reference_not_applicable"
         },
         {
           "rule_id": "4.3.8",
-          "outcome": "MISMATCH"
+          "outcome": "mismatch"
         }
       ],
-      "motivation": "Certifikatet beskriver varan som \"Newsprint\" och 756 reels. Fakturan beskriver varan som \"Fully Bleached Liner Subs 90gsm\" och 25 reels. Den identitetsbärande huvudbeteckningen i certifikatet kan inte återfinnas i fakturan och varubeskrivningarna avser inte samma vara."
+      "motivation": "Certifikatet beskriver varan som \"Newsprint\" och anger \"756 Reels\". Fakturan beskriver varan som \"Fully Bleached Liner\" med \"25 Reels\". Den identitetsbärande huvudbeteckningen \"Newsprint\" kan inte identifieras i fakturan. Regeln om generell varubeskrivning med fakturareferens kan inte användas eftersom fakturareferensen i certifikatet står i remarks, inte i varubeskrivningsfältet, och dessutom avser ett annat fakturanummer."
     },
     "quantity": {
       "applicable": true,
       "status": "MISMATCH",
-      "confidence": 1,
+      "confidence": 0.99,
       "certificate_value": "496.616 MT",
-      "invoice_value": "TOTAL NET WEIGHT: 25.356 MT; TOTAL GROSS WEIGHT: 25,356 KG",
+      "invoice_value": "TOTAL NET WEIGHT: 25.356 MT\nTOTAL GROSS WEIGHT: 25,356 KG",
       "rules_applied": [
         {
-          "rule_id": "4.4.2.1",
-          "outcome": "Box 7-värdet är verifieringsgrundande"
+          "rule_id": "4.4.2.2",
+          "outcome": "weight_category_missing_in_certificate"
         },
         {
-          "rule_id": "4.4.3",
-          "outcome": "Certifikatets numeriska värde kan inte identifieras i fakturan"
+          "rule_id": "4.4.4",
+          "outcome": "invoice_values_do_not_match_certificate_value"
         },
         {
           "rule_id": "4.4.6",
-          "outcome": "MISMATCH"
+          "outcome": "mismatch"
         }
       ],
-      "motivation": "Certifikatets kvantitetsfält anger 496.616 MT. Fakturan anger total net weight 25.356 MT och total gross weight 25,356 KG, vilket motsvarar cirka 25.356 MT och inte 496.616 MT. Det finns därför en uttrycklig numerisk avvikelse."
+      "motivation": "Certifikatets box 7 anger vikten \"496.616 MT\" men saknar uttrycklig viktkategori såsom GW eller NW, vilket är ett obligatoriskt formkrav när kvantitet anges i viktenhet. Därutöver visar fakturan \"25.356 MT\" netto och \"25,356 KG\" brutto, vilket inte överensstämmer med certifikatets värde 496.616 MT. Kontrollpunkten ger därför MISMATCH."
     },
     "origin": {
       "applicable": true,
       "status": "MISMATCH",
-      "confidence": 1,
+      "confidence": 1.0,
       "certificate_value": "Norway",
       "invoice_value": "COUNTRY OF ORIGIN: Sweden",
       "rules_applied": [
         {
           "rule_id": "4.5.1",
-          "outcome": "Explicit origin-fält identifierat i fakturan"
+          "outcome": "explicit_origin_found_in_invoice"
         },
         {
           "rule_id": "4.5.5",
-          "outcome": "MISMATCH"
+          "outcome": "explicit_origin_contradiction"
         }
       ],
-      "motivation": "Certifikatet anger ursprungsland \"Norway\". Fakturan anger uttryckligen \"COUNTRY OF ORIGIN: Sweden\". Ursprungslandet i certifikatet kan därför inte verifieras mot fakturan."
+      "motivation": "Certifikatet anger ursprungsland \"Norway\". Fakturan anger uttryckligen \"COUNTRY OF ORIGIN: Sweden\". Ursprungslandet i certifikatet kan därför inte verifieras mot fakturan och uppgifterna motsäger varandra direkt."
     }
   },
   "overall_assessment": {
@@ -148,18 +164,20 @@
     "auto_approval_eligible": false,
     "confidence": 0.99,
     "critical_failures": [
-      "Certifikatet refererar Invoice no: 51572 medan fakturan anger INVOICE NO: 51843.",
-      "Certifikatets consignor Korab International AB kan inte identifieras som samma juridiska part som fakturautställaren KorCo AB.",
-      "Certifikatets consignee Jamana Printers Limited, Tanzania, återfinns inte i fakturan som istället är ställd till Graftek Matbaa Ve Ambalaj, Turkey.",
-      "Varubeskrivning, kvantitet och ursprungsland motsäger fakturan."
+      "Ogiltig dokumentparning enligt sanity check: certifikatets fakturanummer 51572 återfinns inte i fakturafilen, och varken consignor eller consignee från certifikatet kan identifieras i fakturan.",
+      "Consignor mismatch: Korab International AB kan inte identifieras i fakturan som anger KorCo AB.",
+      "Consignee mismatch: Jamana Printers Limited/Tanzania återfinns inte i fakturan som anger Graftek Matbaa Ve Ambalaj/Turkey.",
+      "Goods mismatch: Newsprint i certifikatet motsvaras inte av Fully Bleached Liner i fakturan.",
+      "Quantity mismatch: certifikatet anger 496.616 MT utan GW/NW och fakturan visar 25.356 MT / 25,356 KG.",
+      "Origin mismatch: certifikatet anger Norway medan fakturan anger Sweden."
     ],
     "manual_review_triggers": [],
-    "decision_summary": "Dokumentparet är inte identiskt. Certifikatet hänvisar till ett annat fakturanummer än den bifogade fakturan, och inga av de tre parningskriterierna i parningsvalideringen uppfylls. Därutöver avviker consignor, consignee, varubeskrivning, kvantitet och ursprungsland uttryckligen mellan dokumenten.",
-    "human_explanation": "Certifikatet hänvisar till faktura 51572, men den bifogade fakturan är nummer 51843. Dessutom skiljer sig både avsändare, mottagare, varubeskrivning, mängd och ursprungsland mellan dokumenten. Dokumentparet kan därför inte godkännas."
+    "decision_summary": "Dokumentparet är inte identiskt. Flera grunduppgifter motsäger fakturan: fakturanumret stämmer inte, consignor och consignee kan inte identifieras, varubeskrivning och kvantitet avviker, och ursprungslandet är olika.",
+    "human_explanation": "Dokumenten stämmer inte överens. Certifikatet anger Korab International AB, Jamana Printers Limited, varan Newsprint, 496.616 MT och ursprung Norge, medan fakturan visar KorCo AB, Graftek Matbaa Ve Ambalaj, varan Fully Bleached Liner, 25.356 MT/25,356 KG och ursprung Sverige. Ärendet kräver manuell handläggning."
   },
   "_meta": {
-    "tested_at": "2026-04-02T11:22:43.067361+00:00",
-    "prompt_hash": "f81eb9b0d2ea",
+    "tested_at": "2026-04-24T09:14:16.728958+00:00",
+    "prompt_hash": "10954622b12c",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P010_MISMATCH",

@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-04-02T00:00:00Z",
+    "verification_timestamp": "2026-04-24T00:00:00Z",
     "document_pair_id": null,
     "certificate_issue_date": "2023-11-15",
     "source_documents_received": 2
@@ -20,7 +20,7 @@
     "document_b": {
       "label": "Document B",
       "assumed_role": "invoice",
-      "document_type": "Invoice"
+      "document_type": "Commercial Invoice"
     }
   },
   "rule_activation": {
@@ -33,24 +33,16 @@
     "eu_origin_normalization_active": true,
     "activated_rules": [
       {
-        "rule_id": "8",
-        "rule_name": "Dokumentklassificering: Document A klassificerad som certifikat och Document B som faktura"
-      },
-      {
-        "rule_id": "8.6",
-        "rule_name": "Parningsvalidering passerad via consignor- och consignee-identifiering i fakturan"
-      },
-      {
         "rule_id": "4.1.0",
-        "rule_name": "Consignor identifierad uttryckligen någonstans i fakturan"
+        "rule_name": "Consignor identified anywhere in invoice document"
       },
       {
         "rule_id": "4.2.0.2",
-        "rule_name": "Prioritetsordning för consignee-identifiering tillämpad"
+        "rule_name": "Consignee may be identified in any recipient field"
       },
       {
         "rule_id": "4.5.4.2",
-        "rule_name": "EU-medlemsland normalisering för ursprung"
+        "rule_name": "EU and specific EU member state are equivalent for origin verification"
       }
     ]
   },
@@ -58,127 +50,119 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.96,
+      "confidence": 0.98,
       "certificate_value": "Elmo Sweden AB\nKyrkogatan 18\n51250, Svenljunga",
-      "invoice_value": "POSTADRESS/POSTAL ADRESS:\nElmo Sweden AB\nSE-512 81 SVENLJUNGA\nSWEDEN",
+      "invoice_value": "Elmo Sweden AB\nSE-512 81 SVENLJUNGA\nSWEDEN",
       "rules_applied": [
         {
           "rule_id": "4.1.0",
-          "outcome": "MATCH"
+          "outcome": "applied_match"
+        },
+        {
+          "rule_id": "4.1.2",
+          "outcome": "name_and_country_verified"
         },
         {
           "rule_id": "4.1.2.1",
-          "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.1.5",
-          "outcome": "MATCH"
+          "outcome": "country_verified_from_address_and_company_block"
         }
       ],
-      "motivation": "Certifikatets consignor 'Elmo Sweden AB' kan identifieras uttryckligen i fakturans text på sida 1 i postadressblocket. Landet verifieras som Sweden via adressuppgiften 'SWEDEN' och stöds även av VAT-prefix 'SE' i fakturan. Skillnad i gatuadress/postnummer medför inte avvikelse när företagsnamn och land är verifierade."
+      "motivation": "Certifikatets consignor är \"Elmo Sweden AB\" i Sverige. Samma företagsnamn förekommer uttryckligen i fakturans företagsblock/footer som \"Elmo Sweden AB\" med land \"SWEDEN\". Företagsnamn och land kan därför verifieras entydigt mot fakturan."
     },
     "consignee": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.9,
+      "confidence": 0.97,
       "certificate_value": "Al Muhalhel General Trading\n& Contracting Co\nAl Ardhiya Ind. Area. Block: 1\nBuilding: 81\n15257\nKUWAIT",
-      "invoice_value": "Payer\nAl Muhalhel General Trading & ( 13004017 )\nContractng Co\nP.O.Box 626\nInternational Souk\n15257 - KUWAIT , Kuwait\n\nShip-to\nAl Muhalhel General Trading & ( 18007250 )\nContracting Co\nAl Ardhiya Ind. Area, Block:1\nBuilding: 81\n15257 - KUWAIT , Kuwait",
+      "invoice_value": "Ship-to\nAl Muhalhel General Trading &\nContracting Co\nAl Ardhiya Ind. Area, Block:1\nBuilding: 81\n15257 - KUWAIT , Kuwait",
       "rules_applied": [
         {
           "rule_id": "4.2.0.2",
-          "outcome": "MATCH"
+          "outcome": "matched_in_ship_to_field"
         },
         {
-          "rule_id": "4.2.1.1",
-          "outcome": "MATCH"
+          "rule_id": "4.2.2",
+          "outcome": "same_legal_party_identified"
         },
         {
-          "rule_id": "4.2.4",
-          "outcome": "MATCH"
+          "rule_id": "4.2.3",
+          "outcome": "country_match"
         }
       ],
-      "motivation": "Fakturan innehåller både ett primärt faktureringsfält ('Payer') och ett 'Ship-to'-fält för samma kommersiella part i Kuwait. 'Ship-to'-fältet återger certifikatets mottagarnamn och adress i sak med exakt företagsnamn och samma adressblock 'Al Ardhiya Ind. Area, Block:1, Building:81, 15257, Kuwait'; 'Payer'-fältet visar samma part med en mindre OCR-/stavningsvariant 'Contractng'. Ingen annan juridisk mottagare anges i fakturan, och landet Kuwait överensstämmer."
+      "motivation": "Certifikatets mottagare kan identifieras i fakturans Ship-to-fält. Företagsnamnet \"Al Muhalhel General Trading & Contracting Co\" och landet Kuwait framgår i båda dokumenten. Mindre skiljeteckens- och radbrytningsskillnader är tillåten normalisering."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.99,
-      "certificate_value": "Elmobaltique 97001 Basket Weave I",
+      "confidence": 0.96,
+      "certificate_value": "5 Pkgs\nElmobaltique 97001 Basket Weave I",
       "invoice_value": "ELMOBALTIQUE 97001\nBASKET WEAVE I",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "Prioritet 2 använd"
+          "outcome": "no_separate_article_number_control_used"
         },
         {
           "rule_id": "4.3.3",
-          "outcome": "MATCH"
+          "outcome": "controlled_text_match"
         },
         {
-          "rule_id": "4.3.8",
-          "outcome": "MATCH"
+          "rule_id": "4.3.8.1",
+          "outcome": "packaging_text_not_treated_as_separate_goods"
         }
       ],
-      "motivation": "Certifikatets varubeskrivning 'Elmobaltique 97001 Basket Weave I' återfinns explicit i fakturans produktrad som 'ELMOBALTIQUE 97001 BASKET WEAVE I'. Matchningen är exakt efter normalisering av versaler/gemener och radbrytning."
+      "motivation": "Den identitetsbärande huvudbeteckningen i certifikatet är \"Elmobaltique 97001 Basket Weave I\". Samma produktbeteckning återfinns i fakturans varurad som \"ELMOBALTIQUE 97001 BASKET WEAVE I\" efter normalisering av versaler och radbrytningar. Texten \"5 Pkgs\" är förpackningsuppgift och inte en separat vara."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.99,
       "certificate_value": "288,610 M2",
-      "invoice_value": "Q-ty 288,610    Sales UoM M2",
+      "invoice_value": "288,610 M2",
       "rules_applied": [
         {
-          "rule_id": "4.4.1",
-          "outcome": "MATCH"
+          "rule_id": "4.4.2",
+          "outcome": "numeric_value_and_unit_present"
         },
         {
           "rule_id": "4.4.3",
-          "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.4.6",
-          "outcome": "MATCH"
+          "outcome": "direct_presence_match"
         }
       ],
-      "motivation": "Certifikatets kvantitet '288,610 M2' kan identifieras direkt i fakturans kvantitetskolumn för motsvarande vara som '288,610' med enheten 'M2'. Ingen beräkning eller undantagsregel behövdes."
+      "motivation": "Certifikatets kvantitetsfält anger uttryckligen \"288,610 M2\". Samma numeriska värde och enhet återfinns i fakturans kvantitetskolumn för den matchande varuraden. Ingen beräkning eller undantagsregel behövs."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.91,
+      "confidence": 0.94,
       "certificate_value": "EUROPEAN UNION",
       "invoice_value": "Swedish Origin",
       "rules_applied": [
         {
           "rule_id": "4.5.1",
-          "outcome": "MATCH"
+          "outcome": "explicit_origin_text_found"
         },
         {
           "rule_id": "4.5.4.2",
-          "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.5.5",
-          "outcome": "MATCH"
+          "outcome": "eu_member_state_equivalent_to_eu"
         }
       ],
-      "motivation": "Certifikatet anger ursprung 'EUROPEAN UNION'. Fakturan anger uttryckligen 'Swedish Origin', vilket är ett explicit origin-uttalande. Sverige är en EU-medlemsstat, därför är ursprunget verifierat genom EU-medlemslandsnormalisering."
+      "motivation": "Certifikatet anger ursprung \"EUROPEAN UNION\". Fakturan innehåller den uttryckliga ursprungsangivelsen \"Swedish Origin\". Sverige är en EU-medlemsstat, vilket gör ursprungsuppgiften verifierad enligt EU-medlemslandsnormaliseringen."
     }
   },
   "overall_assessment": {
     "comparison_result": "IDENTICAL",
     "workflow_recommendation": "AUTO_APPROVAL_ELIGIBLE",
     "auto_approval_eligible": true,
-    "confidence": 0.95,
+    "confidence": 0.97,
     "critical_failures": [],
     "manual_review_triggers": [],
-    "decision_summary": "Samtliga tillämpliga kontrollpunkter kan verifieras mot fakturan. Consignor, consignee, varubeskrivning, kvantitet och ursprungsland är identifierbara enligt regelverket, och inga motsägelser har konstaterats.",
-    "human_explanation": "Alla relevanta uppgifter i ursprungscertifikatet kan verifieras mot fakturan. Avsändare, mottagare, varubeskrivning och mängd stämmer, och ursprunget EU bekräftas av uppgiften 'Swedish Origin' i fakturan. Dokumentparet kan därför godkännas automatiskt."
+    "decision_summary": "Samtliga fem tillämpliga kontrollpunkter kan verifieras mot fakturan. LC-undantaget är inte aktivt. Avsändare, mottagare, varubeskrivning, kvantitet och ursprungsland matchar enligt tillåtna regler och normaliseringar.",
+    "human_explanation": "Alla relevanta uppgifter i certifikatet kan återfinnas i fakturan. Avsändare, mottagare, varubeskrivning, mängd och ursprung stämmer överens. Dokumentparet kan därför godkännas automatiskt."
   },
   "_meta": {
-    "tested_at": "2026-04-02T11:22:43.074375+00:00",
-    "prompt_hash": "f81eb9b0d2ea",
+    "tested_at": "2026-04-24T09:14:16.736953+00:00",
+    "prompt_hash": "10954622b12c",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P0125_MATCH",

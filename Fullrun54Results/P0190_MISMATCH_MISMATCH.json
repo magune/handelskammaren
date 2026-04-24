@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-04-11T00:00:00Z",
+    "verification_timestamp": "2026-04-24T00:00:00Z",
     "document_pair_id": null,
     "certificate_issue_date": "2025-03-13",
     "source_documents_received": 2
@@ -34,27 +34,11 @@
     "activated_rules": [
       {
         "rule_id": "4.1.0",
-        "rule_name": "Consignor may be verified if the company name appears anywhere in the invoice documents"
-      },
-      {
-        "rule_id": "4.2.0.2",
-        "rule_name": "Consignee must be identifiable in any relevant recipient field in the invoice"
-      },
-      {
-        "rule_id": "4.3.3",
-        "rule_name": "Controlled text match using the identity-bearing goods designation"
-      },
-      {
-        "rule_id": "4.4.2.1",
-        "rule_name": "Quantity in box 7 is the primary quantity to verify"
-      },
-      {
-        "rule_id": "4.4.3.1",
-        "rule_name": "Explicit contradiction in the same quantity type gives MISMATCH"
+        "rule_name": "Koncernstruktur / consignor får verifieras om företagsnamnet uttryckligen förekommer någonstans i fakturan"
       },
       {
         "rule_id": "4.5.4.2.1",
-        "rule_name": "Explicit EU origin statement in invoice covers certificate origin stated as EU plus one EU member state"
+        "rule_name": "Generellt EU-ursprungsuttalande täcker EU + ett specifikt EU-land"
       }
     ]
   },
@@ -62,20 +46,24 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.94,
+      "confidence": 0.91,
       "certificate_value": "Arctic Paper Munkedals AB\nSE-455 81, MUNKEDAL\nSweden",
-      "invoice_value": "Svensk exportör Arctic Paper Munkedals AB SE556000527301,\nPostadresse Arctic Paper Munkedals AB\nSE- 455 81 Munkedal\nSWEDEN",
+      "invoice_value": "Svensk exportör Arctic Paper Munkedals AB SE556000527301\nPostadresse\nArctic Paper Munkedals\nAB\nSE- 455 81 Munkedal\nSWEDEN",
       "rules_applied": [
         {
           "rule_id": "4.1.0",
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.1.4",
+          "rule_id": "4.1.2.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.5",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor 'Arctic Paper Munkedals AB' återfinns uttryckligen i fakturan utanför issuer-fältet, i exportörs-/footertexten, tillsammans med adress i Munkedal och landet SWEDEN. Därmed är samma juridiska part och land identifierbara i fakturan trots att ett norskt säljkontor också anges."
+      "motivation": "Certifikatets consignor är Arctic Paper Munkedals AB i Sweden. I fakturan är huvudfältet för säljarorganisation 'Arctic Paper Norge AS', men certifikatets consignor-namn förekommer uttryckligen i fakturatexten i exportörs-/footerdelen som 'Arctic Paper Munkedals AB' tillsammans med adressen 'SE-455 81 Munkedal' och 'SWEDEN'. Detta uppfyller regeln om koncernstruktur i 4.1.0, och land kan verifieras via den uttryckliga adressen i fakturan enligt 4.1.2.1."
     },
     "consignee": {
       "applicable": true,
@@ -86,22 +74,26 @@
       "rules_applied": [
         {
           "rule_id": "4.2.0.2",
-          "outcome": "MISMATCH"
+          "outcome": "NO_MATCH_IN_ANY_RECEIVER_FIELD"
         },
         {
-          "rule_id": "4.2.3",
+          "rule_id": "4.2.4",
           "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Certifikatets mottagare 'Al Ghurair Printing and Publishing LLC' i Dubai, United Arab Emirates, kan inte identifieras i något av fakturans mottagarfält. Fakturan visar endast Braillo Norway AS och Seafront Logistics AS i Norge, vilket innebär att både företagsnamn och land avviker."
+      "motivation": "Certifikatet anger mottagaren som Al Ghurair Printing and Publishing LLC i Dubai, United Arab Emirates. Fakturans relevanta mottagarfält visar Braillo Norway AS, Seafront Logistics AS och Norge som land; certifikatets consignee kan inte identifieras i något buyer, ship-to, delivery address eller consignee-liknande fält. Detta är en direkt avvikelse enligt 4.2.0.2 och 4.2.4."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.82,
+      "confidence": 0.86,
       "certificate_value": "Order 4612 / TI 91075 / 5301-PO-1015904\nUncoated paper for printing\n1) 138 reels, Amber Graphic 150gsm, 290 mm",
-      "invoice_value": "RULLER 69\n...\nFormat/Rullebredde (mm) 290\ng/m2 150\nKvalitet Amber Graphic",
+      "invoice_value": "RULLER 69\n...\n1 626150 27271,0 69 290 150 Amber Graphic",
       "rules_applied": [
+        {
+          "rule_id": "4.3.1",
+          "outcome": "IDENTIFIED_RELEVANT_INVOICE_ROW"
+        },
         {
           "rule_id": "4.3.3",
           "outcome": "MATCH"
@@ -111,7 +103,7 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Den identitetsbärande produktangivelsen 'Amber Graphic' kan identifieras i fakturans varurad, tillsammans med samma specifikationer 150 g/m2 och 290 mm. Den generella inledningen 'Uncoated paper for printing' motsägs inte av fakturan och den relevanta produktidentiteten kan verifieras utan att använda otillåten semantisk omtolkning."
+      "motivation": "Den identitetsbärande produktbeteckningen 'Amber Graphic' i certifikatet återfinns uttryckligen i fakturans varurad. Samma rad visar också de stödjande specifikationerna 150 g/m2 och 290 mm, vilket är förenligt med certifikatets 'Amber Graphic 150gsm, 290 mm'. Den generiska texten 'Uncoated paper for printing' och förpackningsuppgiften '138 reels' behandlas inte som separat produktidentitet i denna kontrollpunkt."
     },
     "quantity": {
       "applicable": true,
@@ -121,33 +113,37 @@
       "invoice_value": "Brutto vekt\n27271,0",
       "rules_applied": [
         {
-          "rule_id": "4.4.2.1",
-          "outcome": "APPLIED"
+          "rule_id": "4.4.2.2",
+          "outcome": "FORM_REQUIREMENT_MET"
         },
         {
           "rule_id": "4.4.3.1",
-          "outcome": "MISMATCH"
+          "outcome": "EXPLICIT_CONTRADICTION"
         },
         {
-          "rule_id": "4.4.3.2.1",
-          "outcome": "BOX_7_WEIGHT_TAKES_PRECEDENCE"
+          "rule_id": "4.4.6",
+          "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Den verifieringsgrundande kvantiteten finns i certifikatets box 7 och är 'Gross kgs 30334 kgs'. Fakturan anger uttryckligen 'Brutto vekt 27271,0' för samma försändelse. Detta är en direkt motsägelse i samma kvantitetstyp (bruttovikt) och avvikelsen ligger långt över tillåten tolerans, vilket ger MISMATCH."
+      "motivation": "Verifieringsgrundande kvantitet är box 7 i certifikatet: gross weight 30334 kgs. Fakturan anger uttryckligen total bruttovikt som 27271,0, alltså samma kvantitetstyp men ett annat numeriskt värde. Detta är en uttrycklig motsägelse enligt 4.4.3.1 och ska därför klassificeras som MISMATCH; uppgiften '138 reels' i box 6 kan inte användas för att kringgå avvikelsen i box 7."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.9,
+      "confidence": 0.89,
       "certificate_value": "EU, Sweden",
       "invoice_value": "Opprinnelsesland\nEuropean Union",
       "rules_applied": [
         {
           "rule_id": "4.5.4.2.1",
           "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.5.5",
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger ursprung som 'EU, Sweden' och fakturan innehåller ett explicit ursprungsfält med 'European Union'. Detta omfattas av specialregeln för 'EU + ett specifikt EU-land', där ett uttryckligt EU-ursprungsuttalande i fakturan är tillräckligt när inget i fakturan motsäger EU-ursprung."
+      "motivation": "Certifikatet anger ursprung som 'EU, Sweden', dvs. EU-samlingsbegreppet kombinerat med ett specifikt EU-medlemsland. Fakturan innehåller ett explicit origin-fält med 'European Union'. Enligt 4.5.4.2.1 accepteras detta som MATCH när certifikatet anger EU plus ett specifikt EU-land och fakturan uttryckligen anger generellt EU-ursprung utan motstridiga ursprungsuppgifter."
     }
   },
   "overall_assessment": {
@@ -156,16 +152,16 @@
     "auto_approval_eligible": false,
     "confidence": 0.97,
     "critical_failures": [
-      "Certificate consignee 'Al Ghurair Printing and Publishing LLC' was not found in any invoice recipient field.",
-      "Certificate gross weight '30334 kgs' directly conflicts with invoice gross weight '27271,0'."
+      "Consignee i certifikatet kan inte identifieras i något mottagarfält i fakturan.",
+      "Certifikatets box 7 anger gross weight 30334 kgs medan fakturan anger brutto vikt 27271,0."
     ],
     "manual_review_triggers": [],
-    "decision_summary": "Dokumentparet passerar parningsvalideringen via consignor, men minst två tillämpliga kontrollpunkter ger MISMATCH: mottagare och kvantitet. Varubeskrivning och ursprungsland kan verifieras, men helhetsresultatet måste därför vara NOT_IDENTICAL.",
-    "human_explanation": "Certifikatet anger mottagaren som Al Ghurair Printing and Publishing LLC i Förenade Arabemiraten, men fakturan visar endast Braillo Norway AS och Seafront Logistics AS i Norge. Certifikatet anger dessutom bruttovikten 30334 kgs medan fakturan anger 27271,0 i bruttovikt. Därför stämmer dokumenten inte överens och kräver manuell hantering."
+    "decision_summary": "Dokumentparet kunde paras genom att certifikatets consignor återfinns uttryckligen i fakturan. Avsändare, varubeskrivning och ursprungsland kan verifieras, men mottagaren i certifikatet saknas helt i fakturan och box 7-kvantiteten motsägs uttryckligen av fakturans brutto vikt. Minst en tillämplig kontrollpunkt är MISMATCH, därför är totalresultatet NOT_IDENTICAL.",
+    "human_explanation": "Certifikatet anger mottagaren som Al Ghurair Printing and Publishing LLC i Förenade Arabemiraten, men fakturan visar Braillo Norway AS och Seafront Logistics AS i Norge. Certifikatet anger också brutto 30334 kgs medan fakturan anger brutto 27271,0. Avsändare, varubeskrivning och ursprung kan däremot identifieras i fakturan."
   },
   "_meta": {
-    "tested_at": "2026-04-11T08:05:42.140427+00:00",
-    "prompt_hash": "de0d620a2b38",
+    "tested_at": "2026-04-24T09:51:07.276507+00:00",
+    "prompt_hash": "10954622b12c",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P0190_MISMATCH",

@@ -1,0 +1,183 @@
+{
+  "schema_version": "3.0",
+  "metadata": {
+    "verification_timestamp": null,
+    "document_pair_id": null,
+    "certificate_issue_date": "2023-03-23",
+    "source_documents_received": 2
+  },
+  "task": {
+    "task_type": "customs_document_pair_verification",
+    "comparison_mode": "certificate_vs_invoice",
+    "strictness": "conservative"
+  },
+  "documents": {
+    "document_a": {
+      "label": "Document A",
+      "assumed_role": "certificate",
+      "document_type": "Certificate of Origin"
+    },
+    "document_b": {
+      "label": "Document B",
+      "assumed_role": "invoice",
+      "document_type": "Invoice"
+    }
+  },
+  "rule_activation": {
+    "lc_exception_active": false,
+    "lc_number_found": null,
+    "general_goods_description_with_invoice_reference_active": false,
+    "mixed_origins_rule_active": false,
+    "to_order_rule_active": false,
+    "quantity_exception_applied": null,
+    "eu_origin_normalization_active": true,
+    "activated_rules": [
+      {
+        "rule_id": "4.1.0",
+        "rule_name": "Consignor identified anywhere in invoice documentation"
+      },
+      {
+        "rule_id": "4.2.2.1.3",
+        "rule_name": "Certificate consignee name is a strict subset of invoice consignee name"
+      },
+      {
+        "rule_id": "4.4.2.2",
+        "rule_name": "Weight in certificate requires explicit gross/net category"
+      },
+      {
+        "rule_id": "4.5.4.1.1",
+        "rule_name": "EU plus named EU country verified by the named country in invoice"
+      }
+    ]
+  },
+  "control_points": {
+    "consignor": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.9,
+      "certificate_value": "Elmo Sweden AB\nKyrkogatan 18\n51250, Svenljunga",
+      "invoice_value": "POSTADRESS/POSTAL ADRESS:\nElmo Sweden AB\nSE-512 81 SVENLJUNGA\nSWEDEN",
+      "rules_applied": [
+        {
+          "rule_id": "4.1.0",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.2.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.5",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatets consignor 'Elmo Sweden AB' kan identifieras uttryckligen i fakturans footer/adressblock. Fakturan visar samma företagsnamn samt Sverige via adress, VAT-prefix 'SE' och IBAN-prefix 'SE'. Därmed är consignor verifierad mot fakturan."
+    },
+    "consignee": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.88,
+      "certificate_value": "Boretius Objekt Nähservice\nSüdring 4\n76473 Iffezheim\nGermany",
+      "invoice_value": "Ship-to\nBoretius Objekt Nähservice ( 11007861 )\nfür Dekorationen GmbH\nSüdring 4\nDE 76473 - Iffezheim , Germany",
+      "rules_applied": [
+        {
+          "rule_id": "4.2.0.2",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.2.2.1.3",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.2.3",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Mottagaren i certifikatet återfinns i fakturans Ship-to-fält. Certifikatets namn 'Boretius Objekt Nähservice' är en strikt delmängd av fakturans 'Boretius Objekt Nähservice für Dekorationen GmbH', och landet Germany överensstämmer. Skillnaden i att fakturan innehåller ytterligare verksamhets-/bolagsordsdelar hindrar inte matchning enligt tillåten regel för consignee."
+    },
+    "goods_description": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.97,
+      "certificate_value": "Elmosoft 97038 I\nUpholstery Leather",
+      "invoice_value": "ELMOSOFT 97038 I\n...\nUpholstery Leather",
+      "rules_applied": [
+        {
+          "rule_id": "4.3.2",
+          "outcome": "No separate article-number-only verification used"
+        },
+        {
+          "rule_id": "4.3.3",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.3.8",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Den identitetsbärande varubeskrivningen i certifikatet är 'Elmosoft 97038 I' och 'Upholstery Leather'. Samma beteckningar återfinns i fakturan med endast skillnader i versaler/layout. Varubeskrivningen kan därför verifieras entydigt."
+    },
+    "quantity": {
+      "applicable": true,
+      "status": "MISMATCH",
+      "confidence": 0.98,
+      "certificate_value": "4 Kgs",
+      "invoice_value": "Weight 4 kgs",
+      "rules_applied": [
+        {
+          "rule_id": "4.4.2.2",
+          "outcome": "MISMATCH"
+        },
+        {
+          "rule_id": "4.4.6",
+          "outcome": "MISMATCH"
+        }
+      ],
+      "motivation": "Certifikatet anger kvantiteten som vikt: '4 Kgs'. När kvantitet anges i viktenhet måste certifikatet också uttryckligen ange viktkategori, dvs. Gross/GW eller Net/NW. Någon sådan viktkategori finns inte i certifikatets box 7 eller som fristående viktuppgift i box 6, vilket ger MISMATCH oavsett att fakturan också innehåller 'Weight 4 kgs'."
+    },
+    "origin": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.91,
+      "certificate_value": "EUROPEAN UNION\nSwedish Origin",
+      "invoice_value": "Swedish Origin",
+      "rules_applied": [
+        {
+          "rule_id": "4.5.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.5.4.1.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.5.5",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Fakturan innehåller en explicit ursprungsangivelse: 'Swedish Origin'. Detta verifierar 'Swedish Origin' direkt och verifierar samtidigt 'European Union' eftersom Sverige är en EU-medlemsstat. Ursprungslandet är därför verifierat."
+    }
+  },
+  "overall_assessment": {
+    "comparison_result": "NOT_IDENTICAL",
+    "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
+    "auto_approval_eligible": false,
+    "confidence": 0.96,
+    "critical_failures": [
+      "Kvantitetsfältet i certifikatet anger vikt utan obligatorisk viktkategori (gross/net): '4 Kgs'."
+    ],
+    "manual_review_triggers": [],
+    "decision_summary": "Consignor, consignee, goods description and origin are verified against the invoice. Quantity fails because the certificate states weight without the required gross/net category, which is a form requirement for weight-based quantity entries.",
+    "human_explanation": "Avsändare, mottagare, varubeskrivning och ursprungsland kan verifieras mot fakturan. Certifikatet anger dock mängden som '4 Kgs' utan att ange om vikten är brutto eller netto. Därför är dokumenten inte identiska och kräver manuell handläggning."
+  },
+  "_meta": {
+    "tested_at": "2026-04-24T09:14:16.736134+00:00",
+    "prompt_hash": "10954622b12c",
+    "model": "gpt-5.4",
+    "tier": 2,
+    "pair": "P0124_MISMATCH",
+    "expected": "NOT_IDENTICAL",
+    "actual": "NOT_IDENTICAL",
+    "status": "PASS"
+  }
+}

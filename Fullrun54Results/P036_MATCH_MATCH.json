@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-04-11T00:00:00Z",
+    "verification_timestamp": "2026-04-24T00:00:00Z",
     "document_pair_id": null,
     "certificate_issue_date": "2026-02-02",
     "source_documents_received": 2
@@ -20,7 +20,7 @@
     "document_b": {
       "label": "Document B",
       "assumed_role": "invoice",
-      "document_type": "Invoice"
+      "document_type": "Commercial Invoice"
     }
   },
   "rule_activation": {
@@ -33,20 +33,12 @@
     "eu_origin_normalization_active": false,
     "activated_rules": [
       {
+        "rule_id": "8.5.0",
+        "rule_name": "Standardregel för dokumentparning med två filer"
+      },
+      {
         "rule_id": "8.6",
-        "rule_name": "Parningsvalidering passerad via fakturanummer, consignor och consignee"
-      },
-      {
-        "rule_id": "4.1.3.6",
-        "rule_name": "Förkortning av juridisk bolagsform"
-      },
-      {
-        "rule_id": "4.3.4",
-        "rule_name": "Tillägg som inte påverkar produktidentitet"
-      },
-      {
-        "rule_id": "4.5.4",
-        "rule_name": "Landnormalisering fullständigt namn vs landskod"
+        "rule_name": "Obligatorisk parningsvalidering"
       }
     ]
   },
@@ -54,38 +46,30 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.96,
+      "confidence": 0.97,
       "certificate_value": "SKF Eurotrade\n415 50, GÖTEBORG\nSweden",
-      "invoice_value": "Issued by:\nSKF Eurotrade AB\n415 50 Goteborg\nSweden\nVAT no: SE556206761001",
+      "invoice_value": "Issued by:\nSKF Eurotrade AB\n415 50 Goteborg\nSweden",
       "rules_applied": [
         {
           "rule_id": "4.1.0",
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.1.2.1",
-          "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.1.3.6",
+          "rule_id": "4.1.4",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor 'SKF Eurotrade' kan identifieras uttryckligen i fakturan som 'SKF Eurotrade AB'. Skillnaden är endast juridisk bolagsform 'AB', vilket är tillåten normalisering. Landet Sverige verifieras direkt i adressblocket och stöds även av VAT-prefix 'SE'."
+      "motivation": "Certifikatet anger consignor som \"SKF Eurotrade\" i Sverige. Fakturan anger utställaren som \"SKF Eurotrade AB\" med adress i Sweden, och consignor-namnet återfinns uttryckligen i fakturan på flera sidor. Skillnaden består endast av juridisk bolagsform/tillägget \"AB\", och landet överensstämmer."
     },
     "consignee": {
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.99,
-      "certificate_value": "EGYPTIAN ENGINEERING CO.\nB4 Piece 23-Industrial City\n7064518 10th of Ramadan city\nEgypt",
-      "invoice_value": "Ship to\nEGYPTIAN ENGINEERING CO.\nB4 Piece 23-Industrial City\n7064518 10th of Ramadan city\nEgypt",
+      "certificate_value": "EGYPTIAN ENGINEERING CO.\nB4 Piece 23-Industrial City\n7064518 10th of Ramadan city\nEgypt\nEgypt",
+      "invoice_value": "Bill to / Sold to / Ship to:\nEGYPTIAN ENGINEERING CO.\nB4 Piece 23-Industrial City\n7064518 10th of Ramadan city\nEgypt",
       "rules_applied": [
         {
           "rule_id": "4.2.0.2",
-          "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.2.3",
           "outcome": "MATCH"
         },
         {
@@ -93,18 +77,18 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Mottagaren i certifikatet återfinns exakt i fakturans mottagarfält ('Ship to', och även 'Bill to'/'Sold to'). Företagsnamn och land Egypten överensstämmer utan behov av fri tolkning."
+      "motivation": "Mottagaren i certifikatet kan identifieras exakt i fakturans mottagarfält. Samma företagsnamn och samma land (Egypt) framgår i Bill to, Sold to och Ship to. Dubbel förekomst av landet i certifikatet är inte en motsägelse."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.92,
-      "certificate_value": "1 package of:\nHOUSING INCL BRG(SE)",
+      "confidence": 0.93,
+      "certificate_value": "1 package of:\nHOUSING INCL BRG(SE)\nGross Weight:\nNet Weight:",
       "invoice_value": "HOUSING INCL BRG",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "MATCH"
+          "outcome": "Prioritet 2 tillämpad"
         },
         {
           "rule_id": "4.3.3",
@@ -115,17 +99,17 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Den identitetsbärande huvudbeteckningen 'HOUSING INCL BRG' kan identifieras direkt i fakturan. Tillägget '(SE)' i certifikatet ändrar inte produktidentiteten och kan behandlas som ett icke-identitetsbärande tillägg/landsbeteckning. Ingen motstridig varubeskrivning förekommer i fakturan."
+      "motivation": "Den identitetsbärande huvudbeteckningen i certifikatet är \"HOUSING INCL BRG\". Samma beteckning finns uttryckligen i fakturan. Tillägget \"(SE)\" i certifikatet är en landsbeteckning och ändrar inte produktidentiteten."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.89,
+      "confidence": 0.98,
       "certificate_value": "131,600 KG\n123,300 KG",
       "invoice_value": "Total Gross Weight 131,600 KG\nTotal Net Weight 123,300 KG",
       "rules_applied": [
         {
-          "rule_id": "4.4.2.1",
+          "rule_id": "4.4.2.2",
           "outcome": "MATCH"
         },
         {
@@ -137,21 +121,17 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet visar två viktvärden i kvantitetsdelen, kopplade i layouten till 'Gross Weight' och 'Net Weight'. Fakturan anger uttryckligen 'Total Gross Weight 131,600 KG' och 'Total Net Weight 123,300 KG'. Båda numeriska värdena och enheten KG överensstämmer exakt, och ingen motsägelse finns."
+      "motivation": "Certifikatets box 7 innehåller två viktvärden, 131,600 KG och 123,300 KG, och box 6 anger fristående viktkategorierna Gross Weight och Net Weight som entydigt kopplas till dessa värden. Fakturan anger exakt samma totaler som \"Total Gross Weight 131,600 KG\" och \"Total Net Weight 123,300 KG\". Ingen motsägelse förekommer."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.97,
-      "certificate_value": "Sweden",
-      "invoice_value": "Country of manufacturing\nSweden\nSE",
+      "confidence": 0.96,
+      "certificate_value": ".Sweden",
+      "invoice_value": "Country of manufacturing\nSweden",
       "rules_applied": [
         {
           "rule_id": "4.5.1",
-          "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.5.4",
           "outcome": "MATCH"
         },
         {
@@ -159,22 +139,22 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets ursprungsland 'Sweden' framgår uttryckligen i fakturan som 'Country of manufacturing Sweden'. Fakturan innehåller även landskoden 'SE' på radnivå, vilket är förenligt med tillåten landnormalisering. Ursprunget kan därför verifieras explicit."
+      "motivation": "Certifikatet anger ursprungsland som Sweden. Fakturan innehåller en dedikerad ursprungs-/tillverkningsangivelse \"Country of manufacturing Sweden\" och radnivåangivelsen \"SE\" för varorna. Ursprungslandet kan därför identifieras uttryckligen i fakturan."
     }
   },
   "overall_assessment": {
     "comparison_result": "IDENTICAL",
     "workflow_recommendation": "AUTO_APPROVAL_ELIGIBLE",
     "auto_approval_eligible": true,
-    "confidence": 0.95,
+    "confidence": 0.97,
     "critical_failures": [],
     "manual_review_triggers": [],
-    "decision_summary": "Dokumentparningen är giltig och stöds av fakturanummer 8500028201, samma consignor och samma consignee. Samtliga tillämpliga kontrollpunkter är MATCH: consignor, consignee, varubeskrivning, kvantitet och ursprungsland. Ingen LC-regel aktiveras och inga blockerande läsbarhetsproblem påverkar verifieringen.",
-    "human_explanation": "Alla kontrollpunkter stämmer mellan certifikatet och fakturan: avsändare, mottagare, varan HOUSING INCL BRG, vikterna 131,600 KG och 123,300 KG samt ursprung Sweden. Dokumentparet kan därför godkännas automatiskt."
+    "decision_summary": "Dokumentrollen kan klassificeras säkert: Document A är ett Certificate of Origin och Document B är en kommersiell faktura. Parningsvalideringen passerar eftersom fakturanummer 8500028201 överensstämmer mellan dokumenten, consignor kan identifieras i fakturan och consignee kan identifieras i fakturans mottagarfält. LC-undantaget är inte tillämpligt eftersom ingen uttrycklig LC-hänvisning med nummer finns i varubeskrivningsfältet. Samtliga tillämpliga kontrollpunkter ger MATCH: consignor, consignee, varubeskrivning, kvantitet och ursprungsland.",
+    "human_explanation": "Alla kontrollpunkter stämmer mellan ursprungscertifikatet och fakturan. Fakturanummer, avsändare, mottagare, varubeskrivning, vikter och ursprungsland kan verifieras i fakturan. Dokumentparet kan därför godkännas automatiskt."
   },
   "_meta": {
-    "tested_at": "2026-04-11T08:05:42.156701+00:00",
-    "prompt_hash": "de0d620a2b38",
+    "tested_at": "2026-04-24T09:51:07.291792+00:00",
+    "prompt_hash": "10954622b12c",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P036_MATCH",

@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-04-02T00:00:00Z",
+    "verification_timestamp": null,
     "document_pair_id": null,
     "certificate_issue_date": "2026-02-03",
     "source_documents_received": 2
@@ -20,7 +20,7 @@
     "document_b": {
       "label": "Document B",
       "assumed_role": "invoice",
-      "document_type": "Invoice"
+      "document_type": "Commercial Invoice"
     }
   },
   "rule_activation": {
@@ -33,28 +33,32 @@
     "eu_origin_normalization_active": false,
     "activated_rules": [
       {
+        "rule_id": "8.5.0",
+        "rule_name": "Filbaserad dokumentparning"
+      },
+      {
+        "rule_id": "8.6",
+        "rule_name": "Obligatorisk parningsvalidering"
+      },
+      {
         "rule_id": "4.1.0",
-        "rule_name": "Consignor identified anywhere in invoice documentation"
+        "rule_name": "Consignor identifierad någonstans i fakturadokumentet"
       },
       {
         "rule_id": "4.2.0.2",
-        "rule_name": "Consignee identified in primary invoice party block"
+        "rule_name": "Consignee får återfinnas i något relevant mottagarfält"
       },
       {
         "rule_id": "4.3.3",
-        "rule_name": "Controlled text match for goods description"
+        "rule_name": "Kontrollerad textmatchning av varubeskrivning"
       },
       {
         "rule_id": "4.4.5.3",
-        "rule_name": "Unit conversion MT/TO to KG"
-      },
-      {
-        "rule_id": "4.4.5.3.1",
-        "rule_name": "Decimal notation normalization for MT/KG conversion"
+        "rule_name": "Enhetsomräkning MT/TO till KG"
       },
       {
         "rule_id": "4.5.1",
-        "rule_name": "Explicit origin identification in invoice"
+        "rule_name": "Explicit ursprungsangivelse i fakturan"
       }
     ]
   },
@@ -64,7 +68,7 @@
       "status": "MATCH",
       "confidence": 0.97,
       "certificate_value": "Calderys Nordic AB\nForshammarsgatan 2\nSE- 662 32, ÅMÅL\nSweden",
-      "invoice_value": "Calderys Nordic AB, Sweden\nAddress: Box 216, SE-263 23 Höganäs\n... VAT No. SE556012980001 ...",
+      "invoice_value": "Calderys Nordic AB, Sweden\nAddress: Box 216, SE-263 23 Höganäs\nVAT No. SE556012980001",
       "rules_applied": [
         {
           "rule_id": "4.1.0",
@@ -79,12 +83,12 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger consignor som \"Calderys Nordic AB ... Sweden\". Fakturan innehåller samma företagsnamn uttryckligen i header/footer-texten och även landsindikatorerna \"Sweden\" samt VAT-prefix \"SE\". Skillnaden i gatuadress (Åmål respektive Höganäs) medför inte avvikelse eftersom företagsnamn och land kan verifieras som samma juridiska part."
+      "motivation": "Certifikatets consignor 'Calderys Nordic AB' återfinns uttryckligen på fakturans sida 1 och 2 i header/footer. Landet Sverige verifieras både explicit ('Calderys Nordic AB, Sweden') och indirekt via VAT-prefix SE och IBAN-prefix SE. Skillnad i gatuadress påverkar inte bedömningen."
     },
     "consignee": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.95,
+      "confidence": 0.96,
       "certificate_value": "CALDERYS INDIA REFRACTORIES LIMITED\nSURVEY NO.77/1 VILLAGE:DAHISAR-MORI\nSHEELPARA-PANVEL ROAD\nDIST.THANE, MAHARASHTRA\nIndia",
       "invoice_value": "Company\nCALDERYS INDIA REFRACTORIES LIMITED\n(FORMERLY ACE CALDERYS LIMITED)\nSURVEY NO.77/1,VILLAGE:DAHISAR-MORI\nSHEELPARA - PANVEL ROAD,\n0 DIST. THANE, MAHRASH\nINDIA",
       "rules_applied": [
@@ -93,22 +97,30 @@
           "outcome": "MATCH"
         },
         {
+          "rule_id": "4.2.1.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.2.3",
+          "outcome": "MATCH"
+        },
+        {
           "rule_id": "4.2.4",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger consignee som \"CALDERYS INDIA REFRACTORIES LIMITED ... India\". Fakturan visar samma mottagarföretag i det primära Company-blocket; tillägget \"(FORMERLY ACE CALDERYS LIMITED)\" är ytterligare information och motsäger inte identiteten. Landet India överensstämmer uttryckligen."
+      "motivation": "Certifikatets consignee återfinns uttryckligen i fakturans 'Company' och 'Delivery address'. Kärnnamnet 'CALDERYS INDIA REFRACTORIES LIMITED' matchar exakt och landet India/INDIA överensstämmer. Tillägget '(FORMERLY ACE CALDERYS LIMITED)' i fakturan är ytterligare information och motsäger inte certifikatet."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.89,
+      "confidence": 0.91,
       "certificate_value": "CALDERYS INDIA\nSvenska Mix 5 A60 0,6",
       "invoice_value": "SVENSKA™ MIX 5 A60 0.6",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "No article number in certificate; moved to text match"
+          "outcome": "NO_ARTICLE_NUMBER_IN_CERTIFICATE"
         },
         {
           "rule_id": "4.3.3",
@@ -119,25 +131,25 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Den identitetsbärande huvudbeteckningen i certifikatet är \"Svenska Mix 5 A60 0,6\". Fakturan innehåller \"SVENSKA™ MIX 5 A60 0.6\" på artikelraden. Efter tillåten normalisering av versaler/gemener, symbolen ™ och decimaltecken kan samma produktbeteckning identifieras; den inledande texten \"CALDERYS INDIA\" i certifikatet behandlas som markering/referens och inte som den identitetsbärande varubeskrivningen."
+      "motivation": "Något verifieringsstyrande artikelnummer anges inte i certifikatets varubeskrivning, därför användes kontrollerad textmatchning. Den identitetsbärande huvudbeteckningen i certifikatet är 'Svenska Mix 5 A60 0,6', vilket kan identifieras i fakturan som 'SVENSKA™ MIX 5 A60 0.6' efter normalisering av versaler/gemener, trivial symbolvariation (™) och punkt/komma-notation. Texten 'CALDERYS INDIA' i box 6 bedöms inte vara den identitetsbärande varubeteckningen."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.87,
+      "confidence": 0.88,
       "certificate_value": "NW 100,800 kg",
       "invoice_value": "Quantity 100,800 TO",
       "rules_applied": [
         {
-          "rule_id": "4.4.1",
-          "outcome": "Weight value identified in invoice goods line"
-        },
-        {
-          "rule_id": "4.4.5.3",
+          "rule_id": "4.4.2.2",
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.4.5.3.1",
+          "rule_id": "4.4.4.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.4.5.3",
           "outcome": "MATCH"
         },
         {
@@ -145,7 +157,7 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger kvantiteten som \"NW 100,800 kg\". Fakturan anger för samma vara \"Quantity 100,800 TO\". Med tillåten enhetsomräkning MT/TO↔KG och decimalnotationsnormalisering tolkas fakturans \"100,800 TO\" som 100.800 metric ton, vilket motsvarar 100,800 kg; ingen motstridig alternativ kvantitet förekommer för varan i fakturan."
+      "motivation": "Certifikatet anger uttryckligen viktkategori och enhet: 'NW 100,800 kg'. Fakturan anger för samma vara '100,800 TO'. I fakturans numeriska format används komma som decimaltecken, så '100,800 TO' avser 100.800 metric ton; enligt 4.4.5.3 får 'TO' behandlas som metric ton när kontexten är entydig. Omräkning 100.800 MT = 100,800 KG, vilket matchar certifikatets kvantitet efter tillåten normalisering av separatorer."
     },
     "origin": {
       "applicable": true,
@@ -163,22 +175,22 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger ursprungsland som \"Sweden\". Fakturan innehåller en explicit ursprungsangivelse \"MADE IN SWEDEN\". Ursprungslandet kan därför identifieras uttryckligen i fakturan utan tolkning."
+      "motivation": "Certifikatet anger ursprungsland 'Sweden'. Fakturan innehåller explicit ursprungsangivelse 'MADE IN SWEDEN', vilket uppfyller kravet på positiv verifiering av ursprungsland."
     }
   },
   "overall_assessment": {
     "comparison_result": "IDENTICAL",
     "workflow_recommendation": "AUTO_APPROVAL_ELIGIBLE",
     "auto_approval_eligible": true,
-    "confidence": 0.93,
+    "confidence": 0.94,
     "critical_failures": [],
     "manual_review_triggers": [],
-    "decision_summary": "All applicable control points are verified as MATCH: consignor, consignee, goods description, quantity and origin can all be identified in the invoice.",
-    "human_explanation": "Alla kontrollpunkter i certifikatet kan verifieras mot den bifogade fakturan. Certifikatet anger Calderys Nordic AB, Calderys India Refractories Limited, varan Svenska Mix 5 A60 0,6, kvantitet NW 100,800 kg och ursprung Sweden, och detta stöds av fakturan. Dokumentparet kan därför godkännas automatiskt."
+    "decision_summary": "Samtliga fem tillämpliga kontrollpunkter kan verifieras mot den bifogade fakturan. Ingen LC-regel är tillämplig. Dokumentparet uppfyller kraven för IDENTICAL och är lämpligt för automatiskt godkännande.",
+    "human_explanation": "Avsändare, mottagare, varubeskrivning, mängd och ursprungsland kan samtliga verifieras mot fakturan. Certifikatet anger Calderys Nordic AB / Sweden, mottagaren Calderys India Refractories Limited / India, varan Svenska Mix 5 A60 0,6, mängden NW 100,800 kg och ursprung Sweden, vilket motsvaras av fakturan inklusive MADE IN SWEDEN och 100,800 TO. Dokumentparet kan därför godkännas automatiskt."
   },
   "_meta": {
-    "tested_at": "2026-04-02T11:22:43.075991+00:00",
-    "prompt_hash": "f81eb9b0d2ea",
+    "tested_at": "2026-04-24T09:14:16.738302+00:00",
+    "prompt_hash": "10954622b12c",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P0128_MATCH",

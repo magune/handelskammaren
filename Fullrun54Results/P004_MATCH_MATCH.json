@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": null,
+    "verification_timestamp": "2026-04-24T00:00:00Z",
     "document_pair_id": null,
     "certificate_issue_date": "2026-02-27",
     "source_documents_received": 2
@@ -20,7 +20,7 @@
     "document_b": {
       "label": "Document B",
       "assumed_role": "invoice",
-      "document_type": "Invoice"
+      "document_type": "Commercial Invoice / Invoice Copy"
     }
   },
   "rule_activation": {
@@ -33,32 +33,8 @@
     "eu_origin_normalization_active": false,
     "activated_rules": [
       {
-        "rule_id": "8.5.0",
-        "rule_name": "Filbaserad dokumentparning"
-      },
-      {
-        "rule_id": "8.6",
-        "rule_name": "Obligatorisk parningsvalidering"
-      },
-      {
-        "rule_id": "4.1.2.1",
-        "rule_name": "Landverifiering via adress/VAT för consignor"
-      },
-      {
-        "rule_id": "4.2.0.2",
-        "rule_name": "Prioritetsordning för consignee-identifiering"
-      },
-      {
-        "rule_id": "4.3.3",
-        "rule_name": "Kontrollerad textmatchning av varubeskrivning"
-      },
-      {
-        "rule_id": "4.4.1",
-        "rule_name": "Förekomstkontroll av kvantitet"
-      },
-      {
-        "rule_id": "4.5.1",
-        "rule_name": "Explicit ursprungsfält i fakturan"
+        "rule_id": "4.1.0",
+        "rule_name": "Consignor explicitly found in invoice documents"
       }
     ]
   },
@@ -83,12 +59,12 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger consignor som \"Elof Hansson Trade AB\" i Sverige. Fakturan är utställd av \"Elof Hansson Trade AB\" och innehåller samma adress i Göteborg samt svensk VAT-kod \"SE556088563301\", vilket verifierar landet Sverige. Samma juridiska part kan därför identifieras uttryckligen i fakturan."
+      "motivation": "Certifikatets consignor 'Elof Hansson Trade AB' återfinns uttryckligen i fakturans sidhuvud/footer. Landet Sverige verifieras genom avsändaradressen 'Göteborg, Sweden' samt VAT-prefix 'SE'. Samma juridiska part kan identifieras utan otillåten tolkning."
     },
     "consignee": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.99,
+      "confidence": 0.98,
       "certificate_value": "Wattens (Vietnam) Co., Ltd.\nNo. 8, Dan Chu Street, Singapore\nIndustrial Park II, Binh Duong ward\nHo Chi Minh City Vietnam\nViet Nam",
       "invoice_value": "BUYER\nWattens (Vietnam) Co., Ltd.\nNo. 8, Dan Chu Street, Singapore Industrial\nPark II, Binh Duong ward\nHo Chi Minh City\nVietnam",
       "rules_applied": [
@@ -105,18 +81,18 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignee \"Wattens (Vietnam) Co., Ltd.\" återfinns uttryckligen i fakturans primära faktureringsfält \"BUYER\". Landet är Vietnam/Viet Nam i båda dokumenten. Mindre radbrytningsskillnader i adressen påverkar inte bedömningen."
+      "motivation": "Certifikatets mottagare återfinns i fakturans mottagarfält 'BUYER'. Företagsnamnet matchar direkt och landet Vietnam/Viet Nam överensstämmer efter tillåten normalisering."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.97,
-      "certificate_value": "NBSK Sodra Blue Z\nBleached softwood kraft pulp\nContract No. 00000031_26",
-      "invoice_value": "NBSK Sodra Blue Z\nHS Code: 47032100, FSC CONTROLLED WOOD SAI-CW-010913, 100 % PEFC CERTIFIED ICSE-PEFC–COC-1701435\nBleached softwood kraft pulp\nContract No. 00000031_26",
+      "confidence": 0.95,
+      "certificate_value": "4 x 40' containers\n416 bales\nGross weight: 105,300 tons\nNet/Airdry weight: 104,000 admt\nNBSK Sodra Blue Z\nBleached softwood kraft pulp\nContract No. 00000031_26",
+      "invoice_value": "Description\nNBSK Sodra Blue Z\nHS Code: 47032100, FSC CONTROLLED WOOD SAI-CW-010913, 100 % PEFC CERTIFIED ICSE-PEFC–COC-1701435\nBleached softwood kraft pulp\nContract No. 00000031_26\nB/L No. MEDUUX790030\n4 x 40' containers\n416 bales\nGross weight: 105,300 tons\nNet/Airdry weight: 104,000 admt",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "ARTICLE_NUMBER_NOT_USED"
+          "outcome": "NOT_APPLICABLE"
         },
         {
           "rule_id": "4.3.3",
@@ -131,21 +107,21 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Den identitetsbärande huvudbeteckningen \"NBSK Sodra Blue Z\" och beskrivningen \"Bleached softwood kraft pulp\" förekommer uttryckligen i både certifikat och faktura. Fakturan innehåller ytterligare specifikationer som HS-kod och certifieringsuppgifter, men dessa motsäger inte certifikatets uppgift. Varubeskrivningen kan därför verifieras utan semantisk tolkning."
+      "motivation": "Certifikatet innehåller ingen separat artikelnummeridentifierare som styr Prioritet 1. Den identitetsbärande huvudbeteckningen 'NBSK Sodra Blue Z' och den kompletterande varubeskrivningen 'Bleached softwood kraft pulp' återfinns explicit i fakturan. Ytterligare identiska stödtexter som kontraktsnummer, antal balar och viktuppgifter stärker matchningen."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.96,
+      "confidence": 0.9,
       "certificate_value": "104,000 admt",
-      "invoice_value": "Net/Airdry weight: 104,000 admt",
+      "invoice_value": "Net/Airdry weight: 104,000 admt\nTotal qty\n104 ADMT",
       "rules_applied": [
         {
-          "rule_id": "4.4.2.1",
-          "outcome": "BOX_7_SELECTED"
+          "rule_id": "4.4.2.2",
+          "outcome": "MATCH"
         },
         {
-          "rule_id": "4.4.1",
+          "rule_id": "4.4.3",
           "outcome": "MATCH"
         },
         {
@@ -153,7 +129,7 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets verifieringsgrundande kvantitet i box 7 är \"104,000 admt\". Samma numeriska värde och enhet återfinns uttryckligen i fakturan som \"Net/Airdry weight: 104,000 admt\". Kvantiteten är därför direkt identifierbar i fakturan utan att något undantag behöver tillämpas."
+      "motivation": "Box 7 i certifikatet anger '104,000 admt'. Den nödvändiga viktkategorin stöds av den fristående raden i box 6: 'Net/Airdry weight: 104,000 admt'. Samma exakta viktuppgift återfinns i fakturans varubeskrivning, och fakturan visar dessutom 'Total qty 104 ADMT'. Kvantiteten kan därför verifieras utan att använda något undantag 3A–3E."
     },
     "origin": {
       "applicable": true,
@@ -171,22 +147,22 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger ursprungsland som \"Sweden\". Fakturan innehåller ett explicit ursprungsfält \"COUNTRY OF ORIGIN\" med värdet \"Sweden\". Ursprungslandet kan därför verifieras uttryckligen i fakturan."
+      "motivation": "Certifikatets ursprungsland 'Sweden' framgår uttryckligen i fakturan i ett dedikerat origin-fält: 'COUNTRY OF ORIGIN Sweden'. Ingen tolkning eller indirekt härledning krävs."
     }
   },
   "overall_assessment": {
     "comparison_result": "IDENTICAL",
     "workflow_recommendation": "AUTO_APPROVAL_ELIGIBLE",
     "auto_approval_eligible": true,
-    "confidence": 0.98,
+    "confidence": 0.97,
     "critical_failures": [],
     "manual_review_triggers": [],
-    "decision_summary": "Dokumentparet kunde paras via certifikatets referens \"SI0071552/CA0050927-3\" och fakturans \"INVOICE NO. SI0071552\". Consignor, consignee, varubeskrivning, kvantitet och ursprungsland kan alla verifieras uttryckligen mot fakturan enligt tillåtna regler. Ingen tillämplig kontrollpunkt gav MISMATCH eller MANUAL_REVIEW, och samtliga MATCH-bedömningar ligger över confidence-golvet för automatiskt godkännande.",
-    "human_explanation": "Alla kontrollerade uppgifter i ursprungscertifikatet kan verifieras mot fakturan. Avsändare, mottagare, varubeskrivning, mängd och ursprungsland stämmer överens. Dokumentparet är därför lämpligt för automatiskt godkännande."
+    "decision_summary": "Samtliga fem tillämpliga kontrollpunkter verifieras som MATCH mot den separata fakturafilen. LC-undantaget är inte tillämpligt. Dokumentparet uppfyller kraven för IDENTICAL och automatiskt godkännande.",
+    "human_explanation": "Alla tillämpliga kontrollpunkter stämmer mellan ursprungscertifikatet och fakturan. Avsändare, mottagare, varubeskrivning, mängd och ursprungsland kan verifieras i fakturan. Dokumentparet kan därför godkännas automatiskt."
   },
   "_meta": {
-    "tested_at": "2026-04-02T11:22:43.060799+00:00",
-    "prompt_hash": "f81eb9b0d2ea",
+    "tested_at": "2026-04-24T09:14:16.716966+00:00",
+    "prompt_hash": "10954622b12c",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P004_MATCH",

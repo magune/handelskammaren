@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": null,
+    "verification_timestamp": "2026-04-24T00:00:00Z",
     "document_pair_id": null,
     "certificate_issue_date": "2024-12-17",
     "source_documents_received": 2
@@ -20,7 +20,7 @@
     "document_b": {
       "label": "Document B",
       "assumed_role": "invoice",
-      "document_type": "Commercial Invoice"
+      "document_type": "Invoice"
     }
   },
   "rule_activation": {
@@ -34,15 +34,31 @@
     "activated_rules": [
       {
         "rule_id": "8.5.0",
-        "rule_name": "Standardregel för två filer: certifikat från fil 1 och faktura från fil 2"
+        "rule_name": "Filbaserad dokumentparning – certifikat från certifikatfil och faktura från separat fakturafil"
       },
       {
         "rule_id": "8.6",
-        "rule_name": "Parningsvalidering passerad via consignor och consignee"
+        "rule_name": "Obligatorisk parningsvalidering"
+      },
+      {
+        "rule_id": "4.1.2.1",
+        "rule_name": "Landverifiering via indirekta identifierare och adressblock för consignor"
+      },
+      {
+        "rule_id": "4.2.0.2",
+        "rule_name": "Consignee kan verifieras i valfritt relevant mottagarfält"
+      },
+      {
+        "rule_id": "4.3.3",
+        "rule_name": "Kontrollerad textmatchning av identitetsbärande huvudbeteckning"
       },
       {
         "rule_id": "4.4.3.1",
-        "rule_name": "Flera kvantitetsuppgifter i certifikatet"
+        "rule_name": "Flera kvantitetsuppgifter – minst en verifierad och inga motsägelser"
+      },
+      {
+        "rule_id": "4.5.4",
+        "rule_name": "Normalisering av landsnamn och landsbeteckningar"
       }
     ]
   },
@@ -52,26 +68,26 @@
       "status": "MATCH",
       "confidence": 0.99,
       "certificate_value": "Grace Catalyst AB\nIndustrivägen\n44432, Stenungsund\nSweden",
-      "invoice_value": "Grace Catalyst AB\nIndustrivägen\n44432 Stenungsund\nSweden\nVAT-ID no. SE556613550401",
+      "invoice_value": "Grace Catalyst AB\nOrg. Nr.: 556613-5504\nGRACE Catalyst AB\nIndustrivägen\n44432 Stenungsund\nSweden\nVAT-ID no. SE556613550401",
       "rules_applied": [
         {
           "rule_id": "4.1.1",
-          "outcome": "invoice issuer identified as Grace Catalyst AB"
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.1.2",
-          "outcome": "company name and country verified"
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.1.2.1",
-          "outcome": "country also corroborated by VAT prefix SE"
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.1.5",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger consignor som \"Grace Catalyst AB\" i Sverige. Fakturan visar samma företagsnamn i headern med adress \"Industrivägen, 44432 Stenungsund, Sweden\" och VAT-ID med SE-prefix. Företagsnamn och land kan därför verifieras entydigt mot fakturan."
+      "motivation": "Certifikatets consignor 'Grace Catalyst AB' återfinns uttryckligen i fakturans header/issuer-block på fakturans sida 1 och 2. Landet Sverige verifieras explicit i adressblocket och stöds även av VAT-prefixet 'SE'. Samma juridiska part kan därför identifieras utan behov av specialundantag."
     },
     "consignee": {
       "applicable": true,
@@ -82,107 +98,115 @@
       "rules_applied": [
         {
           "rule_id": "4.2.0.2",
-          "outcome": "consignee identified in Ship-To field"
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.2.2",
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.2.3",
-          "outcome": "country matches"
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.2.4",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets mottagare \"Turkmenbashi oil refinery\" i Turkmenistan återfinns uttryckligen i fakturans Ship-To-fält med samma namn, postort och land. Detta uppfyller kravet att mottagaren får verifieras mot något relevant mottagarfält i fakturan."
+      "motivation": "Certifikatets mottagare återfinns exakt i fakturans 'Ship to'-fält. Företagsnamn, ort, postkod och land Turkmenistan överensstämmer. Att fakturan även innehåller andra parter påverkar inte bedömningen eftersom mottagaren kan identifieras i ett relevant mottagarfält."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.95,
+      "confidence": 0.89,
       "certificate_value": "33 drums, 80 kg each, loaded on 11 pallets\nPolypropylene Catalyst, POLYTRAK(R)8522W-T",
-      "invoice_value": "POLYTRAK®8522W-T 80KG\nCountry of Origin: China\n33 drums each of 80 kgs net, packed on 11 pallets",
+      "invoice_value": "POLYTRAK®8522W-T 80KG HS Code:38151990\n33 drums each of 80 kgs net, packed on 11 pallets",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "no certificate article number used; moved to controlled text match"
+          "outcome": "NOT_APPLICABLE"
         },
         {
           "rule_id": "4.3.3",
-          "outcome": "identity-bearing designation POLYTRAK 8522W-T identified in invoice"
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.3.4",
-          "outcome": "packaging/detail additions do not alter product identity"
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.3.8",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Den identitetsbärande huvudbeteckningen i certifikatet är produktnamnet \"POLYTRAK(R)8522W-T\", som återfinns i fakturan som \"POLYTRAK®8522W-T\". Dessutom stämmer förpackningsuppgiften \"33 drums ... loaded on 11 pallets\" mot fakturans \"33 drums each of 80 kgs net, packed on 11 pallets\". Varubeskrivningen kan därför verifieras utan otillåten tolkning."
+      "motivation": "Ingen separat artikelnummeruppgift i certifikatet styr verifieringen, därför användes kontrollerad textmatchning. Den identitetsbärande huvudbeteckningen 'POLYTRAK(R)8522W-T' kan identifieras i fakturan som 'POLYTRAK®8522W-T', och förpackningsuppgiften '33 drums ... loaded on 11 pallets' återfinns också i fakturan som '33 drums each of 80 kgs net, packed on 11 pallets'. Skillnaden mellan '(R)' och '®' samt mindre formateringsskillnader ändrar inte produktidentiteten."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.97,
+      "confidence": 0.9,
       "certificate_value": "2640 kg\n3894 kg\n4147 kg",
-      "invoice_value": "Net Weight 2.640 KG\nGross Weight 3.894 KG\nGross weight including pallets: 4147 kgs",
+      "invoice_value": "Gross Weight 3.894 KG Net Weight 2.640 KG\nGross weight including pallets: 4147 kgs",
       "rules_applied": [
         {
+          "rule_id": "4.4.2.2",
+          "outcome": "MATCH"
+        },
+        {
           "rule_id": "4.4.3.1",
-          "outcome": "multiple quantities in certificate evaluated"
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.4.3.3",
-          "outcome": "thousands separator normalization applied for 2640/2.640 and 3894/3.894"
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.4.4",
-          "outcome": "total weight values verified against invoice total weights"
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.4.6",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet visar tre viktvärden som motsvaras av fakturans uttryckliga viktuppgifter: net weight 2640 kg, gross weight 3894 kg och gross weight including pallets 4147 kg. Skillnaden i notation med punkt som tusentalsavskiljare i fakturan påverkar inte värdena efter tillåten normalisering. Fakturan motsäger inte någon av certifikatets kvantitetsuppgifter."
+      "motivation": "Certifikatet anger tre viktvärden i box 7: 2640 kg, 3894 kg och 4147 kg, med motsvarande viktkategorier angivna som separata rader i box 6 (Net weight, Gross weight, Gross weight incl pallets). Fakturan innehåller explicit 'Net Weight 2.640 KG', 'Gross Weight 3.894 KG' och 'Gross weight including pallets: 4147 kgs'. Efter tillåten normalisering av tusentalsavskiljare är samtliga numeriska värden verifierade och inga motsägelser förekommer."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.98,
+      "confidence": 0.95,
       "certificate_value": "P:R. China",
       "invoice_value": "Country of Origin: China",
       "rules_applied": [
         {
           "rule_id": "4.5.1",
-          "outcome": "explicit origin field identified in invoice"
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.5.4",
-          "outcome": "country name normalization applied"
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.5.5",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger ursprung som \"P:R. China\", vilket efter tillåten landnormalisering motsvarar \"China\". Fakturan innehåller ett explicit ursprungsfält \"Country of Origin: China\". Ursprungslandet kan därför verifieras uttryckligen mot fakturan."
+      "motivation": "Certifikatet anger ursprungslandet som 'P:R. China', vilket efter normalisering motsvarar People's Republic of China/China. Fakturan anger uttryckligen 'Country of Origin: China' i origin-fältet. Ursprungslandet kan därför identifieras explicit i fakturan."
     }
   },
   "overall_assessment": {
     "comparison_result": "IDENTICAL",
     "workflow_recommendation": "AUTO_APPROVAL_ELIGIBLE",
     "auto_approval_eligible": true,
-    "confidence": 0.98,
+    "confidence": 0.93,
     "critical_failures": [],
     "manual_review_triggers": [],
-    "decision_summary": "All five applicable control points are verified as MATCH. No LC exception applies, no blocking readability issue was found, and the document pairing is valid through matching consignor and consignee details.",
-    "human_explanation": "Certifikatet och fakturan avser samma avsändare, mottagare, vara, kvantiteter och ursprungsland. Produktnamnet POLYTRAK®8522W-T, mottagaren Turkmenbashi oil refinery samt vikterna 2640 kg, 3894 kg och 4147 kg återfinns i fakturan. Dokumentparet kan därför godkännas automatiskt."
+    "decision_summary": "Dokumentparet kunde paras korrekt som Certificate of Origin mot separat faktura. LC-undantaget är inte tillämpligt. Avsändare, mottagare, varubeskrivning, kvantitet och ursprungsland kan samtliga verifieras mot fakturan efter tillåten normalisering, utan motsägelser.",
+    "human_explanation": "Certifikatet och fakturan stämmer överens för avsändare, mottagare, varubeskrivning, mängd och ursprungsland. Grace Catalyst AB och Turkmenbashi oil refinery återfinns i fakturan, varan POLYTRAK 8522W-T samt vikterna 2640/3894/4147 kg kan verifieras, och ursprunget anges som China. Dokumentparet kan godkännas automatiskt."
   },
   "_meta": {
-    "tested_at": "2026-04-11T08:05:42.135919+00:00",
-    "prompt_hash": "de0d620a2b38",
+    "tested_at": "2026-04-24T09:51:07.271573+00:00",
+    "prompt_hash": "10954622b12c",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P0186_MATCH",

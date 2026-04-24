@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": null,
+    "verification_timestamp": "2026-04-24T00:00:00Z",
     "document_pair_id": null,
     "certificate_issue_date": "2026-02-26",
     "source_documents_received": 2
@@ -29,7 +29,7 @@
     "general_goods_description_with_invoice_reference_active": false,
     "mixed_origins_rule_active": false,
     "to_order_rule_active": false,
-    "quantity_exception_applied": "3B",
+    "quantity_exception_applied": null,
     "eu_origin_normalization_active": false,
     "activated_rules": [
       {
@@ -41,8 +41,20 @@
         "rule_name": "Obligatorisk parningsvalidering"
       },
       {
-        "rule_id": "4.4.5.3",
-        "rule_name": "Enhetsomräkning MT ↔ KG vid kvantitetsverifiering"
+        "rule_id": "4.1.0",
+        "rule_name": "Sökning efter consignor i hela fakturaunderlaget"
+      },
+      {
+        "rule_id": "4.3.3",
+        "rule_name": "Kontrollerad textmatchning av varubeskrivning"
+      },
+      {
+        "rule_id": "4.4.2.2",
+        "rule_name": "Särskilt krav på viktkategori i certifikatet"
+      },
+      {
+        "rule_id": "4.5.1",
+        "rule_name": "Explicit ursprungsangivelse i fakturan"
       }
     ]
   },
@@ -50,28 +62,24 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.99,
+      "confidence": 0.98,
       "certificate_value": "Ekman & Co AB\nBox 230\nSE401 23, GÖTEBORG\nSweden",
-      "invoice_value": "Ekman & Co AB\nPolhemsplatsen 5\nPO Box 230\nSE-401 23 Gothenburg, Sweden",
+      "invoice_value": "Ekman & Co AB\nPolhemsplatsen 5\nPO Box 230\nSE-401 23 Gothenburg, Sweden\nVAT NO: SE556020459501",
       "rules_applied": [
         {
-          "rule_id": "8.6",
-          "outcome": "pairing_validated_via_invoice_number_and_party_match"
-        },
-        {
-          "rule_id": "4.1.2",
-          "outcome": "name_and_country_identified"
+          "rule_id": "4.1.0",
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.1.2.1",
-          "outcome": "country_explicit_in_address_block"
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.1.4",
-          "outcome": "country_match"
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor är 'Ekman & Co AB ... Sweden'. Fakturan anger utställaren som 'Ekman & Co AB ... Sweden'. Företagsnamnet är direkt identifierbart och landet framgår uttryckligen i fakturans adressblock. Skillnader i gatuadress/postadress påverkar inte bedömningen eftersom namn och land överensstämmer."
+      "motivation": "Certifikatets consignor 'Ekman & Co AB' återfinns uttryckligen i fakturans sidhuvud på sida 1 och även på sida 2 som 'EKMAN & CO AB'. Landet Sverige framgår explicit i adressen och stöds även av VAT-prefix 'SE'. Skillnader i gatuadress påverkar inte bedömningen eftersom företagsnamn och land kan verifieras."
     },
     "consignee": {
       "applicable": true,
@@ -81,83 +89,59 @@
       "invoice_value": "SOLD TO: Middle East Packages LLC\nPlot No 268, Al Jurf, Al Jurf Industrial Area 1\nAjman, 2029\nUnited Arab Emirates\n\nCONSIGNED TO: Middle East Packages LLC\nPlot No 268, Al Jurf, Al Jurf Industrial Area 1\nAJMAN, 2029\nUnited Arab Emirates",
       "rules_applied": [
         {
-          "rule_id": "8.6",
-          "outcome": "pairing_validated_via_consignee_match"
-        },
-        {
           "rule_id": "4.2.0.2",
-          "outcome": "identified_in_relevant_recipient_fields"
-        },
-        {
-          "rule_id": "4.2.2",
-          "outcome": "same_legal_party_identified"
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.2.3",
-          "outcome": "country_match"
-        },
-        {
-          "rule_id": "4.2.4",
-          "outcome": "match"
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignee 'Middle East Packages LLC ... UNITED ARAB EMIRATES' återfinns uttryckligen i fakturans både 'SOLD TO' och 'CONSIGNED TO'. Företagsnamn och land överensstämmer. Mindre skillnader i radbrytning och versaler är tillåten normalisering."
+      "motivation": "Mottagaren i certifikatet kan identifieras i fakturans både 'SOLD TO' och 'CONSIGNED TO'. Företagsnamn, ort och land överensstämmer. Mindre layoutskillnader och radbrytningar är tillåtna normaliseringar."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.9,
+      "confidence": 0.97,
       "certificate_value": "37 rolls\nWHITE TOP TESTLINER - WE grade",
       "invoice_value": "37 Reels: WHITE TOP TESTLINER - WE grade\nBW: 140 gsm\nRW: ...\n49.229 MT AT USD 635.00/MT, Amount: USD 31,260.13",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "priority_2_text_matching_used_no_article_number_in_certificate"
+          "outcome": "NO_ARTICLE_NUMBER_IN_CERTIFICATE"
         },
         {
           "rule_id": "4.3.3",
-          "outcome": "identity_bearing_main_designation_identified"
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.3.4",
-          "outcome": "additional_invoice_specifications_ignored_as_non_contradictory"
-        },
-        {
-          "rule_id": "4.3.8",
-          "outcome": "match"
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Ingen artikelnummerstyrd matchning är tillämplig eftersom certifikatet inte anger artikelnummer. Den identitetsbärande huvudbeteckningen i certifikatet är 'WHITE TOP TESTLINER - WE grade', och exakt samma produkttext förekommer i fakturan. Certifikatets inledande '37 rolls' ligger i samma box som antal/slags kolli och varubeskrivning; fakturans ytterligare specifikationer (BW, RW, pris och dimensionsrader) motsäger inte produktidentiteten."
+      "motivation": "Certifikatets identitetsbärande huvudbeteckning 'WHITE TOP TESTLINER - WE grade' återfinns exakt i fakturans varubeskrivning. '37 rolls' i certifikatet och '37 Reels' i fakturan är förpacknings-/antalstext runt samma vara och motsäger inte produktidentiteten. Fakturans extra specifikationer om BW, RW, OD och CORE är tillägg som inte ändrar huvudbeteckningen."
     },
     "quantity": {
       "applicable": true,
-      "status": "MANUAL_REVIEW",
-      "confidence": 0.82,
+      "status": "MISMATCH",
+      "confidence": 0.99,
       "certificate_value": "49474,693 kg",
-      "invoice_value": "Total Net Weight Quantity: 49.228550 MT\nTotal Gross Weight Quantity: 49.474693 MT\nTotal Unit Count: 37 Reels",
+      "invoice_value": "Total Gross Weight Quantity: 49.474693 MT\nTotal Net Weight Quantity: 49.228550 MT\nTotal Unit Count: 37 Reels",
       "rules_applied": [
         {
+          "rule_id": "4.4.2",
+          "outcome": "MATCH"
+        },
+        {
           "rule_id": "4.4.2.2",
-          "outcome": "weight_category_missing_in_certificate_value"
-        },
-        {
-          "rule_id": "4.4.4",
-          "outcome": "invoice_contains_both_gross_and_net_weight"
-        },
-        {
-          "rule_id": "4.4.5.1",
-          "outcome": "exceptions_checked_in_sequence"
+          "outcome": "MISMATCH"
         },
         {
           "rule_id": "4.4.5.3",
-          "outcome": "mt_to_kg_conversion_matches_gross_weight_but_not_unambiguous"
-        },
-        {
-          "rule_id": "4.4.6",
-          "outcome": "manual_review_due_to_missing_weight_category_and_dual_invoice_weights"
+          "outcome": "NOT_APPLICABLE"
         }
       ],
-      "motivation": "Certifikatet anger kvantiteten som '49474,693 kg' men anger inte om detta är GW eller NW. Fakturan anger två separata viktvärden: 'Total Gross Weight Quantity: 49.474693 MT' och 'Total Net Weight Quantity: 49.228550 MT'. Omräkning enligt MT↔KG visar att 49.474693 MT = 49 474,693 kg, vilket matchar certifikatets siffervärde, men eftersom fakturan samtidigt innehåller ett annat uttryckligt viktvärde av annan kategori och certifikatet saknar viktkategori kan kvantiteten inte verifieras entydigt. Därför krävs manuell granskning i stället för MATCH eller MISMATCH."
+      "motivation": "Certifikatets box 7 anger en vikt med numeriskt värde och enhet ('49474,693 kg'), men ingen viktkategori som Gross/GW eller Net/NW framgår uttryckligen i box 7 eller som fristående viktuppgift i box 6. Detta är ett absolut formkrav när kvantiteten anges i viktenhet. Fakturans totalvikter kan därför inte användas för att rädda kontrollpunkten, och MT↔KG-omräkning får inte tillämpas när viktkategori saknas i certifikatet."
     },
     "origin": {
       "applicable": true,
@@ -168,40 +152,36 @@
       "rules_applied": [
         {
           "rule_id": "4.5.1",
-          "outcome": "explicit_origin_statement_found"
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.5.4",
-          "outcome": "country_normalization_applied_indonesia_indonesian"
-        },
-        {
-          "rule_id": "4.5.5",
-          "outcome": "match"
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger ursprungsland 'Indonesia'. Fakturan innehåller en explicit ursprungsangivelse: 'these goods are of Indonesian origin'. Ursprungslandet framgår alltså uttryckligen i fakturan och kan verifieras utan att tolka adress eller exportland."
+      "motivation": "Certifikatet anger ursprungsland 'Indonesia'. Fakturan innehåller en explicit ursprungsangivelse: 'these goods are of Indonesian origin'. Ursprungslandet kan därför verifieras direkt i fakturan."
     }
   },
   "overall_assessment": {
-    "comparison_result": "MANUAL_REVIEW",
+    "comparison_result": "NOT_IDENTICAL",
     "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
     "auto_approval_eligible": false,
-    "confidence": 0.82,
-    "critical_failures": [],
-    "manual_review_triggers": [
-      "Kvantitetsfältet i certifikatet anger vikt utan GW/NW-kategori medan fakturan anger både gross- och nettovikt."
+    "confidence": 0.97,
+    "critical_failures": [
+      "Kvantitetsfältet i certifikatet anger vikt ('49474,693 kg') utan obligatorisk viktkategori som Gross/GW eller Net/NW."
     ],
-    "decision_summary": "Dokumentparet är korrekt parat och avsändare, mottagare, varubeskrivning samt ursprungsland kan verifieras mot fakturan. Kvantiteten i certifikatet kan dock inte verifieras entydigt eftersom certifikatet endast anger '49474,693 kg' utan viktkategori, medan fakturan anger både total gross weight och total net weight. Därför blir slutresultatet MANUAL_REVIEW.",
-    "human_explanation": "Avsändare, mottagare, varubeskrivning och ursprungsland stämmer mellan certifikatet och fakturan. Kvantiteten i certifikatet anges som '49474,693 kg' utan att ange om det är brutto- eller nettovikt, medan fakturan anger både 'Total Gross Weight 49.474693 MT' och 'Total Net Weight 49.228550 MT'. Därför behövs manuell granskning."
+    "manual_review_triggers": [],
+    "decision_summary": "Dokumentparet är korrekt parat via fakturanummer 46189555. Avsändare, mottagare, varubeskrivning och ursprungsland kan verifieras mot fakturan. Kvantitetskontrollpunkten ger dock MISMATCH eftersom certifikatets vikt saknar obligatorisk viktkategori, vilket enligt regelverket medför NOT_IDENTICAL.",
+    "human_explanation": "Avsändare, mottagare, varubeskrivning och ursprungsland stämmer mellan certifikatet och fakturan. Certifikatets kvantitetsfält anger dock endast '49474,693 kg' utan att ange om vikten är brutto eller netto, vilket krävs för verifiering. Därför är dokumenten inte identiska och måste hanteras manuellt."
   },
   "_meta": {
-    "tested_at": "2026-04-11T08:05:42.146257+00:00",
-    "prompt_hash": "de0d620a2b38",
+    "tested_at": "2026-04-24T09:51:07.282628+00:00",
+    "prompt_hash": "10954622b12c",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P020_MISMATCH",
     "expected": "NOT_IDENTICAL",
-    "actual": "MANUAL_REVIEW",
-    "status": "REVIEW"
+    "actual": "NOT_IDENTICAL",
+    "status": "PASS"
   }
 }

@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-04-11T00:00:00Z",
+    "verification_timestamp": "2026-04-24T00:00:00Z",
     "document_pair_id": null,
     "certificate_issue_date": "2026-01-07",
     "source_documents_received": 2
@@ -15,12 +15,12 @@
     "document_a": {
       "label": "Document A",
       "assumed_role": "certificate",
-      "document_type": "Certificate of Origin"
+      "document_type": "Certificate of Origin (file contains certificate and an embedded invoice copy; certificate page used as certificate source)"
     },
     "document_b": {
       "label": "Document B",
       "assumed_role": "invoice",
-      "document_type": "Invoice"
+      "document_type": "Commercial Invoice"
     }
   },
   "rule_activation": {
@@ -34,31 +34,31 @@
     "activated_rules": [
       {
         "rule_id": "8.5.0",
-        "rule_name": "Filbaserad dokumentparning"
+        "rule_name": "Certifikat hämtat från certifikatfilen och verifiering utförd mot separat fakturafil"
       },
       {
         "rule_id": "8.6",
-        "rule_name": "Obligatorisk parningsvalidering"
+        "rule_name": "Parningsvalidering passerad genom consignor- och consignee-identifiering"
       },
       {
         "rule_id": "4.1.0",
-        "rule_name": "Consignor kan identifieras i fakturan"
+        "rule_name": "Consignor återfunnen uttryckligen i fakturan"
       },
       {
         "rule_id": "4.2.0.2",
-        "rule_name": "Consignee får verifieras i relevant mottagarfält"
+        "rule_name": "Consignee identifierad i relevant mottagarfält i fakturan"
       },
       {
         "rule_id": "4.3.3",
         "rule_name": "Kontrollerad textmatchning av varubeskrivning"
       },
       {
-        "rule_id": "4.4.3",
-        "rule_name": "Numeriskt värde ska kunna identifieras i fakturan"
+        "rule_id": "4.4.2.2",
+        "rule_name": "Viktkategori verifierad och box 7-värde jämfört mot fakturans totalvikt"
       },
       {
         "rule_id": "4.5.1",
-        "rule_name": "Ursprungsland ska uttryckligen framgå i fakturan"
+        "rule_name": "Ursprungsland identifierat i explicit origin-uttalande i fakturan"
       }
     ]
   },
@@ -66,12 +66,16 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.98,
+      "confidence": 0.97,
       "certificate_value": "CELLMARK AB\nGOTHENBURG\nSWEDEN",
-      "invoice_value": "CELLMARK AB\nLilla Bommen 3C\nBOX 11927\n404 39 GOTHENBURG\nSWEDEN\nVAT No SE556244243301",
+      "invoice_value": "CellMark AB / CELLMARK AB\nLilla Bommen 3C\nBOX 11927\n404 39 GOTHENBURG\nSWEDEN\nVAT No SE556244243301",
       "rules_applied": [
         {
           "rule_id": "4.1.0",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.2",
           "outcome": "MATCH"
         },
         {
@@ -79,12 +83,12 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor 'CELLMARK AB' återfinns uttryckligen i fakturans footer/issuer-identifikation tillsammans med svensk adress och VAT-prefix 'SE'. Företagsnamn och land kan därför verifieras som samma juridiska part."
+      "motivation": "Certifikatet anger consignor som \"CELLMARK AB\" i Sverige. Samma företagsnamn återfinns uttryckligen i fakturans header/footer och adressblock som \"CellMark AB / CELLMARK AB ... SWEDEN\". Landet verifieras både genom adressen \"SWEDEN\" och VAT-prefixet \"SE\". Därmed kan samma juridiska part identifieras i fakturan."
     },
     "consignee": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.97,
+      "confidence": 0.96,
       "certificate_value": "CROWN PAPER MILL L.L.C.\nPO BOX 91635, ICAD III,\nABU DHABI\nUnited Arab Emirates",
       "invoice_value": "Buyer\nCROWN PAPER MILL L.L.C\nICAD III MUSSAFAH\nABU DHABI\nUNITED ARAB EMIRATES",
       "rules_applied": [
@@ -93,22 +97,26 @@
           "outcome": "MATCH"
         },
         {
+          "rule_id": "4.2.2",
+          "outcome": "MATCH"
+        },
+        {
           "rule_id": "4.2.3",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets mottagare återfinns i fakturans Buyer-fält som 'CROWN PAPER MILL L.L.C' i Abu Dhabi, United Arab Emirates. Smärre adressskillnad ('PO BOX 91635, ICAD III' vs 'ICAD III MUSSAFAH') påverkar inte bedömningen eftersom företagsnamn och land överensstämmer."
+      "motivation": "Certifikatet anger mottagaren som \"CROWN PAPER MILL L.L.C.\" i Förenade Arabemiraten. Fakturans Buyer-fält innehåller samma företagsnamn och samma land. Den extra platsuppgiften \"MUSSAFAH\" i fakturan motsäger inte certifikatets uppgift. Mottagaren kan därför identifieras i fakturan."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.96,
+      "confidence": 0.93,
       "certificate_value": "2 750 UNITS / 22 000 BALES\nBLEACHED EUCALYPTUS KRAFT PULP\nGROSS WEIGHT\nHS CODE: 47032900",
       "invoice_value": "SUZANO BLEACHED EUCALYPTUS KRAFT PULP. 100% PLANTED EUCALYPTUS.\nFSC MIX CREDIT. CELLMARK AB FSC CERTIFICATE NO DNV-COC-001902. HS Code: 47032900",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "text_match_path_selected"
+          "outcome": "No article number in certificate; continued to controlled text matching"
         },
         {
           "rule_id": "4.3.3",
@@ -116,32 +124,32 @@
         },
         {
           "rule_id": "4.3.4",
-          "outcome": "additional_non_identity_text_ignored"
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Den identitetsbärande huvudbeteckningen 'BLEACHED EUCALYPTUS KRAFT PULP' kan identifieras explicit i fakturan. Tillägg som 'SUZANO', '100% PLANTED EUCALYPTUS' och FSC-information ändrar inte produktidentiteten, och HS-koden 47032900 stöder samma vara."
+      "motivation": "Den identitetsbärande huvudbeteckningen i certifikatet är \"BLEACHED EUCALYPTUS KRAFT PULP\". Samma ordsekvens återfinns uttryckligen i fakturan. Tilläggen \"SUZANO\", \"100% PLANTED EUCALYPTUS\", \"FSC MIX CREDIT\" och certifieringsreferensen är kompletterande text som inte ändrar produktidentiteten. HS-koden 47032900 överensstämmer också."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.88,
-      "certificate_value": "GROSS WEIGHT\n5 500.000 MT",
-      "invoice_value": "22000 BALES 5 500.000 GMT\nTotals:\n22000 BALES\n5 500.000",
+      "confidence": 0.86,
+      "certificate_value": "Box 7: 5 500.000 MT\nBox 6 context: GROSS WEIGHT",
+      "invoice_value": "22000 BALES 5 500.000 GMT\nTotals: 22000 BALES / 5 500.000 GMT",
       "rules_applied": [
+        {
+          "rule_id": "4.4.2.1",
+          "outcome": "Box 7 treated as the governing quantity field"
+        },
         {
           "rule_id": "4.4.2.2",
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.4.3",
+          "rule_id": "4.4.4",
           "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.4.3.1",
-          "outcome": "box_7_weight_verified"
         }
       ],
-      "motivation": "Certifikatet anger en viktuppgift som tillsammans framträder som 'GROSS WEIGHT 5 500.000 MT'. Fakturan anger för samma vara och total '5 500.000 GMT'. Det numeriska värdet 5 500.000 kan identifieras exakt i fakturan för motsvarande försändning, och box 7-vikten är därmed verifierad."
+      "motivation": "Certifikatets verifieringsgrundande kvantitet är box 7-värdet \"5 500.000 MT\". Viktkategorin framgår av den separata texten \"GROSS WEIGHT\" i box 6 och är entydigt kopplad till det enda viktvärdet i box 7. Fakturan anger totalvikten \"5 500.000 GMT\". Det numeriska värdet är identiskt och fakturans GMT anger gross metric ton, vilket är förenligt med certifikatets gross weight-angivelse."
     },
     "origin": {
       "applicable": true,
@@ -159,22 +167,22 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger ursprungslandet 'BRAZIL'. Fakturan innehåller en explicit ursprungsangivelse: 'THE GOODS ARE OF BRAZIL ORIGIN', vilket uppfyller kravet på positiv verifiering av ursprungsland."
+      "motivation": "Certifikatet anger ursprungslandet som \"BRAZIL\". Fakturan innehåller ett explicit origin-uttalande: \"THE GOODS ARE OF BRAZIL ORIGIN\". Ursprungslandet kan därför uttryckligen identifieras i fakturan."
     }
   },
   "overall_assessment": {
     "comparison_result": "IDENTICAL",
     "workflow_recommendation": "AUTO_APPROVAL_ELIGIBLE",
     "auto_approval_eligible": true,
-    "confidence": 0.95,
+    "confidence": 0.92,
     "critical_failures": [],
     "manual_review_triggers": [],
-    "decision_summary": "Dokumentparet är ett giltigt certifikat-faktura-par. Avsändare, mottagare, varubeskrivning, kvantitet och ursprungsland kan verifieras mot den separata fakturafilen, och den inbäddade fakturakopian i certifikatfilen har inte använts som verifieringsunderlag.",
-    "human_explanation": "Samtliga kontrollpunkter stämmer mellan certifikatet och fakturan. Avsändare, mottagare, varubeskrivning, mängd och ursprungsland kan verifieras. Dokumentparet kan godkännas automatiskt."
+    "decision_summary": "Det korrekta dokumentparet identifierades enligt filparningsreglerna: certifikatet togs från certifikatfilen och verifieringen gjordes mot den separata fakturafilen. Samtliga tillämpliga kontrollpunkter — consignor, consignee, varubeskrivning, kvantitet och ursprungsland — kunde verifieras som MATCH enligt regelverket. Ingen LC-regel eller manuell granskningsregel behövde aktiveras.",
+    "human_explanation": "Certifikatet och fakturan visar samma avsändare (CellMark AB, Sverige), samma mottagare (CROWN PAPER MILL L.L.C., Förenade Arabemiraten), samma vara, samma kvantitet 5 500.000 MT/GMT och samma ursprung Brasilien. Uppgifterna kan därför verifieras mot varandra och dokumentparet kan godkännas automatiskt."
   },
   "_meta": {
-    "tested_at": "2026-04-11T08:05:42.152070+00:00",
-    "prompt_hash": "de0d620a2b38",
+    "tested_at": "2026-04-24T09:51:07.287531+00:00",
+    "prompt_hash": "10954622b12c",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P029_MATCH",

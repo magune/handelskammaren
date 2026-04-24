@@ -1,0 +1,154 @@
+{
+  "schema_version": "3.0",
+  "metadata": {
+    "verification_timestamp": null,
+    "document_pair_id": null,
+    "certificate_issue_date": "2023-03-07",
+    "source_documents_received": 2
+  },
+  "task": {
+    "task_type": "customs_document_pair_verification",
+    "comparison_mode": "certificate_vs_invoice",
+    "strictness": "conservative"
+  },
+  "documents": {
+    "document_a": {
+      "label": "Document A",
+      "assumed_role": "certificate",
+      "document_type": "Certificate of Origin"
+    },
+    "document_b": {
+      "label": "Document B",
+      "assumed_role": "invoice",
+      "document_type": "Commercial Invoice"
+    }
+  },
+  "rule_activation": {
+    "lc_exception_active": false,
+    "lc_number_found": null,
+    "general_goods_description_with_invoice_reference_active": false,
+    "mixed_origins_rule_active": false,
+    "to_order_rule_active": false,
+    "quantity_exception_applied": null,
+    "eu_origin_normalization_active": false,
+    "activated_rules": []
+  },
+  "control_points": {
+    "consignor": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.98,
+      "certificate_value": "Korab International AB\nMårten Krakowgatan 2\nSE411 04, GÖTEBORG\nSweden",
+      "invoice_value": "Korab International AB\nMårten Krakowgatan 2\n411 04 Göteborg, Sweden\nVAT NO: SE556564039701",
+      "rules_applied": [
+        {
+          "rule_id": "4.1.0",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.2",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.4",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatet anger avsändaren som Korab International AB i Sweden. Fakturan är utställd av Korab International AB på samma adress i Göteborg, Sweden, och land stöds även av VAT-prefixet SE. Företagsnamn och land kan därför verifieras entydigt mot fakturan."
+    },
+    "consignee": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.98,
+      "certificate_value": "Jamana Printers Limited\nPlot No. 9 Nyerere Road, Pugu Road\nP.O Box 5584\nDar es Salaam\nTanzania",
+      "invoice_value": "SOLD TO: Jamana Printers Limited\nPlot No. 9 Nyerere Road, Pugu Road\nP.O Box 5584\nDar es Salaam,\nTanzania",
+      "rules_applied": [
+        {
+          "rule_id": "4.2.0.2",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.2.3",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Mottagaren i certifikatet kan identifieras direkt i fakturans SOLD TO-fält som Jamana Printers Limited med adress i Dar es Salaam, Tanzania. Företagsnamn och land överensstämmer utan otillåten tolkning."
+    },
+    "goods_description": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.97,
+      "certificate_value": "756 Reels\nNewsprint",
+      "invoice_value": "756 Reels: Newsprint",
+      "rules_applied": [
+        {
+          "rule_id": "4.3.2",
+          "outcome": "Artikelnummer ej tillämpligt"
+        },
+        {
+          "rule_id": "4.3.3",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatets varubeskrivning består av 756 Reels och Newsprint. Fakturan innehåller samma varubeskrivning som 756 Reels: Newsprint. Skillnaden är endast formatering och skiljetecken, vilket är tillåten normalisering."
+    },
+    "quantity": {
+      "applicable": true,
+      "status": "MISMATCH",
+      "confidence": 0.99,
+      "certificate_value": "496.616 MT",
+      "invoice_value": "TOTAL NET WEIGHT: 496.616 MT\nTOTAL GROSS WEIGHT: 496,616 KG",
+      "rules_applied": [
+        {
+          "rule_id": "4.4.2.2",
+          "outcome": "MISMATCH"
+        },
+        {
+          "rule_id": "4.4.2.1",
+          "outcome": "Box 7 är verifieringsgrundande"
+        }
+      ],
+      "motivation": "Certifikatets kvantitetsfält (box 7) anger endast 496.616 MT. När kvantiteten anges i viktenhet kräver regelverket att viktkategori också framgår uttryckligen, exempelvis Gross/GW eller Net/NW. Eftersom box 7 saknar sådan viktkategori, och ingen fristående viktkategori finns angiven tillsammans med detta värde i certifikatet, uppfylls inte formkravet och kontrollpunkten ska därför klassificeras som MISMATCH."
+    },
+    "origin": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.98,
+      "certificate_value": "Norway",
+      "invoice_value": "COUNTRY OF ORIGIN: Norway\nWe hereby certify that this invoice is true and correct and that these goods are of Norwegian origin.",
+      "rules_applied": [
+        {
+          "rule_id": "4.5.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.5.5",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatet anger ursprungsland Norway. Fakturan innehåller ett explicit origin-fält med COUNTRY OF ORIGIN: Norway och även en bekräftande ursprungstext om Norwegian origin. Ursprungslandet kan därför identifieras uttryckligen i fakturan."
+    }
+  },
+  "overall_assessment": {
+    "comparison_result": "NOT_IDENTICAL",
+    "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
+    "auto_approval_eligible": false,
+    "confidence": 0.97,
+    "critical_failures": [
+      "Kvantitetsfältet i certifikatet anger 496.616 MT utan uttrycklig viktkategori (GW/NW/Net/Gross), vilket enligt regelverket medför MISMATCH."
+    ],
+    "manual_review_triggers": [],
+    "decision_summary": "Avsändare, mottagare, varubeskrivning och ursprungsland kan verifieras mot fakturan. Dokumentparet är dock inte identiskt eftersom certifikatets kvantitetsfält anger vikt utan obligatorisk viktkategori.",
+    "human_explanation": "Avsändare, mottagare, varubeskrivning och ursprungsland stämmer mellan certifikatet och fakturan. Däremot anger certifikatet mängden som 496.616 MT utan att ange om det är brutto- eller nettovikt. Därför kan dokumentparet inte godkännas automatiskt."
+  },
+  "_meta": {
+    "tested_at": "2026-04-24T09:51:04.659714+00:00",
+    "prompt_hash": "10954622b12c",
+    "model": "gpt-5.4",
+    "tier": 2,
+    "pair": "P009_MISMATCH",
+    "expected": "NOT_IDENTICAL",
+    "actual": "NOT_IDENTICAL",
+    "status": "PASS"
+  }
+}

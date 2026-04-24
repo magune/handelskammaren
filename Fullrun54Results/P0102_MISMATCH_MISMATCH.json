@@ -1,8 +1,8 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-04-02T00:00:00Z",
-    "document_pair_id": "P0102",
+    "verification_timestamp": "2026-04-24T00:00:00Z",
+    "document_pair_id": null,
     "certificate_issue_date": "2026-02-26",
     "source_documents_received": 2
   },
@@ -15,12 +15,12 @@
     "document_a": {
       "label": "Document A",
       "assumed_role": "certificate",
-      "document_type": "certificate of origin"
+      "document_type": "Certificate of Origin"
     },
     "document_b": {
       "label": "Document B",
       "assumed_role": "invoice",
-      "document_type": "commercial invoice"
+      "document_type": "Invoice (image-based / scanned)"
     }
   },
   "rule_activation": {
@@ -34,27 +34,11 @@
     "activated_rules": [
       {
         "rule_id": "8.6",
-        "rule_name": "Parningsvalidering via identifierbar consignor i fakturan"
+        "rule_name": "Parningsvalidering passerad via consignor-identifikation i fakturan"
       },
       {
-        "rule_id": "4.1.2",
-        "rule_name": "Verifiering av consignor namn och land"
-      },
-      {
-        "rule_id": "4.2.0.2",
-        "rule_name": "Prioritetsordning för consignee-identifiering"
-      },
-      {
-        "rule_id": "4.3.5",
-        "rule_name": "Generell varubeskrivning med fakturareferens kräver både fakturanummer och fakturadatum"
-      },
-      {
-        "rule_id": "4.4.2.1",
-        "rule_name": "Box 7 är verifieringsgrundande kvantitet"
-      },
-      {
-        "rule_id": "4.5.1",
-        "rule_name": "Ursprungsland måste framgå explicit i fakturan"
+        "rule_id": "4.1.0",
+        "rule_name": "Consignor identifierad uttryckligen i fakturans seller-/brandingtext"
       }
     ]
   },
@@ -62,12 +46,12 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.97,
+      "confidence": 0.91,
       "certificate_value": "FORPAC INTERNATIONAL AB\nKUNGSPORTEN 4E\nSE-427 50, BILLDAL\nSWEDEN",
-      "invoice_value": "Seller\nForpac International AB\nKungsporten 4E\n427 50 Billdal\nSweden",
+      "invoice_value": "Seller\nForpac International AB\nKungsporten 4E\n427 50 Billdal\nSweden\n\nFORPAC international ab.",
       "rules_applied": [
         {
-          "rule_id": "8.6",
+          "rule_id": "4.1.0",
           "outcome": "MATCH"
         },
         {
@@ -77,13 +61,9 @@
         {
           "rule_id": "4.1.4",
           "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.1.5",
-          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger consignor som FORPAC INTERNATIONAL AB i Sverige. Fakturan visar säljaren som Forpac International AB, Kungsporten 4E, 427 50 Billdal, Sweden. Företagsnamn och land kan identifieras som samma juridiska part efter tillåten normalisering av versaler/gemener och formatering."
+      "motivation": "Certifikatets consignor 'FORPAC INTERNATIONAL AB' återfinns uttryckligen i fakturans seller-block längst ned på sidan samt i brandingtexten 'FORPAC international ab.'. Landet Sverige framgår också i fakturans seller-adress. Uppgiften kan därför verifieras som samma juridiska part i samma land."
     },
     "consignee": {
       "applicable": true,
@@ -94,100 +74,110 @@
       "rules_applied": [
         {
           "rule_id": "4.2.0.2",
-          "outcome": "NO_MATCH"
+          "outcome": "MISMATCH"
         },
         {
           "rule_id": "4.2.1",
-          "outcome": "NOT_FOUND"
+          "outcome": "MISMATCH"
         },
         {
           "rule_id": "4.2.4",
           "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Certifikatet anger mottagaren som NAPACK i Tunisia. I den bifogade fakturan kan ingen Bill to, Invoice to, Buyer, Consignee, Ship to eller annan mottagarpart identifieras som NAPACK, och inget mottagarland Tunisia kan verifieras. Uppgiften i certifikatet kan därför inte återfinnas i fakturan."
+      "motivation": "Certifikatets mottagare 'NAPACK' i Tunisien kan inte identifieras i något synligt mottagarfält i den bifogade fakturan. Den synliga fakturasidan visar seller-information men ingen buyer, ship-to, consignee eller annan mottagaradress som matchar NAPACK/Tunisia. Därför är mottagaren inte verifierad mot fakturan."
     },
     "goods_description": {
       "applicable": true,
       "status": "MISMATCH",
-      "confidence": 0.95,
+      "confidence": 0.94,
       "certificate_value": "TOTAL 73 REELS\nFLUTING & TESTLINER",
       "invoice_value": "Natural Kraft Extensible 80 gsm\nNatural Kraft Bag 49 gsm",
       "rules_applied": [
         {
-          "rule_id": "4.3.5",
-          "outcome": "MISMATCH"
+          "rule_id": "4.3.2",
+          "outcome": "not_applicable_no_article_number_in_certificate"
         },
         {
           "rule_id": "4.3.3",
           "outcome": "MISMATCH"
         },
         {
+          "rule_id": "4.3.5",
+          "outcome": "not_applicable_invoice_reference_not_in_box_6"
+        },
+        {
           "rule_id": "4.3.8",
           "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Certifikatet beskriver varorna som \"FLUTING & TESTLINER\" och hänvisar till \"INVOICE N° 1003009\" men anger inget fakturadatum. Därmed är villkoren för generell varubeskrivning med fakturareferens inte uppfyllda. Dessutom kan den identitetsbärande huvudbeteckningen i certifikatet inte identifieras i fakturans varubeskrivningar, som i stället anger \"Natural Kraft Extensible 80 gsm\" och \"Natural Kraft Bag 49 gsm\"."
+      "motivation": "Certifikatets varubeskrivning är 'FLUTING & TESTLINER'. Fakturan visar i stället varor beskrivna som 'Natural Kraft Extensible 80 gsm' och 'Natural Kraft Bag 49 gsm'. Den identitetsbärande huvudbeteckningen från certifikatet kan inte identifieras i fakturan. Fakturanumret 1003009 står i certifikatets remarks-fält, inte i varubeskrivningsfältet, så regeln om generell varubeskrivning med fakturareferens kan inte användas."
     },
     "quantity": {
       "applicable": true,
       "status": "MISMATCH",
-      "confidence": 0.98,
+      "confidence": 0.95,
       "certificate_value": "187,905 MT/GW",
       "invoice_value": "Total qty. 28 Reel 23,861 MT",
       "rules_applied": [
         {
           "rule_id": "4.4.2.1",
-          "outcome": "BOX_7_SELECTED"
+          "outcome": "box_7_is_verification_basis"
+        },
+        {
+          "rule_id": "4.4.2.2",
+          "outcome": "form_requirement_met"
         },
         {
           "rule_id": "4.4.3",
-          "outcome": "VALUE_MISMATCH"
+          "outcome": "MISMATCH"
         },
         {
           "rule_id": "4.4.6",
           "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Den verifieringsgrundande kvantiteten i certifikatets box 7 är 187,905 MT/GW. Fakturan visar total kvantitet 23,861 MT och inget uttryckligt värde som motsvarar 187,905 MT/GW. Den numeriska uppgiften i certifikatet kan därför inte identifieras i fakturan och avvikelsen överstiger alla tillåtna toleranser."
+      "motivation": "Certifikatets verifieringsgrundande kvantitet i box 7 är '187,905 MT/GW'. Den synliga fakturan anger total kvantitet '28 Reel 23,861 MT'. Det numeriska värdet 187,905 kan inte identifieras i fakturan; i stället finns ett annat explicit totalvärde, 23,861 MT. Detta är en motsägelse och ger MISMATCH."
     },
     "origin": {
       "applicable": true,
       "status": "MISMATCH",
-      "confidence": 0.91,
+      "confidence": 0.9,
       "certificate_value": "FRANCE",
       "invoice_value": null,
       "rules_applied": [
         {
           "rule_id": "4.5.1",
-          "outcome": "NOT_FOUND"
+          "outcome": "origin_not_found_in_invoice"
         },
         {
           "rule_id": "4.5.5",
           "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Certifikatet anger ursprungsland FRANCE. I den bifogade fakturan kan inget explicit ursprungsfält såsom Country of Origin, Origin eller Made in identifieras, och Frankrike framgår inte uttryckligen som ursprung. Ursprungslandet i certifikatet kan därför inte verifieras mot fakturan."
+      "motivation": "Certifikatet anger ursprungsland 'FRANCE'. Ingen explicit ursprungsangivelse såsom 'Country of Origin', 'Origin' eller 'Made in' kan identifieras på den synliga fakturasidan. Ursprungslandet får inte härledas från säljaradress eller annan indirekt information, och Frankrike kan därför inte verifieras mot fakturan."
     }
   },
   "overall_assessment": {
     "comparison_result": "NOT_IDENTICAL",
     "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
     "auto_approval_eligible": false,
-    "confidence": 0.95,
+    "confidence": 0.93,
     "critical_failures": [
-      "Consignee i certifikatet (NAPACK, Tunisia) kan inte identifieras i fakturan.",
-      "Varubeskrivningen FLUTING & TESTLINER kan inte verifieras mot fakturans varor Natural Kraft Extensible 80 gsm / Natural Kraft Bag 49 gsm, och certifikatet saknar dessutom fakturadatum för generell fakturareferens.",
-      "Kvantiteten 187,905 MT/GW i certifikatet motsvaras inte av fakturans 23,861 MT.",
+      "Consignee 'NAPACK' i Tunisien kan inte identifieras i fakturan.",
+      "Varubeskrivningen 'FLUTING & TESTLINER' motsvaras inte av fakturans varor 'Natural Kraft Extensible 80 gsm' och 'Natural Kraft Bag 49 gsm'.",
+      "Kvantiteten 187,905 MT/GW i certifikatet motsägs av fakturans total 23,861 MT / 28 Reel.",
       "Ursprungslandet FRANCE framgår inte uttryckligen i fakturan."
     ],
-    "manual_review_triggers": [],
-    "decision_summary": "Dokumentparet kunde paras via gemensam consignor, men flera tillämpliga kontrollpunkter ger MISMATCH. Consignor matchar, medan consignee, varubeskrivning, kvantitet och ursprungsland inte kan verifieras mot fakturan. Därför är dokumenten inte identiska.",
-    "human_explanation": "Avsändaren stämmer, men mottagaren NAPACK i Tunisien kan inte hittas i fakturan. Certifikatet anger varorna som FLUTING & TESTLINER, kvantiteten som 187,905 MT/GW och ursprunget som Frankrike, medan fakturan visar andra varor, totalen 23,861 MT och inget uttryckligt ursprungsland. Dokumenten kan därför inte godkännas som överensstämmande."
+    "manual_review_triggers": [
+      "Fakturan är bildbaserad/skannad och OCR-text saknas, vilket är en teknisk riskfaktor, men de synliga uppgifterna visar redan flera tydliga avvikelser."
+    ],
+    "decision_summary": "Dokumentparningen kan accepteras eftersom consignor 'Forpac International AB' tydligt återfinns i fakturans seller-block. Däremot kan certifikatets consignee inte identifieras i fakturan, varubeskrivningen stämmer inte med fakturans varor, kvantiteten i box 7 motsägs av fakturans totalvärde och ursprungslandet Frankrike framgår inte uttryckligen i fakturan. Minst en tillämplig kontrollpunkt ger MISMATCH, och flera gör det, vilket kräver resultatet NOT_IDENTICAL.",
+    "human_explanation": "Certifikatet anger mottagaren NAPACK i Tunisien, varorna FLUTING & TESTLINER, kvantiteten 187,905 MT/GW och ursprung Frankrike. I den bifogade fakturan kan mottagaren inte identifieras, varorna är i stället Natural Kraft Extensible 80 gsm och Natural Kraft Bag 49 gsm, total mängd är 23,861 MT / 28 Reel och någon uttrycklig ursprungsangivelse för Frankrike syns inte. Dokumenten stämmer därför inte överens och måste hanteras manuellt."
   },
   "_meta": {
-    "tested_at": "2026-04-02T11:22:43.064327+00:00",
-    "prompt_hash": "f81eb9b0d2ea",
+    "tested_at": "2026-04-24T09:14:16.724793+00:00",
+    "prompt_hash": "10954622b12c",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P0102_MISMATCH",

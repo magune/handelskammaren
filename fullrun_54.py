@@ -24,6 +24,7 @@ load_dotenv()
 
 BASE_DIR        = Path(__file__).parent
 TESTSYSTEM_DIR  = BASE_DIR / "Testdata" / "Testsystem företag"
+MULTI_INV_DIR   = BASE_DIR / "Testdata" / "Testsystem med flera fakturor"
 RESULTS_DIR     = BASE_DIR / "Fullrun54Results"
 BASELINE_DIR    = BASE_DIR / "Fullrun54Results"   # compare against own previous results
 PROMPT_FILE     = BASE_DIR / "api_prompt_54.md"
@@ -51,11 +52,7 @@ CHUNK_SIZE       = 50
 
 # Filter to specific pairs, or None for all.
 # Example: ["P001", "P003", "P031"]
-# Targeted re-test (Regelverk 5 prompt + 20 facit changes):
-#   - 20 pairs with new MISMATCH facit
-#   - P013: EU origin regression risk (cert lists specific EU countries, invoice has DE not listed)
-#   - P210: EU origin spot check (cert SE+DE, invoice matches — low risk)
-ONLY_PAIRS       = ["P015", "P0182", "P224"]
+ONLY_PAIRS       = None
 
 # Max retries per pair when LLM returns unparseable/garbage JSON
 MAX_GARBAGE_RETRIES = 2
@@ -164,7 +161,10 @@ def is_garbage(result: dict) -> bool:
 # ---------------------------------------------------------------------------
 
 def discover_pairs() -> list[dict]:
-    """Discover all test pairs."""
+    """Discover all test pairs from both test folders."""
+    pairs = []
+
+    # --- Testsystem företag: flat files named P013_MATCH_certificate.pdf ---
     pair_files: dict[str, dict] = {}
     for pdf in sorted(TESTSYSTEM_DIR.glob("*.pdf")):
         parts = pdf.stem.split("_")
@@ -173,7 +173,6 @@ def discover_pairs() -> list[dict]:
         key = f"{parts[0]}_{parts[1]}"
         pair_files.setdefault(key, {})[parts[2]] = pdf
 
-    pairs = []
     for key in sorted(pair_files):
         docs = pair_files[key]
         if "certificate" not in docs or "invoice" not in docs:
@@ -185,6 +184,33 @@ def discover_pairs() -> list[dict]:
             "expected": "IDENTICAL" if category == "MATCH" else "NOT_IDENTICAL",
             "files":    [str(docs["certificate"]), str(docs["invoice"])],
         })
+
+    # --- Testsystem med flera fakturor: subdirs named MATCH_<id> or MISMATCH_<id> ---
+    # Each subdir contains 1 certificate PDF + 1-3 invoice PDFs.
+    # Certificate is identified by matching the dir's <id> in the filename.
+    if MULTI_INV_DIR.exists():
+        for subdir in sorted(MULTI_INV_DIR.iterdir()):
+            if not subdir.is_dir():
+                continue
+            parts = subdir.name.split("_", 1)
+            if len(parts) != 2 or parts[0] not in ("MATCH", "MISMATCH"):
+                continue
+            category, cert_id = parts[0], parts[1]
+            pdfs = sorted(subdir.glob("*.pdf"))
+            # Certificate = PDF whose stem contains cert_id (case-insensitive)
+            cert_pdfs = [p for p in pdfs if cert_id.lower() in p.stem.lower()]
+            inv_pdfs  = [p for p in pdfs if p not in cert_pdfs]
+            if not cert_pdfs or not inv_pdfs:
+                print(f"  [warn] {subdir.name}: kunde inte identifiera certifikat/faktura — hoppar över")
+                continue
+            key = f"{cert_id}_{category}"
+            pairs.append({
+                "name":     key,
+                "category": category,
+                "expected": "IDENTICAL" if category == "MATCH" else "NOT_IDENTICAL",
+                "files":    [str(cert_pdfs[0])] + [str(p) for p in inv_pdfs],
+            })
+
     return pairs
 
 
@@ -456,7 +482,7 @@ def main():
 
     # Filter pairs if ONLY_PAIRS is set
     if ONLY_PAIRS is not None:
-        pairs = [p for p in pairs if p["name"].split("_")[0] in ONLY_PAIRS]
+        pairs = [p for p in pairs if p["name"].split("_")[0] in ONLY_PAIRS or p["name"] in ONLY_PAIRS]
         if not pairs:
             print(f"No pairs matched filter: {ONLY_PAIRS}")
             return

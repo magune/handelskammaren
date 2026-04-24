@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-04-02T00:00:00Z",
+    "verification_timestamp": "2026-04-24T00:00:00Z",
     "document_pair_id": null,
     "certificate_issue_date": "2023-03-06",
     "source_documents_received": 2
@@ -20,12 +20,12 @@
     "document_b": {
       "label": "Document B",
       "assumed_role": "invoice",
-      "document_type": "Invoice"
+      "document_type": "Invoice Copy"
     }
   },
   "rule_activation": {
     "lc_exception_active": false,
-    "lc_number_found": null,
+    "lc_number_found": "LCOSA195230012",
     "general_goods_description_with_invoice_reference_active": false,
     "mixed_origins_rule_active": false,
     "to_order_rule_active": false,
@@ -34,15 +34,31 @@
     "activated_rules": [
       {
         "rule_id": "2.2",
-        "rule_name": "LC-undantag ej aktiverat; texten \"DC NO. LCOSA195230012\" är en referenssträng och inte en separat LC-fältrubrik"
-      },
-      {
-        "rule_id": "8.5.0",
-        "rule_name": "Standardparning med två filer: certifikat från fil 1 och faktura från fil 2"
+        "rule_name": "LC-undantag prövat men inte aktiverat; strängen \"DC NO. LCOSA195230012\" i varubeskrivningen bedömdes inte som en uttrycklig separat LC/L/C/Letter of Credit-etikett enligt banktermskravet."
       },
       {
         "rule_id": "8.6",
-        "rule_name": "Parningsvalidering passerad genom matchande consignor, consignee och fakturareferens"
+        "rule_name": "Parningsvalidering passerad; certifikatets grunduppgifter kan återfinnas i fakturan genom consignor, consignee och referenser."
+      },
+      {
+        "rule_id": "4.1.0",
+        "rule_name": "Consignor identifierad uttryckligen i fakturan."
+      },
+      {
+        "rule_id": "4.2.0.2",
+        "rule_name": "Consignee identifierad i fakturans Buyer-fält."
+      },
+      {
+        "rule_id": "4.3.3",
+        "rule_name": "Kontrollerad textmatchning av varubeskrivning."
+      },
+      {
+        "rule_id": "4.4.3",
+        "rule_name": "Kvantitetsvärde identifierat i fakturan."
+      },
+      {
+        "rule_id": "4.5.1",
+        "rule_name": "Ursprungsland identifierat i explicit origin-fält i fakturan."
       }
     ]
   },
@@ -63,11 +79,11 @@
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.1.5",
+          "rule_id": "4.1.4",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor \"Elof Hansson Trade AB\" återfinns uttryckligen i fakturans sidhuvud som \"ELOF HANSSON TRADE AB\". Landet Sweden framgår i fakturautställarens adressblock. Skillnaderna avser endast versaler och adressformatering, vilket är tillåten normalisering."
+      "motivation": "Certifikatets consignor \"Elof Hansson Trade AB\" återfinns uttryckligen i fakturans sidhuvud som fakturautställare. Landet verifieras som \"Sweden\" i fakturans adressblock. Samma juridiska part och samma land kan därför identifieras utan ytterligare tolkning."
     },
     "consignee": {
       "applicable": true,
@@ -81,23 +97,27 @@
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.2.3",
+          "rule_id": "4.2.2",
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.2.4",
+          "rule_id": "4.2.3",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignee återfinns exakt i fakturans primära faktureringsfält \"BUYER\". Företagsnamn och land överensstämmer; \"HONG KONG\" och \"Hong Kong\" är samma land efter tillåten normalisering."
+      "motivation": "Mottagaren i certifikatet kan identifieras direkt i fakturans Buyer-fält med samma företagsnamn och samma land, Hong Kong. Skillnader i versaler/gemener påverkar inte bedömningen."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.97,
+      "confidence": 0.95,
       "certificate_value": "39 X 40' CONTAINERS\n4056 BALES\nGROSS WEIGHT: 1026,675 TONS\nNET/AIRDRY WEIGHT: 1014,000 ADMT\nNBSK SODRA BLUE\nBLEACHED SOFTWOOD KRAFT PULP\nDC NO. LCOSA195230012\nCONTRACT NO.SO046379",
-      "invoice_value": "NBSK SODRA BLUE\nBLEACHED SOFTWOOD KRAFT PULP\n39 X 40' CONTAINERS\n4056 BALES\nGROSS WEIGHT: 1026,675 TONS\nNET/AIRDRY WEIGHT: 1014,000 ADMT\nDC NO. LCOSA19523012\nCONTRACT NO.SO046379",
+      "invoice_value": "NBSK SODRA BLUE\nBLEACHED SOFTWOOD KRAFT PULP\n\n39 X 40' CONTAINERS\n4056 BALES\nGROSS WEIGHT: 1026,675 TONS\nNET/AIRDRY WEIGHT: 1014,000 ADMT\n\nDC NO. LCOSA195230012\nCONTRACT NO.SO046379",
       "rules_applied": [
+        {
+          "rule_id": "4.3.2",
+          "outcome": "NOT_USED_NO_ARTICLE_NUMBER"
+        },
         {
           "rule_id": "4.3.3",
           "outcome": "MATCH"
@@ -107,37 +127,33 @@
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.3.8",
+          "rule_id": "4.3.8.1",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Den identitetsbärande huvudbeteckningen \"NBSK SODRA BLUE / BLEACHED SOFTWOOD KRAFT PULP\" återfinns uttryckligen i fakturan. Även kolli- och viktuppgifterna samt kontraktsreferensen återfinns. Att raderna står i annan ordning i fakturan påverkar inte matchningen eftersom huvudbeteckningen kan identifieras explicit utan semantisk tolkning."
+      "motivation": "Certifikatets identitetsbärande huvudbeteckning \"NBSK SODRA BLUE / BLEACHED SOFTWOOD KRAFT PULP\" återfinns exakt i fakturan. Även kompletterande uppgifter om containers, bales, gross weight, net/airdry weight, DC-nummer och kontraktsnummer finns i fakturan. Varubeskrivningen kan därför verifieras genom direkt textmatchning."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.93,
+      "confidence": 0.94,
       "certificate_value": "1014 ADMT",
-      "invoice_value": "Quantity 1 014 Unit ADMT",
+      "invoice_value": "1 014 ADMT",
       "rules_applied": [
         {
-          "rule_id": "4.4.2.1",
+          "rule_id": "4.4.2",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.4.2.2",
           "outcome": "MATCH"
         },
         {
           "rule_id": "4.4.3",
           "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.4.3.3",
-          "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.4.6",
-          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets verifieringsgrundande kvantitet i box 7 är \"1014 ADMT\". Fakturan anger \"1 014\" med enheten \"ADMT\" för samma vara. Mellanslaget i fakturans tal är en tillåten tusentalsavskiljare, så värdet identifieras som samma numeriska kvantitet."
+      "motivation": "Certifikatets kvantitet i box 7 är \"1014 ADMT\". Fakturan anger samma kvantitet som \"1 014 ADMT\" på varuraden och dessutom \"NET/AIRDRY WEIGHT: 1014,000 ADMT\" i beskrivningen. Värdet är numeriskt samma efter tillåten normalisering av mellanslag och decimalformat, och ADMT är uttryckligen angivet."
     },
     "origin": {
       "applicable": true,
@@ -159,7 +175,7 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets ursprungsland \"SWEDEN\" återfinns uttryckligen i fakturans dedikerade ursprungsfält \"COUNTRY OF ORIGIN SWEDEN\". Ingen tolkning eller indirekt härledning behövs."
+      "motivation": "Certifikatets ursprungsland \"SWEDEN\" återfinns uttryckligen i fakturan i ett dedikerat origin-fält: \"COUNTRY OF ORIGIN SWEDEN\". Ingen tolkning krävs."
     }
   },
   "overall_assessment": {
@@ -169,12 +185,12 @@
     "confidence": 0.97,
     "critical_failures": [],
     "manual_review_triggers": [],
-    "decision_summary": "Alla tillämpliga kontrollpunkter kan verifieras direkt mellan certifikatet och fakturan. LC-undantaget aktiverades inte eftersom \"LC\" endast förekommer som del av referensen \"LCOSA195230012\" och inte som separat bankterm eller LC-fält. Dokumentparet uppfyller därmed kraven för IDENTICAL.",
-    "human_explanation": "Avsändare, mottagare, varubeskrivning, mängd 1014 ADMT och ursprungsland Sweden stämmer mellan certifikatet och fakturan. Dokumentparet kan godkännas automatiskt."
+    "decision_summary": "Dokumentrollen kan klassificeras säkert: Document A är ett Certificate of Origin och Document B är en faktura. LC-undantaget aktiveras inte. Samtliga fem tillämpliga kontrollpunkter kan verifieras som MATCH mot fakturan med hög säkerhet.",
+    "human_explanation": "Alla kontrollpunkter stämmer mellan dokumenten. Avsändare Elof Hansson Trade AB, mottagare Dryad Resources (HK) Co., Limited, varubeskrivningen för NBSK Sodra Blue bleached softwood kraft pulp, mängden 1014 ADMT och ursprungslandet Sweden återfinns i fakturan. Dokumentparet kan godkännas automatiskt."
   },
   "_meta": {
-    "tested_at": "2026-04-02T11:22:43.061874+00:00",
-    "prompt_hash": "f81eb9b0d2ea",
+    "tested_at": "2026-04-24T09:14:16.718385+00:00",
+    "prompt_hash": "10954622b12c",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P006_MATCH",
