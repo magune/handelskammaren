@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-04-24T00:00:00Z",
+    "verification_timestamp": null,
     "document_pair_id": null,
     "certificate_issue_date": "2026-02-25",
     "source_documents_received": 2
@@ -33,24 +33,28 @@
     "eu_origin_normalization_active": false,
     "activated_rules": [
       {
-        "rule_id": "8.5.0",
-        "rule_name": "Filbaserad dokumentparning: certifikat från fil 1 och faktura från fil 2"
-      },
-      {
-        "rule_id": "8.6",
-        "rule_name": "Parningsvalidering passerad via consignor och consignee"
+        "rule_id": "4.1.0",
+        "rule_name": "Consignor identifierad någonstans i fakturan"
       },
       {
         "rule_id": "4.2.0.2",
-        "rule_name": "Consignee identifierad i relevant mottagarfält"
+        "rule_name": "Consignee får verifieras i valfritt mottagarfält"
       },
       {
-        "rule_id": "4.3.8.1",
-        "rule_name": "Kompletterande text i varubeskrivningsfältet behandlas inte som separat vara"
+        "rule_id": "4.3.3",
+        "rule_name": "Kontrollerad textmatchning av varubeskrivning"
+      },
+      {
+        "rule_id": "4.3.4",
+        "rule_name": "Tillägg som inte påverkar produktidentitet"
       },
       {
         "rule_id": "4.4.4",
-        "rule_name": "Total vikt i faktura används för verifiering av försändelsevikt"
+        "rule_name": "Total vikt i faktura får verifiera försändelsevikt"
+      },
+      {
+        "rule_id": "8.6",
+        "rule_name": "Obligatorisk parningsvalidering"
       }
     ]
   },
@@ -58,12 +62,20 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.99,
+      "confidence": 0.98,
       "certificate_value": "Th.Brunius & Co AB\nPO Box 2516\nSE-403 17, Gothenburg\nSweden",
       "invoice_value": "Th. Brunius & Co AB\nVAT NO: SE556011055201\nPo Box 2516\nSE-403 17 Gothenburg, Sweden",
       "rules_applied": [
         {
-          "rule_id": "4.1.3.1",
+          "rule_id": "4.1.0",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.2",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.2.1",
           "outcome": "MATCH"
         },
         {
@@ -71,7 +83,7 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets avsändare kan identifieras som samma juridiska part i fakturan. Namnet överensstämmer efter tillåten normalisering av interpunktion och mellanslag ('Th.Brunius & Co AB' vs 'Th. Brunius & Co AB'), och landet Sverige framgår uttryckligen i fakturautställarens adress."
+      "motivation": "Certifikatets consignor 'Th.Brunius & Co AB' återfinns uttryckligen i fakturans sidhuvud som 'Th. Brunius & Co AB'. Skillnaden är endast punkt- och mellanslagsnormalisering. Landet Sverige verifieras explicit i adressen och stöds även av VAT-prefixet 'SE'."
     },
     "consignee": {
       "applicable": true,
@@ -85,11 +97,19 @@
           "outcome": "MATCH"
         },
         {
+          "rule_id": "4.2.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.2.2",
+          "outcome": "MATCH"
+        },
+        {
           "rule_id": "4.2.3",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Mottagaren i certifikatet återfinns uttryckligen i fakturans mottagarfält, både som 'SOLD TO' och 'CONSIGNED TO'. Företagsnamn och land (China) överensstämmer efter tillåten normalisering; mindre skillnader i tecken som '&' kontra 'and' påverkar inte matchningen."
+      "motivation": "Mottagaren i certifikatet kan identifieras exakt i fakturans både 'SOLD TO' och 'CONSIGNED TO'. Företagsnamn, adresskärna och land China överensstämmer utan behov av otillåten tolkning."
     },
     "goods_description": {
       "applicable": true,
@@ -98,6 +118,10 @@
       "certificate_value": "Mill's standard\n27 reels of Saica Testliner 90gsm",
       "invoice_value": "SHIPPING MARKS: Mill's standard LSS\nDESCRIPTION: Saica Testliner 90gsm\nTotal Unit Count: 27 Reels",
       "rules_applied": [
+        {
+          "rule_id": "4.3.2",
+          "outcome": "NOT_APPLICABLE"
+        },
         {
           "rule_id": "4.3.3",
           "outcome": "MATCH"
@@ -111,12 +135,12 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Den identitetsbärande huvudbeteckningen i certifikatet är 'Saica Testliner 90gsm', och denna kan identifieras exakt i fakturans varubeskrivning. 'Mill's standard' är kompletterande märkning/shipping marks och '27 reels' är kolli-/kvantitetsuppgift; dessa behandlas inte som separata varor och motsägs inte av fakturan, som dessutom anger 'Total Unit Count: 27 Reels'."
+      "motivation": "Inget artikelnummer anges i certifikatet, därför användes kontrollerad textmatchning. Den identitetsbärande huvudbeteckningen 'Saica Testliner 90gsm' återfinns exakt i fakturan. Tilläggen 'Mill's standard' och '27 reels' motsägs inte; 'Mill's standard' stöds av shipping marks och '27 reels' är en kompletterande kvantitetsangivelse som inte ändrar produktidentiteten."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.9,
+      "confidence": 0.88,
       "certificate_value": "49.770 mt gross/net",
       "invoice_value": "Total Weight Quantity: 49.770 MT",
       "rules_applied": [
@@ -133,7 +157,7 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets kvantitetsfält anger ett explicit viktvärde med enhet och viktkategori ('49.770 mt gross/net'). Fakturan anger en total försändelsevikt '49.770 MT' för samma vara. Det numeriska värdet och enheten överensstämmer exakt, och skillnad i benämning av viktkategori medför inte avvikelse när totalvikten entydigt avser samma försändning."
+      "motivation": "Certifikatets verifieringsgrundande kvantitet i box 7 är '49.770 mt gross/net'. Fakturan innehåller den explicita totalvikten '49.770 MT' för samma vara/försändning. Numeriskt värde och enhet överensstämmer exakt, och fakturan innehåller ingen alternativ viktuppgift som motsäger certifikatet."
     },
     "origin": {
       "applicable": true,
@@ -147,26 +171,30 @@
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.5.5",
+          "rule_id": "4.5.2",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.5.4",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Ursprungslandet i certifikatet är 'France' och fakturan innehåller en explicit ursprungsangivelse 'COUNTRY OF ORIGIN: FRANCE'. Uppgiften är direkt verifierad utan behov av vidare tolkning."
+      "motivation": "Ursprungslandet anges uttryckligen som 'France' i certifikatet och 'COUNTRY OF ORIGIN: FRANCE' i fakturan. Detta är en direkt och explicit origin-matchning."
     }
   },
   "overall_assessment": {
     "comparison_result": "IDENTICAL",
     "workflow_recommendation": "AUTO_APPROVAL_ELIGIBLE",
     "auto_approval_eligible": true,
-    "confidence": 0.96,
+    "confidence": 0.94,
     "critical_failures": [],
     "manual_review_triggers": [],
-    "decision_summary": "Dokumentparet är korrekt klassificerat som Certificate of Origin respektive Commercial Invoice. LC-undantaget är inte tillämpligt eftersom ingen LC-hänvisning med nummer finns i certifikatets varubeskrivningsfält. Samtliga fem tillämpliga kontrollpunkter—avsändare, mottagare, varubeskrivning, kvantitet och ursprungsland—kan verifieras mot fakturan enligt regelverket utan kvarstående motsägelser eller osäkerheter.",
-    "human_explanation": "Alla relevanta uppgifter i certifikatet kan återfinnas i fakturan. Avsändare, mottagare, varubeskrivning, mängd 49.770 MT och ursprungsland Frankrike stämmer överens. Dokumentparet kan därför godkännas automatiskt."
+    "decision_summary": "Alla fem tillämpliga kontrollpunkter verifierades som MATCH. LC-undantaget är inte tillämpligt. Dokumentparningen passerade sanity check eftersom både consignor och consignee kunde identifieras i fakturan.",
+    "human_explanation": "Avsändare, mottagare, varubeskrivning, mängd och ursprungsland i certifikatet kan alla identifieras i den bifogade fakturan. Certifikatet anger Th.Brunius & Co AB, Xiamen New Paper Source E-Commerce Co., Ltd, Saica Testliner 90gsm, 49.770 MT och Frankrike, och samma uppgifter finns i fakturan. Dokumentparet kan därför godkännas automatiskt."
   },
   "_meta": {
-    "tested_at": "2026-04-24T09:14:16.733012+00:00",
-    "prompt_hash": "10954622b12c",
+    "tested_at": "2026-04-27T08:04:29.099211+00:00",
+    "prompt_hash": "ea5d944217d3",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P0118_MATCH",

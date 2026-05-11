@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-04-24T00:00:00Z",
+    "verification_timestamp": null,
     "document_pair_id": null,
     "certificate_issue_date": "2025-12-17",
     "source_documents_received": 2
@@ -15,12 +15,12 @@
     "document_a": {
       "label": "Document A",
       "assumed_role": "certificate",
-      "document_type": "certificate of origin"
+      "document_type": "Certificate of Origin"
     },
     "document_b": {
       "label": "Document B",
       "assumed_role": "invoice",
-      "document_type": "invoice"
+      "document_type": "Commercial Invoice"
     }
   },
   "rule_activation": {
@@ -41,12 +41,20 @@
         "rule_name": "Consignee kan verifieras i valfritt mottagarfält"
       },
       {
+        "rule_id": "4.3.3",
+        "rule_name": "Kontrollerad textmatchning av varubeskrivning"
+      },
+      {
         "rule_id": "4.3.4",
         "rule_name": "Tillägg som inte påverkar produktidentitet"
       },
       {
-        "rule_id": "4.4.3.4",
-        "rule_name": "Normalisering av blandade decimalseparatorer"
+        "rule_id": "4.4.4",
+        "rule_name": "Total vikt i faktura"
+      },
+      {
+        "rule_id": "4.5.1",
+        "rule_name": "Explicit ursprungsangivelse i faktura"
       }
     ]
   },
@@ -54,17 +62,13 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.88,
-      "certificate_value": "Nouryon Pulp and Perf. Ch. AB\nGamlestadsvägen 18 B-C\nBOX 47067 \n40258, Göteborg \nSweden",
+      "confidence": 0.9,
+      "certificate_value": "Nouryon Pulp and Perf. Ch. AB\nGamlestadsvägen 18 B-C\nBOX 47067\n40258, Göteborg\nSweden",
       "invoice_value": "Nouryon Pulp and\nPerformance Chemicals AB\nBOX 47067\n402 58 Goteborg\nSweden",
       "rules_applied": [
         {
           "rule_id": "4.1.0",
-          "outcome": "NO_MATCH_EXACT_COMPANY_NAME_NOT_FOUND_ELSEWHERE_IN_INVOICE"
-        },
-        {
-          "rule_id": "4.1.3.2",
-          "outcome": "NOT_APPLICABLE_NOT_LAYOUT_PREFIX_TRUNCATION"
+          "outcome": "no_exact_full_certificate_name_string_found_in_invoice_text"
         },
         {
           "rule_id": "4.1.3.3",
@@ -73,14 +77,18 @@
         {
           "rule_id": "4.1.4",
           "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.5",
+          "outcome": "address_differences_not_decisive"
         }
       ],
-      "motivation": "Certifikatets consignor är en förkortad form av fakturautställarens fullständiga juridiska namn: \"Nouryon Pulp and Perf. Ch. AB\" motsvarar \"Nouryon Pulp and Performance Chemicals AB\". Förkortningen av \"Performance Chemicals\" är kommersiellt vedertagen, ingen annan liknande juridisk part förekommer i fakturan och landet Sweden framgår i båda dokumenten."
+      "motivation": "Certifikatet anger consignor som \"Nouryon Pulp and Perf. Ch. AB\" medan fakturan anger \"Nouryon Pulp and Performance Chemicals AB\" i sidhuvudet. Förkortningen \"Perf. Ch.\" är en tydlig kommersiell förkortning av \"Performance Chemicals\" och kärnan i företagsnamnet \"Nouryon Pulp and ... AB\" överensstämmer. Landet verifieras som Sweden i fakturans adressblock. Skillnad i gatuadress påverkar inte utfallet."
     },
     "consignee": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.97,
+      "confidence": 0.99,
       "certificate_value": "Akzo Nobel Vietnam Ltd\nLong Binh Ward\nLot 107, Amata Industrial Zone\n76000 BIEN HOA\nVIETNAM\n76000\nViet Nam",
       "invoice_value": "Ship To 41376278\nAkzo Nobel Vietnam Ltd\nLong Binh Ward\nLot 107, Amata Industrial Zone,\n76000 BIEN HOA\nVIETNAM",
       "rules_applied": [
@@ -89,7 +97,7 @@
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.2.2",
+          "rule_id": "4.2.1.1",
           "outcome": "MATCH"
         },
         {
@@ -97,18 +105,18 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Mottagaren i certifikatet kan identifieras direkt i fakturans Ship To-fält. Företagsnamn och leveransadress överensstämmer i allt väsentligt, och landet Viet Nam/VIETNAM är samma efter tillåten normalisering."
+      "motivation": "Mottagaren i certifikatet kan identifieras exakt i fakturans Ship To-fält. Företagsnamn, platsen Long Binh Ward, Lot 107 Amata Industrial Zone, Bien Hoa och landet Vietnam överensstämmer. Att fakturan även innehåller Bill To och Sold To med annan adress påverkar inte bedömningen eftersom Ship To är en tillåten mottagarroll."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.92,
+      "confidence": 0.97,
       "certificate_value": "Container nr:\nMRKU9069758\nSeal nr :\n0113483\n1 Cont Microspheres\n1X 20 DV\nLoaded with :\n1. 22 BOX, FIBREBOARD, Expancel 920 DE 40 d30 AS Bags 4X3 KG\nLoaded on 22 Pallets",
-      "invoice_value": "Expancel 920 DE 40 d30 AS Bags 4X3 KG\n...\nShipping Marks\n22 FIBREBOARD BOXES LOADED ON 22 PALLETS\nUN4GW\nContainer No. MRKU9069758 Seal No.: 0113483",
+      "invoice_value": "Item 10 Expancel 920 DE 40 d30 AS Bags 4X3 KG\nShipping Marks\n22 FIBREBOARD BOXES LOADED ON 22 PALLETS\nContainer No. MRKU9069758 Seal No.: 0113483",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "ARTICLE_NUMBER_NOT_USED"
+          "outcome": "no_article_number_in_certificate_priority_2_used"
         },
         {
           "rule_id": "4.3.3",
@@ -117,13 +125,9 @@
         {
           "rule_id": "4.3.4",
           "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.3.8.1",
-          "outcome": "MATCH"
         }
       ],
-      "motivation": "Den identitetsbärande huvudbeteckningen \"Expancel 920 DE 40 d30 AS Bags 4X3 KG\" återfinns exakt i fakturan. Certifikatets övriga text om container, seal, boxar och pallar är kompletterande transport-/förpackningsinformation och motsägs inte av fakturan; container- och sealnummer samt 22 fibreboard boxes loaded on 22 pallets stöds dessutom av fakturan."
+      "motivation": "Den identitetsbärande huvudbeteckningen \"Expancel 920 DE 40 d30 AS Bags 4X3 KG\" återfinns exakt i fakturan. Kompletterande uppgifter i certifikatet som containernummer MRKU9069758, sealnummer 0113483 och förpacknings-/lastningsuppgifter återfinns också i fakturan som shipping marks och container/seal-information. Texten \"1 Cont Microspheres\" är ett tillägg som inte motsäger produktidentiteten."
     },
     "quantity": {
       "applicable": true,
@@ -137,20 +141,20 @@
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.4.4",
+          "rule_id": "4.4.3",
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.4.3.4",
+          "rule_id": "4.4.4",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger uttryckligen bruttoikt med värde, kategori och enhet: \"G/W 726,00 KG\". Fakturan anger total \"Gross Weight 726,000 KG\" för samma sändning; efter normalisering av decimalnotation är värdet numeriskt identiskt."
+      "motivation": "Certifikatet anger en uttrycklig viktkvantitet med numeriskt värde, enhet och viktkategori: gross weight 726,00 KG. Fakturan anger explicit \"Gross Weight 726,000 KG\" för samma försändning. Skillnaden är endast format för decimaler och påverkar inte det numeriska värdet."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.98,
+      "confidence": 0.99,
       "certificate_value": "Sweden",
       "invoice_value": "Country of Origin Sweden",
       "rules_applied": [
@@ -159,26 +163,30 @@
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.5.5",
+          "rule_id": "4.5.2",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.5.4",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Ursprungslandet i certifikatet är \"Sweden\" och fakturan innehåller ett explicit origin-fält: \"Country of Origin Sweden\". Uppgiften kan därför verifieras direkt utan ytterligare tolkning."
+      "motivation": "Certifikatet anger ursprungsland Sweden. Fakturan innehåller ett explicit origin-fält: \"Country of Origin Sweden\". Ursprungslandet kan därför verifieras direkt utan tolkning."
     }
   },
   "overall_assessment": {
     "comparison_result": "IDENTICAL",
     "workflow_recommendation": "AUTO_APPROVAL_ELIGIBLE",
     "auto_approval_eligible": true,
-    "confidence": 0.93,
+    "confidence": 0.96,
     "critical_failures": [],
     "manual_review_triggers": [],
-    "decision_summary": "Ingen LC-hänvisning med nummer finns i varubeskrivningsfältet, så full verifiering enligt kontrollpunkterna 4.1–4.5 har genomförts. Avsändare, mottagare, varubeskrivning, kvantitet och ursprungsland kan alla verifieras mot fakturan enligt tillåtna regler och normaliseringar.",
-    "human_explanation": "Alla relevanta uppgifter i certifikatet kan verifieras mot fakturan. Avsändare, mottagare, varubeskrivning, bruttoikt 726,00 KG och ursprungsland Sweden stämmer. Dokumentparet kan därför godkännas automatiskt."
+    "decision_summary": "Dokumentparet har klassificerats som Certificate of Origin respektive Commercial Invoice. Samtliga fem tillämpliga kontrollpunkter är verifierade som MATCH: consignor, consignee, varubeskrivning, kvantitet och ursprungsland. Ingen LC-regel eller annat undantag begränsar verifieringen, och inga blockerande motsägelser har identifierats.",
+    "human_explanation": "Alla relevanta uppgifter i certifikatet kan verifieras mot fakturan. Avsändare, mottagare, varubeskrivning, bruttovikt 726,00 KG och ursprungsland Sweden stämmer överens. Dokumentparet kan därför godkännas automatiskt."
   },
   "_meta": {
-    "tested_at": "2026-04-24T09:51:07.289892+00:00",
-    "prompt_hash": "10954622b12c",
+    "tested_at": "2026-04-27T08:06:36.996057+00:00",
+    "prompt_hash": "ea5d944217d3",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P033_MATCH",

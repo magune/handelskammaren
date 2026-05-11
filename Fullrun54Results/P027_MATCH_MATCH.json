@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-04-24T00:00:00Z",
+    "verification_timestamp": "2026-04-27T00:00:00Z",
     "document_pair_id": null,
     "certificate_issue_date": "2026-03-02",
     "source_documents_received": 2
@@ -15,7 +15,7 @@
     "document_a": {
       "label": "Document A",
       "assumed_role": "certificate",
-      "document_type": "Certificate of Origin PDF containing original/copy certificate pages and embedded invoice copy"
+      "document_type": "Certificate of Origin PDF containing ORIGINAL and COPY certificate pages; embedded invoice pages present but not used for verification"
     },
     "document_b": {
       "label": "Document B",
@@ -34,19 +34,35 @@
     "activated_rules": [
       {
         "rule_id": "8.5.0",
-        "rule_name": "Filbaserad dokumentparning: certifikat hämtat från certifikatfilen och verifiering gjord mot separat fakturafil"
+        "rule_name": "Filbaserad dokumentparning: certifikat hämtas från certifikatfilen och faktura från separat fakturafil"
+      },
+      {
+        "rule_id": "8.5",
+        "rule_name": "Original-certifikatet används när både ORIGINAL och COPY finns"
       },
       {
         "rule_id": "8.6",
-        "rule_name": "Parningsvalidering passerad eftersom consignor och consignee kan identifieras i fakturan"
+        "rule_name": "Obligatorisk parningsvalidering"
       },
       {
         "rule_id": "4.1.0",
-        "rule_name": "Consignor identifierad uttryckligen i fakturan via företagsnamn i footer/issuertext"
+        "rule_name": "Consignor identifierad i fakturan"
       },
       {
-        "rule_id": "4.4.3.4",
-        "rule_name": "Normalisering av decimaltecken mellan certifikat och faktura för viktvärdet 160,987 MT / 160.987 MT"
+        "rule_id": "4.2.0.2",
+        "rule_name": "Consignee identifierad i relevant mottagarfält i fakturan"
+      },
+      {
+        "rule_id": "4.3.3",
+        "rule_name": "Kontrollerad textmatchning för varubeskrivning"
+      },
+      {
+        "rule_id": "4.4.3.1",
+        "rule_name": "Minst en kvantitetsuppgift verifierad; här även både vikt och antal"
+      },
+      {
+        "rule_id": "4.5.1",
+        "rule_name": "Explicit ursprungsangivelse i fakturan"
       }
     ]
   },
@@ -54,7 +70,7 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.95,
+      "confidence": 0.97,
       "certificate_value": "Cellmark AB\nBox 11927\nSE404 39, GÖTEBORG\nSweden",
       "invoice_value": "CellMark AB\nLilla Bommen 3C·Box 11927\nSE-404 39 Gothenburg·Sweden\nVAT No SE556244243301",
       "rules_applied": [
@@ -63,29 +79,29 @@
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.1.2.1",
+          "rule_id": "4.1.2",
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.1.4",
+          "rule_id": "4.1.2.1",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger consignor som \"Cellmark AB ... Sweden\". Den separata fakturan innehåller samma juridiska part uttryckligen i footer/issuertext som \"CellMark AB\" med svensk adress och svenskt VAT-nummer \"SE556244243301\". Skillnaden i versalisering är tillåten normalisering, och landet verifieras av både adressen \"Sweden\" och VAT-prefixet \"SE\"."
+      "motivation": "Certifikatets consignor 'Cellmark AB ... Sweden' kan identifieras uttryckligen i fakturan som 'CellMark AB' i footer/issuer-informationen. Landet verifieras av den explicita adressen 'Gothenburg·Sweden' samt VAT-prefix 'SE'. Skillnaden i versalgemenskap mellan 'Cellmark' och 'CellMark' är tillåten normalisering."
     },
     "consignee": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.98,
+      "confidence": 0.99,
       "certificate_value": "EXPRESS PACK PRINT FZE\nJEBEL ALI FREE ZONE\nP.O. BOX 16797\nPLOT NO EWTA - 28\nDUBAI\nUNITED ARAB EMIRATES",
       "invoice_value": "Buyer\nEXPRESS PACK PRINT FZE\nJEBEL ALI FREE ZONE\nP.O. BOX 16797 ,PLOT NO EWTA - 28\nDUBAI\nUNITED ARAB EMIRATES",
       "rules_applied": [
         {
-          "rule_id": "4.2.0",
+          "rule_id": "4.2.0.2",
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.2.0.2",
+          "rule_id": "4.2.2",
           "outcome": "MATCH"
         },
         {
@@ -93,34 +109,38 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Mottagaren i certifikatet återfinns direkt i fakturans Buyer-fält med samma företagsnamn, samma boxadress, samma platsangivelse Dubai och samma land United Arab Emirates. Ingen motsägelse finns i något annat mottagarfält."
+      "motivation": "Certifikatets consignee återfinns exakt i fakturans Buyer-fält med samma företagsnamn och samma land 'UNITED ARAB EMIRATES'. Mindre interpunktionsskillnad i adressraden påverkar inte bedömningen."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.96,
+      "confidence": 0.95,
       "certificate_value": "C60034062\nJEBEL ALI, U.A.E.\nBROWN KRAFTLINER\nFSC CONTROLLED WOOD CERTIFICATE NO DNV-CW-001902\nHS CODE: 480411",
-      "invoice_value": "BROWN KRAFTLINER FSC CONTROLLED WOOD CERTIFICATE NO \nDNV-CW-001902 HS Code: 480411",
+      "invoice_value": "BROWN KRAFTLINER FSC CONTROLLED WOOD CERTIFICATE NO DNV-CW-001902 HS Code: 480411",
       "rules_applied": [
         {
           "rule_id": "4.3.2.1",
-          "outcome": "APPLIED_NOT_ARTICLE_NUMBER"
+          "outcome": "NOT_APPLICABLE_FOR_ARTICLE_NUMBER_PRIORITY"
         },
         {
           "rule_id": "4.3.3",
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.3.8",
+          "rule_id": "4.3.4",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.3.8.1",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Den identitetsbärande huvudbeteckningen i certifikatet är \"BROWN KRAFTLINER FSC CONTROLLED WOOD CERTIFICATE NO DNV-CW-001902 HS CODE: 480411\" och denna kan identifieras explicit i fakturans beskrivningsfält. Texten \"C60034062\" och \"JEBEL ALI, U.A.E.\" i certifikatruta 6 behandlas inte som artikelnummer eller identitetsbärande varunamn enligt 4.3.2.1, utan som märknings-/referenstext. Någon fri semantisk tolkning behövs därför inte; huvudbeskrivningen matchar direkt."
+      "motivation": "Prioritet 1 för artikelnummer används inte, eftersom 'C60034062' i box 6 framstår som markering/referens och inte som ett produktartikelnummer. Den identitetsbärande huvudbeteckningen 'BROWN KRAFTLINER FSC CONTROLLED WOOD CERTIFICATE NO DNV-CW-001902 HS CODE: 480411' kan identifieras i fakturan med samma ordsekvens. De övriga raderna 'C60034062' och 'JEBEL ALI, U.A.E.' behandlas som markering/shipping marks i samma box och inte som separata varor."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.91,
+      "confidence": 0.93,
       "certificate_value": "GROSS/NETTO\n160,987 MT\n59 REELS",
       "invoice_value": "Totals: 59 REELS Gross/Net Weight: 160.987 MT",
       "rules_applied": [
@@ -141,7 +161,7 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet innehåller två uttryckliga kvantitetsuppgifter i box 7: \"160,987 MT\" med viktkategori \"GROSS/NETTO\" samt \"59 REELS\". Fakturans totalrad anger exakt samma försändningsantal \"59 REELS\" och samma totalvikt som \"160.987 MT\". Skillnaden mellan komma och punkt i viktvärdet är en tillåten formatskillnad; de normaliserade värdena är numeriskt identiska."
+      "motivation": "Certifikatets box 7 innehåller två uttryckliga kvantitetsuppgifter: '160,987 MT' och '59 REELS'. Fakturan anger totalraden '59 REELS Gross/Net Weight: 160.987 MT', vilket verifierar både antal och vikt. Skillnaden mellan komma och punkt i 160,987/160.987 är en tillåten formatskillnad; det underliggande numeriska värdet är identiskt."
     },
     "origin": {
       "applicable": true,
@@ -159,22 +179,22 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger ursprungsland som \"AUSTRIA\". Fakturan anger ursprunget uttryckligen två gånger i dedikerad origin-text: \"MADE IN AUSTRIA\" och \"THE GOODS ARE OF AUSTRIA ORIGIN\". Ursprungslandet är därför positivt verifierat utan att behöva härledas från adress eller annan indirekt information."
+      "motivation": "Certifikatets ursprungsland 'AUSTRIA' framgår uttryckligen i fakturan både som 'MADE IN AUSTRIA' och som 'THE GOODS ARE OF AUSTRIA ORIGIN'. Ursprunget verifieras därmed positivt i dedikerad ursprungsformulering."
     }
   },
   "overall_assessment": {
     "comparison_result": "IDENTICAL",
     "workflow_recommendation": "AUTO_APPROVAL_ELIGIBLE",
     "auto_approval_eligible": true,
-    "confidence": 0.96,
+    "confidence": 0.97,
     "critical_failures": [],
     "manual_review_triggers": [],
-    "decision_summary": "Originalcertifikatet i certifikatfilen har verifierats mot den separata fakturafilen. Samtliga tillämpliga kontrollpunkter — consignor, consignee, varubeskrivning, kvantitet och ursprungsland — är MATCH efter tillåten normalisering. Ingen LC-regel eller annat undantag begränsar verifieringens omfattning.",
-    "human_explanation": "Certifikatet och den separata fakturan stämmer överens för avsändare, mottagare, varubeskrivning, mängd och ursprungsland. Certifikatet anger Cellmark AB, Express Pack Print FZE, Brown Kraftliner, 160,987 MT och 59 reels samt Austria, och samma uppgifter kan verifieras i fakturan. Dokumentparet kan därför godkännas automatiskt."
+    "decision_summary": "Dokumentparet har parats enligt standardregeln med certifikatet från certifikatfilen och fakturan från den separata fakturafilen. LC-undantaget är inte tillämpligt. Samtliga fem tillämpliga kontrollpunkter är verifierade som MATCH med confidence minst 0.85, varför slutresultatet är IDENTICAL.",
+    "human_explanation": "Certifikatet och den separata fakturan stämmer överens för avsändare, mottagare, varubeskrivning, kvantitet och ursprungsland. Certifikatet anger Cellmark AB, EXPRESS PACK PRINT FZE, BROWN KRAFTLINER, 160,987 MT / 59 REELS och AUSTRIA, och motsvarande uppgifter finns i fakturan. Dokumentparet kan därför godkännas automatiskt."
   },
   "_meta": {
-    "tested_at": "2026-04-24T09:51:07.286524+00:00",
-    "prompt_hash": "10954622b12c",
+    "tested_at": "2026-04-27T08:06:36.994232+00:00",
+    "prompt_hash": "ea5d944217d3",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P027_MATCH",

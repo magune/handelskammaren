@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": null,
+    "verification_timestamp": "2026-04-27T00:00:00Z",
     "document_pair_id": null,
     "certificate_issue_date": "2026-02-17",
     "source_documents_received": 2
@@ -20,7 +20,7 @@
     "document_b": {
       "label": "Document B",
       "assumed_role": "invoice",
-      "document_type": "Invoice"
+      "document_type": "Commercial Invoice"
     }
   },
   "rule_activation": {
@@ -33,20 +33,16 @@
     "eu_origin_normalization_active": false,
     "activated_rules": [
       {
-        "rule_id": "8.5.0",
-        "rule_name": "Standardparning: certifikat från fil 1 och faktura från fil 2"
-      },
-      {
-        "rule_id": "8.6",
-        "rule_name": "Parningsvalidering passerad via matchande fakturanummer"
-      },
-      {
         "rule_id": "4.3.5",
         "rule_name": "Generell varubeskrivning med fakturareferens"
       },
       {
         "rule_id": "4.4.4.1",
-        "rule_name": "Tolkning av punkt som tusentalsavskiljare i numeriskt värde"
+        "rule_name": "Punkt som tusentalsavskiljare i numeriskt värde"
+      },
+      {
+        "rule_id": "8.6",
+        "rule_name": "Obligatorisk parningsvalidering"
       }
     ]
   },
@@ -54,28 +50,24 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.98,
+      "confidence": 0.97,
       "certificate_value": "Volvo car corporation\nBox 24035\nSE-400 22, GÖTEBORG\nSweden",
-      "invoice_value": "Volvo Car Corporation\nSE-405 31 Göteborg\nSWEDEN\nVAT reg no SE556074308901",
+      "invoice_value": "Volvo Car Corporation\nPostal Address: SE-405 31 Göteborg\nSWEDEN\nVAT reg no: SE556074308901",
       "rules_applied": [
         {
           "rule_id": "4.1.0",
-          "outcome": "matched_via_explicit_company_name_found_in_invoice_header_and_footer"
-        },
-        {
-          "rule_id": "4.1.2",
-          "outcome": "company_name_and_country_verified"
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.1.2.1",
-          "outcome": "country_verified_via_address_and_vat_prefix"
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.1.4",
-          "outcome": "country_match"
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor 'Volvo car corporation' kan identifieras uttryckligen i fakturans header som 'Volvo Car Corporation' och även i footer/adressblock. Landet Sverige framgår i fakturans adressblock ('SWEDEN') och stöds även av VAT-prefixet 'SE'. Skillnaderna är endast versal/gemen-formattering."
+      "motivation": "Certifikatets consignor \"Volvo car corporation\" återfinns uttryckligen i fakturans sidhuvud som \"Volvo Car Corporation\". Landet verifieras i fakturan genom adressuppgiften \"SWEDEN\" och stöds även av VAT-prefixet \"SE\". Skillnaden i versalisering påverkar inte matchningen efter tillåten normalisering."
     },
     "consignee": {
       "applicable": true,
@@ -86,70 +78,62 @@
       "rules_applied": [
         {
           "rule_id": "4.2.0.2",
-          "outcome": "all_relevant_recipient_fields_checked_no_match_for_certificate_consignee"
-        },
-        {
-          "rule_id": "4.2.2",
-          "outcome": "company_name_not_identifiable_as_same_legal_entity"
+          "outcome": "NO_MATCH_IN_ANY_RELEVANT_RECIPIENT_FIELD"
         },
         {
           "rule_id": "4.1.3.1",
-          "outcome": "different_legal_entity_name_not_normalizable"
+          "outcome": "MISMATCH"
         },
         {
           "rule_id": "4.2.3",
-          "outcome": "country_match_but_insufficient_without_name_match"
-        },
-        {
-          "rule_id": "4.2.4",
-          "outcome": "mismatch"
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger mottagaren som 'CARIBBEAN VEHICLE ALLIANCE LLC'. Fakturan anger mottagaren/kunden som 'VV Auto Puerto Rico LLC'. Samma juridiska företagsnamn kan inte identifieras i något relevant mottagarfält i fakturan. Liknande adress i San Juan/Puerto Rico räcker inte när företagsnamnet är ett annat."
+      "motivation": "Certifikatets consignee är \"CARIBBEAN VEHICLE ALLIANCE LLC\" men fakturans enda identifierbara mottagarroll är \"VV Auto Puerto Rico LLC\" under Customer-Payer. Certifikatets företagsnamn kan inte identifieras i något mottagarfält i fakturan. Att adress och land pekar på Puerto Rico räcker inte när den juridiska parten har ett annat namn."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.9,
+      "confidence": 0.91,
       "certificate_value": "1 New Volvo vehicles\n1 New Volvo vehicle\nVIN number: YV4H60PE9T1434643\nInvoice: 461333619\nInvoice date: 20.05.2025",
       "invoice_value": "1 piece new passenger car Volvo XC90 256 H6 HL 0D1 31\nProd Year/Model Year: 2025/2026 Country of Origin: Sweden\n...\nInvoice No: 461333619\nDate & Tax point: 20.05.2025",
       "rules_applied": [
         {
           "rule_id": "4.3.5",
-          "outcome": "general_goods_description_with_invoice_reference_applied"
-        },
-        {
-          "rule_id": "4.3.5.1",
-          "outcome": "invoice_number_and_invoice_date_match"
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.3.5.2",
-          "outcome": "invoice_contents_consistent_with_certificate_goods_description"
+          "outcome": "COMPATIBLE_INVOICE_CONTENT"
+        },
+        {
+          "rule_id": "8.5.1.1",
+          "outcome": "INVOICE_NUMBER_MATCH"
         }
       ],
-      "motivation": "Varubeskrivningsfältet i certifikatet innehåller fakturareferens med både fakturanummer '461333619' och fakturadatum '20.05.2025', vilket uppfyller formkraven för generell varubeskrivning med fakturareferens. Fakturan i dokumentparet har exakt samma fakturanummer och datum. Fakturans innehåll avser en ny Volvo-personbil, vilket är förenligt med certifikatets angivelse av en ny Volvo-vehicle."
+      "motivation": "Certifikatets varubeskrivningsfält innehåller både fakturanummer \"461333619\" och fakturadatum \"20.05.2025\" i direkt anslutning till varubeskrivningen, vilket uppfyller kraven för generell varubeskrivning med fakturareferens. Fakturan i dokumentparet har samma fakturanummer och datum. Fakturans innehåll är förenligt med certifikatets beskrivning av en ny Volvo-bil."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.88,
+      "confidence": 0.89,
       "certificate_value": "G/W2302KGS",
       "invoice_value": "Weight: 2.302 kg",
       "rules_applied": [
         {
           "rule_id": "4.4.2.2",
-          "outcome": "certificate_weight_has_explicit_weight_category_and_unit"
-        },
-        {
-          "rule_id": "4.4.4.1",
-          "outcome": "invoice_value_2.302_interpreted_as_2302_via_thousands_separator_rule"
+          "outcome": "FORM_REQUIREMENT_MET"
         },
         {
           "rule_id": "4.4.4",
-          "outcome": "total_weight_in_invoice_accepted_against_certificate_weight"
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.4.4.1",
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets kvantitetsfält anger bruttovikt 'G/W2302KGS', alltså 2302 kg gross weight. Fakturan anger 'Weight: 2.302 kg'. Enligt regeln för punkt som tusentalsavskiljare, när tre siffror följer efter punkten och tolkningen bekräftas av certifikatets värde, normaliseras '2.302 kg' till 2302 kg. Det numeriska värdet kan därför verifieras."
+      "motivation": "Certifikatet anger explicit grossvikt och enhet i samma fält: \"G/W2302KGS\". Fakturan anger \"Weight: 2.302 kg\". Punkten i fakturans värde tolkas som tusentalsavskiljare eftersom tre siffror följer efter separatorn och den normaliserade siffran 2302 exakt motsvarar certifikatets vikt; skillnad i viktkategori-beteckning mellan certifikat och faktura medför inte avvikelse när numeriskt värde och enhet överensstämmer."
     },
     "origin": {
       "applicable": true,
@@ -160,31 +144,31 @@
       "rules_applied": [
         {
           "rule_id": "4.5.1",
-          "outcome": "explicit_origin_field_found_in_invoice"
+          "outcome": "EXPLICIT_ORIGIN_FOUND"
         },
         {
           "rule_id": "4.5.5",
-          "outcome": "match"
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger ursprungsland 'Sweden'. Fakturan anger uttryckligen 'Country of Origin: Sweden'. Ursprungslandet kan därför verifieras direkt utan ytterligare tolkning."
+      "motivation": "Certifikatets ursprungsland \"Sweden\" återfinns uttryckligen i fakturan i ett dedikerat origin-fält: \"Country of Origin: Sweden\". Ingen normalisering utöver versalisering behövs."
     }
   },
   "overall_assessment": {
     "comparison_result": "NOT_IDENTICAL",
     "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
     "auto_approval_eligible": false,
-    "confidence": 0.96,
+    "confidence": 0.97,
     "critical_failures": [
-      "Consignee mismatch: certifikatet anger 'CARIBBEAN VEHICLE ALLIANCE LLC' medan fakturan anger 'VV Auto Puerto Rico LLC'."
+      "Consignee mismatch: certifikatet anger \"CARIBBEAN VEHICLE ALLIANCE LLC\" medan fakturan anger \"VV Auto Puerto Rico LLC\" och certifikatets mottagare återfinns inte i något mottagarfält i fakturan."
     ],
     "manual_review_triggers": [],
-    "decision_summary": "Dokumentparet är korrekt parat via fakturanummer 461333619. Consignor, varubeskrivning, kvantitet och ursprungsland kan verifieras mot fakturan. Consignee kan däremot inte verifieras eftersom certifikatets mottagarnamn inte återfinns i något mottagarfält i fakturan. Minst en tillämplig kontrollpunkt är därför MISMATCH, vilket medför NOT_IDENTICAL.",
-    "human_explanation": "Certifikatet anger mottagaren som CARIBBEAN VEHICLE ALLIANCE LLC, men fakturan anger mottagaren/kunden som VV Auto Puerto Rico LLC. Övriga uppgifter som avsändare, fakturareferens, varubeskrivning, kvantitet och ursprungsland kan verifieras. Därför kan dokumentparet inte godkännas som identiskt."
+    "decision_summary": "Dokumentparet är korrekt parat via fakturanummer 461333619 och flera kontrollpunkter verifieras, men mottagaren i certifikatet kan inte styrkas mot fakturan. Minst en tillämplig kontrollpunkt är därför MISMATCH, vilket medför comparison_result NOT_IDENTICAL.",
+    "human_explanation": "Certifikatet anger mottagaren som CARIBBEAN VEHICLE ALLIANCE LLC, medan fakturan anger VV Auto Puerto Rico LLC. Avsändare, varubeskrivning, kvantitet och ursprungsland kan verifieras mot fakturan, men mottagaren kan inte styrkas. Ärendet kräver därför manuell hantering."
   },
   "_meta": {
-    "tested_at": "2026-04-24T09:51:07.285567+00:00",
-    "prompt_hash": "10954622b12c",
+    "tested_at": "2026-04-27T08:06:36.993720+00:00",
+    "prompt_hash": "ea5d944217d3",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P025_MISMATCH",

@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-04-24T00:00:00Z",
+    "verification_timestamp": null,
     "document_pair_id": null,
     "certificate_issue_date": "2023-03-08",
     "source_documents_received": 2
@@ -34,23 +34,7 @@
     "activated_rules": [
       {
         "rule_id": "8.5.2.1",
-        "rule_name": "Helt avvikande fakturanummer i certifikat vs fakturafil"
-      },
-      {
-        "rule_id": "8.6",
-        "rule_name": "Obligatorisk parningsvalidering"
-      },
-      {
-        "rule_id": "4.1.0",
-        "rule_name": "Consignor kan identifieras i fakturan"
-      },
-      {
-        "rule_id": "4.2.0.2",
-        "rule_name": "Consignee kan identifieras i något mottagarfält"
-      },
-      {
-        "rule_id": "4.4.2.2",
-        "rule_name": "Viktangivelse i certifikat kräver uttrycklig viktkategori"
+        "rule_name": "Certifikatet hänvisar till fakturanummer 108759 men fakturafilen innehåller fakturanummer 108760"
       }
     ]
   },
@@ -58,7 +42,7 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.99,
+      "confidence": 0.98,
       "certificate_value": "Forest Papper AB\nÅsgatan 4\n41463, GÖTEBORG\nSWEDEN",
       "invoice_value": "FOREST PAPPER AB\nÅsgatan 4, 414 63 GÖTEBORG\nVAT no: SE556878121401",
       "rules_applied": [
@@ -69,13 +53,9 @@
         {
           "rule_id": "4.1.2.1",
           "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.1.4",
-          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor 'Forest Papper AB' återfinns uttryckligen i fakturans sidhuvud och adressblock. Landet Sverige styrks både av adressen 'GÖTEBORG'/'Sweden' och VAT-prefixet 'SE'. Samma juridiska part och land kan därför verifieras."
+      "motivation": "Certifikatets consignor 'Forest Papper AB' återfinns uttryckligen i fakturans sidhuvud. Landet Sverige kan verifieras genom adressen 'GÖTEBORG, Sweden' och VAT-prefixet 'SE'. Samma juridiska part och land kan därför identifieras i fakturan."
     },
     "consignee": {
       "applicable": true,
@@ -93,47 +73,51 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignee förekommer uttryckligen i fakturans både 'Delivery address' och 'Buyer'. Företagsnamn och land Turkey/TURKEY överensstämmer efter tillåten normalisering."
+      "motivation": "Mottagaren i certifikatet kan identifieras direkt i fakturans fält 'Delivery address' och även under 'Buyer'. Företagsnamn och land överensstämmer efter tillåten normalisering."
     },
     "goods_description": {
       "applicable": true,
       "status": "MISMATCH",
-      "confidence": 0.92,
+      "confidence": 0.91,
       "certificate_value": "Order No:17470\n48 Packages Fluting- Testliner\nInvoice No: 108759",
-      "invoice_value": "Description of Goods Testliner",
+      "invoice_value": "Description of Goods Testliner\nInvoice no 108760\nOur Order number 17469",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "NOT_APPLICABLE"
+          "outcome": "NO_ARTICLE_NUMBER_USED"
         },
         {
           "rule_id": "4.3.3",
           "outcome": "MISMATCH"
         },
         {
-          "rule_id": "4.3.5",
-          "outcome": "NOT_APPLICABLE"
+          "rule_id": "8.5.2.1",
+          "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Inget artikelnummer i certifikatet kan användas som prioritet 1. Vid kontrollerad textmatchning kan certifikatets identitetsbärande text 'Fluting- Testliner' inte verifieras mot fakturans varubeskrivning 'Testliner' utan att bortse från ordet 'Fluting', vilket inte är tillåtet. Regeln om generell varubeskrivning med fakturareferens är inte tillämplig här och certifikatets angivna fakturanummer 108759 saknar dessutom fakturadatum i varubeskrivningsfältet."
+      "motivation": "LC-undantaget är inte aktivt. Något verifierbart artikelnummer används inte i certifikatet, så kontrollen går till kontrollerad textmatchning. Certifikatet anger 'Fluting- Testliner' medan fakturan endast anger 'Testliner'; den fulla identitetsbärande beteckningen i certifikatet kan därför inte verifieras utan otillåten tolkning. Därutöver hänvisar certifikatet i samma fält till 'Invoice No: 108759' medan fakturafilen innehåller 'Invoice no 108760', vilket är ett helt avvikande fakturanummer."
     },
     "quantity": {
       "applicable": true,
       "status": "MISMATCH",
-      "confidence": 0.98,
+      "confidence": 0.99,
       "certificate_value": "46740kgs",
-      "invoice_value": "Total Quantity 23,425\nRadrader: 5,004 MT; 7,602 MT; 2,877 MT; 7,942 MT",
+      "invoice_value": "Total Quantity 23,425\nLine quantities: 5,004 MT; 7,602 MT; 2,877 MT; 7,942 MT",
       "rules_applied": [
         {
           "rule_id": "4.4.2",
-          "outcome": "MATCH"
+          "outcome": "QUANTITY_UNIT_PRESENT"
         },
         {
           "rule_id": "4.4.2.2",
           "outcome": "MISMATCH"
+        },
+        {
+          "rule_id": "4.4.6",
+          "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Certifikatets box 7 anger ett numeriskt värde och enhet ('46740kgs') men saknar obligatorisk viktkategori som Gross/GW eller Net/NW. Detta är ett absolut formkrav för viktangivelser i certifikatet. Kontrollpunkten blir därför MISMATCH redan på formkravet; dessutom återfinns inte värdet 46740 i fakturans kvantitetsuppgifter."
+      "motivation": "Certifikatets kvantitetsfält anger vikt '46740kgs' men saknar obligatorisk viktkategori som Gross/GW eller Net/NW. Detta är ett absolut formkrav för viktangivelse och ger därför MISMATCH. Fakturan visar dessutom en total kvantitet om 23,425 MT, vilket inte motsvarar 46 740 kg."
     },
     "origin": {
       "applicable": true,
@@ -151,7 +135,7 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets ursprungsland 'United Kingdom' återfinns uttryckligen i fakturan som 'Goods origin United Kingdom'. Positiv verifiering finns i ett explicit origin-fält."
+      "motivation": "Certifikatets ursprungsland 'United Kingdom' återfinns uttryckligen i fakturan som 'Goods origin United Kingdom'. Ursprungslandet är därför verifierat."
     }
   },
   "overall_assessment": {
@@ -160,17 +144,17 @@
     "auto_approval_eligible": false,
     "confidence": 0.98,
     "critical_failures": [
-      "Certifikatet refererar uttryckligen till 'Invoice No: 108759' medan den bifogade fakturan är 'Invoice no 108760'.",
-      "Varubeskrivningen i certifikatet ('Fluting- Testliner') kan inte verifieras mot fakturans 'Testliner' utan otillåten tolkning.",
-      "Kvantitetsfältet i certifikatet ('46740kgs') saknar obligatorisk viktkategori för viktangivelse."
+      "Certifikatet hänvisar till fakturanummer 108759 medan den bifogade fakturan är nummer 108760.",
+      "Kvantitetsfältet i certifikatet anger vikt utan obligatorisk viktkategori (GW/NW/Gross/Net).",
+      "Varubeskrivningen 'Fluting- Testliner' kan inte verifieras exakt mot fakturans 'Testliner' utan otillåten tolkning."
     ],
     "manual_review_triggers": [],
-    "decision_summary": "Dokumentrollen kunde klassificeras säkert och parningsvalideringen passerar via matchande consignor och consignee. Trots detta föreligger konstaterade avvikelser: certifikatet hänvisar till ett annat fakturanummer än fakturafilen, varubeskrivningen kan inte verifieras enligt reglerna och kvantitetsfältet uppfyller inte formkravet för viktangivelse. Eftersom minst en tillämplig kontrollpunkt är MISMATCH ska totalresultatet vara NOT_IDENTICAL.",
-    "human_explanation": "Certifikatet hänvisar till faktura 108759 men den bifogade fakturan är nummer 108760. Varubeskrivningen 'Fluting- Testliner' kan inte styrkas mot fakturans 'Testliner', och kvantiteten '46740kgs' saknar obligatorisk uppgift om brutto- eller nettovikt. Dokumentparet kan därför inte godkännas automatiskt."
+    "decision_summary": "Dokumentparet är inte identiskt. Consignor, consignee och ursprungsland kan verifieras, men varubeskrivningen och kvantiteten faller ut som MISMATCH. Dessutom finns ett helt avvikande fakturanummer mellan certifikatet och fakturafilen.",
+    "human_explanation": "Dokumenten stämmer inte överens. Certifikatet hänvisar till faktura 108759 medan den bifogade fakturan är 108760, och certifikatets kvantitet är angiven som 46740 kgs utan obligatorisk brutto-/nettoviktsmarkering. Varubeskrivningen i certifikatet är också mer specificerad än i fakturan och kan inte verifieras exakt."
   },
   "_meta": {
-    "tested_at": "2026-04-24T09:14:16.729475+00:00",
-    "prompt_hash": "10954622b12c",
+    "tested_at": "2026-04-27T08:04:29.095129+00:00",
+    "prompt_hash": "ea5d944217d3",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P0110_MISMATCH",

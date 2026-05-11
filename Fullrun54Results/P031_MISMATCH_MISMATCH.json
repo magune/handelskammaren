@@ -31,20 +31,7 @@
     "to_order_rule_active": false,
     "quantity_exception_applied": null,
     "eu_origin_normalization_active": false,
-    "activated_rules": [
-      {
-        "rule_id": "8.5.0",
-        "rule_name": "Filbaserad dokumentparning"
-      },
-      {
-        "rule_id": "8.6",
-        "rule_name": "Obligatorisk parningsvalidering"
-      },
-      {
-        "rule_id": "4.3.4",
-        "rule_name": "Tillägg som inte påverkar produktidentitet"
-      }
-    ]
+    "activated_rules": []
   },
   "control_points": {
     "consignor": {
@@ -55,31 +42,19 @@
       "invoice_value": "Nouryon Surface Chemistry AB\nBOX 47067\n402 58 Goteborg\nSweden",
       "rules_applied": [
         {
-          "rule_id": "4.1.1",
-          "outcome": "invoice issuer identified in header"
+          "rule_id": "4.1.0",
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.1.2",
-          "outcome": "company name and country verified"
-        },
-        {
-          "rule_id": "4.1.2.1",
-          "outcome": "country verified via issuer address block"
-        },
-        {
-          "rule_id": "4.1.3.1",
-          "outcome": "same legal entity identified"
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.1.4",
-          "outcome": "country match"
-        },
-        {
-          "rule_id": "4.1.5",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor 'Nouryon Surface Chemistry AB' återfinns som fakturautställare i fakturans sidhuvud. Adressen är i sak samma och landet Sverige framgår explicit i båda dokumenten. Stavningsskillnaden 'GOTHENBURG' vs 'Goteborg' påverkar inte bedömningen eftersom företagsnamn och land är entydigt verifierade."
+      "motivation": "Certifikatets avsändare 'Nouryon Surface Chemistry AB' återfinns uttryckligen i fakturans sidhuvud. Landet Sverige framgår explicit i fakturans adressblock. Skillnaden 'GOTHENBURG'/'Goteborg' gäller adressort och påverkar inte bedömningen eftersom företagsnamn och land kan verifieras entydigt."
     },
     "consignee": {
       "applicable": true,
@@ -90,86 +65,62 @@
       "rules_applied": [
         {
           "rule_id": "4.2.0.2",
-          "outcome": "consignee found in Ship-To field"
-        },
-        {
-          "rule_id": "4.2.1",
-          "outcome": "relevant recipient roles checked"
-        },
-        {
-          "rule_id": "4.2.1.1",
-          "outcome": "alternative recipient address accepted"
-        },
-        {
-          "rule_id": "4.2.2",
-          "outcome": "same legal recipient identified"
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.2.3",
-          "outcome": "country match"
-        },
-        {
-          "rule_id": "4.2.4",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets mottagare återfinns exakt i fakturans Ship-To-block, inklusive 'Attn: BDP Global Logistics', 'Jebel Ali Free Zone', 'DUBAI' och 'UNITED ARAB EMIRATES'. Enligt reglerna räcker det att mottagaren kan identifieras i något av fakturans mottagarfält."
+      "motivation": "Certifikatets mottagare återfinns exakt i fakturans Ship To-fält, inklusive företagsnamn, attention-rad, plats och land. Detta uppfyller kravet att mottagaren får verifieras i något relevant mottagarfält i fakturan."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.9,
+      "confidence": 0.89,
       "certificate_value": "80 DRUM\n80 DRUM AMPHOMER 200 LBS 90.72 KG FIBRE DRUM - US",
-      "invoice_value": "Item 10 AMPHOMER\n200 LBS ~ 90.72 KG FIBRE DRUM\nNo of Packages 80\nCountry of Origin United States",
+      "invoice_value": "AMPHOMER\n200 LBS ~ 90.72 KG FIBRE DRUM",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "no usable article number in certificate; moved to controlled text matching"
-        },
-        {
-          "rule_id": "4.3.2.1",
-          "outcome": "package count not treated as article number"
+          "outcome": "NOT_APPLICABLE"
         },
         {
           "rule_id": "4.3.3",
-          "outcome": "identity-bearing main designation identified"
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.3.4",
-          "outcome": "non-identity-bearing additions accepted"
+          "outcome": "MATCH"
         },
         {
-          "rule_id": "4.3.8",
+          "rule_id": "4.3.8.1",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Den identitetsbärande huvudbeteckningen i certifikatet är 'AMPHOMER 200 LBS 90.72 KG FIBRE DRUM'. Den kan identifieras i fakturan som 'AMPHOMER 200 LBS ~ 90.72 KG FIBRE DRUM'. Tilläggen '80 DRUM' och suffixet '- US' behandlas inte som separata artikelnummer; '80' verifieras även av 'No of Packages 80' och 'US' är förenligt med fakturans ursprungsangivelse 'United States'."
+      "motivation": "Ingen verifieringsgrundande artikelnummerreferens identifierades i certifikatet, därför användes kontrollerad textmatchning. Den identitetsbärande huvudbeteckningen 'AMPHOMER 200 LBS 90.72 KG FIBRE DRUM' kan identifieras i fakturan; tecknet '~' i fakturan och tilläggen '80 DRUM' samt suffixet '- US' i certifikatet behandlas som icke identitetsbärande kompletteringar och förpacknings-/ursprungsrelaterad text som inte ändrar produktidentiteten."
     },
     "quantity": {
       "applicable": true,
       "status": "MISMATCH",
       "confidence": 0.99,
-      "certificate_value": "7801.920\nG.W.",
+      "certificate_value": "7801.920 G.W.",
       "invoice_value": "Gross Weight 7.801,920 KG",
       "rules_applied": [
         {
-          "rule_id": "4.4.2.1",
-          "outcome": "box 7 selected as mandatory verification basis"
+          "rule_id": "4.4.2",
+          "outcome": "MISMATCH"
         },
         {
           "rule_id": "4.4.2.2",
-          "outcome": "weight category present but explicit weight unit missing in certificate"
+          "outcome": "MISMATCH"
         },
         {
           "rule_id": "4.4.4",
-          "outcome": "GW without KG/MT/LB in certificate is a form defect"
-        },
-        {
-          "rule_id": "4.4.6",
           "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Certifikatets kvantitetsfält i box 7 anger endast '7801.920 G.W.' och saknar uttrycklig viktenhet som KG, MT eller LB. Regelverket anger uttryckligen att GW/NW utan viktenhet i certifikatet medför MISMATCH och att enheten inte får härledas från fakturan. Fakturans 'Gross Weight 7.801,920 KG' kan därför inte bota formfelet i certifikatet."
+      "motivation": "Certifikatets kvantitetsfält anger '7801.920 G.W.' med numeriskt värde och viktkategori, men utan uttrycklig viktenhet som KG, MT eller LB. Regelverket kräver att viktenhet framgår uttryckligen i certifikatet när vikt anges, och enheten får inte härledas från fakturan. Att fakturan anger 'Gross Weight 7.801,920 KG' läker inte detta formkravsfel; därför ska kontrollpunkten klassificeras som MISMATCH."
     },
     "origin": {
       "applicable": true,
@@ -180,18 +131,14 @@
       "rules_applied": [
         {
           "rule_id": "4.5.1",
-          "outcome": "explicit origin field identified in invoice"
-        },
-        {
-          "rule_id": "4.5.4",
-          "outcome": "case-normalized country comparison"
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.5.5",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Ursprungslandet anges uttryckligen i certifikatet som 'UNITED STATES' och i fakturan som 'Country of Origin United States'. Det är en direkt och entydig match i ett explicit origin-fält."
+      "motivation": "Certifikatets ursprungsland 'UNITED STATES' återfinns uttryckligen i fakturan i ett dedikerat origin-fält: 'Country of Origin United States'. Ingen tolkning behövs."
     }
   },
   "overall_assessment": {
@@ -200,15 +147,15 @@
     "auto_approval_eligible": false,
     "confidence": 0.97,
     "critical_failures": [
-      "Kvantitetsfältet i certifikatet anger '7801.920 G.W.' utan uttrycklig viktenhet (KG/MT/LB)."
+      "Kontrollpunkten kvantitet är MISMATCH eftersom certifikatet anger '7801.920 G.W.' utan uttrycklig viktenhet."
     ],
     "manual_review_triggers": [],
-    "decision_summary": "Dokumentparet är korrekt parat och avsändare, mottagare, varubeskrivning samt ursprungsland kan verifieras mot fakturan. Kvantitetskontrollpunkten ger dock MISMATCH eftersom certifikatets box 7 saknar uttrycklig viktenhet trots att viktkategori anges som G.W. Minst en tillämplig kontrollpunkt är därmed MISMATCH, vilket medför NOT_IDENTICAL.",
-    "human_explanation": "Certifikatet och fakturan stämmer för avsändare, mottagare, varubeskrivning och ursprungsland. Kvantitetsfältet i certifikatet anger '7801.920 G.W.' utan någon viktenhet som KG, MT eller LB, medan sådan enhet är ett krav för verifiering. Därför kan dokumentparet inte godkännas automatiskt."
+    "decision_summary": "Dokumentparet är korrekt parat genom fakturanummer 9430002357 och fyra kontrollpunkter kan verifieras mot fakturan. Avsändare, mottagare, varubeskrivning och ursprungsland matchar. Kvantitetskontrollpunkten är dock MISMATCH eftersom certifikatet saknar uttrycklig viktenhet i box 7, vilket enligt regelverket medför att det övergripande resultatet måste vara NOT_IDENTICAL.",
+    "human_explanation": "Avsändare, mottagare, varubeskrivning och ursprungsland kan verifieras mot fakturan. Däremot anger certifikatet mängden som '7801.920 G.W.' utan uttrycklig viktenhet, medan fakturan visar 'Gross Weight 7.801,920 KG'. Därför är dokumenten inte identiska och kräver manuell handläggning."
   },
   "_meta": {
-    "tested_at": "2026-04-24T09:51:07.288584+00:00",
-    "prompt_hash": "10954622b12c",
+    "tested_at": "2026-04-27T08:06:36.995533+00:00",
+    "prompt_hash": "ea5d944217d3",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P031_MISMATCH",

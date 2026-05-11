@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-04-24T00:00:00Z",
+    "verification_timestamp": "2026-04-27T00:00:00Z",
     "document_pair_id": null,
     "certificate_issue_date": "2023-03-03",
     "source_documents_received": 2
@@ -20,7 +20,7 @@
     "document_b": {
       "label": "Document B",
       "assumed_role": "invoice",
-      "document_type": "Commercial Invoice"
+      "document_type": "Invoice"
     }
   },
   "rule_activation": {
@@ -34,11 +34,11 @@
     "activated_rules": [
       {
         "rule_id": "4.1.0",
-        "rule_name": "Koncernstruktur / consignor förekommer uttryckligen i fakturan"
+        "rule_name": "Koncernstruktur / consignor identifierad någonstans i fakturan"
       },
       {
         "rule_id": "8.6",
-        "rule_name": "Parningsvalidering passerad via consignor-identifiering"
+        "rule_name": "Obligatorisk parningsvalidering"
       }
     ]
   },
@@ -46,7 +46,7 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.93,
+      "confidence": 0.91,
       "certificate_value": "TETRA PAK INTERNATIONAL SA\nAV. GENERAL GUISAN 70\nPO BOX 446, 1009 PULLY\nSWITZERLAND",
       "invoice_value": "Postal address:\nTetra Pak International SA\nPO Box 446\nCH / 1009 PULLY\n...\nVAT reg no: ESN0391145J\nTetra Pak International SA\nAv. General-Guisan 70,CH-1009 Pully",
       "rules_applied": [
@@ -61,16 +61,20 @@
         {
           "rule_id": "4.1.4",
           "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.5",
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor 'TETRA PAK INTERNATIONAL SA' återfinns uttryckligen i fakturans footer/postadress- och VAT-block, trots att fakturans issuer-rad anger 'TETRA PAK CLOSURES SPAIN SLU.'. Landet verifieras som Schweiz via adressen 'CH / 1009 PULLY' och 'Av. General-Guisan 70, CH-1009 Pully'. Därför är consignor styrkt via koncernstruktur-regeln."
+      "motivation": "Certifikatets consignor-namn 'TETRA PAK INTERNATIONAL SA' återfinns uttryckligen i fakturan i postal/VAT-block på sida 1 och 2. Landet i certifikatet är 'SWITZERLAND' och fakturan visar 'CH / 1009 PULLY' samt 'CH-1009 Pully', vilket verifierar samma land efter tillåten landnormalisering. Matchning sker via koncernstruktur-regeln, inte via fakturans From-fält."
     },
     "consignee": {
       "applicable": true,
       "status": "MISMATCH",
       "confidence": 0.99,
       "certificate_value": "Tetra Pak Jurong Pte Ltd.\n19, Gul Lane,\nSINGAPORE 629414\nSINGAPORE 629414\nSINGAPORE",
-      "invoice_value": "Buyer 940001\nTetra Pak Pakistan Ltd\n316, Upper Mall\n54000 LAHORE\nPAKISTAN\n...\nConsignee 940001\nTetra Pak Pakistan Ltd\n316, Upper Mall\n54000 LAHORE\nPAKISTAN\n...\nShip to 10003366\nQASIM INTERNATIONAL PORT\nQASIM INTERNATIONAL\nPAKISTAN",
+      "invoice_value": "Consignee 940001\nTetra Pak Pakistan Ltd\n316, Upper Mall\n54000 LAHORE\nPAKISTAN\n\nShip to 10003366\nQASIM INTERNATIONAL PORT\nQASIM INTERNATIONAL\nPAKISTAN\n\nBuyer 940001\nTetra Pak Pakistan Ltd\n316, Upper Mall\n54000 LAHORE\nPAKISTAN",
       "rules_applied": [
         {
           "rule_id": "4.2.0.2",
@@ -81,18 +85,18 @@
           "outcome": "MISMATCH"
         },
         {
-          "rule_id": "4.2.3",
+          "rule_id": "4.2.4",
           "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Certifikatets mottagare är 'Tetra Pak Jurong Pte Ltd.' i Singapore. Fakturan visar mottagarrollerna Buyer och Consignee som 'Tetra Pak Pakistan Ltd' i Pakistan samt Ship-To i Pakistan. Certifikatets consignee kan inte identifieras i något mottagarfält i fakturan, och landet Singapore överensstämmer inte med Pakistan."
+      "motivation": "Certifikatet anger mottagaren som 'Tetra Pak Jurong Pte Ltd.' i Singapore. Fakturans relevanta mottagarfält (Buyer, Ship to, Consignee) visar i stället 'Tetra Pak Pakistan Ltd' i Pakistan respektive leverans till Qasim International Port, Pakistan. Certifikatets consignee kan inte identifieras i något mottagarfält i fakturan."
     },
     "goods_description": {
       "applicable": true,
       "status": "MISMATCH",
-      "confidence": 0.97,
-      "certificate_value": "HeliCap3 27 mm White PA001\nHS CODE:39235090",
-      "invoice_value": "HeliCap3 27 mm Blue P2945C PA001\nProduct description: HeliCap3 27 mm\nTariff Code 39235090",
+      "confidence": 0.96,
+      "certificate_value": "25 PALLETS, 600 CARTONS\nGID 0924246493\nFDCU0522303\nHeliCap3 27 mm White PA001\nHS CODE:39235090\nFREIGHT PREPAID",
+      "invoice_value": "10 A100000245 HeliCap3 27 mm Blue P2945C PA001 1,800.000 KPC\nProduct code: 8853-902-00\nProduct description: HeliCap3 27 mm\nOrigin ES Tariff Code 39235090",
       "rules_applied": [
         {
           "rule_id": "4.3.2.1",
@@ -103,51 +107,59 @@
           "outcome": "MISMATCH"
         },
         {
-          "rule_id": "4.3.4",
+          "rule_id": "4.3.3.4",
+          "outcome": "MISMATCH"
+        },
+        {
+          "rule_id": "4.3.8",
           "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Certifikatet anger varan som 'HeliCap3 27 mm White PA001'. Fakturan anger 'HeliCap3 27 mm Blue P2945C PA001'. Den identitetsbärande beskrivningen matchar inte eftersom färg/variant skiljer sig ('White' kontra 'Blue') och fakturans tillägg ändrar produktvarianten. HS-koden 39235090 matchar, men varubeskrivningen kan inte verifieras som samma vara enligt reglerna."
+      "motivation": "Certifikatets identifierbara varubeteckning är 'HeliCap3 27 mm White PA001'. Fakturan visar 'HeliCap3 27 mm Blue P2945C PA001'. Gemensamma delar ('HeliCap3 27 mm' och 'PA001') räcker inte, eftersom färg-/variantordet i certifikatet ('White') motsägs av fakturans 'Blue P2945C'. Ingen uttrycklig fakturahänvisning med fakturanummer och datum finns i certifikatets varubeskrivningsfält, så regeln för generell varubeskrivning kan inte användas."
     },
     "quantity": {
       "applicable": true,
       "status": "MISMATCH",
-      "confidence": 0.98,
+      "confidence": 0.99,
       "certificate_value": "7875 KGS",
-      "invoice_value": "Gross weight\n7,875 KG",
+      "invoice_value": "Gross weight\n7,875 KG\n\nNet weight\n6,984 KG",
       "rules_applied": [
+        {
+          "rule_id": "4.4.2",
+          "outcome": "MATCH"
+        },
         {
           "rule_id": "4.4.2.2",
           "outcome": "MISMATCH"
         },
         {
-          "rule_id": "4.4.4",
-          "outcome": "NOT_APPLICABLE_FOR_OVERRIDE"
+          "rule_id": "4.4.6",
+          "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Certifikatets box 7 anger vikt '7875 KGS' men saknar obligatorisk viktkategori (GW/NW/Gross/Net). Enligt formkravet för viktangivelse i certifikatet leder detta till MISMATCH. Att fakturan innehåller 'Gross weight 7,875 KG' kan inte reparera att certifikatet saknar viktkategori."
+      "motivation": "Certifikatet anger vikt i box 7 som '7875 KGS' men saknar uttrycklig viktkategori (GW/NW/Gross/Net) i box 7 och saknar även fristående viktkategoriuppgift i box 6. Enligt formkravet för viktangivelse medför detta MISMATCH, även om fakturan innehåller 'Gross weight 7,875 KG'."
     },
     "origin": {
       "applicable": true,
       "status": "MISMATCH",
       "confidence": 0.99,
       "certificate_value": "ITALY",
-      "invoice_value": "Country of origin of goods\nES\n...\nOrigin ES",
+      "invoice_value": "Country of origin of goods\nES\n\nOrigin ES",
       "rules_applied": [
         {
           "rule_id": "4.5.1",
-          "outcome": "MISMATCH"
+          "outcome": "IDENTIFIED"
         },
         {
           "rule_id": "4.5.4",
-          "outcome": "MISMATCH"
+          "outcome": "NORMALIZED"
         },
         {
           "rule_id": "4.5.5",
           "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Certifikatet anger ursprungsland 'ITALY'. Fakturan anger ursprung uttryckligen som 'ES' / Spanien både i fältet 'Country of origin of goods' och på artikelnivå ('Origin ES'). Ursprungslandet i certifikatet kan därför inte verifieras mot fakturan."
+      "motivation": "Certifikatet anger ursprungsland 'ITALY'. Fakturan anger explicit ursprung som 'ES' / 'Origin ES', vilket efter ISO-normalisering motsvarar Spanien. Italien kan därför inte verifieras i fakturan."
     }
   },
   "overall_assessment": {
@@ -156,18 +168,18 @@
     "auto_approval_eligible": false,
     "confidence": 0.98,
     "critical_failures": [
-      "Consignee mismatch: certificate shows Tetra Pak Jurong Pte Ltd, Singapore, while invoice shows Tetra Pak Pakistan Ltd, Pakistan.",
-      "Goods description mismatch: certificate shows 'HeliCap3 27 mm White PA001' while invoice shows 'HeliCap3 27 mm Blue P2945C PA001'.",
-      "Quantity mismatch: certificate weight lacks required GW/NW category.",
-      "Origin mismatch: certificate shows Italy while invoice explicitly shows ES/Spain."
+      "Consignee mismatch: certifikatet anger Tetra Pak Jurong Pte Ltd., Singapore, medan fakturan anger Tetra Pak Pakistan Ltd., Pakistan.",
+      "Goods description mismatch: certifikatet anger 'HeliCap3 27 mm White PA001' medan fakturan anger 'HeliCap3 27 mm Blue P2945C PA001'.",
+      "Quantity mismatch: certifikatet anger '7875 KGS' utan obligatorisk viktkategori GW/NW.",
+      "Origin mismatch: certifikatet anger Italy medan fakturan anger ES (Spain)."
     ],
     "manual_review_triggers": [],
-    "decision_summary": "Dokumentparet är inte identiskt. Consignor kan verifieras via uttrycklig förekomst av 'Tetra Pak International SA' i fakturans identifieringsblock, men consignee, varubeskrivning, kvantitetsformkrav och ursprungsland avviker från fakturan. Minst en tillämplig kontrollpunkt är MISMATCH, därför är totalresultatet NOT_IDENTICAL.",
-    "human_explanation": "Certifikatet anger mottagaren som Tetra Pak Jurong Pte Ltd i Singapore medan fakturan anger Tetra Pak Pakistan Ltd i Pakistan. Varubeskrivningen skiljer sig också ('HeliCap3 27 mm White PA001' i certifikatet mot 'HeliCap3 27 mm Blue P2945C PA001' i fakturan), och ursprungslandet är Italy i certifikatet men ES/Spain i fakturan. Därför krävs manuell handläggning."
+    "decision_summary": "Dokumentparet kunde identifieras, och consignor kan verifieras via uttrycklig förekomst av 'Tetra Pak International SA' i fakturans postal/VAT-block. Däremot föreligger flera direkta avvikelser: mottagare, varubeskrivning, kvantitetsformkrav och ursprungsland. Eftersom minst en tillämplig kontrollpunkt gav MISMATCH är totalresultatet NOT_IDENTICAL.",
+    "human_explanation": "Dokumenten stämmer inte överens. Certifikatet anger mottagaren Tetra Pak Jurong Pte Ltd. i Singapore, men fakturan anger Tetra Pak Pakistan Ltd. i Pakistan. Certifikatet anger dessutom varan 'HeliCap3 27 mm White PA001', mängden '7875 KGS' utan GW/NW och ursprung 'Italy', medan fakturan visar 'HeliCap3 27 mm Blue P2945C PA001', gross weight 7,875 KG och ursprung ES."
   },
   "_meta": {
-    "tested_at": "2026-04-24T09:51:07.293293+00:00",
-    "prompt_hash": "10954622b12c",
+    "tested_at": "2026-04-27T08:06:36.997854+00:00",
+    "prompt_hash": "ea5d944217d3",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P039_MISMATCH",

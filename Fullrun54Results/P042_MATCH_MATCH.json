@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-04-24T00:00:00Z",
+    "verification_timestamp": "2026-04-27",
     "document_pair_id": null,
     "certificate_issue_date": "2025-11-25",
     "source_documents_received": 2
@@ -34,27 +34,31 @@
     "activated_rules": [
       {
         "rule_id": "4.1.0",
-        "rule_name": "Consignor found explicitly in invoice text"
+        "rule_name": "Consignor explicitly found in invoice text"
       },
       {
         "rule_id": "4.2.0.2",
-        "rule_name": "Consignee identified in delivery address field"
+        "rule_name": "Consignee may be verified in any relevant recipient field"
       },
       {
         "rule_id": "4.3.3",
-        "rule_name": "Controlled text match on goods description"
+        "rule_name": "Controlled text match on identity-bearing goods description"
       },
       {
         "rule_id": "4.3.4",
-        "rule_name": "Non-identity-bearing prefix/tail ignored for goods description"
+        "rule_name": "Non-identity-bearing additions may be ignored"
       },
       {
-        "rule_id": "4.4.4",
-        "rule_name": "Total gross weight in invoice used for verification"
+        "rule_id": "4.4.2.1",
+        "rule_name": "Box 7 quantity is verification basis"
+      },
+      {
+        "rule_id": "4.4.4.1",
+        "rule_name": "Total weight in invoice may verify shipment weight"
       },
       {
         "rule_id": "4.4.3.4",
-        "rule_name": "Normalization of decimal/thousands formatting"
+        "rule_name": "Normalization of numeric separators"
       },
       {
         "rule_id": "4.5.4",
@@ -68,36 +72,32 @@
       "status": "MATCH",
       "confidence": 0.98,
       "certificate_value": "ERICSSON AB\nTORSHAMNSGATAN 23\n164 80, STOCKHOLM\nSWEDEN",
-      "invoice_value": "ERICSSON AB PRO FORMA INVOICE\nTorshamnsgatan 21-23\nS-164 83 STOCKHOLM, SWEDEN\n... page 2 footer: Ericsson AB / Torshamnsgatan 23 / S-164 80 STOCKHOLM / SWEDEN",
+      "invoice_value": "ERICSSON AB PRO FORMA INVOICE\nTorshamnsgatan 21-23\nS-164 83 STOCKHOLM, SWEDEN\n\nand also page 2 footer:\nEricsson AB\nTorshamnsgatan 23\nS-164 80 STOCKHOLM\nSWEDEN",
       "rules_applied": [
         {
           "rule_id": "4.1.0",
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.1.2.1",
+          "rule_id": "4.1.2",
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.1.4",
+          "rule_id": "4.1.2.1",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor 'ERICSSON AB' återfinns uttryckligen i fakturans sidhuvud på sida 1 och i företags-/adressblocket på sida 2. Landet Sverige framgår explicit i fakturan. Skillnaden mellan 'Torshamnsgatan 23' i certifikatet och 'Torshamnsgatan 21-23' i fakturans header motsäger inte företagsidentiteten, och samma företag samt land kan verifieras tydligt."
+      "motivation": "Certifikatets consignor 'ERICSSON AB' kan identifieras uttryckligen i fakturans sidhuvud på sida 1 och i footer/adressblock på sida 2. Landet Sverige framgår explicit i fakturan. Företagsnamn och land är därmed verifierade."
     },
     "consignee": {
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.99,
       "certificate_value": "KCELL JSC\nALIMZHANOVA STREET 51\n050004 ALMATY\nKAZAKHSTAN",
-      "invoice_value": "DELIVERY ADDRESS:\nKCELL JSC\nALIMZHANOVA STREET 51, 050004\nALMATY, KAZAKHSTAN",
+      "invoice_value": "DELIVERY ADDRESS :\nKCELL JSC\nALIMZHANOVA STREET 51, 050004\nALMATY, KAZAKHSTAN",
       "rules_applied": [
         {
           "rule_id": "4.2.0.2",
-          "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.2.1.1",
           "outcome": "MATCH"
         },
         {
@@ -105,18 +105,18 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Mottagaren i certifikatet kan identifieras exakt i fakturans Delivery Address-fält. Företagsnamn, gata, postnummer, ort och land överensstämmer utan behov av fri tolkning."
+      "motivation": "Mottagaren i certifikatet återfinns exakt i fakturans Delivery Address-fält. Både företagsnamn och land överensstämmer utan tolkning."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.91,
       "certificate_value": "42 PACKAGES\nTELECOM EQUIPMENT\nPL - AIR 3258 B78V and HWACs\nPL - AIR 3258 B78V and HWACs",
-      "invoice_value": "Telecommunication Equipment\n...\nAIR 3258 B78V and HWACs / Приемопередатчик AIR 3258 B78V и Коды аппаратной активации PL\n...\nAIR 3258 B78V and HWACs / Приемопередатчик AIR 3258 B78V и Коды аппаратной активации PL",
+      "invoice_value": "Telecommunication Equipment:\n...\nAIR 3258 B78V and HWACs / Приемопередатчик AIR 3258 B78V и Коды аппаратной активации PL\n...\nAIR 3258 B78V and HWACs / Приемопередатчик AIR 3258 B78V и Коды аппаратной активации PL",
       "rules_applied": [
         {
-          "rule_id": "4.3.2",
-          "outcome": "No standalone article number in certificate; moved to text matching"
+          "rule_id": "4.3.2.1",
+          "outcome": "NO_STANDALONE_ARTICLE_NUMBER_IDENTIFIED"
         },
         {
           "rule_id": "4.3.3",
@@ -131,21 +131,25 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Den identitetsbärande huvudbeteckningen 'AIR 3258 B78V and HWACs' kan identifieras exakt i fakturans två varurader. Inledande 'PL -' i certifikatet och kategoritexten 'TELECOM EQUIPMENT' behandlas som kompletterande icke identitetsbärande text när huvudbeteckningen redan återfinns explicit i fakturan. Fakturan får dessutom innehålla extra språktext på ryska utan att det påverkar den ensidiga verifieringen."
+      "motivation": "Den identitetsbärande huvudbeteckningen 'AIR 3258 B78V and HWACs' återfinns exakt i fakturan på två artikelrader. '42 PACKAGES', 'TELECOM EQUIPMENT' och prefixet 'PL -' behandlas som kompletterande text som inte ändrar produktidentiteten. Varubeskrivningen kan därför verifieras ensidigt mot fakturan."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.95,
+      "confidence": 0.94,
       "certificate_value": "G.W 5298,000 KG",
-      "invoice_value": "GRAND TOTAL ... GROSS WEIGHT 5 298,000 ...\npage 2: Gross Weight: 5.298,000 kg",
+      "invoice_value": "Page 1 grand total gross weight: 5 298,000\nPage 2: Gross Weight: 5.298,000 kg",
       "rules_applied": [
         {
-          "rule_id": "4.4.2.2",
-          "outcome": "Formkrav uppfyllt"
+          "rule_id": "4.4.2.1",
+          "outcome": "BOX_7_SELECTED_AS_VERIFICATION_BASIS"
         },
         {
-          "rule_id": "4.4.4",
+          "rule_id": "4.4.2.2",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.4.4.1",
           "outcome": "MATCH"
         },
         {
@@ -153,29 +157,29 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger uttryckligen gross weight med numeriskt värde och enhet: 'G.W 5298,000 KG'. Fakturan anger samma totalvikt som gross weight, dels i grand total-raden på sida 1 och dels explicit på sida 2 som 'Gross Weight: 5.298,000 kg'. Skillnaden är endast format för tusentals-/decimalseparator och normaliseras till samma numeriska värde 5298,000 kg."
+      "motivation": "Certifikatets verifieringsgrundande kvantitet i box 7 är 'G.W 5298,000 KG'. Fakturan anger total bruttovikt som '5 298,000' på sida 1 och uttryckligt 'Gross Weight: 5.298,000 kg' på sida 2. Efter tillåten normalisering av separatorer är det samma numeriska värde och samma vikttyp."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.98,
+      "confidence": 0.97,
       "certificate_value": "PL",
-      "invoice_value": "COUNTRY OF ORIGIN column: PL (row 1), PL (row 2)\npage 2: Country of Origin: mentioned above",
+      "invoice_value": "COUNTRY OF ORIGIN column: PL / PL\nPage 2: Country of Origin: mentioned above",
       "rules_applied": [
         {
           "rule_id": "4.5.1",
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.5.2",
+          "rule_id": "4.5.4",
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.5.4",
+          "rule_id": "4.5.5",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets ursprungsland anges som 'PL'. Fakturan innehåller en explicit origin-kolumn där båda relevanta raderna är märkta 'PL'. ISO-koden matchar direkt och ursprunget framgår uttryckligen i fakturan."
+      "motivation": "Certifikatet anger ursprungsland 'PL'. Fakturan har ett explicit origin-fält på radnivå där båda artikelraderna är markerade 'PL'. Ursprungslandet kan därför identifieras uttryckligen i fakturan."
     }
   },
   "overall_assessment": {
@@ -185,12 +189,12 @@
     "confidence": 0.96,
     "critical_failures": [],
     "manual_review_triggers": [],
-    "decision_summary": "All five applicable control points were verified as MATCH. No LC exception applied, no pairing defect was found, and all applicable control points have confidence at or above the auto-approval threshold.",
-    "human_explanation": "Certifikatet kan verifieras mot den bifogade fakturan. Avsändare, mottagare, varubeskrivning, bruttovikt 5298,000 kg och ursprung PL stämmer överens. Dokumentparet kan därför godkännas automatiskt."
+    "decision_summary": "Alla fem tillämpliga kontrollpunkter verifierades som MATCH. Ingen LC-regel aktiverades och inga motsägelser eller läsbarhetsproblem identifierades.",
+    "human_explanation": "Avsändare, mottagare, varubeskrivning, kvantitet och ursprungsland kan alla verifieras mot den bifogade proformafakturan. Certifikatet anger Ericsson AB, KCELL JSC, varan AIR 3258 B78V and HWACs, bruttovikt 5298,000 KG och ursprung PL, och dessa uppgifter återfinns i fakturan. Dokumentparet kan därför godkännas automatiskt."
   },
   "_meta": {
-    "tested_at": "2026-04-24T09:51:07.294662+00:00",
-    "prompt_hash": "10954622b12c",
+    "tested_at": "2026-04-27T08:06:36.999036+00:00",
+    "prompt_hash": "ea5d944217d3",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P042_MATCH",

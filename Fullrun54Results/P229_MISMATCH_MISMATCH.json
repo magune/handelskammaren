@@ -1,0 +1,200 @@
+{
+  "schema_version": "3.0",
+  "metadata": {
+    "verification_timestamp": "2026-04-27T00:00:00Z",
+    "document_pair_id": null,
+    "certificate_issue_date": "2026-03-02",
+    "source_documents_received": 2
+  },
+  "task": {
+    "task_type": "customs_document_pair_verification",
+    "comparison_mode": "certificate_vs_invoice",
+    "strictness": "conservative"
+  },
+  "documents": {
+    "document_a": {
+      "label": "Document A",
+      "assumed_role": "certificate",
+      "document_type": "certificate of origin"
+    },
+    "document_b": {
+      "label": "Document B",
+      "assumed_role": "invoice",
+      "document_type": "commercial invoice"
+    }
+  },
+  "rule_activation": {
+    "lc_exception_active": false,
+    "lc_number_found": null,
+    "general_goods_description_with_invoice_reference_active": false,
+    "mixed_origins_rule_active": false,
+    "to_order_rule_active": false,
+    "quantity_exception_applied": "3D",
+    "eu_origin_normalization_active": true,
+    "activated_rules": [
+      {
+        "rule_id": "8.5.0",
+        "rule_name": "Filbaserad dokumentparning: certifikat från fil 1 och faktura från fil 2"
+      },
+      {
+        "rule_id": "8.6",
+        "rule_name": "Obligatorisk parningsvalidering passerad via fakturanummer, consignor och consignee"
+      },
+      {
+        "rule_id": "4.2.2.1.1",
+        "rule_name": "Layoutavkortning av mottagarnamn i certifikatet"
+      },
+      {
+        "rule_id": "4.4.5.5",
+        "rule_name": "Summering av flera rader inom samma faktura"
+      },
+      {
+        "rule_id": "4.5.4.1.1",
+        "rule_name": "EU-land i faktura verifierar 'European Community; Sweden' i certifikatet"
+      }
+    ]
+  },
+  "control_points": {
+    "consignor": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.93,
+      "certificate_value": "AB Akronmaskiner AB\nAkrons industriområde 1\n53194, Järpås\nSverige",
+      "invoice_value": "AB Akronmaskiner \nSE-531 94 JÄRPÅS\nVAT.No SE556102009901\nIBAN SE6060000000000569337178",
+      "rules_applied": [
+        {
+          "rule_id": "4.1.0",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.2.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.5",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatets consignor kan identifieras uttryckligen i fakturan genom företagsnamnet 'AB Akronmaskiner' i sidfot/adressblock. Landet verifieras som Sverige genom svensk adress samt landskod 'SE' i VAT-nummer och IBAN. Skillnaden att certifikatet visar ett extra 'AB' påverkar inte matchningen efter tillåten normalisering av bolagsform."
+    },
+    "consignee": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.9,
+      "certificate_value": "Karlovskiy Machine-Building Plant L\nSergei Nigoyan Street, 2\nPoltava region\nKarlovka city, 39500\nUkraine",
+      "invoice_value": "Invoice address\nKarlovskiy Machine-Building Plant Ltd\nSergei Nigoyan Street, 2\nPoltava region\nKarlovka city, 39500\nUkraine",
+      "rules_applied": [
+        {
+          "rule_id": "4.2.0.2",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.2.2.1.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.2.4",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Mottagaren i certifikatet återfinns i fakturans 'Invoice address'. Certifikatets namn 'Karlovskiy Machine-Building Plant L' är en exakt inledande del av fakturans fullständiga namn 'Karlovskiy Machine-Building Plant Ltd', vilket är förenligt med layoutavkortning. Landet Ukraine överensstämmer också exakt."
+    },
+    "goods_description": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.82,
+      "certificate_value": "Order 80490\nFans AKL",
+      "invoice_value": "Order No. 80490\n1 12712926 Fan AKL125glv J140L12FM ...\n2 12712928 Fan AKL125glv J140L06FM ...",
+      "rules_applied": [
+        {
+          "rule_id": "4.3.2",
+          "outcome": "NO_CERTIFICATE_ARTICLE_NUMBER_USED"
+        },
+        {
+          "rule_id": "4.3.3",
+          "outcome": "MATCH_LOW_CONFIDENCE"
+        },
+        {
+          "rule_id": "4.3.5",
+          "outcome": "NOT_APPLICABLE"
+        }
+      ],
+      "motivation": "Certifikatet innehåller ingen verifierbar artikelnummerreferens utan en generell produktangivelse 'Fans AKL' tillsammans med ordernummer 80490. Fakturan visar samma ordernummer 80490 och två varurader som båda avser AKL-fläktar ('Fan AKL125glv ...'). Detta stöder att certifikatets generella produktfamilj kan identifieras i fakturan, men matchningen kräver viss återhållsam tolkning eftersom fakturan specificerar varianter medan certifikatet använder en kortare samlingsbeskrivning. Därför sätts kontrollpunkten till MATCH men med confidence under auto-approval-tröskeln."
+    },
+    "quantity": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.89,
+      "certificate_value": "2 pcs",
+      "invoice_value": "1,00 pcs\n1,00 pcs",
+      "rules_applied": [
+        {
+          "rule_id": "4.4.2",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.4.5.1",
+          "outcome": "3D_EVALUATED"
+        },
+        {
+          "rule_id": "4.4.5.5",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.4.6",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatet anger uttryckligen kvantiteten '2 pcs' i box 7. Fakturan innehåller två relevanta varurader med '1,00 pcs' respektive '1,00 pcs'. Summering av flera rader inom samma faktura ger totalt 2 pcs, vilket verifierar certifikatets kvantitet."
+    },
+    "origin": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.91,
+      "certificate_value": "European Community\nSweden",
+      "invoice_value": "The exporter of the products covered by this document declares that, except where otherwise clearly indicated, these products are of SE preferential origin.",
+      "rules_applied": [
+        {
+          "rule_id": "4.5.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.5.4",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.5.4.1.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.5.5",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Fakturan innehåller en uttrycklig ursprungsangivelse: 'these products are of SE preferential origin'. ISO-koden 'SE' motsvarar Sweden. Eftersom certifikatet anger 'European Community' tillsammans med 'Sweden' är detta verifierat av att fakturan uttryckligen anger Sverige som ursprung; Sverige verifierar både det specifika landet och EU-samlingsbegreppet."
+    }
+  },
+  "overall_assessment": {
+    "comparison_result": "MANUAL_REVIEW",
+    "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
+    "auto_approval_eligible": false,
+    "confidence": 0.79,
+    "critical_failures": [],
+    "manual_review_triggers": [
+      "Varubeskrivningen matchar sannolikt men kontrollpunkten goods_description har confidence 0.82, vilket understiger confidence-golvet 0.85 för automatiskt godkännande.",
+      "Certifikatet använder den korta samlingsbeskrivningen 'Fans AKL' medan fakturan specificerar två detaljerade AKL-fläktvarianter."
+    ],
+    "decision_summary": "Dokumentparet är korrekt identifierat och parningsvalideringen är uppfylld genom fakturanummer 175585 samt matchande consignor och consignee. Avsändare, mottagare, kvantitet och ursprung kan verifieras som MATCH. Varubeskrivningen kan sannolikt verifieras mot fakturan men kräver viss återhållsam tolkning på produktfamilj/variantnivå och får därför confidence under 0.85. Enligt confidence-golvet kan resultatet därmed inte bli IDENTICAL och ärendet ska gå till manuell handläggning.",
+    "human_explanation": "Certifikatet och fakturan stämmer för avsändare, mottagare, kvantitet och ursprung. Varubeskrivningen i certifikatet är kortfattad ('Fans AKL') medan fakturan anger två mer detaljerade rader ('Fan AKL125glv ...'), så en manuell kontroll behövs innan ärendet kan godkännas automatiskt."
+  },
+  "_meta": {
+    "tested_at": "2026-04-27T08:19:25.076018+00:00",
+    "prompt_hash": "ea5d944217d3",
+    "model": "gpt-5.4",
+    "tier": 2,
+    "pair": "P229_MISMATCH",
+    "expected": "NOT_IDENTICAL",
+    "actual": "MANUAL_REVIEW",
+    "status": "REVIEW"
+  }
+}

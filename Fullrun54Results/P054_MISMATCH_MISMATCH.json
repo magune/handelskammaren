@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-04-24T00:00:00Z",
+    "verification_timestamp": "2026-04-27T00:00:00Z",
     "document_pair_id": null,
     "certificate_issue_date": "2026-01-07",
     "source_documents_received": 2
@@ -15,7 +15,7 @@
     "document_a": {
       "label": "Document A",
       "assumed_role": "certificate",
-      "document_type": "Certificate of Origin"
+      "document_type": "Certificate of Origin (Original + Copy in same file; Original used for verification)"
     },
     "document_b": {
       "label": "Document B",
@@ -25,7 +25,7 @@
   },
   "rule_activation": {
     "lc_exception_active": false,
-    "lc_number_found": "592LC2502563",
+    "lc_number_found": null,
     "general_goods_description_with_invoice_reference_active": false,
     "mixed_origins_rule_active": false,
     "to_order_rule_active": false,
@@ -34,15 +34,27 @@
     "activated_rules": [
       {
         "rule_id": "8.5.0",
-        "rule_name": "Filbaserad dokumentparning"
-      },
-      {
-        "rule_id": "8.5",
-        "rule_name": "Original-certifikat vald när både Original och Copy finns i certifikatfilen"
+        "rule_name": "Filbaserad dokumentparning – certifikat från fil 1 och faktura från fil 2"
       },
       {
         "rule_id": "8.6",
-        "rule_name": "Parningsvalidering"
+        "rule_name": "Obligatorisk parningsvalidering"
+      },
+      {
+        "rule_id": "4.1.0",
+        "rule_name": "Consignor identifierad i fakturan"
+      },
+      {
+        "rule_id": "4.2.0.2",
+        "rule_name": "Consignee får verifieras i relevant mottagarfält"
+      },
+      {
+        "rule_id": "4.3.8.1",
+        "rule_name": "Kategoritext och kolliuppgifter i varubeskrivningsfältet"
+      },
+      {
+        "rule_id": "4.4.2.2",
+        "rule_name": "Viktangivelse kräver viktkategori"
       }
     ]
   },
@@ -50,94 +62,90 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.98,
+      "confidence": 0.99,
       "certificate_value": "ARA PAPER AB\nVALLGATAN 27\n411 16, GOTEBORG\nSWEDEN",
       "invoice_value": "ARA Paper AB\nVallgatan 27\n411 16 Göteborg\nSweden\nVAT No SE559465998801",
       "rules_applied": [
         {
           "rule_id": "4.1.0",
-          "outcome": "match_found_in_invoice_text"
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.1.2.1",
-          "outcome": "country_verified_via_address_and_vat_prefix"
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.1.5",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor 'ARA PAPER AB' återfinns uttryckligen i fakturan, både i branding/header och i footer med full adress. Landet Sverige verifieras via adressblocket 'Sweden' och VAT-prefix 'SE'. Samma juridiska part kan därför identifieras i fakturan."
+      "motivation": "Certifikatets consignor 'ARA PAPER AB' återfinns uttryckligen i fakturan som utställare i sidhuvud/footer. Landet verifieras som Sweden både i adressblocket och via VAT-prefix 'SE'. Samma juridiska part kan identifieras utan otillåten tolkning."
     },
     "consignee": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.98,
+      "confidence": 0.99,
       "certificate_value": "XIAMEN PORT COMMERCE INFORMATION\nCO.,LTD 6/F, NO.31 NORTH DONGGANG\nROAD, XIAMEN AREA OF CHINA (FUJIAN)\nPILOT FREE TRADE ZONE\nTEL:0592-5829873,\nEMAIL:WOOD-2@XMGKSW.COM\nCHINA",
       "invoice_value": "Customer\nXIAMEN PORT COMMERCE INFORMATION\nCO.,LTD 6/F, NO.31 NORTH DONGGANG\nROAD, XIAMEN AREA OF CHINA (FUJIAN)\nPILOT FREE TRADE ZONE CHINA\nTEL:0592-5829873,EMAIL:WOOD-2@XMGKSW.COM",
       "rules_applied": [
         {
           "rule_id": "4.2.0.2",
-          "outcome": "customer_block_accepted_as_relevant_recipient_field"
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.2.3",
-          "outcome": "country_match"
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.2.4",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Mottagaren i certifikatet kan identifieras i fakturans kundblock med samma företagsnamn, samma adressuppgifter och samma land China. Skillnader i radbrytning påverkar inte bedömningen."
+      "motivation": "Certifikatets mottagare återfinns i fakturans Customer-fält med samma företagsnamn, adressuppgifter och land China. Verifieringen kan göras direkt utan specialnormalisering."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.96,
+      "confidence": 0.98,
       "certificate_value": "409 Rolls\nFULLY COATED KRAFT BACK BOARD 191-350GSM",
-      "invoice_value": "Fully Coated Kraft Back Board, 191-350gsm, R/W 580-2100mm\nCOMMODITY: FULLY COATED KRAFT BACK BOARD 191-350GSM\n409 Rolls",
+      "invoice_value": "COMMODITY: FULLY COATED KRAFT BACK BOARD 191-350GSM",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "no_article_number_in_certificate"
+          "outcome": "NO_ARTICLE_NUMBER_PRIORITY"
         },
         {
           "rule_id": "4.3.3",
-          "outcome": "controlled_text_match_on_identity_bearing_main_designation"
+          "outcome": "MATCH"
         },
         {
-          "rule_id": "4.3.4",
-          "outcome": "additional_non_conflicting_text_in_invoice_accepted"
-        },
-        {
-          "rule_id": "4.3.8",
+          "rule_id": "4.3.8.1",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Den identitetsbärande huvudbeteckningen 'FULLY COATED KRAFT BACK BOARD 191-350GSM' återfinns exakt i fakturan. Tillägget 'R/W 580-2100mm' i fakturan är ytterligare specifikation och motsäger inte certifikatets varubeskrivning. '409 Rolls' behandlas som kompletterande kolli-/kvantitetsuppgift och motsvaras också i fakturan."
+      "motivation": "Den identitetsbärande huvudbeteckningen 'FULLY COATED KRAFT BACK BOARD 191-350GSM' kan identifieras exakt i fakturan. '409 Rolls' i certifikatet är kolli-/paketuppgift och inte en separat vara. Fakturans extra specifikation 'R/W 580-2100mm' motsäger inte certifikatets huvudbeteckning."
     },
     "quantity": {
       "applicable": true,
       "status": "MISMATCH",
       "confidence": 0.99,
       "certificate_value": "806,617 MT",
-      "invoice_value": "806,617 Ton\nTOTAL QUANTITY: 806,617 MT",
+      "invoice_value": "TOTAL QUANTITY: 806,617 MT",
       "rules_applied": [
         {
-          "rule_id": "4.4.2.1",
-          "outcome": "box_7_selected_as_governing_quantity"
+          "rule_id": "4.4.2.2",
+          "outcome": "MISMATCH"
         },
         {
-          "rule_id": "4.4.2.2",
-          "outcome": "mismatch_weight_unit_without_required_weight_category"
+          "rule_id": "4.4.3",
+          "outcome": "VALUE_PRESENT_BUT_NOT_SUFFICIENT"
         },
         {
           "rule_id": "4.4.6",
           "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Certifikatets verifieringsgrundande kvantitet i box 7 är '806,617 MT'. Eftersom kvantiteten anges i viktenhet måste certifikatet också uttryckligen ange viktkategori (Gross/GW eller Net/NW), men sådan kategori saknas både i box 7 och som fristående viktuppgift i box 6. Att fakturan innehåller samma numeriska värde ändrar inte detta formkrav, därför är kontrollpunkten MISMATCH."
+      "motivation": "Certifikatet anger mängden som '806,617 MT', vilket är en viktenhet. När kvantitet anges i viktenhet måste certifikatet uttryckligen ange viktkategori (Gross/GW eller Net/NW). Varken box 7 eller box 6 innehåller sådan fristående viktkategori för detta värde. Att fakturan också anger '806,617 MT' räcker inte, eftersom formkravet i certifikatet inte är uppfyllt."
     },
     "origin": {
       "applicable": true,
@@ -148,14 +156,18 @@
       "rules_applied": [
         {
           "rule_id": "4.5.1",
-          "outcome": "explicit_origin_field_found_in_invoice"
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.5.4",
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.5.5",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger ursprungsland 'SWEDEN'. Fakturan innehåller ett explicit origin-fält med texten 'Country of origin Sweden'. Ursprungslandet kan därför verifieras direkt utan tolkning."
+      "motivation": "Certifikatets ursprungsland 'SWEDEN' återfinns uttryckligen i fakturan i ett dedikerat origin-fält: 'Country of origin Sweden'."
     }
   },
   "overall_assessment": {
@@ -164,15 +176,15 @@
     "auto_approval_eligible": false,
     "confidence": 0.98,
     "critical_failures": [
-      "Kvantitetsfältet i certifikatet anger vikt ('806,617 MT') utan obligatorisk viktkategori (Gross/Net/GW/NW)."
+      "Kvantitetsfältet i certifikatet anger '806,617 MT' utan obligatorisk viktkategori (Gross/GW eller Net/NW)."
     ],
     "manual_review_triggers": [],
-    "decision_summary": "Dokumentparet är korrekt parat och avsändare, mottagare, varubeskrivning samt ursprungsland kan verifieras mot fakturan. LC-undantaget aktiveras inte eftersom 'L/C NO. 592LC2502563' står i remarks (box 5) och inte i varubeskrivningsfältet (box 6). Minst en tillämplig kontrollpunkt, kvantitet, ger MISMATCH eftersom certifikatets viktuppgift saknar obligatorisk viktkategori. Därför är totalresultatet NOT_IDENTICAL.",
-    "human_explanation": "Avsändare, mottagare, varubeskrivning och ursprungsland kan verifieras mot fakturan. Certifikatet anger mängden som '806,617 MT' men anger inte om det är brutto- eller nettovikt, vilket krävs för viktangivelser. Dokumentparet kan därför inte godkännas automatiskt."
+    "decision_summary": "Consignor, consignee, goods description and origin are verified against the invoice. Quantity is not compliant because the certificate states a weight in MT without specifying gross or net weight, which results in MISMATCH for control point 4.4 and therefore NOT_IDENTICAL overall.",
+    "human_explanation": "Avsändare, mottagare, varubeskrivning och ursprungsland stämmer mellan dokumenten. Däremot anger certifikatet mängden som '806,617 MT' utan att ange om det är brutto- eller nettovikt. Därför kan dokumentparet inte godkännas automatiskt."
   },
   "_meta": {
-    "tested_at": "2026-04-24T09:51:07.300764+00:00",
-    "prompt_hash": "10954622b12c",
+    "tested_at": "2026-04-27T08:06:37.002588+00:00",
+    "prompt_hash": "ea5d944217d3",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P054_MISMATCH",

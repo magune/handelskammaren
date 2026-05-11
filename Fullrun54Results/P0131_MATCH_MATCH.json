@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-04-24T00:00:00Z",
+    "verification_timestamp": "2026-04-27T00:00:00Z",
     "document_pair_id": null,
     "certificate_issue_date": "2026-03-03",
     "source_documents_received": 2
@@ -34,27 +34,15 @@
     "activated_rules": [
       {
         "rule_id": "8.5.1.1",
-        "rule_name": "Normalisering av fakturanummer – suffixvariant identifierad"
+        "rule_name": "Normalisering av fakturanummer – suffixvariant X-Y vs X"
+      },
+      {
+        "rule_id": "8.5.2.2",
+        "rule_name": "Möjlig variant eller osäkerhet i fakturanummer → MANUAL_REVIEW"
       },
       {
         "rule_id": "8.6",
-        "rule_name": "Parningsvalidering passerad via consignor och consignee"
-      },
-      {
-        "rule_id": "4.1.0",
-        "rule_name": "Consignor återfunnen uttryckligen i fakturan"
-      },
-      {
-        "rule_id": "4.2.0.2",
-        "rule_name": "Consignee identifierad i relevant mottagarfält"
-      },
-      {
-        "rule_id": "4.3.2",
-        "rule_name": "Varubeskrivning verifierad via prioritet 2 kontrollerad textmatchning"
-      },
-      {
-        "rule_id": "4.4.3.1",
-        "rule_name": "Flera kvantitetsuppgifter verifierade mot fakturan"
+        "rule_name": "Obligatorisk parningsvalidering – sanity check"
       }
     ]
   },
@@ -62,9 +50,9 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.98,
+      "confidence": 0.99,
       "certificate_value": "GLOBAL FOREST PRODUCTS SWEDEN AB\nSTORA BADHUSGATAN 18-20\nTEL: 46 73 1526315\n411 21, GOTHENBURG\nSWEDEN",
-      "invoice_value": "GLOBAL FOREST PRODUCTS SWEDEN AB\nGLOBAL FOREST PRODUCTS SWEDEN AB\nSTORA BADHUSGATAN 18-20\n411 21 GOTEBORG, SWEDEN\nTEL: 46 73 1526315\nVAT NO. SE559374366801",
+      "invoice_value": "GLOBAL FOREST PRODUCTS SWEDEN AB\nSTORA BADHUSGATAN 18-20\n411 21 GOTEBORG, SWEDEN\nTEL: 46 73 1526315\nVAT NO. SE559374366801",
       "rules_applied": [
         {
           "rule_id": "4.1.0",
@@ -79,12 +67,12 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor 'GLOBAL FOREST PRODUCTS SWEDEN AB' återfinns uttryckligen i fakturans utställarblock och i fakturans branding/header. Landet Sverige framgår explicit i fakturaadressen och stöds även av VAT-prefix 'SE'. Skillnaden 'GOTHENBURG' vs 'GOTEBORG' avser ortstavning och påverkar inte bedömningen eftersom företagsnamn och land är verifierade."
+      "motivation": "Certifikatets consignor-namn återfinns uttryckligen i fakturans footer och branding. Landet Sverige verifieras explicit i adressblocket och stöds även av VAT-prefixet SE. Skillnaden GOTHENBURG/GOTEBORG påverkar inte eftersom endast företagsnamn och land är avgörande här."
     },
     "consignee": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.98,
+      "confidence": 0.99,
       "certificate_value": "SHANDONG PUBLISHING FOREIGN TRADE COMPANY LIMITED\n69 JIEFANGDONG ROAD, JINAN\nSHANDONG\nChina",
       "invoice_value": "BUYER\nSHANDONG PUBLISHING FOREIGN TRADE COMPANY LIMITED 69 JIEFANGDONG ROAD,JINAN,SHANDONG, CHINA",
       "rules_applied": [
@@ -93,26 +81,26 @@
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.2.2",
+          "rule_id": "4.2.3",
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.2.3",
+          "rule_id": "4.2.4",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignee kan identifieras direkt i fakturans BUYER-fält med samma företagsnamn och samma land China. Mindre formateringsskillnader i radbrytning och interpunktion är tillåtet normaliserade."
+      "motivation": "Mottagaren i certifikatet kan identifieras direkt i fakturans BUYER-fält med samma företagsnamn, adresskärna och land. Ingen motstridig mottagaruppgift påverkar matchningen."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.93,
+      "confidence": 0.97,
       "certificate_value": "2 X 40' CONTAINERS, SODRA BLUE Z\nSODRA BLUE Z SOFTWOOD KRAFT PULP\nNO. OF BALES\nNO. OF UNITS\nGROSS WEIGHT\nNET/ AIRDRY WEIGHT",
-      "invoice_value": "52 ADMT 208 Bales COMMODITY: SODRA BLUE Z SOFTWOOD KRAFT PULP\n...\n2 X 40' CONTAINERS",
+      "invoice_value": "52 ADMT 208 Bales COMMODITY: SODRA BLUE Z SOFTWOOD KRAFT PULP\nCOUNTRY OF ORIGIN: SWEDEN\nMANUFACTURER: SODRA CELL AB\nPACKING: TO BE PACKED IN STRONG UNITIZED BALES",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "PRIORITY_2_USED"
+          "outcome": "NO_ARTICLE_NUMBER_USED"
         },
         {
           "rule_id": "4.3.3",
@@ -123,22 +111,18 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "LC-undantaget aktiveras inte eftersom 'L/C NO. 151591LC25000010' står i remarks/box 5 och inte i varubeskrivningsfältet. Den identitetsbärande huvudbeteckningen 'SODRA BLUE Z SOFTWOOD KRAFT PULP' återfinns exakt i fakturans varubeskrivning. Tilläggen om containrar, balar, units och vikt är kompletterande uppgifter och motsäger inte produktidentiteten."
+      "motivation": "Ingen artikelnummerstyrd matchning är tillämplig. Den identitetsbärande huvudbeteckningen i certifikatet är 'SODRA BLUE Z SOFTWOOD KRAFT PULP', och denna återfinns exakt i fakturans varubeskrivning efter normalisering. Tillägget '2 X 40' CONTAINERS' är kompletterande försändelseinformation och ändrar inte produktidentiteten."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.97,
+      "confidence": 0.95,
       "certificate_value": "208\n26\n52.650 TON\n52 ADMT",
-      "invoice_value": "52 ADMT 208 Bales\n...\nNO. OF BALES: 208\nNO. OF UNITS: 26\nGROSS WEIGHT: 52.650 TON\nNET/ AIRDRY WEIGHT: 52 ADMT",
+      "invoice_value": "52 ADMT 208 Bales\nNO. OF BALES: 208\nNO. OF UNITS: 26\nGROSS WEIGHT: 52.650 TON\nNET/ AIRDRY WEIGHT: 52 ADMT",
       "rules_applied": [
         {
-          "rule_id": "4.4.2.1",
-          "outcome": "BOX_7_SELECTED"
-        },
-        {
           "rule_id": "4.4.2.2",
-          "outcome": "FORM_REQUIREMENT_MET"
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.4.3.1",
@@ -149,7 +133,7 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets box 7 innehåller fyra explicita kvantitetsuppgifter: 208, 26, 52.650 TON och 52 ADMT. Viktkategorierna framgår entydigt via de fristående etiketterna i box 6 ('GROSS WEIGHT' respektive 'NET/ AIRDRY WEIGHT') som direkt korresponderar till värdena i box 7. Samma numeriska värden återfinns i fakturan utan motsägelse: 208 bales, 26 units, gross weight 52.650 TON och net/airdry weight 52 ADMT."
+      "motivation": "Certifikatets box 7 innehåller fyra kvantitetsvärden som motsvarar etiketterna i box 6: 208 bales, 26 units, 52.650 TON gross weight och 52 ADMT net/airdry weight. Fakturan innehåller samma numeriska värden för samma försändning utan motsägelser. Minst en kvantitetsuppgift måste verifieras; här verifieras samtliga relevanta värden."
     },
     "origin": {
       "applicable": true,
@@ -160,32 +144,31 @@
       "rules_applied": [
         {
           "rule_id": "4.5.1",
-          "outcome": "ORIGIN_FIELD_IDENTIFIED"
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.5.5",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets ursprungsland 'SWEDEN' kan identifieras uttryckligen i fakturans dedikerade ursprungsfält 'COUNTRY OF ORIGIN: SWEDEN'. Ingen motsägande ursprungsuppgift finns i fakturan."
+      "motivation": "Certifikatets ursprungsland 'SWEDEN' återfinns uttryckligen i fakturan i ett dedikerat origin-fält: 'COUNTRY OF ORIGIN: SWEDEN'. Ingen normalisering utöver versaler behövs."
     }
   },
   "overall_assessment": {
     "comparison_result": "MANUAL_REVIEW",
     "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
     "auto_approval_eligible": false,
-    "confidence": 0.82,
+    "confidence": 0.9,
     "critical_failures": [],
     "manual_review_triggers": [
-      "Certifikatet refererar uttryckligen 'COMMERCIAL INVOICE NO. 11428-2' medan fakturafilen bär nummer 'No. 11428'.",
-      "Skillnaden är en suffixvariant X-Y vs X och omfattas av regeln att sådana fakturanummerskillnader ska hanteras som MANUAL_REVIEW vid dokumentparning."
+      "Certifikatet hänvisar till 'COMMERCIAL INVOICE NO. 11428-2' medan den separata fakturafilen är 'No. 11428'. Suffixskillnaden X-Y jämfört med X utgör en möjlig variant och kräver manuell dokumentparningsbedömning."
     ],
-    "decision_summary": "Alla fem tillämpliga kontrollpunkter kan verifieras som MATCH mot den bifogade fakturan. Det övergripande resultatet kan ändå inte sättas till IDENTICAL eftersom certifikatet hänvisar till fakturanummer 11428-2 medan den separata fakturafilen visar 11428; enligt suffixvariantsregeln i dokumentparningen kräver detta manuell granskning.",
-    "human_explanation": "Certifikatet och fakturan stämmer överens för avsändare, mottagare, varubeskrivning, mängd och ursprungsland. Certifikatet hänvisar dock till Commercial Invoice No. 11428-2 medan den bifogade fakturan är numrerad 11428. Eftersom nummerskillnaden kan vara en suffixvariant krävs manuell kontroll av dokumentparningen."
+    "decision_summary": "Samtliga fem kontrollpunkter kan verifieras mot den bifogade fakturan, men dokumentparningen kan inte fastställas med full automatsäkerhet eftersom certifikatet refererar till fakturanummer 11428-2 medan fakturafilen visar 11428. Enligt reglerna för suffixvariant i fakturanummer ska detta leda till manuell granskning, inte automatiskt godkännande.",
+    "human_explanation": "Alla kontrollpunkter stämmer i sak mellan certifikatet och fakturan. Certifikatet hänvisar dock till faktura 11428-2 medan den bifogade fakturan är nummer 11428, och det behöver bedömas manuellt om suffixet '-2' avser samma faktura. Därför kan ärendet inte auto-godkännas."
   },
   "_meta": {
-    "tested_at": "2026-04-24T09:14:16.740103+00:00",
-    "prompt_hash": "10954622b12c",
+    "tested_at": "2026-04-27T08:04:29.105085+00:00",
+    "prompt_hash": "ea5d944217d3",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P0131_MATCH",

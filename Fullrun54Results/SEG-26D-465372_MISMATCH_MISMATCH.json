@@ -1,0 +1,204 @@
+{
+  "schema_version": "3.0",
+  "metadata": {
+    "verification_timestamp": "2026-04-27T00:00:00Z",
+    "document_pair_id": null,
+    "certificate_issue_date": "2026-03-02",
+    "source_documents_received": 2
+  },
+  "task": {
+    "task_type": "customs_document_pair_verification",
+    "comparison_mode": "certificate_vs_invoice",
+    "strictness": "conservative"
+  },
+  "documents": {
+    "document_a": {
+      "label": "Document A",
+      "assumed_role": "certificate",
+      "document_type": "Certificate of Origin"
+    },
+    "document_b": {
+      "label": "Document B",
+      "assumed_role": "invoice",
+      "document_type": "Invoice"
+    }
+  },
+  "rule_activation": {
+    "lc_exception_active": false,
+    "lc_number_found": null,
+    "general_goods_description_with_invoice_reference_active": true,
+    "mixed_origins_rule_active": true,
+    "to_order_rule_active": false,
+    "quantity_exception_applied": null,
+    "eu_origin_normalization_active": false,
+    "activated_rules": [
+      {
+        "rule_id": "8.5.0",
+        "rule_name": "Filbaserad dokumentparning: certifikat från fil 1 och verifiering mot separat fakturafil"
+      },
+      {
+        "rule_id": "8.6",
+        "rule_name": "Obligatorisk parningsvalidering"
+      },
+      {
+        "rule_id": "4.3.5",
+        "rule_name": "Generell varubeskrivning med fakturareferens"
+      },
+      {
+        "rule_id": "4.5.3",
+        "rule_name": "Blandade ursprung"
+      }
+    ]
+  },
+  "control_points": {
+    "consignor": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.97,
+      "certificate_value": "Volvo Car Corporation\nRB building\nSE405 31, GÖTEBORG\nSweden",
+      "invoice_value": "Volvo Car Corporation\n405 31 Gothenburg\nSWEDEN\nReg.No. 556074-3089\nSE556074308901",
+      "rules_applied": [
+        {
+          "rule_id": "4.1.0",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.2",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.2.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.4",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatets consignor är 'Volvo Car Corporation' i Sweden. Samma juridiska namn framgår uttryckligen i fakturans header/sändarenhet, och landet verifieras av adressen '405 31 Gothenburg, SWEDEN' samt VAT-prefixet 'SE' i 'SE556074308901'. Skillnader i gatudetalj ('RB building' saknas i fakturan) påverkar inte utfallet eftersom företagsnamn och land överensstämmer."
+    },
+    "consignee": {
+      "applicable": true,
+      "status": "MISMATCH",
+      "confidence": 0.96,
+      "certificate_value": "Domasco Industrialare\nGate No. 67\nDOHA, QATAR\n04-600352\nQatar",
+      "invoice_value": "DOHA MARKETING SERVICES CO WLL\nB RING ROAD 1427\n. AL-MANSOORA DOHA\nQATAR",
+      "rules_applied": [
+        {
+          "rule_id": "8.5.0",
+          "outcome": "APPLIED"
+        },
+        {
+          "rule_id": "4.2.0.2",
+          "outcome": "MISMATCH"
+        },
+        {
+          "rule_id": "4.2.1.1",
+          "outcome": "MISMATCH"
+        },
+        {
+          "rule_id": "4.2.4",
+          "outcome": "MISMATCH"
+        }
+      ],
+      "motivation": "Certifikatet anger mottagaren som 'Domasco Industrialare' i Qatar. I den separata fakturafilen identifieras mottagaren som 'DOHA MARKETING SERVICES CO WLL' i Qatar, och 'Domasco Industrialare' kan inte identifieras i något mottagarfält i fakturan. En eventuell förekomst av 'DOMASCO' i inbäddad cargospec i certifikatfilen får inte användas som fakturaunderlag för consignee-verifiering; därför föreligger MISMATCH."
+    },
+    "goods_description": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.93,
+      "certificate_value": "Autoparts,attached invoice 2612143, date 26-02-27",
+      "invoice_value": "Invoice No. 2612143\nInvoice date 20260227\nPart descriptions including POLLEN FILTER, ANTI-ROLL BAR, IGNITION COIL, BRAKE DISC, BRAKE PAD KIT, KEY CARD, CLIP and other automotive spare parts",
+      "rules_applied": [
+        {
+          "rule_id": "4.3.5",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.3.5.2",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Varubeskrivningen i certifikatet är generell men innehåller uttrycklig fakturahänvisning med både fakturanummer '2612143' och fakturadatum '26-02-27'. Fakturan i dokumentparet har nummer '2612143' och datum '20260227', vilket representerar samma kalenderdatum efter tillåten datumformatnormalisering. Fakturans innehåll består av fordonsdelar/autoparts och är därmed förenligt med certifikatets generella beskrivning."
+    },
+    "quantity": {
+      "applicable": true,
+      "status": "MISMATCH",
+      "confidence": 0.91,
+      "certificate_value": "Gross weight\n61,0 kg",
+      "invoice_value": "Invoice no. 2612143 pages 1-4 contain article line quantities (Q.REQ/Q.DEL) and monetary totals, but no explicit gross weight, net weight, total weight or weight field.",
+      "rules_applied": [
+        {
+          "rule_id": "4.4.2.1",
+          "outcome": "APPLIED"
+        },
+        {
+          "rule_id": "4.4.2.2",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.4.3",
+          "outcome": "NOT_FOUND_IN_INVOICE"
+        },
+        {
+          "rule_id": "4.4.5.1",
+          "outcome": "NO_EXCEPTION_APPLICABLE"
+        },
+        {
+          "rule_id": "4.4.6.1",
+          "outcome": "MISMATCH"
+        }
+      ],
+      "motivation": "Verifieringsgrundande kvantitet är box 7 i certifikatet: 'Gross weight 61,0 kg'. Den separata fakturafilen innehåller ingen explicit viktuppgift som motsvarar detta värde; endast artikelantal och prisuppgifter finns. Inget av undantagen 3A-3E är tillämpligt på den separata fakturan, och den inbäddade cargospecifikationen i certifikatfilen får inte ersätta den separata fakturafilen enligt dokumentparningsregeln. Därför kan box 7-värdet inte verifieras mot fakturan och kontrollpunkten blir MISMATCH."
+    },
+    "origin": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.98,
+      "certificate_value": "RO FR HU JP SE DE IN ES PL CZ NO IT CN",
+      "invoice_value": "Origin column contains: RO, FR, HU, JP, SE, DE, IN, ES, PL, CZ, NO, IT, CN",
+      "rules_applied": [
+        {
+          "rule_id": "4.5.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.5.3",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.5.4",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.5.5",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatet anger flera ursprungsländer som ISO-koder: RO, FR, HU, JP, SE, DE, IN, ES, PL, CZ, NO, IT och CN. Fakturan har en explicit origin-kolumn per artikelrad och samtliga dessa koder återfinns där. Ingen extra unik ursprungskod utanför certifikatets lista identifierades i fakturans origin-kolumn."
+    }
+  },
+  "overall_assessment": {
+    "comparison_result": "NOT_IDENTICAL",
+    "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
+    "auto_approval_eligible": false,
+    "confidence": 0.95,
+    "critical_failures": [
+      "Consignee i certifikatet ('Domasco Industrialare') kan inte identifieras i den separata fakturan, som anger 'DOHA MARKETING SERVICES CO WLL'.",
+      "Certifikatets kvantitet i box 7 ('Gross weight 61,0 kg') kan inte verifieras mot den separata fakturan, som saknar viktuppgift."
+    ],
+    "manual_review_triggers": [],
+    "decision_summary": "Dokumentparet passerar parningsvalideringen genom matchande fakturanummer 2612143 och matchande consignor, men två tillämpliga kontrollpunkter ger MISMATCH: consignee och quantity. Goods description matchar via generell fakturahänvisning med korrekt nummer och datum. Origin matchar eftersom samtliga ursprungskoder i certifikatet återfinns explicit i fakturans origin-kolumn.",
+    "human_explanation": "Certifikatet hänvisar korrekt till faktura 2612143 och avsändare, varubeskrivning och ursprungsländer stämmer mot fakturan. Däremot anger certifikatet mottagaren som Domasco Industrialare medan fakturan anger DOHA MARKETING SERVICES CO WLL, och certifikatets bruttovikt 61,0 kg finns inte angiven i den bifogade fakturan. Därför är dokumenten inte identiska och måste hanteras manuellt."
+  },
+  "_meta": {
+    "tested_at": "2026-04-27T08:19:25.086139+00:00",
+    "prompt_hash": "ea5d944217d3",
+    "model": "gpt-5.4",
+    "tier": 2,
+    "pair": "SEG-26D-465372_MISMATCH",
+    "expected": "NOT_IDENTICAL",
+    "actual": "NOT_IDENTICAL",
+    "status": "PASS"
+  }
+}

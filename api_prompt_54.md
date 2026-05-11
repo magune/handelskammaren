@@ -1218,7 +1218,8 @@ Om referens eller fakturadatum saknas, eller om hänvisningen inte entydigt iden
 När certifikatet innehåller mer än ett ursprungsland och varorna anges separat i certifikatet ska det entydigt framgå vilket ursprungsland som avser respektive vara.
 
 Detta krav anses uppfyllt när:
-- ursprungsland anges direkt efter respektive artikel i certifikatet, ELLER
+- ursprungsland anges direkt efter respektive artikel i certifikatet (i box 6), ELLER
+- ursprungsland per artikel framgår uttryckligen i remarks (box 5) eller annat fält som en dedikerad koppling (t.ex. "Product A — Country of origin: Sweden", "SmartPegs country of origin Germany"), ELLER
 - certifikatet innehåller en uttrycklig hänvisning till fakturan i varubeskrivningen (t.ex. "according to attached invoice")
 
 **Exempel på godkänd koppling vara–ursprungsland:**
@@ -1230,9 +1231,11 @@ Certifikatet listar varor med landskod i parentes efter varje artikel:
 
 Landskoder i parentes direkt efter en artikel utgör en GILTIG koppling mellan vara och ursprungsland. Systemet ska tolka "(XX)" efter en artikelrad som en landskod som anger ursprung för den artikeln, förutsatt att XX är en vedertagen ISO-landskod eller landförkortning.
 
-Om certifikatet innehåller flera ursprungsländer men INTE anger ursprung per artikel och INTE heller innehåller en uttrycklig fakturahänvisning i varubeskrivningsfältet → MISMATCH.
+Per-artikel ursprungskopplingar i remarks (box 5) är också godkända om de UTTRYCKLIGEN namnger varje produkt och dess ursprung (t.ex. "SmartPegs country of origin Germany / Beacon country of origin Sweden"). Vaga ursprungsangivelser som inte kopplar ett specifikt ursprung till en specifik vara i remarks accepteras INTE.
 
-Obs: Fakturahänvisning i remarks (box 5) eller andra fält utanför varubeskrivningen uppfyller INTE detta krav. Hänvisningen måste finnas i varubeskrivningsfältet (box 6).
+Om certifikatet innehåller flera ursprungsländer men INTE anger ursprung per artikel (vare sig i box 6 eller i remarks) och INTE heller innehåller en uttrycklig fakturahänvisning i varubeskrivningsfältet → MISMATCH.
+
+Obs: En GENERELL fakturahänvisning (t.ex. "according to invoice 12345") i remarks uppfyller INTE kravet på koppling vara–ursprungsland. Hänvisningen måste antingen vara en per-artikel-ursprungskoppling eller en uttrycklig fakturahänvisning i box 6.
 
 Denna bestämmelse gäller ENDAST när certifikatet innehåller flera ursprungsländer. När certifikatet anger ett enda ursprungsland krävs ingen sådan koppling per artikel.
 
@@ -1281,8 +1284,12 @@ En kvantitetsenhet ska ange mängd, exempelvis:
 Längdmått är INTE kvantitetsenheter. Följande är ogiltiga kvantitetsenheter → MISMATCH:
 - Längdmått: cm, mm, m, lm (löpmeter), ft
 - Vaga beteckningar: "item", "items" (utan numerisk enhet som PCS eller UNITS)
+- Ädelstensenheter: ct, carat, karats (används i smyckesbranschen men är inte en standardiserad handelskvantitet för COO-ändamål)
 
-Om certifikatets kvantitetsfält enbart innehåller sådana ogiltiga enheter ska kontrollpunkten klassificeras som MISMATCH.
+**KRITISK REGEL – Ogiltig enhet medför alltid MISMATCH:**
+Om certifikatets kvantitetsfält innehåller en eller flera ogiltiga enheter (se listan ovan) ska kontrollpunkten klassificeras som MISMATCH — OAVSETT om andra giltiga kvantitetsuppgifter också förekommer i certifikatet. Regeln om "minst en kvantitetsuppgift räcker" (4.4.3.1) gäller INTE för ogiltiga enheter — om en ogiltig enhet som lm, cm, ft eller ct förekommer i box 7 MASTE den hela kvantitetskontrollpunkten bli MISMATCH. Det räcker INTE att m² eller kg finns bredvid lm — förekomsten av lm (eller annan ogiltig enhet) i box 7 är ett självständigt formkravsfel.
+
+Undantag: Om den ogiltiga enheten (t.ex. lm) förekommer uteslutande i varubeskrivningsfältet (box 6) och INTE i kvantitetsfältet (box 7), ska detta INTE i sig medföra MISMATCH på kvantitetskontrollpunkten.
 
 #### 4.4.2.1 Flera kvantitetsuppgifter i certifikatet
 Om flera olika kvantitetsuppgifter förekommer i certifikatet ska verifieringen utgå UTESLUTANDE från den kvantitetsuppgift som är placerad i fältet "Quantity / Mängd" (box 7).

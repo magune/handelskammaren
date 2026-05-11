@@ -1,0 +1,216 @@
+{
+  "schema_version": "3.0",
+  "metadata": {
+    "verification_timestamp": null,
+    "document_pair_id": null,
+    "certificate_issue_date": "2026-01-21",
+    "source_documents_received": 2
+  },
+  "task": {
+    "task_type": "customs_document_pair_verification",
+    "comparison_mode": "certificate_vs_invoice",
+    "strictness": "conservative"
+  },
+  "documents": {
+    "document_a": {
+      "label": "Document A",
+      "assumed_role": "certificate",
+      "document_type": "certificate of origin with embedded supplementary pages"
+    },
+    "document_b": {
+      "label": "Document B",
+      "assumed_role": "invoice",
+      "document_type": "invoice (image-based/scanned)"
+    }
+  },
+  "rule_activation": {
+    "lc_exception_active": false,
+    "lc_number_found": null,
+    "general_goods_description_with_invoice_reference_active": false,
+    "mixed_origins_rule_active": false,
+    "to_order_rule_active": false,
+    "quantity_exception_applied": null,
+    "eu_origin_normalization_active": false,
+    "activated_rules": [
+      {
+        "rule_id": "8.5.0",
+        "rule_name": "Filbaserad dokumentparning – använd certifikat från fil 1 och verifieringsfaktura från separat fakturafil"
+      },
+      {
+        "rule_id": "8.6",
+        "rule_name": "Obligatorisk parningsvalidering"
+      },
+      {
+        "rule_id": "4.1.0",
+        "rule_name": "Consignor kan styrkas om företagsnamnet förekommer någonstans i fakturan"
+      },
+      {
+        "rule_id": "4.2.0.2",
+        "rule_name": "Consignee ska återfinnas i något relevant mottagarfält i fakturan"
+      },
+      {
+        "rule_id": "4.3.3",
+        "rule_name": "Kontrollerad textmatchning för varubeskrivning"
+      },
+      {
+        "rule_id": "4.4.3.0",
+        "rule_name": "Enhetsprefix-normalisering kpcs/pcs"
+      },
+      {
+        "rule_id": "4.5.1",
+        "rule_name": "Ursprungsland ska framgå explicit i fakturan"
+      }
+    ]
+  },
+  "control_points": {
+    "consignor": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.9,
+      "certificate_value": "Emballator Tectubes Sweden AB\nTubgatan 2\nBox 103\n54422, Hjo\nSweden",
+      "invoice_value": "Emballator Tectubes Sweden AB\nBox 103\nSE-54422 Hjo\nSWEDEN",
+      "rules_applied": [
+        {
+          "rule_id": "8.6",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.0",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.2.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.5",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatets consignor 'Emballator Tectubes Sweden AB ... Sweden' kan identifieras i den separata fakturafilens footer som 'Emballator Tectubes Sweden AB ... SWEDEN'. Företagsnamn och land kan därmed verifieras i fakturan. Matchningen baseras på separat fakturafil, inte på inbäddade fakturasidor i certifikatfilen."
+    },
+    "consignee": {
+      "applicable": true,
+      "status": "MANUAL_REVIEW",
+      "confidence": 0.48,
+      "certificate_value": "The Saudi British Bank\nWestern Province Management Office\nP.O.Box 106\nSA-21411 Jeddah\nSaudi Arabia",
+      "invoice_value": "Relevant consignee/buyer/ship-to field could not be read in the separate invoice file",
+      "rules_applied": [
+        {
+          "rule_id": "8.5.0",
+          "outcome": "APPLIED"
+        },
+        {
+          "rule_id": "4.2.0.2",
+          "outcome": "NOT_VERIFIED"
+        },
+        {
+          "rule_id": "8.1.1",
+          "outcome": "MANUAL_REVIEW"
+        },
+        {
+          "rule_id": "8.1.2",
+          "outcome": "EMBEDDED_PAGES_NOT_USED_FOR_VERIFICATION"
+        }
+      ],
+      "motivation": "Den separata fakturafilen är bildbaserad och den synliga sidan visar varurader, kvantitet, ursprungsangivelse och footer, men inte något läsbart mottagarfält. Certifikatfilen innehåller inbäddade faktura-/delivery note-sidor där mottagaren ser ut att framgå, men dessa får inte användas som verifieringsunderlag enligt filparningsregeln. Eftersom consignee i den separata fakturafilen inte kan läsas med tillräcklig säkerhet blir utfallet MANUAL_REVIEW, inte MISMATCH."
+    },
+    "goods_description": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.89,
+      "certificate_value": "Printed Aluminiumtubes with caps, 4 pallets\nSure Cure Gel-CMN 30g",
+      "invoice_value": "Sure Cure Gel-CMN 30g\nPrinted Aluminiumtubes with caps\nPackages: 4 pallets",
+      "rules_applied": [
+        {
+          "rule_id": "4.3.2",
+          "outcome": "NO_ARTICLE_NUMBER_IN_CERTIFICATE_USED"
+        },
+        {
+          "rule_id": "4.3.3",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.3.4",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.3.8",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatets varubeskrivning innehåller den identitetsbärande produkten 'Sure Cure Gel-CMN 30g' samt förpackningsbeskrivningen 'Printed Aluminiumtubes with caps, 4 pallets'. Den separata fakturafilen visar samma produkttext och samma kompletterande förpackningsuppgifter. Tillägget 'Packages: 4 pallets' i fakturan påverkar inte produktidentiteten och stödjer matchningen."
+    },
+    "quantity": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.86,
+      "certificate_value": "30640pcs\n30640pcs",
+      "invoice_value": "30,640 kpcs",
+      "rules_applied": [
+        {
+          "rule_id": "4.4.2",
+          "outcome": "VALID_UNIT"
+        },
+        {
+          "rule_id": "4.4.3.0",
+          "outcome": "MATCH_AFTER_ALLOWED_UNIT_PREFIX_NORMALIZATION"
+        },
+        {
+          "rule_id": "4.4.3.1",
+          "outcome": "MATCH_AT_LEAST_ONE_QUANTITY"
+        },
+        {
+          "rule_id": "4.4.6",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatets kvantitetsfält anger 30640 pcs. Den separata fakturafilen visar kvantiteten som '30,640 kpcs'. Enligt den uttryckliga regeln om enhetsprefix-normalisering för kpcs/pcs accepteras denna skrivning som verifiering av 30640 pcs. Minst en verifierbar kvantitetsuppgift räcker för MATCH."
+    },
+    "origin": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.93,
+      "certificate_value": "Sweden",
+      "invoice_value": "The origin of the material is Sweden.",
+      "rules_applied": [
+        {
+          "rule_id": "4.5.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.5.2",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.5.5",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatet anger ursprungsland 'Sweden'. Den separata fakturafilen innehåller den explicita ursprungsangivelsen 'The origin of the material is Sweden.' Ursprungslandet kan därför verifieras direkt utan tolkning."
+    }
+  },
+  "overall_assessment": {
+    "comparison_result": "MANUAL_REVIEW",
+    "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
+    "auto_approval_eligible": false,
+    "confidence": 0.76,
+    "critical_failures": [],
+    "manual_review_triggers": [
+      "Consignee kunde inte verifieras säkert i den separata fakturafilen eftersom mottagarfältet inte var läsbart/visibelt.",
+      "Certifikatfilens inbäddade fakturasidor får inte ersätta separat fakturafil vid verifiering."
+    ],
+    "decision_summary": "Dokumentparet passerar parningsvalideringen via consignor och flera materiella kontrollpunkter matchar i den separata fakturafilen: consignor, varubeskrivning, kvantitet och ursprungsland. Den separata fakturafilen är dock bildbaserad och visar inte ett läsbart consignee-fält, medan motsvarande uppgift endast framgår i inbäddade sidor i certifikatfilen som inte får användas som verifieringsunderlag. Därför kan mottagaren inte verifieras entydigt och totalresultatet blir MANUAL_REVIEW.",
+    "human_explanation": "Avsändare, varubeskrivning, kvantitet och ursprung kan verifieras mot fakturan. Den separata fakturafilen är dock bildbaserad och mottagarfältet framgår inte tillräckligt tydligt för att mottagaren ska kunna bekräftas säkert. Ärendet behöver därför granskas manuellt."
+  },
+  "_meta": {
+    "tested_at": "2026-04-27T08:19:25.059178+00:00",
+    "prompt_hash": "ea5d944217d3",
+    "model": "gpt-5.4",
+    "tier": 2,
+    "pair": "P203_MATCH",
+    "expected": "IDENTICAL",
+    "actual": "MANUAL_REVIEW",
+    "status": "REVIEW"
+  }
+}

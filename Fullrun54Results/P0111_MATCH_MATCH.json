@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-04-24T00:00:00Z",
+    "verification_timestamp": null,
     "document_pair_id": null,
     "certificate_issue_date": "2026-02-27",
     "source_documents_received": 2
@@ -20,7 +20,7 @@
     "document_b": {
       "label": "Document B",
       "assumed_role": "invoice",
-      "document_type": "Proforma invoice"
+      "document_type": "Proforma Invoice"
     }
   },
   "rule_activation": {
@@ -34,19 +34,23 @@
     "activated_rules": [
       {
         "rule_id": "8.1.2",
-        "rule_name": "Proforma invoice accepted as invoice-type verification document"
+        "rule_name": "Proforma invoice accepted as verification document"
+      },
+      {
+        "rule_id": "4.1.0",
+        "rule_name": "Consignor identified anywhere in invoice documents"
       },
       {
         "rule_id": "4.3.2",
-        "rule_name": "Goods verification primarily by article number"
+        "rule_name": "Goods verified primarily by article number"
       },
       {
         "rule_id": "4.4.5.6",
-        "rule_name": "Summation of row weights when total weight line is absent"
+        "rule_name": "Summation of line weights when total line is missing"
       },
       {
         "rule_id": "4.5.4",
-        "rule_name": "Origin normalization including ISO country code equivalence"
+        "rule_name": "Origin normalization using ISO country code"
       }
     ]
   },
@@ -54,9 +58,9 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.96,
+      "confidence": 0.94,
       "certificate_value": "Volvo Merchandise AB\nBror Nilssons g 5\nSE-40508, GÖTEBORG\nSweden",
-      "invoice_value": "Visiting address\nVolvo Merchandise AB\nBror Nilssons gata 5\n40508 GOTEBORG\nSweden\nVAT no\nSE556744915101",
+      "invoice_value": "Visiting address\nVolvo Merchandise AB\nBror Nilssons gata 5\n40508 GÖTEBORG\nSweden",
       "rules_applied": [
         {
           "rule_id": "4.1.0",
@@ -67,15 +71,11 @@
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.1.2.1",
-          "outcome": "MATCH"
-        },
-        {
           "rule_id": "4.1.4",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor 'Volvo Merchandise AB' återfinns uttryckligen i fakturan i besöksadressen. Adressen visar samma land, Sweden, och stöds även av svensk VAT-kod 'SE556744915101'. Skillnaden 'g' vs 'gata' är tillåten adressnormalisering."
+      "motivation": "Certifikatets consignor \"Volvo Merchandise AB\" återfinns uttryckligen i fakturans visiting address-block. Företagsnamnet matchar efter tillåten normalisering av gatubeteckning (\"g\"/\"gata\"), och landet Sweden framgår uttryckligen i båda dokumenten."
     },
     "consignee": {
       "applicable": true,
@@ -89,67 +89,55 @@
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.2.2",
-          "outcome": "MATCH"
-        },
-        {
           "rule_id": "4.2.3",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Mottagaren i certifikatet kan identifieras exakt i fakturans både invoicing address och delivery address. Företagsnamn, gatulinjer och stad överensstämmer. 'Turkiye' och 'Türkiye' är samma land enligt tillåten landnormalisering."
+      "motivation": "Mottagaren i certifikatet kan identifieras exakt i fakturans mottagarfält, både som invoicing address och delivery address. Företagsnamn, adress och land överensstämmer; Turkiye/Türkiye är tillåten landnormalisering."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.97,
-      "certificate_value": "32 Packages\n30 pcs - 113974 Renault Trucks K Rigid 8x4 1:43 CN\n75 pcs - 113597 Renault Trucks T High tractor 4x2 1 :43 CN\n25 pcs - 113599 Renault Trucks T High tractor 4x2 1 :24 CN",
-      "invoice_value": "Item number Description\n113974 Renault Trucks K Rigid 8x4 1:43\n113597 Renault Trucks T High tractor 4x2 1 :43\n113599 Renault Trucks T High tractor 4x2 1 :24\nCoO\nCN\nCN\nCN",
+      "confidence": 0.99,
+      "certificate_value": "30 pcs - 113974 Renault Trucks K Rigid 8x4 1:43 CN\n75 pcs - 113597 Renault Trucks T High tractor 4x2 1 :43 CN\n25 pcs - 113599 Renault Trucks T High tractor 4x2 1 :24 CN",
+      "invoice_value": "113974 Renault Trucks K Rigid 8x4 1:43\n113597 Renault Trucks T High tractor 4x2 1 :43\n113599 Renault Trucks T High tractor 4x2 1 :24",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.3.2.1",
-          "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.3.8.1",
+          "rule_id": "4.3.8",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet innehåller artikelnummer 113974, 113597 och 113599. Samma artikelnummer återfinns exakt i fakturan tillsammans med motsvarande varubeskrivningar. '32 Packages' behandlas som kompletterande kolliuppgift och inte som separat vara."
+      "motivation": "Certifikatet innehåller artikelnumren 113974, 113597 och 113599. Samtliga tre artikelnummer och motsvarande varubeskrivningar återfinns exakt i fakturan, vilket ger MATCH enligt prioritet 1 för artikelnummer."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.86,
+      "confidence": 0.89,
       "certificate_value": "113.30 KG GROSS",
-      "invoice_value": "Kg column per item:\n113974 ... 23.34\n113597 ... 44.46\n113599 ... 45.50",
+      "invoice_value": "CoO Kg Qty\nCN 23.34 30.00\nCN 44.46 75.00\nCN 45.50 25.00",
       "rules_applied": [
+        {
+          "rule_id": "4.4.2.1",
+          "outcome": "MATCH"
+        },
         {
           "rule_id": "4.4.2.2",
           "outcome": "MATCH"
         },
         {
           "rule_id": "4.4.5.1",
-          "outcome": "APPLIED_SEQUENCE"
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.4.5.6",
           "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.4.5.6.5",
-          "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.4.5.6.6",
-          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger explicit vikt med enhet och kategori: '113.30 KG GROSS'. Fakturan saknar totalvikt men innehåller radvikter i kolumnen 'Kg': 23.34, 44.46 och 45.50. Summering enligt undantag 3E ger 113.30, vilket exakt motsvarar certifikatets värde; ingen annan viktkategori i fakturan motsäger att samma viktkategori avses."
+      "motivation": "Verifieringsgrundande kvantitet är box 7: \"113.30 KG GROSS\". Fakturan saknar total vikt men anger radvikter 23.34 kg, 44.46 kg och 45.50 kg; dessa summeras enligt undantag 3E till exakt 113.30 kg. Certifikatet anger viktkategori GROSS, och fakturan innehåller ingen motstridig viktkategori."
     },
     "origin": {
       "applicable": true,
@@ -165,24 +153,28 @@
         {
           "rule_id": "4.5.4",
           "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.5.5",
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger ursprungsland 'China'. Fakturan har ett explicit origin-fält på radnivå, 'CoO', där varje artikel anges med 'CN'. ISO-koden CN är ekvivalent med China."
+      "motivation": "Certifikatet anger ursprungsland China. Fakturan anger explicit per rad i origin-kolumnen \"CoO\" värdet \"CN\", vilket är en tillåten ISO-landkod för China; därmed kan ursprungslandet verifieras uttryckligen."
     }
   },
   "overall_assessment": {
     "comparison_result": "IDENTICAL",
     "workflow_recommendation": "AUTO_APPROVAL_ELIGIBLE",
     "auto_approval_eligible": true,
-    "confidence": 0.93,
+    "confidence": 0.95,
     "critical_failures": [],
     "manual_review_triggers": [],
-    "decision_summary": "Dokumentparet har klassificerats som Certificate of Origin och Proforma invoice. Samtliga fem tillämpliga kontrollpunkter verifieras som MATCH. Kvantiteten verifieras genom summering av fakturans radvikter till 113.30 kg, vilket exakt motsvarar certifikatet.",
-    "human_explanation": "Alla kontrollpunkter stämmer mellan ursprungscertifikatet och fakturan. Avsändare, mottagare, artikelnummer/varor, kvantitet och ursprungsland kan verifieras i fakturan. Dokumentparet kan därför godkännas automatiskt."
+    "decision_summary": "Alla fem tillämpliga kontrollpunkter verifierades som MATCH. Consignor och consignee återfinns i fakturan, varorna verifieras via exakta artikelnummer, kvantiteten 113.30 KG verifieras genom summering av fakturans radvikter enligt undantag 3E, och ursprungslandet China verifieras via den explicita origin-koden CN i fakturan.",
+    "human_explanation": "Alla tillämpliga uppgifter i certifikatet kan verifieras mot den bifogade proformafakturan. Avsändare, mottagare, varor, mängd och ursprungsland stämmer överens. Dokumentparet kan därför godkännas automatiskt."
   },
   "_meta": {
-    "tested_at": "2026-04-24T09:14:16.729951+00:00",
-    "prompt_hash": "10954622b12c",
+    "tested_at": "2026-04-27T08:04:29.095586+00:00",
+    "prompt_hash": "ea5d944217d3",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P0111_MATCH",

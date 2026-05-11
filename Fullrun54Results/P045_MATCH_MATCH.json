@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-04-24T00:00:00Z",
+    "verification_timestamp": "2026-04-27T00:00:00Z",
     "document_pair_id": null,
     "certificate_issue_date": "2025-12-17",
     "source_documents_received": 2
@@ -15,12 +15,12 @@
     "document_a": {
       "label": "Document A",
       "assumed_role": "certificate",
-      "document_type": "Certificate of Origin"
+      "document_type": "certificate_of_origin"
     },
     "document_b": {
       "label": "Document B",
       "assumed_role": "invoice",
-      "document_type": "Customs Invoice"
+      "document_type": "customs_invoice"
     }
   },
   "rule_activation": {
@@ -34,19 +34,31 @@
     "activated_rules": [
       {
         "rule_id": "4.1.0",
-        "rule_name": "Consignor identified anywhere in invoice documents"
+        "rule_name": "Consignor found anywhere in invoice documents"
       },
       {
         "rule_id": "4.2.0.2",
-        "rule_name": "Consignee may match any relevant recipient field in invoice"
+        "rule_name": "Consignee may match any relevant recipient field"
+      },
+      {
+        "rule_id": "4.3.3",
+        "rule_name": "Controlled text matching for goods description"
+      },
+      {
+        "rule_id": "4.3.4",
+        "rule_name": "Non-identity-bearing additions in goods text may be ignored"
+      },
+      {
+        "rule_id": "4.4.4",
+        "rule_name": "Total gross weight in invoice may verify certificate gross weight"
       },
       {
         "rule_id": "4.4.3.4",
         "rule_name": "Normalization of mixed decimal/thousand separators"
       },
       {
-        "rule_id": "8.6",
-        "rule_name": "Mandatory pairing validation"
+        "rule_id": "4.5.4",
+        "rule_name": "ISO country code normalization"
       }
     ]
   },
@@ -54,9 +66,9 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.99,
+      "confidence": 0.98,
       "certificate_value": "ERICSSON AB\nTORSHAMNSGATAN 23\n164 80, STOCKHOLM\nSWEDEN",
-      "invoice_value": "Ericsson AB\nTorshamnsgatan 23\nS-164 80 STOCKHOLM\nSWEDEN\nVAT No: SE556056625801",
+      "invoice_value": "Ericsson AB Ericsson AB Bank: SE BANKEN\nVAT No: SE556056625801 Torshamnsgatan 23 Bank: Gothenburg\nTax rep: EAB S-164 80 STOCKHOLM Account No: 5746-8212767\nReg. office SWEDEN",
       "rules_applied": [
         {
           "rule_id": "4.1.0",
@@ -71,14 +83,14 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor 'ERICSSON AB' återfinns uttryckligen i fakturan flera gånger, bland annat i företagsblock och adressblock. Landet Sweden verifieras direkt i adressen och stöds även av VAT-prefixet 'SE'. Samma juridiska part och samma land kan därför identifieras i fakturan."
+      "motivation": "Certifikatets consignor 'ERICSSON AB' återfinns uttryckligen flera gånger i fakturan, bland annat i footer/adressblock. Landet verifieras som 'SWEDEN' i fakturan och stöds även av VAT-prefix 'SE'. Samma juridiska part och land kan därmed identifieras."
     },
     "consignee": {
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.99,
       "certificate_value": "VIVA ARMENIA CJSC\n4/1 ARGISHTI STR\n0015 YEREVAN\nARMENIA",
-      "invoice_value": "Invoice to:\nVIVA ARMENIA CJSC\n4/1 ARGISHTI STR\n0015 YEREVAN\nARMENIA\n\nCustomer/Sold to:\nVIVA ARMENIA CJSC\n4/1 ARGISHTI STR\n0015 YEREVAN\nARMENIA",
+      "invoice_value": "Invoice to 582468\nVIVA ARMENIA CJSC\n4/1 ARGISHTI STR\n0015 YEREVAN\nARMENIA\nConsignee/Ship to 1100022968 Customer/Sold to\nVIVA ARMENIA CJSC VIVA ARMENIA CJSC\nARARATYAN ST 62/23 4/1 ARGISHTI STR\n0043 YEREVAN 0015 YEREVAN\nARMENIA ARMENIA",
       "rules_applied": [
         {
           "rule_id": "4.2.0.2",
@@ -93,18 +105,18 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Mottagaren i certifikatet kan identifieras direkt i fakturans 'Invoice to' och 'Customer/Sold to'. Företagsnamn och land överensstämmer exakt. Därmed är consignee verifierad utan behov av ytterligare tolkning."
+      "motivation": "Mottagaren 'VIVA ARMENIA CJSC' återfinns uttryckligen i fakturans fält 'Invoice to', 'Customer/Sold to' och 'Consignee/Ship to'. Landet Armenia överensstämmer exakt. Skillnader i alternativ ship-to-gatuadress påverkar inte bedömningen eftersom samma företag och land är identifierade."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.95,
+      "confidence": 0.94,
       "certificate_value": "37 PACKAGES\nTELECOM EQUIPMENT\nCN - Antenna 5700 2L 4M 2.0m\nCN - Kingsignal 1/4\" jumper cable, MQ4(plug) - NEX10(m), 3 m\nCN - Kingsignal 1/4\" jumper cable, MQ5(plug) - NEX10(m), 3 m",
-      "invoice_value": "Goods Marking: Telecommunication equipment\n1 CN ... Antenna 5700 2L 4M 2.0m\n2 CN ... Kingsignal 1/4\" jumper cable, MQ4(plug) - NEX10(m), 3 m\n3 CN ... Kingsignal 1/4\" jumper cable, MQ5(plug) - NEX10(m), 3 m",
+      "invoice_value": "Goods Marking\nTelecommunication equipment\n1 CN 85177100 KRE1012408/2 KRE1012408/2 Antenna 5700 2L 4M 2.0m\n2 CN 85442000 RPM629551/3 RPM629551/3 Kingsignal 1/4\" jumper cable, MQ4(plug) - NEX10(m), 3 m\n3 CN 85442000 RPM629552/3 RPM629552/3 Kingsignal 1/4\" jumper cable, MQ5(plug) - NEX10(m), 3 m",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "Priority 2 applied"
+          "outcome": "Prioritet 2 använd"
         },
         {
           "rule_id": "4.3.3",
@@ -119,70 +131,66 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet innehåller inga artikelnummer som styr Prioritet 1. De tre konkreta varubeskrivningarna i certifikatet kan identifieras exakt i fakturans rader. Den generella rubriken 'TELECOM EQUIPMENT' är förenlig med fakturans 'Telecommunication equipment', och prefixet 'CN -' ändrar inte produktidentiteten eftersom varorna i fakturan också har ursprungskod CN. Varubeskrivningen är därför verifierad genom kontrollerad textmatchning."
+      "motivation": "De tre konkreta varuposterna i certifikatet kan identifieras exakt i fakturan. Prefixet 'CN -' i certifikatet och 'CN' i fakturans CoO-kolumn behandlas som icke-identitetsbärande tillägg i sammanhanget, medan huvudbeteckningarna för varorna är identiska. Rubriken 'TELECOM EQUIPMENT' bedöms som kategoritext och inte som en separat vara."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.96,
+      "confidence": 0.95,
       "certificate_value": "G.W 4972,910 KG",
-      "invoice_value": "Total gross weight\n4.972,910 KG",
+      "invoice_value": "Total gross weight 4.972,910 KG",
       "rules_applied": [
         {
           "rule_id": "4.4.2.2",
-          "outcome": "MATCH"
+          "outcome": "Formkrav uppfyllt"
         },
         {
-          "rule_id": "4.4.3",
+          "rule_id": "4.4.4",
           "outcome": "MATCH"
         },
         {
           "rule_id": "4.4.3.4",
           "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.4.4",
-          "outcome": "MATCH"
         }
       ],
-      "motivation": "Det verifieringsgrundande kvantitetsfältet i certifikatet är box 7: 'G.W 4972,910 KG'. Fakturan innehåller explicit 'Total gross weight 4.972,910 KG'. Efter tillåten normalisering av punkt och komma är de numeriska värdena identiska och avser samma viktkategori gross weight. Kvantiteten är därför verifierad."
+      "motivation": "Certifikatet anger explicit gross weight med numeriskt värde och enhet: 'G.W 4972,910 KG'. Fakturan anger 'Total gross weight 4.972,910 KG'. Efter tillåten normalisering av tusentals-/decimalseparatorer är värdet numeriskt identiskt och avser samma gross weight-kategori."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.98,
+      "confidence": 0.97,
       "certificate_value": "CN",
-      "invoice_value": "CoO column per line: CN / CN / CN",
+      "invoice_value": "№ CoO HS-code: Product Number Part Number Description Qty Price unit * USD Amount\n1 CN 85177100 KRE1012408/2 KRE1012408/2 Antenna 5700 2L 4M 2.0m 75 1.055,74 79.180,50\n2 CN 85442000 RPM629551/3 RPM629551/3 Kingsignal 1/4\" jumper cable, MQ4(plug) - NEX10(m), 3 m 75 48,06 3.604,50\n3 CN 85442000 RPM629552/3 RPM629552/3 Kingsignal 1/4\" jumper cable, MQ5(plug) - NEX10(m), 3 m 75 58,19 4.364,25",
       "rules_applied": [
         {
           "rule_id": "4.5.1",
-          "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.5.2",
-          "outcome": "MATCH"
+          "outcome": "Explicit origin field identified"
         },
         {
           "rule_id": "4.5.4",
           "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.5.5",
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger ursprungsland 'CN'. Fakturan anger explicit ursprung i en dedikerad 'CoO'-kolumn, där samtliga rader är märkta 'CN'. Certifikatets ursprungsland kan därför uttryckligen identifieras i fakturan."
+      "motivation": "Certifikatet anger ursprungsland 'CN'. Fakturan har en explicit per-rad ursprungskolumn märkt 'CoO', där samtliga relevanta rader visar 'CN'. ISO-koden i certifikatet kan därmed uttryckligen identifieras i fakturan."
     }
   },
   "overall_assessment": {
     "comparison_result": "IDENTICAL",
     "workflow_recommendation": "AUTO_APPROVAL_ELIGIBLE",
     "auto_approval_eligible": true,
-    "confidence": 0.98,
+    "confidence": 0.96,
     "critical_failures": [],
     "manual_review_triggers": [],
-    "decision_summary": "All five applicable control points are verified as MATCH. No LC exception applies. Document pairing is valid because consignor and consignee are both identifiable in the invoice, and the goods, quantity and origin are explicitly supported.",
-    "human_explanation": "Avsändare, mottagare, varubeskrivning, kvantitet och ursprungsland i certifikatet kan alla verifieras mot fakturan. Certifikatet anger Ericsson AB, VIVA ARMENIA CJSC, de listade telekomvarorna, bruttovikt 4972,910 KG och ursprung CN, och samma uppgifter finns i fakturan. Dokumentparet kan därför godkännas automatiskt."
+    "decision_summary": "Alla fem tillämpliga kontrollpunkter verifieras som MATCH mot den bifogade fakturan. Ingen LC-regel aktiveras och inga motsägelser har identifierats.",
+    "human_explanation": "Certifikatet kan verifieras mot fakturan. Avsändare, mottagare, varor, bruttovikt 4972,910 KG och ursprung CN återfinns i fakturan. Dokumentparet kan därför godkännas automatiskt."
   },
   "_meta": {
-    "tested_at": "2026-04-24T09:51:07.296290+00:00",
-    "prompt_hash": "10954622b12c",
+    "tested_at": "2026-04-27T08:06:37.000009+00:00",
+    "prompt_hash": "ea5d944217d3",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P045_MATCH",

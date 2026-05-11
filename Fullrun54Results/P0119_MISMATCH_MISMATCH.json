@@ -15,12 +15,12 @@
     "document_a": {
       "label": "Document A",
       "assumed_role": "certificate",
-      "document_type": "Certificate of Origin"
+      "document_type": "certificate of origin"
     },
     "document_b": {
       "label": "Document B",
       "assumed_role": "invoice",
-      "document_type": "Commercial Invoice"
+      "document_type": "commercial invoice"
     }
   },
   "rule_activation": {
@@ -34,19 +34,15 @@
     "activated_rules": [
       {
         "rule_id": "8.5.0",
-        "rule_name": "Filbaserad dokumentparning; separat fakturafil används för verifiering, inte inbäddad fakturakopia i certifikatfilen"
+        "rule_name": "Filbaserad dokumentparning - certifikat från certifikatfil, faktura från separat fakturafil"
       },
       {
         "rule_id": "8.6",
-        "rule_name": "Parningsvalidering passerad genom consignor- och consignee-identifiering i fakturan"
-      },
-      {
-        "rule_id": "4.1.0",
-        "rule_name": "Consignor identifierad uttryckligen i fakturan"
+        "rule_name": "Obligatorisk parningsvalidering"
       },
       {
         "rule_id": "4.2.0.2",
-        "rule_name": "Consignee får verifieras mot något mottagarfält i fakturan"
+        "rule_name": "Consignee kan verifieras i något relevant mottagarfält"
       },
       {
         "rule_id": "4.3.3",
@@ -54,11 +50,11 @@
       },
       {
         "rule_id": "4.4.2.2",
-        "rule_name": "Viktangivelse i certifikat kräver uttrycklig viktkategori"
+        "rule_name": "Viktangivelse kräver uttrycklig viktkategori i certifikatet"
       },
       {
         "rule_id": "4.5.1",
-        "rule_name": "Ursprungsland måste framgå explicit i fakturan"
+        "rule_name": "Ursprungsland ska framgå uttryckligen i fakturan"
       }
     ]
   },
@@ -71,63 +67,83 @@
       "invoice_value": "Th. Brunius & Co AB\nVAT NO: SE556011055201\nPO Box 2516\nSE-403 17 Gothenburg, Sweden",
       "rules_applied": [
         {
-          "rule_id": "4.1.0",
-          "outcome": "MATCH"
+          "rule_id": "8.6",
+          "outcome": "passed"
+        },
+        {
+          "rule_id": "4.1.1",
+          "outcome": "invoice issuer identified"
+        },
+        {
+          "rule_id": "4.1.2",
+          "outcome": "name and country verified"
         },
         {
           "rule_id": "4.1.2.1",
-          "outcome": "MATCH"
+          "outcome": "country corroborated by address and VAT prefix SE"
         },
         {
-          "rule_id": "4.1.4",
+          "rule_id": "4.1.5",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor 'Th.Brunius & Co AB' kan identifieras uttryckligen i fakturans issuer/header som 'Th. Brunius & Co AB'. Skillnaden består endast av punkt/mellanslag och är tillåten normalisering. Landet Sverige verifieras direkt i adressen och stöds även av VAT-prefix 'SE'."
+      "motivation": "Certifikatets avsändare \"Th.Brunius & Co AB ... Sweden\" kan identifieras direkt i fakturan som utställare i headern: \"Th. Brunius & Co AB ... Gothenburg, Sweden\". Skillnaden \"Th.Brunius\" vs \"Th. Brunius\" är endast punkt-/mellanslagsnormalisering. Landet verifieras både genom adressen \"Sweden\" och VAT-prefixet \"SE\". Samma juridiska part och land kan därför verifieras entydigt."
     },
     "consignee": {
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.99,
       "certificate_value": "Al-Medan Project Company For\nCorrugated Carton\nP.O.Box 51\n11351 Riyadh\nSaudi Arabia",
-      "invoice_value": "SOLD TO: Al-Medan Project Company for Corrugated Carton\nP.O.Box 51\n11351 Riyadh\nSaudi Arabia\n\nCONSIGNED TO: Al-Medan Project Company for Corrugated Carton\nP.O.Box 51\n11351 Riyadh\nSaudi Arabia",
+      "invoice_value": "SOLD TO: Al-Medan Project Company for Corrugated Carton\nP.O.Box 51\n11351 Riyadh\nSaudi Arabia\nCONSIGNED TO: Al-Medan Project Company for Corrugated Carton\nP.O.Box 51\n11351 Riyadh\nSaudi Arabia",
       "rules_applied": [
         {
+          "rule_id": "8.6",
+          "outcome": "passed"
+        },
+        {
           "rule_id": "4.2.0.2",
-          "outcome": "MATCH"
+          "outcome": "consignee identified in relevant recipient fields"
+        },
+        {
+          "rule_id": "4.2.2",
+          "outcome": "same legal entity identified"
         },
         {
           "rule_id": "4.2.3",
-          "outcome": "MATCH"
+          "outcome": "country matches"
         },
         {
           "rule_id": "4.2.4",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Mottagaren i certifikatet återfinns exakt i fakturans både 'SOLD TO' och 'CONSIGNED TO'. Företagsnamn och land överensstämmer utan behov av otillåten tolkning."
+      "motivation": "Certifikatets mottagare återfinns ordagrant i fakturan i både \"SOLD TO\" och \"CONSIGNED TO\": \"Al-Medan Project Company for Corrugated Carton ... Riyadh ... Saudi Arabia\". Skillnaden \"For\"/\"for\" är endast skillnad i versal/gemen. Landet Saudi Arabia överensstämmer exakt. Kontrollpunkten är därför verifierad."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.94,
-      "certificate_value": "Al-Medan\nWTTL\nMade in Slovakia\nPO 1027/22\n\n10x40' HC Containers\n82 reels of White Top Testliner\nH.S. Code No.: 48052400\n\nManufacturer:\nMondi SCP A.S.\nTatranská cesta 3\n03417 Ružomberok\nSlovakia",
-      "invoice_value": "SHIPPING MARKS:\nAl-Medan\nWTTL\nMade in Slovakia\nPO 1027/22\n\n13 Reels: WHITE TOP TESTLINER\n9 Reels: WHITE TOP TESTLINER\n3 Reels: WHITE TOP TESTLINER\n8 Reels: WHITE TOP TESTLINER\n25 Reels: WHITE TOP TESTLINER\n24 Reels: WHITE TOP TESTLINER\n\nTotal Unit Count: 82 Reels\nH.S. Code No.: 48052400\nManufacturer:\nMondi SCP A.S.\nTatranská cesta 3, 03417 Ružomberok, Slovakia",
+      "confidence": 0.91,
+      "certificate_value": "Al-Medan\nWTTL\nMade in Slovakia\nPO 1027/22\n10x40' HC Containers\n82 reels of White Top Testliner\nH.S. Code No.: 48052400\nManufacturer:\nMondi SCP A.S.\nTatranská cesta 3\n03417 Ružomberok\nSlovakia",
+      "invoice_value": "SHIPPING MARKS:\nAl-Medan\nWTTL\nMade in Slovakia\nPO 1027/22\nDESCRIPTION ...\n13 Reels: WHITE TOP TESTLINER\n9 Reels: WHITE TOP TESTLINER\n3 Reels: WHITE TOP TESTLINER\n8 Reels: WHITE TOP TESTLINER\n25 Reels: WHITE TOP TESTLINER\n24 Reels: WHITE TOP TESTLINER\nTotal Unit Count: 82 Reels\nH.S. Code No.: 48052400\nManufacturer:\nMondi SCP A.S.\nTatranská cesta 3, 03417 Ružomberok, Slovakia",
       "rules_applied": [
         {
-          "rule_id": "4.3.2",
-          "outcome": "Prioritet 2 användes; inget artikelnummer i certifikatet"
+          "rule_id": "4.3.1",
+          "outcome": "relevant goods text identified in invoice"
         },
         {
           "rule_id": "4.3.3",
-          "outcome": "MATCH"
+          "outcome": "identity-bearing term matched"
         },
         {
           "rule_id": "4.3.4",
+          "outcome": "additional non-identity-bearing text accepted"
+        },
+        {
+          "rule_id": "4.3.8",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Den identitetsbärande huvudbeteckningen 'White Top Testliner' kan identifieras exakt i fakturan på samtliga produktrader. Ytterligare text i certifikatet såsom shipping marks, PO-nummer, HS-kod och manufacturer ändrar inte produktidentiteten och återfinns dessutom i fakturan. Ensidig verifiering är därmed uppfylld."
+      "motivation": "Den identitetsbärande huvudbeteckningen i certifikatet är \"White Top Testliner\", och denna förekommer uttryckligen i fakturans varurader som \"WHITE TOP TESTLINER\". Certifikatets övriga stödjande uppgifter återfinns också i fakturan: shipping marks \"Al-Medan / WTTL / Made in Slovakia / PO 1027/22\", totalen \"82 Reels\", HS-kod \"48052400\" samt tillverkaren \"Mondi SCP A.S.\". Tillägget \"10x40' HC Containers\" i certifikatet motsägs inte av fakturan och utgör inte den identitetsbärande produktbeteckningen. Varubeskrivningen kan därför verifieras."
     },
     "quantity": {
       "applicable": true,
@@ -137,19 +153,23 @@
       "invoice_value": "Total Weight Quantity: 247.133 MT",
       "rules_applied": [
         {
-          "rule_id": "4.4.2.2",
-          "outcome": "MISMATCH"
+          "rule_id": "4.4.2",
+          "outcome": "weight unit present"
         },
         {
           "rule_id": "4.4.2.1",
-          "outcome": "Box 7 är verifieringsgrundande"
+          "outcome": "box 7 is governing quantity field"
+        },
+        {
+          "rule_id": "4.4.2.2",
+          "outcome": "failed - weight category missing in certificate"
         },
         {
           "rule_id": "4.4.6",
           "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Certifikatets box 7 anger vikt i MT men saknar uttrycklig viktkategori såsom Gross/GW eller Net/NW. Enligt formkravet för viktangivelse i certifikat är detta ett direkt MISMATCH, även om fakturan innehåller samma numeriska värde '247.133 MT'. Box 6 innehåller inte någon fristående viktuppgift med kategori som kan avhjälpa bristen."
+      "motivation": "Certifikatets kvantitetsfält i box 7 anger endast \"247.133 mt\". Eftersom kvantiteten anges i viktenhet kräver regelverket att certifikatet också uttryckligen anger viktkategori (Gross/GW eller Net/NW) i box 7 eller som fristående och direkt kopplad viktuppgift i box 6. Någon sådan viktkategori finns inte i certifikatet. Att fakturan anger samma numeriska värde \"247.133 MT\" reparerar inte detta formkrav; kontrollpunkten ska därför klassificeras som MISMATCH."
     },
     "origin": {
       "applicable": true,
@@ -160,14 +180,14 @@
       "rules_applied": [
         {
           "rule_id": "4.5.1",
-          "outcome": "MATCH"
+          "outcome": "explicit origin field identified"
         },
         {
           "rule_id": "4.5.5",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Ursprungslandet 'Slovakia' anges uttryckligen i fakturan i ett dedikerat origin-fält. Certifikatets uppgift kan därför verifieras direkt utan normalisering utöver versaler/gemener."
+      "motivation": "Certifikatet anger ursprungsland \"Slovakia\" i box 3. Fakturan innehåller ett explicit ursprungsfält med texten \"COUNTRY OF ORIGIN: Slovakia\". Samma ursprungsland kan därför identifieras uttryckligen i fakturan utan tolkning."
     }
   },
   "overall_assessment": {
@@ -176,15 +196,15 @@
     "auto_approval_eligible": false,
     "confidence": 0.98,
     "critical_failures": [
-      "Kvantitetsfältet i certifikatet anger '247.133 mt' utan obligatorisk viktkategori (GW/NW), vilket ger MISMATCH."
+      "Kvantitetsfältet i certifikatet anger \"247.133 mt\" utan uttrycklig viktkategori (GW/NW), vilket enligt regelverket ger MISMATCH."
     ],
     "manual_review_triggers": [],
-    "decision_summary": "Dokumentparet är korrekt parat och avsändare, mottagare, varubeskrivning samt ursprungsland kan verifieras mot den separata fakturan. Kontrollpunkten kvantitet ger dock MISMATCH eftersom certifikatet anger en vikt i MT utan uttrycklig viktkategori. Minst en tillämplig kontrollpunkt är därmed MISMATCH och totalresultatet måste vara NOT_IDENTICAL.",
-    "human_explanation": "Avsändare, mottagare, varubeskrivning och ursprungsland stämmer mellan certifikatet och fakturan. Däremot anger certifikatet endast mängden '247.133 mt' utan att specificera om vikten är brutto eller netto, vilket krävs för att viktuppgiften ska kunna verifieras korrekt. Därför kan dokumentparet inte godkännas automatiskt."
+    "decision_summary": "Dokumentparningen är giltig: certifikatet hämtas från certifikatfilen och verifieringen sker mot den separata fakturafilen. Avsändare, mottagare, varubeskrivning och ursprungsland kan verifieras mot fakturan. Kvantitetskontrollpunkten ger dock MISMATCH eftersom certifikatet anger en vikt i box 7 utan obligatorisk viktkategori. Minst en tillämplig kontrollpunkt har därmed status MISMATCH och totalresultatet måste vara NOT_IDENTICAL.",
+    "human_explanation": "Avsändare, mottagare, varubeskrivning och ursprungsland stämmer mellan certifikatet och fakturan. Däremot anger certifikatet mängden som \"247.133 mt\" utan att ange om det är brutto- eller nettovikt. Därför kan dokumentparet inte godkännas automatiskt."
   },
   "_meta": {
-    "tested_at": "2026-04-24T09:14:16.733544+00:00",
-    "prompt_hash": "10954622b12c",
+    "tested_at": "2026-04-27T08:04:29.099661+00:00",
+    "prompt_hash": "ea5d944217d3",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P0119_MISMATCH",

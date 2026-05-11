@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-04-24T00:00:00Z",
+    "verification_timestamp": null,
     "document_pair_id": null,
     "certificate_issue_date": "2023-03-03",
     "source_documents_received": 2
@@ -33,16 +33,28 @@
     "eu_origin_normalization_active": false,
     "activated_rules": [
       {
-        "rule_id": "8.6",
-        "rule_name": "Parningsvalidering passerad via consignor och consignee i fakturan"
+        "rule_id": "4.1.0",
+        "rule_name": "Consignor får verifieras om företagsnamnet uttryckligen förekommer någonstans i fakturan"
       },
       {
-        "rule_id": "4.1.0",
-        "rule_name": "Consignor identifierad någonstans i fakturadokumentet"
+        "rule_id": "4.2.0.2",
+        "rule_name": "Consignee får verifieras mot något relevant mottagarfält i fakturan"
+      },
+      {
+        "rule_id": "4.3.3",
+        "rule_name": "Kontrollerad textmatchning av identitetsbärande huvudbeteckning"
+      },
+      {
+        "rule_id": "4.3.4",
+        "rule_name": "Icke identitetsbärande tillägg i varubeskrivning påverkar inte matchning"
+      },
+      {
+        "rule_id": "4.4.2.2",
+        "rule_name": "Viktangivelse i certifikat kräver uttrycklig viktkategori"
       },
       {
         "rule_id": "4.5.4",
-        "rule_name": "Landnormalisering med landsnamn och ISO-kod"
+        "rule_name": "Ursprungsland får normaliseras mellan landsnamn och ISO-kod"
       }
     ]
   },
@@ -50,28 +62,24 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.97,
+      "confidence": 0.92,
       "certificate_value": "TETRA PAK INTERNATIONAL SA\nAV. GENERAL GUISAN 70\nPO BOX 446, 1009 PULLY\nSWITZERLAND",
-      "invoice_value": "Postal address:\nTetra Pak International SA\nPO Box 446\nCH / 1009 PULLY\n...\nVAT reg no:\nTetra Pak International SA\nAv. General-Guisan 70,CH-1009 Pully",
+      "invoice_value": "Postal address:\nTetra Pak International SA\nPO Box 446\nAv. General-Guisan 70,CH-1009 Pully\nCH / 1009 PULLY",
       "rules_applied": [
-        {
-          "rule_id": "8.6",
-          "outcome": "MATCH"
-        },
         {
           "rule_id": "4.1.0",
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.1.2.1",
+          "rule_id": "4.1.4",
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.1.4",
+          "rule_id": "4.1.2.1",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor 'TETRA PAK INTERNATIONAL SA' återfinns uttryckligen i fakturan, trots att fakturans From-fält anger 'Tetra Pak Closures Italy S.r.l.'. Regeln om koncernstruktur ska prövas först och ger MATCH eftersom consignor-namnet förekommer i fakturans postal/VAT-block och landet kan verifieras via adressen 'CH / 1009 PULLY' och 'CH-1009 Pully', vilket stödjer Schweiz."
+      "motivation": "Certifikatets consignor 'TETRA PAK INTERNATIONAL SA' kan identifieras uttryckligen i fakturans postal/VAT-block på sida 1 och 2. Landet verifieras genom adressangivelsen 'CH-1009 Pully' / 'CH / 1009 PULLY', vilket är förenligt med certifikatets 'SWITZERLAND'. Att fakturan även anger 'From: Tetra Pak Closures Italy S.r.l.' hindrar inte match enligt koncernstruktursregeln eftersom certifikatets consignor förekommer uttryckligen i fakturan."
     },
     "consignee": {
       "applicable": true,
@@ -85,30 +93,22 @@
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.2.2",
-          "outcome": "MATCH"
-        },
-        {
           "rule_id": "4.2.3",
-          "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.2.4",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets mottagare kan identifieras exakt i fakturans explicita Consignee-fält. Företagsnamn och land överensstämmer tydligt: 'Tetra Pak Jurong Pte Ltd.' i Singapore."
+      "motivation": "Mottagaren i certifikatet kan identifieras direkt i fakturans 'Consignee'-fält med samma företagsnamn och samma land, Singapore. Adressens kärnuppgifter överensstämmer också: '19, Gul Lane' och 'SINGAPORE 629414'."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.98,
       "certificate_value": "25 PALLETS, 600 CARTONS\nGID 0924246493\nFDCU0522303\nHeliCap3 27 mm White PA001\nHS CODE:39235090\nFREIGHT PREPAID",
-      "invoice_value": "10 A100000242 HeliCap3 27 mm White PA001 1,800.000 KPC\nProduct code: 8853-902-00\nProduct description: HeliCap3 27 mm\n...\nOrigin IT Tariff Code 39235090",
+      "invoice_value": "10 A100000242 HeliCap3 27 mm White PA001 1,800.000 KPC\nProduct code: 8853-902-00\nProduct description: HeliCap3 27 mm\nGlobal Id: 0924246493\nOrigin IT Tariff Code 39235090",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "ARTICLE_NUMBER_NOT_PRIMARY"
+          "outcome": "NOT_APPLICABLE"
         },
         {
           "rule_id": "4.3.3",
@@ -117,46 +117,34 @@
         {
           "rule_id": "4.3.4",
           "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.3.8.1",
-          "outcome": "MATCH"
         }
       ],
-      "motivation": "Den identitetsbärande huvudbeteckningen i certifikatet är 'HeliCap3 27 mm White PA001', och samma text återfinns uttryckligen i fakturans varurad. Övriga uppgifter i certifikatruta 6 såsom '25 PALLETS, 600 CARTONS', 'GID 0924246493', containernummer, HS-kod och 'FREIGHT PREPAID' behandlas som kompletterande uppgifter och ändrar inte varuidentiteten."
+      "motivation": "Den identitetsbärande huvudbeteckningen 'HeliCap3 27 mm White PA001' återfinns explicit i fakturans varurad. Ytterligare text i certifikatet såsom '25 PALLETS, 600 CARTONS', containerreferens och 'FREIGHT PREPAID' ändrar inte produktidentiteten. Även 'GID 0924246493' och HS/Tariff Code 39235090 stöder samma vara."
     },
     "quantity": {
       "applicable": true,
       "status": "MISMATCH",
-      "confidence": 0.98,
+      "confidence": 0.99,
       "certificate_value": "7875 KGS",
-      "invoice_value": "Gross weight\n7,875 KG\nNet weight\n7,002 KG",
+      "invoice_value": "Net weight\n7,002 KG\nGross weight\n7,875 KG",
       "rules_applied": [
-        {
-          "rule_id": "4.4.2",
-          "outcome": "PARTIAL"
-        },
-        {
-          "rule_id": "4.4.2.1",
-          "outcome": "BOX_7_GOVERNS"
-        },
         {
           "rule_id": "4.4.2.2",
           "outcome": "MISMATCH"
         },
         {
-          "rule_id": "4.4.6",
+          "rule_id": "4.4.2.1",
           "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Certifikatets kvantitetsfält (box 7) anger endast '7875 KGS'. När kvantitet anges i vikt måste certifikatet uttryckligen ange viktkategori som Gross/GW eller Net/NW; sådan kategori saknas i både box 7 och som fristående viktuppgift i box 6. Fakturans 'Gross weight 7,875 KG' kan inte bota detta formfel, och systemet får inte byta till andra uppgifter som '25 PALLETS, 600 CARTONS' eftersom box 7 är verifieringsgrundande."
+      "motivation": "Certifikatets kvantitetsfält anger en vikt i viktenhet ('7875 KGS') men anger inte om vikten är Gross/GW eller Net/NW. Enligt formkravet för viktangivelse måste viktkategori framgå uttryckligen i certifikatet. Fakturans 'Gross weight 7,875 KG' kan därför inte användas för att rädda kontrollpunkten; avsaknaden av viktkategori i certifikatet medför MISMATCH."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.99,
+      "confidence": 0.98,
       "certificate_value": "ITALY",
-      "invoice_value": "Country of origin of goods\nIT\n...\nOrigin IT",
+      "invoice_value": "Country of origin of goods\nIT\nOrigin IT",
       "rules_applied": [
         {
           "rule_id": "4.5.1",
@@ -165,13 +153,9 @@
         {
           "rule_id": "4.5.4",
           "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.5.5",
-          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger ursprungsland 'ITALY'. Fakturan anger ursprung uttryckligen både som 'Country of origin of goods IT' och på radnivå som 'Origin IT'; ISO-koden IT är ekvivalent med Italy."
+      "motivation": "Certifikatet anger ursprungsland 'ITALY'. Fakturan anger ursprung uttryckligen både i fältet 'Country of origin of goods IT' och i varuraden 'Origin IT'. ISO-koden 'IT' är ekvivalent med 'Italy'."
     }
   },
   "overall_assessment": {
@@ -180,15 +164,15 @@
     "auto_approval_eligible": false,
     "confidence": 0.97,
     "critical_failures": [
-      "Kvantitetsfältet i certifikatet anger '7875 KGS' utan obligatorisk viktkategori Gross/Net."
+      "Kvantitetskontrollpunkten är MISMATCH eftersom certifikatets viktangivelse '7875 KGS' saknar uttrycklig viktkategori (gross/net)."
     ],
     "manual_review_triggers": [],
-    "decision_summary": "Dokumentparet passerar parningsvalidering och certifikatets consignor, consignee, varubeskrivning och ursprungsland kan verifieras mot fakturan. Kontrollpunkten kvantitet ger dock MISMATCH eftersom certifikatet anger en vikt utan obligatorisk viktkategori, vilket enligt regelverket inte får godkännas även om fakturan innehåller motsvarande grossovikt.",
-    "human_explanation": "Avsändare, mottagare, varubeskrivning och ursprungsland stämmer mellan certifikatet och fakturan. Däremot anger certifikatet bara '7875 KGS' i mängdfältet utan att säga om det är brutto- eller nettovikt. Därför kan dokumentparet inte godkännas automatiskt."
+    "decision_summary": "Dokumentparet är i huvudsak konsistent avseende avsändare, mottagare, varubeskrivning och ursprungsland. Kvantitetsfältet i certifikatet uppfyller dock inte formkravet för viktangivelse eftersom viktkategori saknas. Därför blir totalresultatet NOT_IDENTICAL.",
+    "human_explanation": "Avsändare, mottagare, varubeskrivning och ursprungsland kan verifieras mot fakturan. Certifikatet anger mängden som '7875 KGS' men anger inte om detta är brutto- eller nettovikt. Därför stämmer dokumenten inte fullt ut och ärendet måste hanteras manuellt."
   },
   "_meta": {
-    "tested_at": "2026-04-24T09:51:07.292831+00:00",
-    "prompt_hash": "10954622b12c",
+    "tested_at": "2026-04-27T08:06:36.997524+00:00",
+    "prompt_hash": "ea5d944217d3",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P038_MISMATCH",

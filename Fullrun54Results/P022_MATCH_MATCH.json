@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": null,
+    "verification_timestamp": "2026-04-27T00:00:00Z",
     "document_pair_id": null,
     "certificate_issue_date": "2026-02-26",
     "source_documents_received": 2
@@ -34,7 +34,11 @@
     "activated_rules": [
       {
         "rule_id": "4.5.4.1.1",
-        "rule_name": "EU-samlingsbegrepp kombinerat med specifikt EU-land kan verifieras av det specifika landet i fakturan"
+        "rule_name": "EU-samlingsbegrepp i certifikat kan verifieras av specifikt EU-land i fakturan"
+      },
+      {
+        "rule_id": "4.2.0.2",
+        "rule_name": "Consignee får verifieras mot valfritt relevant mottagarfält i fakturan"
       }
     ]
   },
@@ -42,9 +46,9 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.97,
+      "confidence": 0.98,
       "certificate_value": "Nouryon Functional Chemicals AB\nGamlestadsvägen 18 B\n41502, Göteborg\nSWEDEN",
-      "invoice_value": "Nouryon Functional Chemicals AB\nBOX 47067\n402 58 Goteborg\nSweden",
+      "invoice_value": "Nouryon Functional\nChemicals AB\nBOX 47067\n402 58 Goteborg\nSweden",
       "rules_applied": [
         {
           "rule_id": "4.1.0",
@@ -55,11 +59,11 @@
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.1.4",
+          "rule_id": "4.1.5",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor-namn 'Nouryon Functional Chemicals AB' återfinns uttryckligen i fakturans sidhuvud/issuer-block. Landet Sverige framgår i fakturaadressen ('Sweden') och stöds även av VAT-prefix 'SE'. Skillnader i gatuadress (Gamlestadsvägen 18 B vs BOX 47067) medför inte avvikelse eftersom företagsnamn och land kan verifieras för samma juridiska part."
+      "motivation": "Certifikatets consignor \"Nouryon Functional Chemicals AB\" kan identifieras uttryckligen i fakturans issuer/header som \"Nouryon Functional Chemicals AB\". Landet verifieras i fakturaadressen som \"Sweden\" och stöds även av VAT-prefix \"SE\". Skillnader i gatuadress påverkar inte bedömningen när juridiskt namn och land överensstämmer."
     },
     "consignee": {
       "applicable": true,
@@ -75,9 +79,13 @@
         {
           "rule_id": "4.2.3",
           "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.2.4",
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Mottagaren i certifikatet kan identifieras exakt i fakturans Ship-To-fält och även i Bill-To-fältet. Företagsnamn, adresskärna och land överensstämmer. Därmed är mottagaren verifierad utan behov av vidare normalisering."
+      "motivation": "Certifikatets consignee återfinns exakt i fakturans \"Ship To\"-fält som \"Pulcra Kimya Sanayi Tic AS\" med samma adressort och land \"TÜRKIYE\". Eftersom mottagaren får verifieras mot något relevant mottagarfält i fakturan är detta tillräckligt för MATCH."
     },
     "goods_description": {
       "applicable": true,
@@ -88,7 +96,7 @@
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "Artikelnummer saknas i certifikatet; Prioritet 1 ej tillämplig"
+          "outcome": "Prioritet 2 tillämpad - inget artikelnummer i certifikatet"
         },
         {
           "rule_id": "4.3.3",
@@ -97,16 +105,20 @@
         {
           "rule_id": "4.3.4",
           "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.3.8.1",
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets identitetsbärande huvudbeteckning 'Diethylenetriamine' återfinns exakt i fakturan. Förpackningsinformationen är förenlig: certifikatet anger '28 pcs of Drums 195 kg' och fakturan anger 'in Drums 195 kg on pallet' samt separat 'No of Packages 28 PIECES'. Tillägget 'on pallet' ändrar inte produktidentiteten."
+      "motivation": "Ingen artikelnummerverifiering är tillämplig eftersom certifikatet inte anger något artikelnummer. Den identitetsbärande huvudbeteckningen \"Diethylenetriamine\" kan identifieras exakt i fakturan. Texten om drums/195 kg är kompletterande förpackningsinformation och ändrar inte produktidentiteten."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.97,
+      "confidence": 0.98,
       "certificate_value": "5.460,000 KG net",
-      "invoice_value": "Quantity 5.460,000 KG; Net Weight 5.460,000 KG",
+      "invoice_value": "Net Weight 5.460,000 KG",
       "rules_applied": [
         {
           "rule_id": "4.4.2.2",
@@ -117,11 +129,11 @@
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.4.4",
+          "rule_id": "4.4.6",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets box 7 innehåller ett explicit numeriskt värde, enhet och viktkategori: '5.460,000 KG net'. Fakturan innehåller exakt samma numeriska värde och enhet som 'Net Weight 5.460,000 KG', vilket entydigt verifierar certifikatets kvantitet. Ingen motsägelse finns i fakturan."
+      "motivation": "Den verifieringsgrundande kvantiteten i box 7 är \"5.460,000 KG net\". Fakturan innehåller exakt motsvarande uppgift som \"Net Weight 5.460,000 KG\" för samma vara. Numeriskt värde, enhet och viktkategori överensstämmer utan behov av undantag eller omräkning."
     },
     "origin": {
       "applicable": true,
@@ -137,24 +149,32 @@
         {
           "rule_id": "4.5.4.1.1",
           "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.5.4.2",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.5.5",
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger ursprung 'EU Sweden'. Fakturan innehåller en explicit ursprungsangivelse i dedikerat origin-fält: 'Country of Origin Sweden'. Det specifika EU-landet Sweden verifieras direkt, och EU-komponenten anses verifierad genom att Sweden är en EU-medlemsstat."
+      "motivation": "Certifikatet anger ursprung \"EU Sweden\". Fakturan innehåller ett explicit origin-fält: \"Country of Origin Sweden\". \"Sweden\" verifierar den namngivna landsdelen direkt, och eftersom Sverige är ett EU-medlemsland verifierar samma uppgift även \"EU\"-delen enligt EU-normaliseringsreglerna. Ingen motstridig ursprungsuppgift förekommer i fakturan."
     }
   },
   "overall_assessment": {
     "comparison_result": "IDENTICAL",
     "workflow_recommendation": "AUTO_APPROVAL_ELIGIBLE",
     "auto_approval_eligible": true,
-    "confidence": 0.95,
+    "confidence": 0.96,
     "critical_failures": [],
     "manual_review_triggers": [],
-    "decision_summary": "Dokumentparet är korrekt klassificerat som Certificate of Origin respektive Invoice. LC-undantaget är inte tillämpligt. Samtliga fem tillämpliga kontrollpunkter verifieras som MATCH: consignor, consignee, varubeskrivning, kvantitet och ursprungsland. Ingen tillämplig kontrollpunkt har confidence under 0.85, varför övergripande resultat är IDENTICAL och dokumentparet är berättigat till automatisk hantering.",
-    "human_explanation": "Alla uppgifter i certifikatet kan verifieras mot fakturan: avsändare Nouryon Functional Chemicals AB i Sverige, mottagare Pulcra Kimya Sanayi Tic AS i Türkiye, varan Diethylenetriamine, mängden 5.460,000 KG net och ursprung Sweden/EU. Dokumenten kan därför godkännas automatiskt."
+    "decision_summary": "Samtliga tillämpliga kontrollpunkter är verifierade som MATCH. Certifikatet kan entydigt styrkas mot den bifogade fakturan för avsändare, mottagare, varubeskrivning, kvantitet och ursprungsland.",
+    "human_explanation": "Alla tillämpliga kontrollpunkter stämmer mellan ursprungscertifikatet och fakturan. Avsändare, mottagare, varubeskrivning, mängd och ursprungsland kan verifieras mot fakturan. Dokumentparet kan därför godkännas automatiskt."
   },
   "_meta": {
-    "tested_at": "2026-04-24T09:51:07.283821+00:00",
-    "prompt_hash": "10954622b12c",
+    "tested_at": "2026-04-27T08:06:36.992946+00:00",
+    "prompt_hash": "ea5d944217d3",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P022_MATCH",

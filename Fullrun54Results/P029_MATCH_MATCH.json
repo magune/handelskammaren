@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-04-24T00:00:00Z",
+    "verification_timestamp": null,
     "document_pair_id": null,
     "certificate_issue_date": "2026-01-07",
     "source_documents_received": 2
@@ -15,7 +15,7 @@
     "document_a": {
       "label": "Document A",
       "assumed_role": "certificate",
-      "document_type": "Certificate of Origin (file contains certificate and an embedded invoice copy; certificate page used as certificate source)"
+      "document_type": "Certificate of Origin (page 1) with embedded invoice copy on page 2"
     },
     "document_b": {
       "label": "Document B",
@@ -34,31 +34,31 @@
     "activated_rules": [
       {
         "rule_id": "8.5.0",
-        "rule_name": "Certifikat hämtat från certifikatfilen och verifiering utförd mot separat fakturafil"
+        "rule_name": "Filbaserad dokumentparning – certifikat från fil 1, verifiering mot separat fakturafil"
       },
       {
         "rule_id": "8.6",
-        "rule_name": "Parningsvalidering passerad genom consignor- och consignee-identifiering"
+        "rule_name": "Obligatorisk parningsvalidering"
       },
       {
         "rule_id": "4.1.0",
-        "rule_name": "Consignor återfunnen uttryckligen i fakturan"
+        "rule_name": "Consignor får verifieras om företagsnamnet förekommer uttryckligen någonstans i fakturan"
       },
       {
         "rule_id": "4.2.0.2",
-        "rule_name": "Consignee identifierad i relevant mottagarfält i fakturan"
+        "rule_name": "Consignee får verifieras i något relevant mottagarfält i fakturan"
       },
       {
         "rule_id": "4.3.3",
-        "rule_name": "Kontrollerad textmatchning av varubeskrivning"
+        "rule_name": "Kontrollerad textmatchning av identitetsbärande huvudbeteckning"
       },
       {
         "rule_id": "4.4.2.2",
-        "rule_name": "Viktkategori verifierad och box 7-värde jämfört mot fakturans totalvikt"
+        "rule_name": "Särskilt krav på viktkategori för viktangivelse i certifikat"
       },
       {
         "rule_id": "4.5.1",
-        "rule_name": "Ursprungsland identifierat i explicit origin-uttalande i fakturan"
+        "rule_name": "Ursprungsland ska framgå uttryckligen i fakturan"
       }
     ]
   },
@@ -66,24 +66,24 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.97,
+      "confidence": 0.98,
       "certificate_value": "CELLMARK AB\nGOTHENBURG\nSWEDEN",
-      "invoice_value": "CellMark AB / CELLMARK AB\nLilla Bommen 3C\nBOX 11927\n404 39 GOTHENBURG\nSWEDEN\nVAT No SE556244243301",
+      "invoice_value": "CELLMARK AB\nLilla Bommen 3C\nBOX 11927\n404 39 GOTHENBURG\nSWEDEN\nVAT No SE556244243301",
       "rules_applied": [
         {
           "rule_id": "4.1.0",
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.1.2",
+          "rule_id": "4.1.2.1",
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.1.2.1",
+          "rule_id": "4.1.5",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger consignor som \"CELLMARK AB\" i Sverige. Samma företagsnamn återfinns uttryckligen i fakturans header/footer och adressblock som \"CellMark AB / CELLMARK AB ... SWEDEN\". Landet verifieras både genom adressen \"SWEDEN\" och VAT-prefixet \"SE\". Därmed kan samma juridiska part identifieras i fakturan."
+      "motivation": "Certifikatets consignor 'CELLMARK AB' återfinns uttryckligen i den separata fakturafilen, både som branding/utställare och i footer med svensk adress och SE-VAT-nummer. Företagsnamn och land Sverige kan därmed verifieras mot fakturan."
     },
     "consignee": {
       "applicable": true,
@@ -97,26 +97,26 @@
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.2.2",
+          "rule_id": "4.2.3",
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.2.3",
+          "rule_id": "4.2.4",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger mottagaren som \"CROWN PAPER MILL L.L.C.\" i Förenade Arabemiraten. Fakturans Buyer-fält innehåller samma företagsnamn och samma land. Den extra platsuppgiften \"MUSSAFAH\" i fakturan motsäger inte certifikatets uppgift. Mottagaren kan därför identifieras i fakturan."
+      "motivation": "Mottagaren i certifikatet kan identifieras i fakturans Buyer-fält som samma juridiska part: 'CROWN PAPER MILL L.L.C'. Landet United Arab Emirates överensstämmer. Skillnader i detaljadress/postbox påverkar inte utfallet."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.93,
+      "confidence": 0.95,
       "certificate_value": "2 750 UNITS / 22 000 BALES\nBLEACHED EUCALYPTUS KRAFT PULP\nGROSS WEIGHT\nHS CODE: 47032900",
       "invoice_value": "SUZANO BLEACHED EUCALYPTUS KRAFT PULP. 100% PLANTED EUCALYPTUS.\nFSC MIX CREDIT. CELLMARK AB FSC CERTIFICATE NO DNV-COC-001902. HS Code: 47032900",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "No article number in certificate; continued to controlled text matching"
+          "outcome": "No article number in certificate; moved to text match"
         },
         {
           "rule_id": "4.3.3",
@@ -125,31 +125,35 @@
         {
           "rule_id": "4.3.4",
           "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.3.8",
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Den identitetsbärande huvudbeteckningen i certifikatet är \"BLEACHED EUCALYPTUS KRAFT PULP\". Samma ordsekvens återfinns uttryckligen i fakturan. Tilläggen \"SUZANO\", \"100% PLANTED EUCALYPTUS\", \"FSC MIX CREDIT\" och certifieringsreferensen är kompletterande text som inte ändrar produktidentiteten. HS-koden 47032900 överensstämmer också."
+      "motivation": "Certifikatets identitetsbärande huvudbeteckning 'BLEACHED EUCALYPTUS KRAFT PULP' kan identifieras exakt i fakturans varubeskrivning. Tilläggen 'SUZANO', '100% PLANTED EUCALYPTUS' och 'FSC MIX CREDIT' i fakturan ändrar inte att huvudbeteckningen finns uttryckligen."
     },
     "quantity": {
       "applicable": true,
-      "status": "MATCH",
-      "confidence": 0.86,
-      "certificate_value": "Box 7: 5 500.000 MT\nBox 6 context: GROSS WEIGHT",
-      "invoice_value": "22000 BALES 5 500.000 GMT\nTotals: 22000 BALES / 5 500.000 GMT",
+      "status": "MISMATCH",
+      "confidence": 0.97,
+      "certificate_value": "Box 7: 5 500.000 MT\nBox 6: GROSS WEIGHT",
+      "invoice_value": "22000 BALES 5 500.000 GMT\nTotals:\n22000 BALES\n5 500.000 GMT",
       "rules_applied": [
         {
-          "rule_id": "4.4.2.1",
-          "outcome": "Box 7 treated as the governing quantity field"
-        },
-        {
           "rule_id": "4.4.2.2",
-          "outcome": "MATCH"
+          "outcome": "MISMATCH"
         },
         {
           "rule_id": "4.4.4",
-          "outcome": "MATCH"
+          "outcome": "Not reached as form requirement already failed"
+        },
+        {
+          "rule_id": "4.4.6",
+          "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Certifikatets verifieringsgrundande kvantitet är box 7-värdet \"5 500.000 MT\". Viktkategorin framgår av den separata texten \"GROSS WEIGHT\" i box 6 och är entydigt kopplad till det enda viktvärdet i box 7. Fakturan anger totalvikten \"5 500.000 GMT\". Det numeriska värdet är identiskt och fakturans GMT anger gross metric ton, vilket är förenligt med certifikatets gross weight-angivelse."
+      "motivation": "Certifikatet anger ett viktvärde i box 7 ('5 500.000 MT') men viktkategori framgår inte korrekt enligt formkravet. Texten 'GROSS WEIGHT' står i box 6 utan eget numeriskt värde och utgör inte en fristående viktuppgift av typen 'Kategori: värde enhet' som exakt kopplar viktkategorin till box 7-värdet. Därför faller kontrollpunkten på certifikatets formkrav och ska klassificeras som MISMATCH, även om fakturan innehåller 5 500.000 GMT."
     },
     "origin": {
       "applicable": true,
@@ -167,27 +171,29 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger ursprungslandet som \"BRAZIL\". Fakturan innehåller ett explicit origin-uttalande: \"THE GOODS ARE OF BRAZIL ORIGIN\". Ursprungslandet kan därför uttryckligen identifieras i fakturan."
+      "motivation": "Certifikatets ursprungsland 'BRAZIL' återfinns uttryckligen i fakturan genom origin-uttalandet 'THE GOODS ARE OF BRAZIL ORIGIN'. Positiv och explicit ursprungsverifiering föreligger."
     }
   },
   "overall_assessment": {
-    "comparison_result": "IDENTICAL",
-    "workflow_recommendation": "AUTO_APPROVAL_ELIGIBLE",
-    "auto_approval_eligible": true,
-    "confidence": 0.92,
-    "critical_failures": [],
+    "comparison_result": "NOT_IDENTICAL",
+    "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
+    "auto_approval_eligible": false,
+    "confidence": 0.96,
+    "critical_failures": [
+      "Kvantitetskontrollpunkten är MISMATCH eftersom certifikatets viktangivelse '5 500.000 MT' saknar korrekt uttryckt viktkategori enligt formkravet."
+    ],
     "manual_review_triggers": [],
-    "decision_summary": "Det korrekta dokumentparet identifierades enligt filparningsreglerna: certifikatet togs från certifikatfilen och verifieringen gjordes mot den separata fakturafilen. Samtliga tillämpliga kontrollpunkter — consignor, consignee, varubeskrivning, kvantitet och ursprungsland — kunde verifieras som MATCH enligt regelverket. Ingen LC-regel eller manuell granskningsregel behövde aktiveras.",
-    "human_explanation": "Certifikatet och fakturan visar samma avsändare (CellMark AB, Sverige), samma mottagare (CROWN PAPER MILL L.L.C., Förenade Arabemiraten), samma vara, samma kvantitet 5 500.000 MT/GMT och samma ursprung Brasilien. Uppgifterna kan därför verifieras mot varandra och dokumentparet kan godkännas automatiskt."
+    "decision_summary": "Dokumentparningen är giltig och verifiering har gjorts mot den separata fakturafilen, inte mot den inbäddade fakturakopian i certifikatfilen. Avsändare, mottagare, varubeskrivning och ursprungsland matchar. Kvantitet blir dock MISMATCH eftersom certifikatet inte uppfyller det uttryckliga formkravet för viktkategori vid viktangivelse.",
+    "human_explanation": "Avsändare, mottagare, varubeskrivning och ursprungsland kan verifieras mot fakturan. Certifikatet anger kvantiteten som '5 500.000 MT', men viktkategorin är inte korrekt angiven tillsammans med värdet; texten 'GROSS WEIGHT' i varubeskrivningen saknar eget kopplat numeriskt värde. Därför är dokumenten inte identiska och kräver manuell handläggning."
   },
   "_meta": {
-    "tested_at": "2026-04-24T09:51:07.287531+00:00",
-    "prompt_hash": "10954622b12c",
+    "tested_at": "2026-04-27T08:06:36.994925+00:00",
+    "prompt_hash": "ea5d944217d3",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P029_MATCH",
     "expected": "IDENTICAL",
-    "actual": "IDENTICAL",
-    "status": "PASS"
+    "actual": "NOT_IDENTICAL",
+    "status": "FAIL"
   }
 }

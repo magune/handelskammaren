@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-04-24T00:00:00Z",
+    "verification_timestamp": "2026-04-27T00:00:00Z",
     "document_pair_id": null,
     "certificate_issue_date": "2025-08-14",
     "source_documents_received": 2
@@ -20,7 +20,7 @@
     "document_b": {
       "label": "Document B",
       "assumed_role": "invoice",
-      "document_type": "Commercial Invoice"
+      "document_type": "Invoice"
     }
   },
   "rule_activation": {
@@ -33,16 +33,8 @@
     "eu_origin_normalization_active": false,
     "activated_rules": [
       {
-        "rule_id": "8.6",
-        "rule_name": "Parningsvalidering godkänd via fakturanummer, consignor och consignee"
-      },
-      {
-        "rule_id": "4.1.0",
-        "rule_name": "Consignor återfanns uttryckligen i fakturan"
-      },
-      {
-        "rule_id": "4.2.0.2",
-        "rule_name": "Consignee identifierad i relevant mottagarfält"
+        "rule_id": "2.2",
+        "rule_name": "LC-undantag ej aktiverat; ingen LC-hänvisning med nummer i varubeskrivningsfältet"
       },
       {
         "rule_id": "4.3.2",
@@ -53,8 +45,8 @@
         "rule_name": "Summering av radvikter när totalrad saknas"
       },
       {
-        "rule_id": "4.5.4",
-        "rule_name": "Ursprungsland verifierat via explicit origin-kolumn"
+        "rule_id": "4.5.2",
+        "rule_name": "Enhetligt ursprungsland verifierat via origin-kolumn i fakturan"
       }
     ]
   },
@@ -62,155 +54,147 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.99,
+      "confidence": 0.98,
       "certificate_value": "Volvo Merchandise AB\nBror Nilssons gata 5\nSE-40508, GÖTEBORG\nSweden",
       "invoice_value": "Volvo Merchandise AB\nBror Nilssons gata 5\n40508 GÖTEBORG\nSweden",
       "rules_applied": [
         {
           "rule_id": "4.1.0",
-          "outcome": "MATCH"
+          "outcome": "MATCH - certifikatets consignor förekommer uttryckligen i fakturan"
         },
         {
           "rule_id": "4.1.2",
-          "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.1.2.1",
-          "outcome": "MATCH"
+          "outcome": "MATCH - företagsnamn och land kan identifieras i fakturan"
         },
         {
           "rule_id": "4.1.4",
-          "outcome": "MATCH"
+          "outcome": "MATCH - landet Sweden överensstämmer"
         }
       ],
-      "motivation": "Certifikatets consignor 'Volvo Merchandise AB' återfinns uttryckligen i fakturan och samma svenska adress/land framgår i fakturans företagsuppgifter. Landet verifieras dessutom av adressen och VAT-prefixet 'SE'. Ingen motstridighet finns."
+      "motivation": "Certifikatet anger consignor som Volvo Merchandise AB i Sverige. Fakturan identifierar samma företag i footer/adressblock med samma namn och landet Sweden. Skillnader i postnummerformat (SE-40508 vs 40508) påverkar inte bedömningen."
     },
     "consignee": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.98,
+      "confidence": 0.96,
       "certificate_value": "Volvo Group Korea Ltd\nVolvo Bldg., 5th fl.,\n726-173 Hannam-dong,\nYongsan-gu 140-210 Seoul\n140-210\nKorea, Republic of",
-      "invoice_value": "Invoicing address\nVolvo Group Korea Ltd\nVolvo Construction Equipment\nVolvo Bldg, 5th fl., 726-173\nHannam-dong, Yongsan-gu,\n140-210 Seoul\nKorea\n\nDelivery address\nVolvo Group Korea Ltd\nVolvo Bldg., 5th fl., 726-173 Hannam-dong,\nYongsan-gu\n140-210 Seoul\nKorea",
+      "invoice_value": "Invoicing address\nVolvo Group Korea Ltd\nVolvo Construction Equipment\nVolvo Bldg, 5th fl., 726-173\nHannam-dong, Yongsan-gu,\n140-210 Seoul\nKorea\n\nDelivery address\nVolvo Group Korea Ltd\nVolvo Bldg, 5th fl., 726-173 Hannam-dong,\nYongsan-gu\n140-210 Seoul\nKorea",
       "rules_applied": [
         {
           "rule_id": "4.2.0.2",
-          "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.2.1.1",
-          "outcome": "MATCH"
+          "outcome": "MATCH - mottagaren återfinns i fakturans mottagarfält"
         },
         {
           "rule_id": "4.2.2",
-          "outcome": "MATCH"
+          "outcome": "MATCH - företagsnamnet kan identifieras i fakturan"
         },
         {
           "rule_id": "4.2.3",
-          "outcome": "MATCH"
+          "outcome": "MATCH - Korea, Republic of överensstämmer med Korea som kortform"
         }
       ],
-      "motivation": "Certifikatets mottagare 'Volvo Group Korea Ltd' kan identifieras i fakturans både Invoicing address och Delivery address. Landet 'Korea, Republic of' i certifikatet motsvaras av 'Korea' i fakturan. Den extra raden 'Volvo Construction Equipment' i en av fakturans adresser motsäger inte identifikationen eftersom certifikatets mottagare finns uttryckligen i mottagarfältet."
+      "motivation": "Certifikatets consignee Volvo Group Korea Ltd återfinns uttryckligen i både invoicing address och delivery address i fakturan. Landet Korea i fakturan verifierar Korea, Republic of i certifikatet som vedertagen kortform. Den extra raden 'Volvo Construction Equipment' i ett adressfält motsäger inte mottagaridentiteten."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.99,
+      "confidence": 0.97,
       "certificate_value": "1 packages\n7 pcs - 113066 Short Winter Jacket, CLR 99, Size M, CN\n4 pcs - 113066 Short Winter Jacket, CLR 99, Size L, CN\n13 pcs - 113470 Iron Mark Pin (10 pack), CN",
       "invoice_value": "113066 Short Winter Jacket 1 99 M 6201401000 CN 7\n113066 Short Winter Jacket 1 99 L 6201401000 CN 4\n113470 Iron Mark Pin (10-pack) 2 8310000000 CN 13",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "MATCH"
+          "outcome": "MATCH - artikelnummer används som primär verifieringsmetod"
         },
         {
           "rule_id": "4.3.2.1",
-          "outcome": "NOT_APPLICABLE"
+          "outcome": "MATCH - 113066 och 113470 är produktidentifierare, inte kvantitetskoder"
         },
         {
           "rule_id": "4.3.8.1",
-          "outcome": "MATCH"
+          "outcome": "MATCH - '1 packages' behandlas som kompletterande kolliuppgift, inte separat vara"
         }
       ],
-      "motivation": "Certifikatet innehåller artikelnumren 113066 och 113470, så verifiering ska primärt ske via artikelnummer. Båda artikelnumren återfinns exakt i fakturan tillsammans med motsvarande produkttexter 'Short Winter Jacket' och 'Iron Mark Pin (10-pack)'. Texten '1 packages' är kompletterande kolliuppgift och utgör inte en separat vara."
+      "motivation": "Certifikatet innehåller artikelnummer 113066 och 113470 och dessa kan identifieras exakt i fakturan. För artikel 113066 återfinns båda certifikatets varianter med storlek M respektive L. Textskillnaden '10 pack' jämfört med '10-pack' påverkar inte identiteten eftersom artikelnummer 113470 matchar exakt."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.91,
+      "confidence": 0.89,
       "certificate_value": "14,69 KG NET",
-      "invoice_value": "Kg\n9.10\n5.20\n0.39",
+      "invoice_value": "113066 Short Winter Jacket ... Qty 7 Kg 9.10\n113066 Short Winter Jacket ... Qty 4 Kg 5.20\n113470 Iron Mark Pin (10-pack) ... Qty 13 Kg 0.39",
       "rules_applied": [
         {
-          "rule_id": "4.4.2",
-          "outcome": "MATCH"
-        },
-        {
           "rule_id": "4.4.2.2",
-          "outcome": "MATCH"
+          "outcome": "MATCH - certifikatet anger numeriskt värde, enhet KG och viktkategori NET"
+        },
+        {
+          "rule_id": "4.4.3.2.1",
+          "outcome": "APPLICABLE - box 7 innehåller explicit viktvärde som måste verifieras"
         },
         {
           "rule_id": "4.4.5.1",
-          "outcome": "3A_NOT_APPLICABLE"
+          "outcome": "SEKVENTIELL PRÖVNING - undantag prövade i ordning"
         },
         {
-          "rule_id": "4.4.5.1",
-          "outcome": "3B_NOT_APPLICABLE"
+          "rule_id": "4.4.5.2",
+          "outcome": "NOT_APPLICABLE - endast en faktura"
         },
         {
-          "rule_id": "4.4.5.1",
-          "outcome": "3C_NOT_APPLICABLE"
+          "rule_id": "4.4.5.3",
+          "outcome": "NOT_APPLICABLE - ingen MT↔KG-konvertering behövs"
         },
         {
-          "rule_id": "4.4.5.1",
-          "outcome": "3D_NOT_APPLICABLE"
+          "rule_id": "4.4.5.4",
+          "outcome": "NOT_APPLICABLE - inte styckvikt för en enda artikelrad"
+        },
+        {
+          "rule_id": "4.4.5.5",
+          "outcome": "NOT_APPLICABLE - ingen summering av radkvantiteter för en enda vara enligt detta undantag"
         },
         {
           "rule_id": "4.4.5.6",
-          "outcome": "MATCH"
+          "outcome": "MATCH - radvikter summeras när totalrad saknas: 9.10 + 5.20 + 0.39 = 14.69 KG"
         }
       ],
-      "motivation": "Certifikatets verifieringsgrundande kvantitet i box 7 är '14,69 KG NET', vilket uppfyller formkravet med numeriskt värde, enhet och viktkategori. Fakturan saknar totalrad för vikt men anger radvikter i kg: 9.10, 5.20 och 0.39. Enligt undantag 3E får radvikterna summeras när totalrad saknas; summan är 14.69 kg, vilket matchar certifikatets 14,69 kg efter normalisering av decimaltecken. Fakturan anger inte explicit NET, men ingen annan viktkategori förekommer och inget i fakturan motsäger att kg-kolumnen avser samma viktkategori."
+      "motivation": "Certifikatets verifieringsgrundande kvantitet i box 7 är 14,69 KG NET. Fakturan saknar totalrad men anger radvikter 9.10 kg, 5.20 kg och 0.39 kg för de tre varuraderna; dessa summeras enligt undantag 3E till 14.69 kg, vilket exakt motsvarar certifikatets värde efter normalisering av decimaltecken. Inget i fakturan motsäger att radvikterna avser samma sammanlagda vikt för försändelsen."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.99,
+      "confidence": 0.96,
       "certificate_value": "CN",
       "invoice_value": "CoO\nCN\nCN\nCN",
       "rules_applied": [
         {
           "rule_id": "4.5.1",
-          "outcome": "MATCH"
+          "outcome": "MATCH - ursprungsland framgår uttryckligen i fakturans CoO-kolumn"
         },
         {
-          "rule_id": "4.5.3",
-          "outcome": "NOT_APPLICABLE"
+          "rule_id": "4.5.2",
+          "outcome": "MATCH - samma ursprungsland anges för samtliga varor"
         },
         {
           "rule_id": "4.5.4",
-          "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.5.5",
-          "outcome": "MATCH"
+          "outcome": "MATCH - ISO-koden CN motsvarar China/Kina och används konsekvent i båda dokumenten"
         }
       ],
-      "motivation": "Certifikatet anger ursprungsland 'CN'. Fakturan har en explicit CoO-kolumn och samtliga relevanta artikelrader är märkta 'CN'. Ursprungslandet kan därför uttryckligen identifieras i fakturan utan tolkning."
+      "motivation": "Certifikatet anger ursprungsland CN. Fakturan har en explicit kolumn 'CoO' där varje artikelrad är märkt CN. Ursprungslandet kan därför verifieras uttryckligen i fakturan."
     }
   },
   "overall_assessment": {
     "comparison_result": "IDENTICAL",
     "workflow_recommendation": "AUTO_APPROVAL_ELIGIBLE",
     "auto_approval_eligible": true,
-    "confidence": 0.97,
+    "confidence": 0.95,
     "critical_failures": [],
     "manual_review_triggers": [],
-    "decision_summary": "Dokumentparet är ett giltigt Certificate of Origin och en faktura med matchande fakturanummer 776069. Samtliga tillämpliga kontrollpunkter – consignor, consignee, varubeskrivning, kvantitet och ursprungsland – har verifierats som MATCH enligt regelverket. Ingen LC-regel är aktiv och inga blockerande avvikelser eller osäkerheter kvarstår.",
-    "human_explanation": "Certifikatet kan verifieras mot fakturan. Avsändare, mottagare, varor, nettovikt 14,69 kg och ursprungsland CN återfinns i faktura 776069. Dokumentparet kan godkännas automatiskt."
+    "decision_summary": "Samtliga fem tillämpliga kontrollpunkter är verifierade som MATCH. Ingen LC-regel är aktiv. Kvantiteten verifieras via undantag 3E genom summering av fakturans radvikter till 14.69 KG, och övriga uppgifter matchar direkt mot fakturan.",
+    "human_explanation": "Alla kontrollpunkter stämmer mellan certifikatet och fakturan. Avsändare, mottagare, varor, kvantitet och ursprungsland kan verifieras, och nettovikten 14,69 kg motsvaras av fakturans radvikter summerade till 14,69 kg. Dokumentparet kan därför godkännas automatiskt."
   },
   "_meta": {
-    "tested_at": "2026-04-24T09:14:16.730423+00:00",
-    "prompt_hash": "10954622b12c",
+    "tested_at": "2026-04-27T08:04:29.096077+00:00",
+    "prompt_hash": "ea5d944217d3",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P0112_MATCH",

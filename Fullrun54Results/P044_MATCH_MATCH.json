@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-04-24T00:00:00Z",
+    "verification_timestamp": "2026-04-27T00:00:00Z",
     "document_pair_id": null,
     "certificate_issue_date": "2025-12-22",
     "source_documents_received": 2
@@ -15,12 +15,12 @@
     "document_a": {
       "label": "Document A",
       "assumed_role": "certificate",
-      "document_type": "certificate_of_origin_original"
+      "document_type": "certificate of origin"
     },
     "document_b": {
       "label": "Document B",
       "assumed_role": "invoice",
-      "document_type": "commercial_invoice"
+      "document_type": "commercial invoice"
     }
   },
   "rule_activation": {
@@ -34,27 +34,19 @@
     "activated_rules": [
       {
         "rule_id": "4.1.0",
-        "rule_name": "Consignor found anywhere in invoice documents"
-      },
-      {
-        "rule_id": "4.2.0.2",
-        "rule_name": "Consignee may match any relevant recipient field in invoice"
+        "rule_name": "Consignor identified anywhere in invoice/facturaunderlag"
       },
       {
         "rule_id": "4.3.5",
-        "rule_name": "General goods description with invoice reference"
+        "rule_name": "Generell varubeskrivning med fakturareferens"
       },
       {
         "rule_id": "4.3.7",
-        "rule_name": "Mixed origins with explicit invoice reference in goods field"
+        "rule_name": "Koppling vara–ursprungsland vid flera ursprung via uttrycklig fakturahänvisning"
       },
       {
         "rule_id": "4.5.3",
-        "rule_name": "Mixed origins verified via invoice line origins"
-      },
-      {
-        "rule_id": "4.5.6",
-        "rule_name": "Full origin coverage required when goods description refers to invoice"
+        "rule_name": "Blandade ursprung med per-rad-origin i faktura"
       }
     ]
   },
@@ -62,9 +54,9 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.98,
+      "confidence": 0.97,
       "certificate_value": "ERICSSON AB\nTORSHAMNSGATAN 23\n164 80, STOCKHOLM\nSWEDEN",
-      "invoice_value": "Ericsson AB (EAB)\nV.A.T. No.: SE556056625801\nEricsson AB Gothenburg\nTorshamnsgatan 23\nSE-164 80 STOCKHOLM\nStockholm, Sweden",
+      "invoice_value": "Ericsson AB (EAB)\nV.A.T. No.: SE556056625801\nTorshamnsgatan 23\nS-164 80 Stockholm, Sweden",
       "rules_applied": [
         {
           "rule_id": "4.1.0",
@@ -77,14 +69,18 @@
         {
           "rule_id": "4.1.4",
           "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.5",
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor 'ERICSSON AB' återfinns uttryckligen i fakturan på sida 2 i företags-/remitblock med adress 'Torshamnsgatan 23 ... Stockholm, Sweden'. Landet verifieras både via adressen 'Sweden' och VAT-prefix 'SE'."
+      "motivation": "Certifikatets consignor 'ERICSSON AB' återfinns uttryckligen i fakturan och fakturarelaterad footer som 'Ericsson AB (EAB)'. Landet Sverige verifieras explicit i adressen 'Stockholm, Sweden' och stöds även av VAT-prefix 'SE'. Samma juridiska part och land kan därför identifieras i fakturan."
     },
     "consignee": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.99,
+      "confidence": 0.98,
       "certificate_value": "SUBSIDIARY ENTERPRISE WITH 100% FOREIGN INVESTMENT ERICSSON\n13 MYKOLY PYMONENKA STR., BLOCK 7,\nBLOCK 7, OFF. 7B/21\n04050 KYIV\nUKRAINE",
       "invoice_value": "Customer/Sold to 503575\nSUBSIDIARY ENTERPRISE WITH 100% FOREIGN INVESTMENT ERICSSON\n13 MYKOLY PYMONENKA STR., BLOCK 7, OFF. 7B/21\n04050 KYIV\nUKRAINE",
       "rules_applied": [
@@ -101,34 +97,34 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignee återfinns exakt i fakturans 'Customer/Sold to' och 'Invoice to'. Den separata 'Consignee/Ship to'-adressen i fakturan anger samma juridiska part på annan adress och motsäger därför inte certifikatet."
+      "motivation": "Mottagaren i certifikatet kan identifieras direkt i fakturans 'Customer/Sold to' och 'Invoice to'. Företagsnamnet överensstämmer och landet är uttryckligen 'UKRAINE' i båda dokumenten. Skillnaden att certifikatet duplicerar 'BLOCK 7' påverkar inte identifikationen av samma juridiska part."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.95,
+      "confidence": 0.91,
       "certificate_value": "7 PACKAGES\nTELECOM EQUIPMENT\nAS PER INVOICE 8391985785/8391985798\nDATED 17/12/2025",
-      "invoice_value": "Invoice № 8391985785/8391985798\nInvoice date 17/12/2025\nItems 1-23: telecom equipment and related network components",
+      "invoice_value": "INVOICE\nInvoice № 8391985785/8391985798\nInvoice date 17/12/2025\nItem Country of origin Tariff code Product code / Description ...\n[artikellista med telekom-/nätverksutrustning]",
       "rules_applied": [
         {
           "rule_id": "4.3.5",
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.3.5.1",
+          "rule_id": "4.3.5.2",
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.3.5.2",
+          "rule_id": "4.3.8",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Varubeskrivningen i certifikatet är generell men innehåller uttrycklig hänvisning till faktura, fakturanummer och fakturadatum i varubeskrivningsfältet. Fakturan bär exakt nummer '8391985785/8391985798' och datum '17/12/2025', och dess varurader är förenliga med den generella beskrivningen 'TELECOM EQUIPMENT'."
+      "motivation": "Certifikatet använder generell varubeskrivning med uttrycklig fakturahänvisning: 'AS PER INVOICE 8391985785/8391985798 DATED 17/12/2025'. Fakturans nummer och datum matchar exakt. Fakturans artikellista består av telekom-/nätverksutrustning och är därför förenlig med certifikatets generella beskrivning 'TELECOM EQUIPMENT'. Enligt regeln för generell varubeskrivning anses kontrollpunkten verifierad utan ytterligare strikt textmatchning per artikel."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.96,
+      "confidence": 0.9,
       "certificate_value": "G.W 370,890 KG",
       "invoice_value": "Total gross weight 370.890 kg",
       "rules_applied": [
@@ -143,17 +139,29 @@
         {
           "rule_id": "4.4.3.4",
           "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.4.4",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.4.6",
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger explicit viktkategori, numeriskt värde och enhet i box 7: 'G.W 370,890 KG'. Fakturan anger 'Total gross weight 370.890 kg'. Skillnaden är endast decimalnotation komma/punkt; normaliserat är värdet identiskt."
+      "motivation": "Certifikatet anger uttryckligen viktkategori, numeriskt värde och enhet: 'G.W 370,890 KG'. Fakturan anger 'Total gross weight 370.890 kg'. Uppgifterna avser samma viktkategori (gross weight) och samma numeriska värde efter tillåten normalisering av punkt/komma som formatskillnad. Därmed är kvantiteten verifierad."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.97,
+      "confidence": 0.96,
       "certificate_value": "US, MX, AT, CN, TW, MY",
-      "invoice_value": "Country of origin column across invoice lines: US, MX, AT, CN, TW, MY",
+      "invoice_value": "Item Country of origin ...\n1 US\n2 MX\n3 AT\n...\n7 CN\n8 TW\n...\n20 MY",
       "rules_applied": [
+        {
+          "rule_id": "4.5.1",
+          "outcome": "MATCH"
+        },
         {
           "rule_id": "4.5.3",
           "outcome": "MATCH"
@@ -171,22 +179,22 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Samtliga ursprungsländer i certifikatet återfinns uttryckligen i fakturans origin-kolumn på radnivå: US, MX, AT, CN, TW och MY. Eftersom certifikatet använder generell varubeskrivning med fakturahänvisning har även fullständighetskontroll gjorts; inga ytterligare ursprungsländer förekommer i fakturan."
+      "motivation": "Certifikatet anger sex ursprungsländer: US, MX, AT, CN, TW och MY. Fakturan har en explicit kolumn 'Country of origin' på artikelnivå och samtliga dessa ursprung kan identifieras där. Inga ytterligare ursprungsländer utöver certifikatets lista framgår i fakturan. Därmed är ursprungsfältet fullständigt verifierat även vid generell varubeskrivning."
     }
   },
   "overall_assessment": {
     "comparison_result": "IDENTICAL",
     "workflow_recommendation": "AUTO_APPROVAL_ELIGIBLE",
     "auto_approval_eligible": true,
-    "confidence": 0.97,
+    "confidence": 0.94,
     "critical_failures": [],
     "manual_review_triggers": [],
-    "decision_summary": "Alla fem tillämpliga kontrollpunkter verifieras som MATCH. LC-undantaget är inte tillämpligt. Dokumentparet passerar parningsvalidering via exakt fakturanummermatchning samt verifierad consignor och consignee.",
-    "human_explanation": "Alla uppgifter i certifikatet kan verifieras mot fakturan. Avsändare, mottagare, fakturareferens, bruttovikt 370,890/370.890 kg och ursprungsländerna US, MX, AT, CN, TW och MY stämmer överens. Dokumenten kan därför godkännas automatiskt."
+    "decision_summary": "Alla fem tillämpliga kontrollpunkter verifieras som MATCH. Certifikatet hänvisar uttryckligen till faktura 8391985785/8391985798 daterad 17/12/2025, och fakturans consignor, consignee, gross weight samt samtliga angivna ursprungsländer kan identifieras i fakturan. Inga blockerande motsägelser eller läsbarhetsproblem konstaterades.",
+    "human_explanation": "Alla relevanta uppgifter i ursprungscertifikatet kan verifieras mot fakturan. Avsändare, mottagare, fakturahänvisning, bruttovikt 370,890/370.890 kg och ursprungsländerna US, MX, AT, CN, TW och MY stämmer med fakturan. Dokumentparet kan därför godkännas automatiskt."
   },
   "_meta": {
-    "tested_at": "2026-04-24T09:51:07.295745+00:00",
-    "prompt_hash": "10954622b12c",
+    "tested_at": "2026-04-27T08:06:36.999698+00:00",
+    "prompt_hash": "ea5d944217d3",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P044_MATCH",
