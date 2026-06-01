@@ -1,0 +1,212 @@
+{
+  "schema_version": "3.0",
+  "metadata": {
+    "verification_timestamp": null,
+    "document_pair_id": null,
+    "certificate_issue_date": "2026-02-27",
+    "source_documents_received": 2
+  },
+  "task": {
+    "task_type": "customs_document_pair_verification",
+    "comparison_mode": "certificate_vs_invoice",
+    "strictness": "conservative"
+  },
+  "documents": {
+    "document_a": {
+      "label": "Document A",
+      "assumed_role": "certificate",
+      "document_type": "Certificate of Origin"
+    },
+    "document_b": {
+      "label": "Document B",
+      "assumed_role": "invoice",
+      "document_type": "Invoice"
+    }
+  },
+  "rule_activation": {
+    "lc_exception_active": false,
+    "lc_number_found": null,
+    "general_goods_description_with_invoice_reference_active": false,
+    "mixed_origins_rule_active": false,
+    "to_order_rule_active": false,
+    "quantity_exception_applied": null,
+    "eu_origin_normalization_active": false,
+    "activated_rules": [
+      {
+        "rule_id": "8.5.0",
+        "rule_name": "Original certificate selected from certificate file; invoice selected from separate invoice file"
+      },
+      {
+        "rule_id": "8.6",
+        "rule_name": "Pairing validation passed via invoice reference CD711895 and party matches"
+      },
+      {
+        "rule_id": "4.1.0",
+        "rule_name": "Consignor identified in invoice text/header/footer"
+      },
+      {
+        "rule_id": "4.2.0.2",
+        "rule_name": "Consignee identified in invoice recipient fields"
+      },
+      {
+        "rule_id": "4.3.3",
+        "rule_name": "Controlled text match for goods description"
+      },
+      {
+        "rule_id": "4.4.3.1",
+        "rule_name": "Multiple quantity values assessed; no matching invoice quantity found"
+      },
+      {
+        "rule_id": "4.5.4",
+        "rule_name": "Origin matched using ISO code normalization (Sweden = SE)"
+      }
+    ]
+  },
+  "control_points": {
+    "consignor": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.93,
+      "certificate_value": "HydraSpecma AB\nBox 164\n40122, Göteborg\nSweden",
+      "invoice_value": "HydraSpecma AB\nBox 164\nSE-401 22 GÖTEBORG\nVAT.no SE556089955001\nHydra Specma (header/logo)",
+      "rules_applied": [
+        {
+          "rule_id": "4.1.0",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.2.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.5",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatets avsändare 'HydraSpecma AB' återfinns uttryckligen i fakturan både i sidhuvud/branding ('Hydra Specma') och i footer/adressblock som 'HydraSpecma AB, Box 164, SE-401 22 GÖTEBORG'. Landet Sverige verifieras genom adressen och VAT-prefixet 'SE'. Därmed är samma juridiska part och land verifierade."
+    },
+    "consignee": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.97,
+      "certificate_value": "Ergun Hidrolik San. Tic A.S\nAkhisar Organize Sanayi Bölgesi\nAkhisar-Manisa Yolu7km;5.\nCadde No33\n45230. Akhisar\nTurkiet",
+      "invoice_value": "Customer Address / Delivery Address / Customer:\nErgun Hidrolik San. Tic A.S.\nAkhisar Organize Sanayi Bölgesi\nAkhisar-Manisa Yolu7km;5.Cadde No33\n45230 AKHISAR\nTURKIET",
+      "rules_applied": [
+        {
+          "rule_id": "4.2.0.2",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.2.3",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.2.4",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Mottagaren i certifikatet kan identifieras direkt i flera mottagarfält i fakturan: 'Customer Address', 'Delivery Address' och 'Customer'. Företagsnamn och land överensstämmer efter normalisering av formatering och skiljetecken."
+    },
+    "goods_description": {
+      "applicable": true,
+      "status": "MISMATCH",
+      "confidence": 0.83,
+      "certificate_value": "2 pallets\n980pcs, Rubberhose & Hose Plastic w or wo fittings\n900pcs, Rubberhose & Hose Plastic w or wo fittings",
+      "invoice_value": "Pos 1: 401249 / Hydraulic hose High Pressure\nPos 2: 132122-900 / Rubberhose\nPos 3: 132130-900 / Rubberhose\nPos 4: 132131-900 / Rubberhose\nPos 5: 132132-900 / Rubberhose",
+      "rules_applied": [
+        {
+          "rule_id": "4.3.2",
+          "outcome": "NOT_APPLICABLE"
+        },
+        {
+          "rule_id": "4.3.3",
+          "outcome": "MISMATCH"
+        },
+        {
+          "rule_id": "4.3.5",
+          "outcome": "NOT_APPLICABLE"
+        },
+        {
+          "rule_id": "4.3.8",
+          "outcome": "MISMATCH"
+        }
+      ],
+      "motivation": "Certifikatet innehåller ingen verifierbar artikelnummerreferens som styr Prioritet 1. Kontrollerad textmatchning enligt 4.3.3 ger inte entydig träff: fakturan innehåller 'Rubberhose' och en separat rad 'Hydraulic hose High Pressure', men den identitetsbärande certifikatstexten 'Rubberhose & Hose Plastic w or wo fittings' kan inte identifieras exakt i fakturan, särskilt inte delen 'Hose Plastic w or wo fittings'. Fakturareferensundantaget i 4.3.5 kan inte användas eftersom certifikatet saknar fakturadatum och uttrycklig giltig hänvisning i varubeskrivningsfältet."
+    },
+    "quantity": {
+      "applicable": true,
+      "status": "MISMATCH",
+      "confidence": 0.86,
+      "certificate_value": "148,9kg\n107,1kg\nGW",
+      "invoice_value": "Line weights: 14.60 kg, 20.10 kg, 73.44 kg, 33.50 kg, 35.00 kg\nPage 3 totals: 176.64 kg and 256.08 kg\nNo of Pallets: 2",
+      "rules_applied": [
+        {
+          "rule_id": "4.4.2.2",
+          "outcome": "APPLICABLE"
+        },
+        {
+          "rule_id": "4.4.3.1",
+          "outcome": "MISMATCH"
+        },
+        {
+          "rule_id": "4.4.4",
+          "outcome": "MISMATCH"
+        },
+        {
+          "rule_id": "4.4.5.1",
+          "outcome": "NO_EXCEPTION_APPLIED"
+        },
+        {
+          "rule_id": "4.4.6",
+          "outcome": "MISMATCH"
+        }
+      ],
+      "motivation": "Verifieringsgrundande kvantitet är box 7 i certifikatet: '148,9kg / 107,1kg / GW'. Fakturan visar andra viktuppgifter: radvikter 14.60, 20.10, 73.44, 33.50 och 35.00 kg samt totalsiffror 176.64 kg och 256.08 kg. Inget av certifikatets numeriska viktvärden kan identifieras i fakturan, och fakturans uttryckliga viktuppgifter motsäger därmed certifikatets angivna mängd."
+    },
+    "origin": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.96,
+      "certificate_value": "Sweden",
+      "invoice_value": "Country Of Origin: SE (on article rows)",
+      "rules_applied": [
+        {
+          "rule_id": "4.5.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.5.4",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.5.5",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatet anger ursprungsland 'Sweden'. Fakturan anger uttryckligen 'Country Of Origin: SE' på artikelraderna. ISO-koden 'SE' är ekvivalent med 'Sweden', så ursprungslandet är verifierat."
+    }
+  },
+  "overall_assessment": {
+    "comparison_result": "NOT_IDENTICAL",
+    "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
+    "auto_approval_eligible": false,
+    "confidence": 0.88,
+    "critical_failures": [
+      "Goods description could not be verified against the invoice.",
+      "Certificate quantity values 148,9 kg and 107,1 kg GW could not be matched to invoice weights and are contradicted by invoice weights 176.64 kg and 256.08 kg."
+    ],
+    "manual_review_triggers": [],
+    "decision_summary": "Document pairing is valid and consignor, consignee, and origin are verified. However, the goods description in the certificate cannot be entydigt identified in the invoice, and the certificate quantity values do not match the invoice weight information. Because at least one applicable control point is MISMATCH, the overall result is NOT_IDENTICAL.",
+    "human_explanation": "Avsändare, mottagare och ursprungsland kan verifieras mot fakturan. Varubeskrivningen i certifikatet anger 'Rubberhose & Hose Plastic w or wo fittings', medan fakturan endast visar 'Hydraulic hose High Pressure' och flera rader 'Rubberhose' utan uttrycklig text för 'Hose Plastic w or wo fittings'. Kvantiteten i certifikatet är 148,9 kg och 107,1 kg GW, men fakturan visar andra viktuppgifter, bland annat 176,64 kg och 256,08 kg, därför är dokumenten inte identiska."
+  },
+  "_meta": {
+    "tested_at": "2026-04-27T08:06:36.991566+00:00",
+    "prompt_hash": "ea5d944217d3",
+    "model": "gpt-5.4",
+    "tier": 2,
+    "pair": "P0194_MISMATCH",
+    "expected": "NOT_IDENTICAL",
+    "actual": "NOT_IDENTICAL",
+    "status": "PASS"
+  }
+}

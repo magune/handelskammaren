@@ -1,0 +1,195 @@
+{
+  "schema_version": "3.0",
+  "metadata": {
+    "verification_timestamp": null,
+    "document_pair_id": null,
+    "certificate_issue_date": "2023-04-20",
+    "source_documents_received": 2
+  },
+  "task": {
+    "task_type": "customs_document_pair_verification",
+    "comparison_mode": "certificate_vs_invoice",
+    "strictness": "conservative"
+  },
+  "documents": {
+    "document_a": {
+      "label": "Document A",
+      "assumed_role": "certificate",
+      "document_type": "certificate of origin"
+    },
+    "document_b": {
+      "label": "Document B",
+      "assumed_role": "invoice",
+      "document_type": "pro forma invoice"
+    }
+  },
+  "rule_activation": {
+    "lc_exception_active": false,
+    "lc_number_found": null,
+    "general_goods_description_with_invoice_reference_active": false,
+    "mixed_origins_rule_active": true,
+    "to_order_rule_active": false,
+    "quantity_exception_applied": null,
+    "eu_origin_normalization_active": true,
+    "activated_rules": [
+      {
+        "rule_id": "4.1.0",
+        "rule_name": "Consignor found explicitly somewhere in invoice text"
+      },
+      {
+        "rule_id": "4.2.0.2",
+        "rule_name": "Consignee may be verified in any recipient field"
+      },
+      {
+        "rule_id": "4.3.3",
+        "rule_name": "Controlled text matching for goods description"
+      },
+      {
+        "rule_id": "4.4.2.2",
+        "rule_name": "Weight quantity in certificate requires explicit weight category"
+      },
+      {
+        "rule_id": "4.5.4.2",
+        "rule_name": "EU and specific EU member state normalization"
+      },
+      {
+        "rule_id": "8.6",
+        "rule_name": "Mandatory pairing sanity check"
+      }
+    ]
+  },
+  "control_points": {
+    "consignor": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.98,
+      "certificate_value": "Lantmännen Reppe AB\nJungmansgatan 8\nSE-531 40, LIDKÖPING\nSweden",
+      "invoice_value": "Lantmännen Reppe AB\nJungmansgatan 8\n53140 LIDKÖPING\nSWEDISH VAT NUMBER :SE556000153801\nSweden",
+      "rules_applied": [
+        {
+          "rule_id": "4.1.0",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.2.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.5",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatets consignor-namn 'Lantmännen Reppe AB' återfinns uttryckligen i fakturans footer på sidan 1. Landet Sverige verifieras dessutom av explicit landsrad 'Sweden', svensk VAT-kod 'SE...' och svensk IBAN-prefix 'SE'. Samma juridiska part och land kan därför identifieras i fakturan."
+    },
+    "consignee": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.99,
+      "certificate_value": "Meelunie America Inc.\n3000 Town Center, Suite 2237\nSouthfield, MI 48075\nUnited States Of America",
+      "invoice_value": "Recipient adress :\nMeelunie America Inc.\n3000 Town Center, Suite 2237\nSouthfield, MI 48075\nUnited States Of America",
+      "rules_applied": [
+        {
+          "rule_id": "4.2.0.2",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.2.3",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.2.4",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Mottagaren i certifikatet återfinns exakt i fakturans mottagarfält 'Recipient adress'. Att fakturans köpare högst upp är 'Meelunie B.V.' påverkar inte bedömningen eftersom certifikatets consignee får verifieras i annat mottagarfält enligt reglerna. Företagsnamn och land överensstämmer."
+    },
+    "goods_description": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.96,
+      "certificate_value": "20 Pallets\nOrganic VWG From Lantmännen Reppe AB\nProduced In Sweden With Wheat From EU Region",
+      "invoice_value": "20 000,00 Reppal VWG Organic 25 Kg\nBatch No: 2303090003\nOrganic VWG From Lantmännen Reppe AB\nProduced In Sweden With Wheat From EU Region",
+      "rules_applied": [
+        {
+          "rule_id": "4.3.2",
+          "outcome": "Priority 1 not applicable; no article number selected from certificate goods field"
+        },
+        {
+          "rule_id": "4.3.3",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.3.8.1",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatet innehåller ingen verifieringsgrundande artikelnummerreferens, så kontrollerad textmatchning används. Den identitetsbärande texten 'Organic VWG From Lantmännen Reppe AB' samt fortsättningen 'Produced In Sweden With Wheat From EU Region' förekommer uttryckligen i fakturans varubeskrivning. Texten '20 Pallets' i box 6 behandlas som antal/slags kolli och inte som en separat vara."
+    },
+    "quantity": {
+      "applicable": true,
+      "status": "MISMATCH",
+      "confidence": 0.99,
+      "certificate_value": "20000 Kg",
+      "invoice_value": "Quantity 20 000,00\nDescription: Reppal VWG Organic 25 Kg",
+      "rules_applied": [
+        {
+          "rule_id": "4.4.2",
+          "outcome": "Weight unit detected in certificate quantity field"
+        },
+        {
+          "rule_id": "4.4.2.2",
+          "outcome": "MISMATCH"
+        },
+        {
+          "rule_id": "4.4.6",
+          "outcome": "MISMATCH"
+        }
+      ],
+      "motivation": "Certifikatets kvantitetsfält anger vikt i enheten 'Kg', men box 7 anger inte om vikten avser Gross/GW eller Net/NW. Någon fristående viktkategori som exakt kopplar till detta viktvärde finns inte heller i box 6. Detta är ett absolut formkravsfel för viktangivelse och leder därför till MISMATCH oavsett vad som står i fakturan."
+    },
+    "origin": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.87,
+      "certificate_value": "EU Sweden",
+      "invoice_value": "Produced In Sweden With Wheat From EU Region",
+      "rules_applied": [
+        {
+          "rule_id": "4.5.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.5.4.2",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.5.5",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Fakturatexten innehåller uttryckligen 'Produced In Sweden' samt uttrycklig EU-hänvisning i samma ursprungsrelaterade textsträng 'With Wheat From EU Region'. Certifikatets två ursprungskomponenter 'EU' och 'Sweden' kan därför identifieras i fakturan. Bedömningen bygger inte på säljaradress utan på den explicita produkttexten."
+    }
+  },
+  "overall_assessment": {
+    "comparison_result": "NOT_IDENTICAL",
+    "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
+    "auto_approval_eligible": false,
+    "confidence": 0.97,
+    "critical_failures": [
+      "Certifikatets kvantitetsfält anger '20000 Kg' utan obligatorisk viktkategori Gross/GW eller Net/NW."
+    ],
+    "manual_review_triggers": [],
+    "decision_summary": "Consignor, consignee, varubeskrivning och ursprungsland kan verifieras mot fakturan. Kvantitetskontrollpunkten ger dock MISMATCH eftersom certifikatet använder viktangivelse i KG utan obligatorisk viktkategori. Minst en tillämplig kontrollpunkt är därmed MISMATCH och totalresultatet måste vara NOT_IDENTICAL.",
+    "human_explanation": "Avsändare, mottagare, varubeskrivning och ursprung kan styrkas mot fakturan. Certifikatet anger mängden som '20000 Kg' men anger inte om vikten avser brutto eller netto, vilket krävs för viktangivelser. Därför är dokumentparet inte identiskt och måste hanteras manuellt."
+  },
+  "_meta": {
+    "tested_at": "2026-04-27T08:13:47.434869+00:00",
+    "prompt_hash": "ea5d944217d3",
+    "model": "gpt-5.4",
+    "tier": 2,
+    "pair": "P0148_MISMATCH",
+    "expected": "NOT_IDENTICAL",
+    "actual": "NOT_IDENTICAL",
+    "status": "PASS"
+  }
+}

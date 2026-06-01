@@ -1,0 +1,176 @@
+{
+  "schema_version": "3.0",
+  "metadata": {
+    "verification_timestamp": "2026-04-27T00:00:00Z",
+    "document_pair_id": null,
+    "certificate_issue_date": "2026-02-27",
+    "source_documents_received": 3
+  },
+  "task": {
+    "task_type": "customs_document_pair_verification",
+    "comparison_mode": "certificate_vs_invoice",
+    "strictness": "conservative"
+  },
+  "documents": {
+    "document_a": {
+      "label": "Document A",
+      "assumed_role": "certificate",
+      "document_type": "Certificate of Origin"
+    },
+    "document_b": {
+      "label": "Document B",
+      "assumed_role": "invoice",
+      "document_type": "Commercial Invoice"
+    }
+  },
+  "rule_activation": {
+    "lc_exception_active": false,
+    "lc_number_found": null,
+    "general_goods_description_with_invoice_reference_active": true,
+    "mixed_origins_rule_active": true,
+    "to_order_rule_active": false,
+    "quantity_exception_applied": null,
+    "eu_origin_normalization_active": false,
+    "activated_rules": [
+      {
+        "rule_id": "4.3.5",
+        "rule_name": "Generell varubeskrivning med fakturareferens"
+      },
+      {
+        "rule_id": "4.5.3",
+        "rule_name": "Blandade ursprung"
+      },
+      {
+        "rule_id": "8.5.0.1",
+        "rule_name": "Flera fakturafiler och verifiering mot refererade dokument"
+      }
+    ]
+  },
+  "control_points": {
+    "consignor": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.87,
+      "certificate_value": "Wellspect Healthcare\nP.O Box 14\n431 21, Mölndal\nSweden",
+      "invoice_value": "Wellspect AB\nP.O. BOX 14\nAminogatan 1\nS-431 21 Mölndal\nSweden\nV.A.T. NO. SE559332067301",
+      "rules_applied": [
+        {
+          "rule_id": "4.1.0",
+          "outcome": "NOT_MATCHED"
+        },
+        {
+          "rule_id": "4.1.3.4",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.4",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatet anger consignor som \"Wellspect Healthcare\" med boxadress P.O Box 14, 431 21 Mölndal, Sweden. Fakturan 8280581 anger utställaren som \"Wellspect AB\" med P.O. BOX 14, S-431 21 Mölndal, Sweden. Namnen är inte identiska, men fakturans registrerade bolagsnamn och certifikatets kommersiella namn delar samma adresskärna och samma land; därför accepteras matchning enligt regeln för kommersiellt namn vs registrerat bolagsnamn."
+    },
+    "consignee": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.99,
+      "certificate_value": "Anmar United Trading Co.\nAbi Baker Elsediq Branch Road,\nExit 6, At Tawon District\n12477 RIYADH\nSaudi Arabia",
+      "invoice_value": "Invoice recipient / Delivery address:\nAnmar United Trading Co.\nAbi Baker Elsediq Branch Road,\nExit 6, At Tawon District\n12477 RIYADH\nSaudi Arabia",
+      "rules_applied": [
+        {
+          "rule_id": "4.2.0.2",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.2.3",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Mottagaren i certifikatet kan identifieras direkt i fakturans fält för både invoice recipient och delivery address. Små OCR-/stavningsskillnader i \"Elsediq/Elsediq\" och \"Tawon/Tawon\" påverkar inte identifieringen, och landet Saudi Arabia överensstämmer."
+    },
+    "goods_description": {
+      "applicable": true,
+      "status": "MISMATCH",
+      "confidence": 0.94,
+      "certificate_value": "18 pallets\nMedical Equipment\n(8280581 Invoice, invoice date 2026-02-27)\n(Proforma 0001703399, invoice date 2026-02-27)",
+      "invoice_value": "Invoice 8280581 dated 2026-02-27 with detailed product lines; separate attached files also include unrelated invoice 8280595. No separate attached invoice/proforma file with number 0001703399 was identified.",
+      "rules_applied": [
+        {
+          "rule_id": "4.3.5",
+          "outcome": "ACTIVE"
+        },
+        {
+          "rule_id": "4.3.5.4",
+          "outcome": "REQUIRES_ALL_REFERENCED_DOCUMENTS"
+        },
+        {
+          "rule_id": "8.5.0.1",
+          "outcome": "FAILED_FOR_PROFORMA_0001703399"
+        }
+      ],
+      "motivation": "Varubeskrivningen i certifikatet är generell och hänvisar uttryckligen till två dokument: invoice 8280581 och proforma 0001703399, båda daterade 2026-02-27. Bland de separata fakturafilerna kunde invoice 8280581 identifieras, men ingen separat fakturafil/proformafil med nummer 0001703399 identifierades. En inbäddad proforma i certifikatfilen får inte användas som oberoende verifieringsunderlag, därför kan den generella varubeskrivningen inte verifieras fullt ut mot de refererade bifogade dokumenten."
+    },
+    "quantity": {
+      "applicable": true,
+      "status": "MISMATCH",
+      "confidence": 0.99,
+      "certificate_value": "15790 pcs",
+      "invoice_value": "Invoice 8280581 line quantities: 1251 + 76 + 1800 + 9600 + 1080 + 960 + 960 = 15727 PCE",
+      "rules_applied": [
+        {
+          "rule_id": "4.4.2",
+          "outcome": "FORM_OK"
+        },
+        {
+          "rule_id": "4.4.5.2",
+          "outcome": "NOT_APPLIED_MISSING_ALL_REFERENCED_DOCUMENTS"
+        },
+        {
+          "rule_id": "4.4.3.1",
+          "outcome": "MISMATCH"
+        }
+      ],
+      "motivation": "Certifikatet anger 15790 pcs. Den separat bifogade fakturan 8280581 innehåller explicit radkvantiteter som summerar till 15727 PCE. Undantag 3A för summering av flera fakturor/proformor kan inte tillämpas eftersom certifikatet även refererar proforma 0001703399 men något separat verifieringsdokument med detta nummer inte identifierades bland fakturafilerna. Därför föreligger en uttrycklig kvantitetsavvikelse mellan certifikatet och den verifierbara fakturan."
+    },
+    "origin": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.95,
+      "certificate_value": "Slovakia\nSweden",
+      "invoice_value": "CoO column in invoice 8280581 shows SE for multiple items and SK for one item (LoFric Nel 20cm CH14 Saudi).",
+      "rules_applied": [
+        {
+          "rule_id": "4.5.3",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.5.4",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatet anger två ursprungsländer: Slovakia och Sweden. I faktura 8280581 framgår ursprung explicit per rad i CoO-kolumnen, där SE och SK förekommer. Detta verifierar båda ursprungsländerna efter normalisering av landskod mot landsnamn."
+    }
+  },
+  "overall_assessment": {
+    "comparison_result": "NOT_IDENTICAL",
+    "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
+    "auto_approval_eligible": false,
+    "confidence": 0.95,
+    "critical_failures": [
+      "Generell varubeskrivning hänvisar till proforma 0001703399, men ingen separat verifieringsfil med detta nummer identifierades.",
+      "Certifikatet anger 15790 pcs medan verifierbar separat faktura 8280581 visar totalt 15727 PCE."
+    ],
+    "manual_review_triggers": [],
+    "decision_summary": "Consignor, consignee och ursprungsland kan verifieras mot faktura 8280581, men varubeskrivningen och kvantiteten kan inte godkännas eftersom certifikatet refererar ett ytterligare proformadokument som inte finns som separat verifieringsfil och kvantiteten i den verifierbara fakturan avviker från certifikatet.",
+    "human_explanation": "Avsändare, mottagare och ursprung kan verifieras mot faktura 8280581. Certifikatet hänvisar dock även till proforma 0001703399, men något separat verifieringsdokument med det numret finns inte bland fakturafilerna. Dessutom anger certifikatet 15 790 pcs medan den verifierbara fakturan visar 15 727 pcs."
+  },
+  "_meta": {
+    "tested_at": "2026-04-27T08:19:25.085743+00:00",
+    "prompt_hash": "ea5d944217d3",
+    "model": "gpt-5.4",
+    "tier": 2,
+    "pair": "SEG-26D-465257_MISMATCH",
+    "expected": "NOT_IDENTICAL",
+    "actual": "NOT_IDENTICAL",
+    "status": "PASS"
+  }
+}

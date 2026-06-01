@@ -1,0 +1,159 @@
+{
+  "schema_version": "3.0",
+  "metadata": {
+    "verification_timestamp": null,
+    "document_pair_id": null,
+    "certificate_issue_date": "2025-07-31",
+    "source_documents_received": 2
+  },
+  "task": {
+    "task_type": "customs_document_pair_verification",
+    "comparison_mode": "certificate_vs_invoice",
+    "strictness": "conservative"
+  },
+  "documents": {
+    "document_a": {
+      "label": "Document A",
+      "assumed_role": "certificate",
+      "document_type": "Certificate of Origin"
+    },
+    "document_b": {
+      "label": "Document B",
+      "assumed_role": "invoice",
+      "document_type": "Commercial Invoice"
+    }
+  },
+  "rule_activation": {
+    "lc_exception_active": false,
+    "lc_number_found": null,
+    "general_goods_description_with_invoice_reference_active": true,
+    "mixed_origins_rule_active": false,
+    "to_order_rule_active": false,
+    "quantity_exception_applied": null,
+    "eu_origin_normalization_active": true,
+    "activated_rules": [
+      {
+        "rule_id": "4.3.5",
+        "rule_name": "Generell varubeskrivning med fakturareferens"
+      },
+      {
+        "rule_id": "4.5.4.2",
+        "rule_name": "EU-samlingsbegrepp mot specifikt EU-medlemsland"
+      }
+    ]
+  },
+  "control_points": {
+    "consignor": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.96,
+      "certificate_value": "Vitrolife Sweden AB\nBox 9080\n42132, Göteborg\nSweden",
+      "invoice_value": "Vitrolife Sweden AB, Box 9080, 400 92 Göteborg, SWEDEN",
+      "rules_applied": [
+        {
+          "rule_id": "4.1.0",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.4",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatets consignor 'Vitrolife Sweden AB' återfinns uttryckligen i fakturans footer och avsändaridentitet. Landet Sverige framgår i samma block. Samma juridiska part och land kan därför verifieras direkt."
+    },
+    "consignee": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.95,
+      "certificate_value": "Luvian company\nVital Village - Villa No.55\nZhulian Sharifi\n44001 Erbil\nIraq",
+      "invoice_value": "Delivery address / Invoice address:\nLuvian company\nvital village house number 55\nIQ-Erbil\nIraq",
+      "rules_applied": [
+        {
+          "rule_id": "4.2.0.2",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.2.3",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Mottagaren 'Luvian company' kan identifieras i fakturans Delivery address och Invoice address. Adressdetaljerna varierar något ('Villa No.55' respektive 'house number 55'), men företagsnamn och land Irak överensstämmer och ingen motsägelse finns."
+    },
+    "goods_description": {
+      "applicable": true,
+      "status": "MISMATCH",
+      "confidence": 0.97,
+      "certificate_value": "4 cartons\nReproductive Media Kits for IVF\nSee attached invoice 2005654 dated 20250730",
+      "invoice_value": "COMMERCIAL INVOICE\nInvoice no -2005654\nShipping date 20250731\nLine items: G-TL, G-MOPS PLUS, G-IVF PLUS, EmbryoGlue, RapidVit, HYASE, HSA-solution, ICSI, SpermRinse, OVOIL",
+      "rules_applied": [
+        {
+          "rule_id": "4.3.5",
+          "outcome": "MISMATCH"
+        },
+        {
+          "rule_id": "4.3.5.1",
+          "outcome": "MISMATCH"
+        }
+      ],
+      "motivation": "Certifikatet använder generell varubeskrivning med fakturareferens och anger uttryckligen 'See attached invoice 2005654 dated 20250730'. Fakturan visar nummer 2005654, men något matchande fakturadatum 20250730 framgår inte; det synliga datumet i fakturan är i stället 'Shipping date 20250731'. Shipping date får inte ersätta fakturadatum, så det obligatoriska datumkravet är inte uppfyllt."
+    },
+    "quantity": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.94,
+      "certificate_value": "Gross: 66,40 kg",
+      "invoice_value": "Gross weight (kg): 66,4",
+      "rules_applied": [
+        {
+          "rule_id": "4.4.2.2",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.4.3.4",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatet anger ett explicit bruttovärde med viktkategori och enhet: 'Gross: 66,40 kg'. Fakturan anger 'Gross weight (kg): 66,4'. Efter tillåten normalisering av decimalformat är värdet numeriskt identiskt."
+    },
+    "origin": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.92,
+      "certificate_value": "European Community",
+      "invoice_value": "Country of Origin: Sweden",
+      "rules_applied": [
+        {
+          "rule_id": "4.5.4.2",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.5.5",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatet anger EU-samlingsbegreppet 'European Community'. Fakturan anger det specifika EU-medlemslandet 'Sweden' i ett explicit origin-fält. Detta är verifierat enligt EU-normaliseringsregeln."
+    }
+  },
+  "overall_assessment": {
+    "comparison_result": "NOT_IDENTICAL",
+    "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
+    "auto_approval_eligible": false,
+    "confidence": 0.95,
+    "critical_failures": [
+      "Varubeskrivningen faller på fakturareferensens datumkrav: certifikatet anger invoice 2005654 dated 20250730, men fakturan visar inget matchande fakturadatum och endast shipping date 20250731."
+    ],
+    "manual_review_triggers": [],
+    "decision_summary": "Dokumentparningen är giltig: certifikatets consignor, consignee och fakturanummer kan identifieras i den separata fakturan. Kontrollpunkterna för avsändare, mottagare, kvantitet och ursprungsland matchar. Kontrollpunkten för varubeskrivning ger dock MISMATCH eftersom certifikatet använder generell varubeskrivning med fakturareferens och det angivna fakturadatumet 20250730 inte kan verifieras i fakturan, där endast shipping date 20250731 framgår.",
+    "human_explanation": "Certifikatet och fakturan stämmer för avsändare, mottagare, kvantitet och ursprungsland. Certifikatet hänvisar dock till faktura 2005654 daterad 2025-07-30, medan den bifogade fakturan inte visar detta fakturadatum utan i stället har shipping date 2025-07-31. Därför är dokumenten inte identiska."
+  },
+  "_meta": {
+    "tested_at": "2026-04-27T07:57:16.087185+00:00",
+    "prompt_hash": "ea5d944217d3",
+    "model": "gpt-5.4",
+    "tier": 2,
+    "pair": "P056_MISMATCH",
+    "expected": "NOT_IDENTICAL",
+    "actual": "NOT_IDENTICAL",
+    "status": "PASS"
+  }
+}

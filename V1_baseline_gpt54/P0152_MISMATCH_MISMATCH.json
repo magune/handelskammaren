@@ -1,0 +1,185 @@
+{
+  "schema_version": "3.0",
+  "metadata": {
+    "verification_timestamp": null,
+    "document_pair_id": null,
+    "certificate_issue_date": "2023-03-15",
+    "source_documents_received": 2
+  },
+  "task": {
+    "task_type": "customs_document_pair_verification",
+    "comparison_mode": "certificate_vs_invoice",
+    "strictness": "conservative"
+  },
+  "documents": {
+    "document_a": {
+      "label": "Document A",
+      "assumed_role": "certificate",
+      "document_type": "Certificate of Origin"
+    },
+    "document_b": {
+      "label": "P0152_MISMATCH_invoice.pdf",
+      "assumed_role": "invoice",
+      "document_type": "Commercial invoice with embedded packing list"
+    }
+  },
+  "rule_activation": {
+    "lc_exception_active": false,
+    "lc_number_found": null,
+    "general_goods_description_with_invoice_reference_active": false,
+    "mixed_origins_rule_active": true,
+    "to_order_rule_active": false,
+    "quantity_exception_applied": null,
+    "eu_origin_normalization_active": false,
+    "activated_rules": [
+      {
+        "rule_id": "4.1.3.3",
+        "rule_name": "Kommersiell förkortning av consignor-namn"
+      },
+      {
+        "rule_id": "4.2.0.2",
+        "rule_name": "Consignee identifierad i delivery address"
+      },
+      {
+        "rule_id": "4.3.7",
+        "rule_name": "Flera ursprung kräver koppling vara–ursprungsland eller uttrycklig fakturahänvisning i box 6"
+      },
+      {
+        "rule_id": "4.5.4",
+        "rule_name": "ISO-landkoder normaliseras mot landsnamn"
+      }
+    ]
+  },
+  "control_points": {
+    "consignor": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.86,
+      "certificate_value": "Berg Prop Prod. AB\nTärnvägen 15\nSE-475 40, HÖNÖ\nSweden",
+      "invoice_value": "Berg Propulsion Production AB\nLångesand 1, Box 1005\nSE-475 22 ÖCKERÖ",
+      "rules_applied": [
+        {
+          "rule_id": "4.1.1",
+          "outcome": "issuer and other sender entities identified in invoice file"
+        },
+        {
+          "rule_id": "4.1.3.3",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.4",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatet anger consignor som \"Berg Prop Prod. AB\" i Sverige. Fakturafilen innehåller på sida 11 den uttryckliga juridiska parten \"Berg Propulsion Production AB\" med svensk adress. Skillnaden mellan \"Prop/Prod.\" och \"Propulsion/Production\" bedöms som tillåten kommersiell förkortning, och landet Sverige överensstämmer."
+    },
+    "consignee": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.98,
+      "certificate_value": "HALUL OFFSHORE SERVICES COMPANY W.L\nMSM - Workshop\nBuilding Number- 56\nStreet Number -- 3019, Zone - 91\nBirkat Al Awamer\nCity- Doha,\nPIC: Vinu Vijayan Pillai - Workshop\nQatar",
+      "invoice_value": "Delivery address\nHALUL OFFSHORE SERVICES COMPANY W.L.L\nMSM - Workshop\nBuilding Number – 56\nStreet Number – 3019, Zone – 91\nBirkat Al Awamer\nCity- Doha, Qatar\nPIC: Vinu Vijayan Pillai - Workshop Coordinator",
+      "rules_applied": [
+        {
+          "rule_id": "4.2.0.2",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.2.2.1",
+          "outcome": "normalization applied to punctuation and legal suffix"
+        },
+        {
+          "rule_id": "4.2.3",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Mottagaren i certifikatet kan identifieras direkt i fakturans delivery address på sida 1. Skillnaden \"W.L\" kontra \"W.L.L\" är en juridisk suffixvariation och övriga namn- och adressuppgifter pekar på samma mottagare i Qatar."
+    },
+    "goods_description": {
+      "applicable": true,
+      "status": "MISMATCH",
+      "confidence": 0.95,
+      "certificate_value": "4 Cases\nCase 1: 80*60*35 cm / 106 Kg\nCase 2: 120*80*35 cm / 282 Kg\nCase 3: 120*80*35 cm / 315 Kg\nCase 4: 80*60*55 cm / 120 Kg",
+      "invoice_value": "Packing List - 1060 page 5/5:\nKolli 1: 80*60*35 cm/ 106 Kg\nKolli 2: 120*80*35 cm/ 282 Kg\nKolli 3: 120*80*35 cm/ 315 Kg\n80*60*55cm/ 120 Kg\n\nCommercial Invoice pages 1-11 contain item lines with per-line origins including Sweden, Germany, United Kingdom, Switzerland, Italy, Spain, Taiwan and Austria.",
+      "rules_applied": [
+        {
+          "rule_id": "4.3.5",
+          "outcome": "not fulfilled - no invoice number/date or explicit invoice reference in box 6"
+        },
+        {
+          "rule_id": "4.3.7",
+          "outcome": "MISMATCH"
+        }
+      ],
+      "motivation": "Certifikatet anger åtta ursprungsländer i box 3 (SE, DE, GB, CH, IT, ES, TW, AT) men box 6 innehåller bara kolli-/mått-/viktrader och ingen koppling mellan enskilda varor och respektive ursprungsland. Box 6 innehåller inte heller någon uttrycklig fakturahänvisning med fakturanummer och fakturadatum. Vid flera ursprung är detta ett formellt avvikelsefall, vilket ger MISMATCH även om packlistesidan i fakturafilen återger samma kollimått."
+    },
+    "quantity": {
+      "applicable": true,
+      "status": "MANUAL_REVIEW",
+      "confidence": 0.4,
+      "certificate_value": null,
+      "invoice_value": "Invoice and packing list contain multiple quantities in pcs and package details, e.g. page 1-11 line quantities and page 5/5 package weights.",
+      "rules_applied": [
+        {
+          "rule_id": "4.4.1",
+          "outcome": "box 7 must be used as verification basis"
+        },
+        {
+          "rule_id": "4.4.2",
+          "outcome": "quantity missing in certificate box 7"
+        },
+        {
+          "rule_id": "8.1.1",
+          "outcome": "text is readable; issue is missing field, not legibility"
+        }
+      ],
+      "motivation": "Ruta 7 (Quantity/Mängd) i certifikatet är tom. Enligt reglerna ska kvantitetsverifieringen utgå från uppgiften i box 7 och uppgifter i box 6 får inte ersätta en saknad kvantitetsuppgift. Eftersom certifikatet saknar verifieringsgrundande kvantitet i detta fält kan kontrollpunkten inte avgöras automatiskt."
+    },
+    "origin": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.93,
+      "certificate_value": "SE, DE, GB, CH, IT, ES, TW,\nAT",
+      "invoice_value": "COO: Sweden; Country of origin: Germany; COO: United Kingdom; Country of origin: Switzerland; Country of origin: Italy; Country of origin: Spain; Country of origin: Taiwan; Country of origin: Austria",
+      "rules_applied": [
+        {
+          "rule_id": "4.5.1",
+          "outcome": "explicit origin fields identified in invoice"
+        },
+        {
+          "rule_id": "4.5.4",
+          "outcome": "ISO codes normalized to country names"
+        },
+        {
+          "rule_id": "4.5.5",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Alla ursprungsländer som anges i certifikatet kan identifieras uttryckligen i fakturans radnivåangivelser: SE=Sweden, DE=Germany, GB=United Kingdom, CH=Switzerland, IT=Italy, ES=Spain, TW=Taiwan och AT=Austria. Matchningen bygger på explicit origin-text i fakturan, inte på adress eller annan indirekt information."
+    }
+  },
+  "overall_assessment": {
+    "comparison_result": "NOT_IDENTICAL",
+    "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
+    "auto_approval_eligible": false,
+    "confidence": 0.91,
+    "critical_failures": [
+      "Goods description mismatch: certificate has multiple origin countries but no item-to-origin linkage and no valid invoice reference in box 6."
+    ],
+    "manual_review_triggers": [
+      "Quantity field in certificate box 7 is blank, so quantity cannot be verified automatically."
+    ],
+    "decision_summary": "Consignor, consignee and origin can be verified against the invoice file. The goods-description control point fails because the certificate lists multiple origin countries without linking them to specific goods and without a valid invoice reference in the goods-description field. The quantity field in box 7 is blank and therefore cannot be verified automatically.",
+    "human_explanation": "Avsändare, mottagare och ursprungsländer kan identifieras i fakturafilen. Certifikatets varubeskrivning består bara av fyra kollin med mått och vikter samtidigt som certifikatet anger flera ursprungsländer utan att koppla land till vara eller hänvisa till en specifik faktura i varubeskrivningsfältet. Kvantitetsfältet i ruta 7 är dessutom tomt."
+  },
+  "_meta": {
+    "tested_at": "2026-04-27T08:13:47.437156+00:00",
+    "prompt_hash": "ea5d944217d3",
+    "model": "gpt-5.4",
+    "tier": 2,
+    "pair": "P0152_MISMATCH",
+    "expected": "NOT_IDENTICAL",
+    "actual": "NOT_IDENTICAL",
+    "status": "PASS"
+  }
+}

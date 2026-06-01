@@ -1,0 +1,195 @@
+{
+  "schema_version": "3.0",
+  "metadata": {
+    "verification_timestamp": "2026-04-27T00:00:00Z",
+    "document_pair_id": null,
+    "certificate_issue_date": "2026-02-25",
+    "source_documents_received": 2
+  },
+  "task": {
+    "task_type": "customs_document_pair_verification",
+    "comparison_mode": "certificate_vs_invoice",
+    "strictness": "conservative"
+  },
+  "documents": {
+    "document_a": {
+      "label": "Document A",
+      "assumed_role": "certificate",
+      "document_type": "Certificate of Origin"
+    },
+    "document_b": {
+      "label": "Document B",
+      "assumed_role": "invoice",
+      "document_type": "Customs Invoice"
+    }
+  },
+  "rule_activation": {
+    "lc_exception_active": false,
+    "lc_number_found": null,
+    "general_goods_description_with_invoice_reference_active": false,
+    "mixed_origins_rule_active": false,
+    "to_order_rule_active": false,
+    "quantity_exception_applied": null,
+    "eu_origin_normalization_active": false,
+    "activated_rules": [
+      {
+        "rule_id": "4.1.0",
+        "rule_name": "Consignor identified explicitly somewhere in invoice"
+      },
+      {
+        "rule_id": "4.2.0.2",
+        "rule_name": "Consignee may be identified in any relevant recipient field"
+      },
+      {
+        "rule_id": "4.3.3",
+        "rule_name": "Controlled text match of identity-bearing goods description"
+      },
+      {
+        "rule_id": "4.4.2.2b",
+        "rule_name": "Invalid quantity unit in certificate quantity field"
+      },
+      {
+        "rule_id": "4.5.4",
+        "rule_name": "Origin normalization using ISO code equivalence"
+      }
+    ]
+  },
+  "control_points": {
+    "consignor": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.98,
+      "certificate_value": "ERICSSON AB\nTORSHAMNSGATAN 23\n164 83, STOCKHOLM\nSWEDEN",
+      "invoice_value": "Ericsson AB\nVAT no : SE556056625801\nTax rep : EAB\nReg office : Ericsson AB SE-164 83 Stockholm,Sweden\nReg No : 5560566258",
+      "rules_applied": [
+        {
+          "rule_id": "4.1.0",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.2.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.5",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatets consignor 'ERICSSON AB' återfinns uttryckligen i fakturan och landet Sverige verifieras både via adressen 'Stockholm,Sweden' och VAT-prefix 'SE'. Samma juridiska part kan därför identifieras entydigt i fakturan."
+    },
+    "consignee": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.9,
+      "certificate_value": "SAFARICOM LIMITED\nSAFARICOM HOUSE WAIYAKI WAY,\nP.O. BOX 66827-00800 ,NAIROBI.\nP051129820X\ninboundlogistics@safaricom.co.ke\nKENYA",
+      "invoice_value": "Ship to\nSAFARICOM\nSAFARICOM HOUSE WAIYAKI WAY NAIROBI\n00800 NAIROBI\nKENYA",
+      "rules_applied": [
+        {
+          "rule_id": "4.2.0.2",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.2.2.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.2.4",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Mottagaren i certifikatet kan identifieras i fakturans 'Ship to'-fält. Kärnnamnet 'SAFARICOM' och leveransadressen i Nairobi, Kenya överensstämmer; skillnaden att certifikatet skriver 'SAFARICOM LIMITED' medan fakturan skriver 'SAFARICOM' behandlas som en tillåten skillnad i bolagsbeteckning/formatering."
+    },
+    "goods_description": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.98,
+      "certificate_value": "1 package consisting of 1 item\nPRINTED BOARD ASSEMB/NPU 1006 /HS code 851779000000/ Hungary\nTotal gross weight: 1,500 KG\nInvoice No. 9209877429 dated 2026-01-22",
+      "invoice_value": "000101 ROJ2081327/1 PRINTED BOARD ASSEMB/NPU 1006\nHU 851779000000\n1,00 PC",
+      "rules_applied": [
+        {
+          "rule_id": "4.3.2",
+          "outcome": "No article number in certificate used as primary match key"
+        },
+        {
+          "rule_id": "4.3.3",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.3.8.1",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Den identitetsbärande huvudbeteckningen 'PRINTED BOARD ASSEMB/NPU 1006' återfinns exakt i fakturans varurad. HS-koden 851779000000 stöder samma vara. Övrig text i certifikatets box 6, såsom vikt, land och fakturareferens, ändrar inte produktidentiteten."
+    },
+    "quantity": {
+      "applicable": true,
+      "status": "MISMATCH",
+      "confidence": 0.99,
+      "certificate_value": "1 item",
+      "invoice_value": "Qty 1,00 PC",
+      "rules_applied": [
+        {
+          "rule_id": "4.4.1",
+          "outcome": "Quantity must be verified from box 7"
+        },
+        {
+          "rule_id": "4.4.2",
+          "outcome": "Unit present in certificate quantity field"
+        },
+        {
+          "rule_id": "4.4.2.2b",
+          "outcome": "MISMATCH"
+        },
+        {
+          "rule_id": "4.4.6",
+          "outcome": "MISMATCH"
+        }
+      ],
+      "motivation": "Certifikatets verifieringsgrundande kvantitetsuppgift i box 7 är '1 item'. Enligt regelverket är 'item/items' inte en giltig kvantitetsenhet för COO-verifiering. Därför uppstår ett formellt MISMATCH redan på certifikatsidan och uppgiften kan inte godkännas mot fakturans '1,00 PC'."
+    },
+    "origin": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.96,
+      "certificate_value": "Hungary",
+      "invoice_value": "CoO: HU",
+      "rules_applied": [
+        {
+          "rule_id": "4.5.1",
+          "outcome": "Explicit origin field identified in invoice"
+        },
+        {
+          "rule_id": "4.5.4",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.5.5",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatet anger ursprungslandet 'Hungary'. Fakturan har en explicit CoO-kolumn med värdet 'HU' för varuraden. ISO-koden HU är ekvivalent med Hungary, vilket ger MATCH."
+    }
+  },
+  "overall_assessment": {
+    "comparison_result": "NOT_IDENTICAL",
+    "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
+    "auto_approval_eligible": false,
+    "confidence": 0.97,
+    "critical_failures": [
+      "Quantity field in certificate box 7 uses invalid unit 'item', which triggers MISMATCH."
+    ],
+    "manual_review_triggers": [],
+    "decision_summary": "Dokumentparet är korrekt parat via fakturanummer 9209877429. Consignor, consignee, varubeskrivning och ursprungsland kan verifieras mot fakturan. Kvantitetskontrollpunkten ger dock MISMATCH eftersom certifikatets box 7 anger '1 item', vilket är en ogiltig kvantitetsenhet enligt regelverket.",
+    "human_explanation": "Avsändare, mottagare, varubeskrivning och ursprungsland stämmer mot fakturan. Certifikatet anger dock mängden som '1 item' i mängdfältet, och den enheten är inte giltig för automatisk verifiering. Därför kan dokumentparet inte godkännas automatiskt."
+  },
+  "_meta": {
+    "tested_at": "2026-04-27T08:13:47.452618+00:00",
+    "prompt_hash": "ea5d944217d3",
+    "model": "gpt-5.4",
+    "tier": 2,
+    "pair": "P017_MISMATCH",
+    "expected": "NOT_IDENTICAL",
+    "actual": "NOT_IDENTICAL",
+    "status": "PASS"
+  }
+}

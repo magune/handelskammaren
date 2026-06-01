@@ -1,0 +1,184 @@
+{
+  "schema_version": "3.0",
+  "metadata": {
+    "verification_timestamp": null,
+    "document_pair_id": null,
+    "certificate_issue_date": "2026-02-13",
+    "source_documents_received": 2
+  },
+  "task": {
+    "task_type": "customs_document_pair_verification",
+    "comparison_mode": "certificate_vs_invoice",
+    "strictness": "conservative"
+  },
+  "documents": {
+    "document_a": {
+      "label": "Document A",
+      "assumed_role": "certificate",
+      "document_type": "Certificate of Origin"
+    },
+    "document_b": {
+      "label": "Document B",
+      "assumed_role": "invoice",
+      "document_type": "Original invoice for customs clearance"
+    }
+  },
+  "rule_activation": {
+    "lc_exception_active": false,
+    "lc_number_found": null,
+    "general_goods_description_with_invoice_reference_active": false,
+    "mixed_origins_rule_active": false,
+    "to_order_rule_active": false,
+    "quantity_exception_applied": null,
+    "eu_origin_normalization_active": false,
+    "activated_rules": [
+      {
+        "rule_id": "8.5.0",
+        "rule_name": "Filbaserad dokumentparning – separat fakturafil ska användas för verifiering, inte inbäddad fakturakopia i certifikatfilen"
+      },
+      {
+        "rule_id": "8.6",
+        "rule_name": "Obligatorisk parningsvalidering – consignor och consignee kan identifieras i den bifogade fakturan"
+      },
+      {
+        "rule_id": "4.1.3.1",
+        "rule_name": "Direkt identifiering av samma juridiska avsändare"
+      },
+      {
+        "rule_id": "4.2.0.2",
+        "rule_name": "Mottagare får verifieras i relevant mottagarfält i fakturan"
+      },
+      {
+        "rule_id": "4.3.3",
+        "rule_name": "Kontrollerad textmatchning för varubeskrivning"
+      },
+      {
+        "rule_id": "4.4.3.0b",
+        "rule_name": "Uttrycklig motsägelse i kvantitet ger MISMATCH"
+      },
+      {
+        "rule_id": "4.5.4",
+        "rule_name": "Landnormalisering inklusive ISO-kod"
+      }
+    ]
+  },
+  "control_points": {
+    "consignor": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.98,
+      "certificate_value": "Volvo Bus Corporation\nGropegårdsgatan 11\n405 08, GOTEBORG\nSweden",
+      "invoice_value": "VOLVO BUS CORPORATION\nVAT No. SE556197382601\nCountry of origin: SE\n... \nVolvo Bus Corporation\nSE-405 08 Göteborg\nSweden",
+      "rules_applied": [
+        {
+          "rule_id": "4.1.3.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.2.1",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatets avsändare 'Volvo Bus Corporation' kan identifieras direkt i den separata fakturafilen som 'VOLVO BUS CORPORATION'. Landet verifieras som Sverige genom adressen 'SE-405 08 Göteborg, Sweden' och genom svenskt VAT-prefix 'SE'. Den inbäddade fakturakopian i certifikatfilen användes inte för verifiering enligt filparningsregeln; MATCH baseras på den separata fakturafilen."
+    },
+    "consignee": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.97,
+      "certificate_value": "Manufacturing Commercial Vehicles (MCV) S.A.E\nKm 24 Cairo Ismailia Desert Road\nEl-Obour City, Cairo\nEgypt",
+      "invoice_value": "Consignee:\nManufacturing Commercial Vehicles\nKM 24, Cairo-Ismailia Road,\n00000 CAIRO\nEgypt",
+      "rules_applied": [
+        {
+          "rule_id": "4.2.0.2",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.2.4",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatets mottagare kan identifieras i fakturans uttryckliga fält 'Consignee'. Företagsnamnet 'Manufacturing Commercial Vehicles' och landet 'Egypt' överensstämmer; tillägget '(MCV) S.A.E' i certifikatet och mindre adressvariationer påverkar inte bedömningen eftersom samma juridiska part kan identifieras och landet stämmer."
+    },
+    "goods_description": {
+      "applicable": true,
+      "status": "MISMATCH",
+      "confidence": 0.97,
+      "certificate_value": "Loose\n2 VOLVO BUS CHASSIS BERL SD\nYV3U1W122TA225988, YV3U1W120TA225987",
+      "invoice_value": "Item 1\nMaterial: B8R\nChassis No: 226183\nVIN No: YV3T7U528TA226183\nQuantity: 1",
+      "rules_applied": [
+        {
+          "rule_id": "4.3.3",
+          "outcome": "MISMATCH"
+        },
+        {
+          "rule_id": "4.3.8",
+          "outcome": "MISMATCH"
+        }
+      ],
+      "motivation": "Den separata fakturafilen innehåller inte certifikatets identitetsbärande huvudbeteckning 'VOLVO BUS CHASSIS BERL SD'. Fakturan visar i stället en enda rad med material 'B8R' och VIN 'YV3T7U528TA226183', medan certifikatet anger två chassin med VIN 'YV3U1W122TA225988' och 'YV3U1W120TA225987'. Detta är inte ytterligare information utan en faktisk avvikelse, och någon uttrycklig fakturareferens i certifikatets varubeskrivning som skulle aktivera regeln om generell varubeskrivning finns inte."
+    },
+    "quantity": {
+      "applicable": true,
+      "status": "MISMATCH",
+      "confidence": 0.99,
+      "certificate_value": "GW 11000 kg",
+      "invoice_value": "Total weight:[KG]: 5942",
+      "rules_applied": [
+        {
+          "rule_id": "4.4.2.2",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.4.3.0b",
+          "outcome": "MISMATCH"
+        },
+        {
+          "rule_id": "4.4.6",
+          "outcome": "MISMATCH"
+        }
+      ],
+      "motivation": "Certifikatet anger uttryckligen kvantiteten som 'GW 11000 kg', vilket uppfyller formkravet med viktkategori och enhet. Den separata fakturafilen anger uttryckligen 'Total weight:[KG]: 5942'. Värdena 11000 och 5942 överensstämmer inte och fakturan innehåller därmed en uttrycklig motsägelse till certifikatets viktuppgift; resultatet ska därför vara MISMATCH."
+    },
+    "origin": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.98,
+      "certificate_value": "Sweden",
+      "invoice_value": "Country of origin: SE\n... the country of origin or manufacture of the goods is Sweden.",
+      "rules_applied": [
+        {
+          "rule_id": "4.5.4",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.5.5",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatets ursprungsland är 'Sweden'. Den separata fakturafilen anger uttryckligen 'Country of origin: SE' samt i löptext att varornas ursprung eller tillverkning är i Sweden. ISO-koden 'SE' är ekvivalent med 'Sweden', så ursprungslandet är verifierat."
+    }
+  },
+  "overall_assessment": {
+    "comparison_result": "NOT_IDENTICAL",
+    "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
+    "auto_approval_eligible": false,
+    "confidence": 0.98,
+    "critical_failures": [
+      "Varubeskrivningen i certifikatet ('2 VOLVO BUS CHASSIS BERL SD' med två angivna VIN) kan inte verifieras mot den separata fakturafilen, som avser en enda rad 'B8R' med ett annat VIN.",
+      "Kvantiteten i certifikatet ('GW 11000 kg') motsägs uttryckligen av den separata fakturafilen ('Total weight:[KG]: 5942')."
+    ],
+    "manual_review_triggers": [],
+    "decision_summary": "Dokumentparningen gjordes enligt filregeln: certifikatet hämtades från certifikatfilen och verifieringen gjordes mot den separata fakturafilen, inte mot den inbäddade fakturakopian i certifikatfilen. Avsändare, mottagare och ursprungsland kan verifieras mot den separata fakturan. Varubeskrivning och kvantitet ger däremot tydlig MISMATCH, vilket medför totalt utfall NOT_IDENTICAL.",
+    "human_explanation": "Certifikatet avser 2 VOLVO BUS CHASSIS BERL SD med totalvikt 11000 kg, medan den bifogade separata fakturan avser 1 st B8R med totalvikt 5942 kg. Avsändare, mottagare och ursprungsland stämmer, men varan och mängden kan inte verifieras mot fakturan. Därför kan dokumentparet inte godkännas automatiskt."
+  },
+  "_meta": {
+    "tested_at": "2026-04-27T07:57:16.107681+00:00",
+    "prompt_hash": "ea5d944217d3",
+    "model": "gpt-5.4",
+    "tier": 2,
+    "pair": "P093_MISMATCH",
+    "expected": "NOT_IDENTICAL",
+    "actual": "NOT_IDENTICAL",
+    "status": "PASS"
+  }
+}

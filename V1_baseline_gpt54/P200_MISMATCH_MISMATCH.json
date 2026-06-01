@@ -1,0 +1,188 @@
+{
+  "schema_version": "3.0",
+  "metadata": {
+    "verification_timestamp": "2026-04-27T00:00:00Z",
+    "document_pair_id": null,
+    "certificate_issue_date": "2026-01-27",
+    "source_documents_received": 2
+  },
+  "task": {
+    "task_type": "customs_document_pair_verification",
+    "comparison_mode": "certificate_vs_invoice",
+    "strictness": "conservative"
+  },
+  "documents": {
+    "document_a": {
+      "label": "Document A",
+      "assumed_role": "certificate",
+      "document_type": "Certificate of Origin"
+    },
+    "document_b": {
+      "label": "Document B",
+      "assumed_role": "invoice",
+      "document_type": "Invoice"
+    }
+  },
+  "rule_activation": {
+    "lc_exception_active": false,
+    "lc_number_found": null,
+    "general_goods_description_with_invoice_reference_active": false,
+    "mixed_origins_rule_active": false,
+    "to_order_rule_active": false,
+    "quantity_exception_applied": null,
+    "eu_origin_normalization_active": true,
+    "activated_rules": [
+      {
+        "rule_id": "8.5.0",
+        "rule_name": "Filbaserad dokumentparning"
+      },
+      {
+        "rule_id": "8.6",
+        "rule_name": "Obligatorisk parningsvalidering"
+      },
+      {
+        "rule_id": "4.1.0",
+        "rule_name": "Consignor får verifieras om företagsnamnet uttryckligen förekommer någonstans i fakturan"
+      },
+      {
+        "rule_id": "4.3.2",
+        "rule_name": "Artikelnummer prioriteras för varubeskrivning"
+      },
+      {
+        "rule_id": "4.4.2.2b",
+        "rule_name": "Ogiltig kvantitetsenhet i box 7 medför MISMATCH"
+      },
+      {
+        "rule_id": "4.5.4.2",
+        "rule_name": "EU och specifikt EU-medlemsland är verifierbara i båda riktningarna"
+      }
+    ]
+  },
+  "control_points": {
+    "consignor": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.98,
+      "certificate_value": "Gunnar Dafgård AB\nSjökvarnsvägen 30\nSE531 82, KÄLLBY\nSverige",
+      "invoice_value": "Postal address\nGunnar Dafgård AB\nSE-531 82 Källby\nSWEDEN\nVAT registration no\nSE556080571401",
+      "rules_applied": [
+        {
+          "rule_id": "4.1.0",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.2.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.4",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatets consignor \"Gunnar Dafgård AB\" återfinns uttryckligen i fakturans sidfot/adressblock. Landet verifieras explicit som \"SWEDEN\" och stöds även av VAT-prefix \"SE\". Därmed är samma juridiska part och land verifierade."
+    },
+    "consignee": {
+      "applicable": true,
+      "status": "MISMATCH",
+      "confidence": 0.93,
+      "certificate_value": "JAMES CRISP LTD\nUNILEVER ASIA PRIVATE LTD\n202 PARNELL READ PARNELL\n1052 AUCKLAND\nNew Zealand",
+      "invoice_value": "JAMES CRISP LTD\nUNILEVER ASIA PRIVATE LTD\n202 PARNELL READ PARNELL\nSE-1052 AUCKLAND",
+      "rules_applied": [
+        {
+          "rule_id": "4.2.0.2",
+          "outcome": "partial_match_name_only"
+        },
+        {
+          "rule_id": "4.2.3",
+          "outcome": "MISMATCH"
+        },
+        {
+          "rule_id": "4.2.4",
+          "outcome": "MISMATCH"
+        }
+      ],
+      "motivation": "Mottagarnamnet kan identifieras i fakturan i ett separat mottagar-/leveransblock, men certifikatets land \"New Zealand\" framgår inte uttryckligen i fakturan för denna part. Fakturan visar endast adressrader till Auckland utan explicit landangivelse. Eftersom mottagare ska verifieras på namn och land blir utfallet MISMATCH."
+    },
+    "goods_description": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.99,
+      "certificate_value": "4692\nLAC Whopper SG\nBatch code L60081HN04, L60091HN04\nBBD 03.04.2027, 04.04.2027",
+      "invoice_value": "20 4692 LAC Whopper SG\n30 4692 LAC Whopper SG",
+      "rules_applied": [
+        {
+          "rule_id": "4.3.2",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.3.8",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatet anger artikelnummer 4692 och varubeskrivningen \"LAC Whopper SG\". Fakturan innehåller två rader med exakt samma artikelnummer 4692 och samma varubeskrivning. Eftersom artikelnummer ska prioriteras och kan identifieras exakt är varubeskrivningen verifierad."
+    },
+    "quantity": {
+      "applicable": true,
+      "status": "MISMATCH",
+      "confidence": 0.99,
+      "certificate_value": "1380ct\nGr weight: 15600,9\nNet weight: 15180",
+      "invoice_value": "Nettovikt\n15.180,000 KG\n...\n20 4692 LAC Whopper SG 840 KAR 9.240,000 KG\n30 4692 LAC Whopper SG 540 KAR 5.940,000 KG",
+      "rules_applied": [
+        {
+          "rule_id": "4.4.2.2b",
+          "outcome": "MISMATCH"
+        },
+        {
+          "rule_id": "4.4.4",
+          "outcome": "MISMATCH"
+        }
+      ],
+      "motivation": "Certifikatets kvantitetsfält innehåller \"1380ct\". Enheten \"ct\" är en ogiltig kvantitetsenhet i box 7 och medför enligt regelverket MISMATCH. Därtill anges \"Gr weight: 15600,9\" och \"Net weight: 15180\" utan uttrycklig viktenhet i certifikatet, vilket också är ett formfel. Även om fakturan visar nettovikt 15.180,000 KG kan kvantitetskontrollpunkten därför inte godkännas."
+    },
+    "origin": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.94,
+      "certificate_value": "European Union",
+      "invoice_value": "Country of Origin: SE",
+      "rules_applied": [
+        {
+          "rule_id": "4.5.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.5.4",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.5.4.2",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatet anger ursprung \"European Union\". Fakturan innehåller ett explicit ursprungsfält: \"Country of Origin: SE\". SE är ISO-kod för Sweden, som är ett EU-medlemsland, och EU ↔ specifikt EU-medlemsland är tillåten verifiering. Ursprungslandet är därför verifierat."
+    }
+  },
+  "overall_assessment": {
+    "comparison_result": "NOT_IDENTICAL",
+    "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
+    "auto_approval_eligible": false,
+    "confidence": 0.97,
+    "critical_failures": [
+      "Consignee-landet i certifikatet är New Zealand, men motsvarande mottagarblock i fakturan saknar explicit landangivelse.",
+      "Certifikatets kvantitetsfält innehåller ogiltig enhet \"ct\" och viktuppgifter utan uttrycklig viktenhet."
+    ],
+    "manual_review_triggers": [],
+    "decision_summary": "Dokumentparet har verifierats mot den separata fakturafilen. Consignor, varubeskrivning och ursprungsland kan verifieras, men consignee faller på att landet New Zealand inte uttryckligen framgår i fakturan och quantity faller på formella fel i certifikatets box 7. Minst en tillämplig kontrollpunkt är MISMATCH och totalresultatet måste därför vara NOT_IDENTICAL.",
+    "human_explanation": "Mottagaren i certifikatet anges med landet New Zealand, men i fakturan finns mottagarnamnet bara med adress i Auckland utan att landet anges. Dessutom innehåller certifikatets mängdfält \"1380ct\" samt viktuppgifter utan uttrycklig viktenhet. Därför är dokumenten inte identiska och kräver manuell handläggning."
+  },
+  "_meta": {
+    "tested_at": "2026-04-27T07:57:16.113769+00:00",
+    "prompt_hash": "ea5d944217d3",
+    "model": "gpt-5.4",
+    "tier": 2,
+    "pair": "P200_MISMATCH",
+    "expected": "NOT_IDENTICAL",
+    "actual": "NOT_IDENTICAL",
+    "status": "PASS"
+  }
+}

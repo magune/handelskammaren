@@ -1,0 +1,175 @@
+{
+  "schema_version": "3.0",
+  "metadata": {
+    "verification_timestamp": null,
+    "document_pair_id": null,
+    "certificate_issue_date": "2023-03-03",
+    "source_documents_received": 2
+  },
+  "task": {
+    "task_type": "customs_document_pair_verification",
+    "comparison_mode": "certificate_vs_invoice",
+    "strictness": "conservative"
+  },
+  "documents": {
+    "document_a": {
+      "label": "Document A",
+      "assumed_role": "certificate",
+      "document_type": "certificate of origin"
+    },
+    "document_b": {
+      "label": "Document B",
+      "assumed_role": "invoice",
+      "document_type": "pro forma invoice"
+    }
+  },
+  "rule_activation": {
+    "lc_exception_active": false,
+    "lc_number_found": null,
+    "general_goods_description_with_invoice_reference_active": false,
+    "mixed_origins_rule_active": false,
+    "to_order_rule_active": false,
+    "quantity_exception_applied": null,
+    "eu_origin_normalization_active": true,
+    "activated_rules": [
+      {
+        "rule_id": "8.1.2",
+        "rule_name": "Proforma invoice accepted as verification document"
+      },
+      {
+        "rule_id": "4.1.0",
+        "rule_name": "Consignor found explicitly in invoice text"
+      },
+      {
+        "rule_id": "4.5.4.2.1",
+        "rule_name": "General EU-origin statement covers certificate format 'EU [land]'"
+      }
+    ]
+  },
+  "control_points": {
+    "consignor": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.98,
+      "certificate_value": "Lantmännen Reppe AB\nJungmansgatan 8\nSE-531 40, LIDKÖPING\nSweden",
+      "invoice_value": "Company name and adress of the exporter:\nLantmännen Reppe AB\nJungmansgatan 8\n531 40 Lidköping\nSweden",
+      "rules_applied": [
+        {
+          "rule_id": "4.1.0",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.2",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.2.1",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatets consignor 'Lantmännen Reppe AB' återfinns uttryckligen i fakturan i exportörsblocket och även i sidfoten. Landet 'Sweden' framgår explicit i samma block. Samma juridiska part och land kan därför verifieras direkt mot fakturan."
+    },
+    "consignee": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.99,
+      "certificate_value": "CHORI CO., LTD\nLife Science Dept. (SEC. 0061)\n1-7-3 Awajimachi\nChuo-ku Osaka 540-8603\nJAPAN",
+      "invoice_value": "TO\nName CHORI CO.,LTD.\nLife Science Dept. (SEC. 0061)\n1-7-3, Awajimachi\nChuo-ku Osaka 540-8603\nJAPAN",
+      "rules_applied": [
+        {
+          "rule_id": "4.2.0.2",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.2.3",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Mottagaren i certifikatet kan identifieras direkt i fakturans 'TO'-block. Företagsnamn, avdelning och land Japan överensstämmer efter tillåten normalisering av interpunktion och mellanslag."
+    },
+    "goods_description": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.91,
+      "certificate_value": "20 Pallets\nReppal VWG 25 Kg Bags\nFrom Lantmännen Reppe AB\nProduced in Sweden with wheat from EU Region",
+      "invoice_value": "20 000,00 Reppal VWG (Vital wheat gluten)\nBatch: 2303010003\nHS:Code - 1109 00 00",
+      "rules_applied": [
+        {
+          "rule_id": "4.3.2",
+          "outcome": "NO_ARTICLE_NUMBER_USED"
+        },
+        {
+          "rule_id": "4.3.3",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.3.4",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Den identitetsbärande huvudbeteckningen 'Reppal VWG' förekommer explicit i båda dokumenten. Tillägget '25 Kg Bags' i certifikatet är förpackningsinformation och '(Vital wheat gluten)' i fakturan är ett förklarande tillägg; dessa ändrar inte produktidentiteten enligt tillåten regel för icke-identitetsbärande tillägg."
+    },
+    "quantity": {
+      "applicable": true,
+      "status": "MISMATCH",
+      "confidence": 0.99,
+      "certificate_value": "20000 Kg",
+      "invoice_value": "Quantity\n20 000,00",
+      "rules_applied": [
+        {
+          "rule_id": "4.4.2",
+          "outcome": "WEIGHT_UNIT_PRESENT"
+        },
+        {
+          "rule_id": "4.4.2.2",
+          "outcome": "MISMATCH"
+        },
+        {
+          "rule_id": "4.4.6",
+          "outcome": "MISMATCH"
+        }
+      ],
+      "motivation": "Certifikatet anger mängden som '20000 Kg', alltså i viktenhet. När kvantiteten anges i vikt kräver regelverket att viktkategori också framgår uttryckligen som Gross/GW eller Net/NW, antingen i box 7 eller som fristående viktuppgift i box 6. Ingen sådan viktkategori finns i certifikatet, vilket är ett formkravsfel och ger MISMATCH oavsett att fakturan innehåller ett numeriskt mängdvärde."
+    },
+    "origin": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.88,
+      "certificate_value": "EU Sweden",
+      "invoice_value": "these products are of EU preferential origin.",
+      "rules_applied": [
+        {
+          "rule_id": "4.5.1",
+          "outcome": "EXPLICIT_ORIGIN_FOUND"
+        },
+        {
+          "rule_id": "4.5.4.2.1",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatet anger 'EU Sweden', dvs. EU-samlingsbegreppet kombinerat med ett specifikt EU-medlemsland. Fakturan innehåller ett explicit ursprungsuttalande: 'these products are of EU preferential origin.' Detta är ett uttryckligt EU-ursprungsuttalande i ett dedikerat exportörs-/ursprungsavsnitt och inga motstridiga ursprungsuppgifter förekommer, vilket gör ursprungslandet verifierat enligt specialregeln för 'EU [land]'."
+    }
+  },
+  "overall_assessment": {
+    "comparison_result": "NOT_IDENTICAL",
+    "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
+    "auto_approval_eligible": false,
+    "confidence": 0.97,
+    "critical_failures": [
+      "Quantity control point failed: certificate states '20000 Kg' without mandatory gross/net weight category."
+    ],
+    "manual_review_triggers": [],
+    "decision_summary": "Consignor, consignee, goods description and origin could be verified against the pro forma invoice. The quantity control point failed because the certificate uses a weight unit (Kg) without specifying whether it is gross or net weight, which is a mandatory form requirement. Since at least one applicable control point is MISMATCH, the overall result is NOT_IDENTICAL.",
+    "human_explanation": "Avsändare, mottagare, varubeskrivning och ursprungsland kan verifieras mot fakturan. Certifikatet anger mängden som '20000 Kg' men anger inte om det är brutto- eller nettovikt. Därför stämmer dokumenten inte överens och ärendet kräver manuell hantering."
+  },
+  "_meta": {
+    "tested_at": "2026-04-27T08:13:47.434453+00:00",
+    "prompt_hash": "ea5d944217d3",
+    "model": "gpt-5.4",
+    "tier": 2,
+    "pair": "P0147_MISMATCH",
+    "expected": "NOT_IDENTICAL",
+    "actual": "NOT_IDENTICAL",
+    "status": "PASS"
+  }
+}
