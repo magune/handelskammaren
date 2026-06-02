@@ -1,0 +1,180 @@
+{
+  "schema_version": "3.0",
+  "metadata": {
+    "verification_timestamp": "2026-06-01T00:00:00Z",
+    "document_pair_id": null,
+    "certificate_issue_date": null,
+    "source_documents_received": 1
+  },
+  "task": {
+    "task_type": "customs_document_pair_verification",
+    "comparison_mode": "certificate_vs_invoice",
+    "strictness": "conservative"
+  },
+  "documents": {
+    "document_a": {
+      "label": "CERTIFICATE OF ORIGIN (structured JSON)",
+      "assumed_role": "certificate",
+      "document_type": "structured_json"
+    },
+    "document_b": {
+      "label": "Invoice PDF",
+      "assumed_role": "invoice",
+      "document_type": "invoice"
+    }
+  },
+  "rule_activation": {
+    "lc_exception_active": false,
+    "lc_number_found": null,
+    "general_goods_description_with_invoice_reference_active": false,
+    "mixed_origins_rule_active": true,
+    "to_order_rule_active": false,
+    "quantity_exception_applied": "3D",
+    "eu_origin_normalization_active": true,
+    "activated_rules": [
+      {
+        "rule_id": "4.1.0",
+        "rule_name": "Consignor may match via explicit occurrence anywhere in invoice"
+      },
+      {
+        "rule_id": "4.3.7",
+        "rule_name": "Mixed origins require explicit goods-to-origin linkage"
+      },
+      {
+        "rule_id": "4.4.5.5",
+        "rule_name": "Summation of multiple lines within same invoice"
+      },
+      {
+        "rule_id": "4.5.4.1",
+        "rule_name": "EU normalization with restrictions for specifically named EU countries"
+      },
+      {
+        "rule_id": "4.5.4.1.1",
+        "rule_name": "EU plus named EU country can be verified by the named country"
+      }
+    ]
+  },
+  "control_points": {
+    "consignor": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.92,
+      "certificate_value": "Borealis GmbH c/o Borealis AB",
+      "invoice_value": "Exporter: Borealis GmbH, Vienna VAT ID No.: SE502065098101 c/o Borealis AB SE - 444 86 STENUNGSUND, SWEDEN",
+      "rules_applied": [
+        {
+          "rule_id": "4.1.0",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.2.1",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatets consignor kan identifieras uttryckligen i fakturan i exporter-blocket på sida 2 som \"Borealis GmbH ... c/o Borealis AB ... SWEDEN\". Certifikatets svenska landuppgift stöds av svensk adress och VAT-prefix SE502065098101 i samma block. Därmed är consignor verifierad trots att huvudissuer i sidhuvudet är Borealis GmbH i Wien."
+    },
+    "consignee": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.99,
+      "certificate_value": "Hascelik Kablo Sanayi Ticaret A.S.",
+      "invoice_value": "Delivery address Hascelik Kablo Sanayi Ticaret A.S. Organize San. Bol. 18.Cad. N:20 38070 Melikgazi Kayseri Türkiye",
+      "rules_applied": [
+        {
+          "rule_id": "4.2.0.2",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.2.4",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatets mottagare återfinns explicit i fakturans Delivery address, Customer name/address och Customer Name/Mailing address. Företagsnamnet matchar efter tillåten normalisering och landet är Türkiye i båda dokumenten."
+    },
+    "goods_description": {
+      "applicable": true,
+      "status": "MISMATCH",
+      "confidence": 0.9,
+      "certificate_value": "Visico LE4423 Borealis Octabin LD Polyethylene | Ambicat LE4476 Bag Catalyst masterbatch | Ambicat LE4472 Bag Catalyst masterbatch",
+      "invoice_value": "Visico LE4423 Borealis Octabin LD Polyethylene | Ambicat LE4476 Bag Catalyst masterbatch | Ambicat LE4472 Bag Catalyst masterbatch",
+      "rules_applied": [
+        {
+          "rule_id": "4.3.3",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.3.7",
+          "outcome": "MISMATCH"
+        }
+      ],
+      "motivation": "De tre varubeskrivningarna kan identifieras exakt i fakturan. Certifikatet anger dock flera ursprungsuttryck i ursprungsfältet (\"European Community; Sweden\") samtidigt som varorna listas separat, utan per-artikel-koppling mellan vara och ursprung i certifikatet och utan fakturahänvisning i varubeskrivningsfältet. Därför uppfylls inte kravet på tydlig koppling vara–ursprungsland."
+    },
+    "quantity": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.93,
+      "certificate_value": "net 10.750,00KG | net   7.725,00 kg | net   2.500,00 kg | 9 PAL (409 bag) | 10 OCT",
+      "invoice_value": "10.750,00 KG | 6.225,00 KG + 1.500,00 KG | 2.500,00 KG | Total number of packages 10 OCT 9 PAL (=409 BAG )",
+      "rules_applied": [
+        {
+          "rule_id": "4.4.3",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.4.3.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.4.5.5",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Rad 1 matchar direkt med 10.750,00 KG. För Ambicat LE4476 är certifikatets 7.725,00 kg verifierat genom summering av två fakturarader för samma vara: 6.225,00 KG + 1.500,00 KG = 7.725,00 KG. Rad 3 matchar direkt med 2.500,00 KG och kolliuppgifterna återfinns också i fakturans total packages som 10 OCT och 9 PAL (=409 BAG)."
+    },
+    "origin": {
+      "applicable": true,
+      "status": "MISMATCH",
+      "confidence": 0.98,
+      "certificate_value": "European Community; Sweden",
+      "invoice_value": "Country of origin Sweden | Country of origin Finland | Country of origin Finland",
+      "rules_applied": [
+        {
+          "rule_id": "4.5.4.1.1",
+          "outcome": "PARTIAL_MATCH"
+        },
+        {
+          "rule_id": "4.5.4.1",
+          "outcome": "MISMATCH"
+        },
+        {
+          "rule_id": "4.5.5",
+          "outcome": "MISMATCH"
+        }
+      ],
+      "motivation": "Fakturan visar uttryckligen Sweden som ursprung för första varan, vilket räcker för att verifiera både komponenten \"Sweden\" och EU-komponenten via EU-normalisering. Fakturan visar dock även Finland som explicit ursprung för två andra varor. När certifikatet anger EU-samlingsbegrepp tillsammans med ett specifikt namngivet EU-land får fakturan inte innehålla ytterligare EU-ursprungsländer som saknas i certifikatets specifika lista; därför uppstår MISMATCH."
+    }
+  },
+  "overall_assessment": {
+    "comparison_result": "NOT_IDENTICAL",
+    "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
+    "auto_approval_eligible": false,
+    "confidence": 0.97,
+    "critical_failures": [
+      "Goods description control point failed because certificate lists separate goods while multiple origin expressions are not linked per item.",
+      "Origin control point failed because invoice explicitly contains Finland as origin although certificate origin is limited to European Community; Sweden."
+    ],
+    "manual_review_triggers": [],
+    "decision_summary": "Consignor, consignee and quantity are verified against the invoice. Goods description and origin are not identical under the rules because the certificate does not provide valid per-item origin linkage and the invoice explicitly states Finland as an origin not covered by the certificate's specific origin wording.",
+    "human_explanation": "Certifikatet anger ursprung som \"European Community; Sweden\", men fakturan anger både Sweden och Finland som ursprung. Certifikatet listar dessutom tre separata varor utan att ursprunget kopplas per vara. Dokumentparet är därför inte identiskt och kräver manuell handläggning."
+  },
+  "_meta": {
+    "tested_at": "2026-06-01T15:27:40.715197+00:00",
+    "prompt_hash": "d498a4785374",
+    "model": "gpt-5.4",
+    "tier": 2,
+    "pair": "P0166_MISMATCH",
+    "expected": "NOT_IDENTICAL",
+    "actual": "NOT_IDENTICAL",
+    "status": "PASS"
+  }
+}

@@ -1273,6 +1273,13 @@ Formkravet är UPPFYLLT (→ kan ge MATCH) när viktkategorin:
 - står i samma kvantitetsuppgift som viktvärdet (t.ex. "37.0 KG GW", "187,905 MT/GW", "Gross Weight: 131,600 KG"), ELLER
 - förekommer i kvantitetsfältet (`OriginRows[].Quantity`) tillsammans med vikten — t.ex. "214,845 kg" jämte "NW", eller "Gross weight = 8,7 kg" jämte annan kvantitetsinfo (antal/kolli). **Ordningen och övriga uppgifter i fältet saknar betydelse** — det avgörande är att kategorin (Gross/GW eller Net/NW) framgår i kvantitetsfältet.
 
+**KRITISKT FÖRTYDLIGANDE – kategori och värde får ligga i SEPARATA poster i kvantitetsfältet:**
+`OriginRows[].Quantity` kan vara uppdelat i FLERA separata poster/element (t.ex. en lista som `["12.384,000KG", "G.W."]`, eller `["GW in KGs", "598,102", "NW in KGs", "493,829"]`, eller en sträng som `"3.326,400 KG | G.W."`). Kategorin (GW/NW/Gross/Net) och viktvärdet behöver INTE stå i SAMMA post/element — det räcker att BÅDA förekommer NÅGONSTANS i `OriginRows[].Quantity` (samma rad eller en intilliggande post i kvantitetsfältet). Att de står i var sin post är ENBART en formaterings-/extraktionsartefakt och får ALDRIG i sig medföra MISMATCH. Kräv ALDRIG att kategori och värde sitter i exakt samma textsträng/post — det vore en feltolkning av formkravet. Det avgörande är att kategorin är en del av `Quantity`-fältet, inte i vilken post inom fältet den hamnat.
+
+Exempel MATCH: `OriginRows[].Quantity` = `["12.384,000KG", "G.W."]` → värde + kategori finns båda i kvantitetsfältet → MATCH.
+Exempel MATCH: `OriginRows[].Quantity` = `["GW in KGs", "598,102", "NW in KGs", "493,829"]` → kategori (GW/NW) finns i kvantitetsfältet → MATCH.
+Exempel MATCH: kvantitetsfältet `"3.326,400 KG | G.W. | 5.544,000 KG | G.W."` → kategori (G.W.) i kvantitetsfältet → MATCH.
+
 Formkravet är INTE uppfyllt → MISMATCH när:
 - viktkategori saknas helt, ELLER
 - kategorin förekommer ENBART i varubeskrivningen (`OriginRows[].Description`) / som en separat text skild från kvantitetsvärdet. Uppgifter i andra fält än kvantitetsfältet får INTE användas för att uppfylla formkravet.

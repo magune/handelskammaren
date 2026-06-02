@@ -1,0 +1,219 @@
+{
+  "schema_version": "3.0",
+  "metadata": {
+    "verification_timestamp": "2026-06-01T00:00:00Z",
+    "document_pair_id": "SEG-26D-462148__9190025772",
+    "certificate_issue_date": null,
+    "source_documents_received": 2
+  },
+  "task": {
+    "task_type": "customs_document_pair_verification",
+    "comparison_mode": "certificate_vs_invoice",
+    "strictness": "conservative"
+  },
+  "documents": {
+    "document_a": {
+      "label": "Certificate of Origin structured JSON",
+      "assumed_role": "certificate",
+      "document_type": "structured_json"
+    },
+    "document_b": {
+      "label": "Invoice PDF",
+      "assumed_role": "invoice",
+      "document_type": "invoice_pdf"
+    }
+  },
+  "rule_activation": {
+    "lc_exception_active": false,
+    "lc_number_found": null,
+    "general_goods_description_with_invoice_reference_active": false,
+    "mixed_origins_rule_active": false,
+    "to_order_rule_active": false,
+    "quantity_exception_applied": null,
+    "eu_origin_normalization_active": false,
+    "activated_rules": [
+      {
+        "rule_id": "4.1.0",
+        "rule_name": "Consignor identified anywhere in invoice documents"
+      },
+      {
+        "rule_id": "4.2.0.2",
+        "rule_name": "Consignee may be identified in any recipient role"
+      },
+      {
+        "rule_id": "4.3.3",
+        "rule_name": "Controlled text match of goods description"
+      },
+      {
+        "rule_id": "4.3.4",
+        "rule_name": "Non-identity-bearing additions do not cause mismatch"
+      },
+      {
+        "rule_id": "4.4.2.2",
+        "rule_name": "Weight quantity must include weight category in the same quantity entry"
+      },
+      {
+        "rule_id": "4.5.2",
+        "rule_name": "Uniform origin stated on invoice is sufficient"
+      }
+    ]
+  },
+  "control_points": {
+    "consignor": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.98,
+      "certificate_value": "Company: \"Nouryon Functional Chemicals AB\"; Country: \"SWEDEN\"",
+      "invoice_value": "Page 1 header: \"Nouryon Functional Chemicals AB ... Sweden\"; Page 2 header/footer repeats \"Nouryon Functional Chemicals AB\" and Swedish address details",
+      "rules_applied": [
+        {
+          "rule_id": "4.1.0",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.2",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.4",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.5",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatets consignor \"Nouryon Functional Chemicals AB\" återfinns uttryckligen i fakturans sidhuvud på sida 1 och 2. Landet Sverige framgår explicit i samma adressblock. Samma juridiska part och land kan därför verifieras utan tolkning."
+    },
+    "consignee": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.98,
+      "certificate_value": "DeliveryCompany: \"Nouryon Chemicals India Private Ltd\"; DeliveryCountry: \"India\"",
+      "invoice_value": "Page 1 Ship To: \"Nouryon Chemicals India Private Ltd. C/O M/S.Damco India Private Limited ... 601203 CHENNAI INDIA\"",
+      "rules_applied": [
+        {
+          "rule_id": "4.2.0.2",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.2.2",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.2.3",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.2.4",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatets mottagare återfinns uttryckligen i fakturans Ship-To-fält. Företagsnamnet matchar efter tillåten normalisering av punkttecken i \"Ltd.\" och landet India/INDIA överensstämmer."
+    },
+    "goods_description": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.91,
+      "certificate_value": "OriginRows[].Description: [\" 600 PACKAGES BERMOCOLLPRIMEAP220/600 - SE\", \".\", \"600 PACKAGES BERMOCOLLPRIMEAP220/600 - SE\", \".\"]",
+      "invoice_value": "Page 1 item 10 and 11 description: \"BERMOCOLL PRIME AP2 20/600\"",
+      "rules_applied": [
+        {
+          "rule_id": "4.3.2",
+          "outcome": "Priority 2 used; no article number present in certificate description as controlling identifier"
+        },
+        {
+          "rule_id": "4.3.3",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.3.4",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.3.8.1",
+          "outcome": "Non-goods filler text not treated as separate goods"
+        }
+      ],
+      "motivation": "Den identitetsbärande huvudbeteckningen i certifikatet är \"BERMOCOLLPRIMEAP220/600\". Fakturan anger \"BERMOCOLL PRIME AP2 20/600\" på båda artikelraderna; efter tillåten normalisering av versaler/gemener och mellanslag blir huvudbeteckningen identisk. Prefixet \"600 PACKAGES\" och suffixet \"- SE\" är inte identitetsbärande för produkten, och punkt-raderna \".\" utgör inte separata varor."
+    },
+    "quantity": {
+      "applicable": true,
+      "status": "MISMATCH",
+      "confidence": 0.96,
+      "certificate_value": "OriginRows[].Quantity: [\"12.384,000KG\", \"G.W.\", \" 12.384,000KG\", \"G.W.\"]; OriginPackages[].Package: [\"600 PACKAGES\", \"600 PACKAGES\"]",
+      "invoice_value": "Page 1 item 10: \"Gross Weight 12.384,000 KG\" and \"No of Packages 600 PIECES\"; Page 1 item 11: \"Gross Weight 12.384,000 KG\" and \"No of Packages 600 PIECES\"",
+      "rules_applied": [
+        {
+          "rule_id": "4.4.2",
+          "outcome": "Weight value and unit present in certificate"
+        },
+        {
+          "rule_id": "4.4.2.2",
+          "outcome": "MISMATCH"
+        },
+        {
+          "rule_id": "4.4.2.1",
+          "outcome": "Explicit weight in quantity field is verification-governing"
+        },
+        {
+          "rule_id": "4.4.3.2.1",
+          "outcome": "Shipment/package quantity cannot override explicit weight quantity field"
+        },
+        {
+          "rule_id": "4.4.6",
+          "outcome": "MISMATCH"
+        }
+      ],
+      "motivation": "Certifikatet anger viktvärdet \"12.384,000KG\" och viktkategorin \"G.W.\" i separata kvantitetsuppgifter. Regelverket kräver att viktkategori och viktvärde ska framgå i samma kvantitetsuppgift i kvantitetsfältet. Att fakturan visar \"Gross Weight 12.384,000 KG\" och att certifikatet också innehåller \"600 PACKAGES\" kan inte reparera formfelet, eftersom det explicita viktvärdet i kvantitetsfältet är verifieringsgrundande och dess viktkategori inte står i samma uppgift."
+    },
+    "origin": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.98,
+      "certificate_value": "CountryOfOrigin1: \"sweden\"",
+      "invoice_value": "Page 1 item 10: \"Country of Origin Sweden\"; Page 1 item 11: \"Country of Origin Sweden\"",
+      "rules_applied": [
+        {
+          "rule_id": "4.5.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.5.2",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.5.4",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.5.5",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatets ursprungsland \"sweden\" återfinns uttryckligen i fakturan som \"Country of Origin Sweden\" på båda varuraderna. Det är en explicit ursprungsangivelse och matchar efter normalisering av versaler/gemener."
+    }
+  },
+  "overall_assessment": {
+    "comparison_result": "NOT_IDENTICAL",
+    "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
+    "auto_approval_eligible": false,
+    "confidence": 0.95,
+    "critical_failures": [
+      "Kvantitetskontrollpunkten är MISMATCH eftersom certifikatet delar upp viktvärde och viktkategori i separata kvantitetsuppgifter istället för i samma uppgift."
+    ],
+    "manual_review_triggers": [],
+    "decision_summary": "Dokumentparet passerar verifiering för consignor, consignee, varubeskrivning och ursprungsland, men faller på kvantitetskontrollpunkten på grund av ett formellt kvantitetsfel i certifikatet.",
+    "human_explanation": "Avsändare, mottagare, varubeskrivning och ursprungsland kan verifieras mot fakturan. Certifikatet anger dock kvantiteten uppdelad som \"12.384,000KG\" och separat \"G.W.\", medan viktvärde och viktkategori måste stå i samma kvantitetsuppgift. Därför är dokumenten inte identiska och kräver manuell handläggning."
+  },
+  "_meta": {
+    "tested_at": "2026-06-01T15:27:40.731092+00:00",
+    "prompt_hash": "d498a4785374",
+    "model": "gpt-5.4",
+    "tier": 2,
+    "pair": "P023_MATCH",
+    "expected": "IDENTICAL",
+    "actual": "NOT_IDENTICAL",
+    "status": "FAIL"
+  }
+}

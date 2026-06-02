@@ -1,0 +1,175 @@
+{
+  "schema_version": "3.0",
+  "metadata": {
+    "verification_timestamp": "2026-06-01T00:00:00Z",
+    "document_pair_id": null,
+    "certificate_issue_date": null,
+    "source_documents_received": 2
+  },
+  "task": {
+    "task_type": "customs_document_pair_verification",
+    "comparison_mode": "certificate_vs_invoice",
+    "strictness": "conservative"
+  },
+  "documents": {
+    "document_a": {
+      "label": "Certificate of Origin (structured JSON)",
+      "assumed_role": "certificate",
+      "document_type": "Certificate of Origin"
+    },
+    "document_b": {
+      "label": "Invoice PDF",
+      "assumed_role": "invoice",
+      "document_type": "Invoice"
+    }
+  },
+  "rule_activation": {
+    "lc_exception_active": false,
+    "lc_number_found": null,
+    "general_goods_description_with_invoice_reference_active": false,
+    "mixed_origins_rule_active": false,
+    "to_order_rule_active": false,
+    "quantity_exception_applied": null,
+    "eu_origin_normalization_active": false,
+    "activated_rules": [
+      {
+        "rule_id": "8.6",
+        "rule_name": "Obligatorisk parningsvalidering passerad via consignor och consignee"
+      },
+      {
+        "rule_id": "4.1.3.3",
+        "rule_name": "Kommersiell förkortning av consignor-namn"
+      },
+      {
+        "rule_id": "4.2.0.2",
+        "rule_name": "Consignee får verifieras i valfritt mottagarfält, inklusive Ship-To"
+      },
+      {
+        "rule_id": "4.3.4",
+        "rule_name": "Icke identitetsbärande tillägg i varubeskrivning ignoreras"
+      },
+      {
+        "rule_id": "4.4.2.2",
+        "rule_name": "Viktkategori måste framgå i samma kvantitetsuppgift"
+      },
+      {
+        "rule_id": "4.5.2",
+        "rule_name": "Enhetligt ursprungsland i fakturan är tillräckligt"
+      }
+    ]
+  },
+  "control_points": {
+    "consignor": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.92,
+      "certificate_value": "Nouryon Pulp and Perf. Ch. AB",
+      "invoice_value": "Nouryon Pulp and Performance Chemicals AB",
+      "rules_applied": [
+        {
+          "rule_id": "4.1.3.3",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.4",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatet anger consignor som \"Nouryon Pulp and Perf. Ch. AB\" i Sweden. Fakturan anger utställaren som \"Nouryon Pulp and Performance Chemicals AB\" med adress i Sweden och VAT-prefix SE. Förkortningarna \"Perf.\" och \"Ch.\" är vedertagna kommersiella förkortningar av ord som uttryckligen framgår fullt ut i fakturan, och landet överensstämmer."
+    },
+    "consignee": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.99,
+      "certificate_value": "Nouryon Chemicals India Pvt ltd",
+      "invoice_value": "Ship To PT1021 Nouryon Chemicals India Pvt ltd. ... INDIA",
+      "rules_applied": [
+        {
+          "rule_id": "4.2.0.2",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.2.3",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatets mottagare \"Nouryon Chemicals India Pvt ltd\" återfinns uttryckligen i fakturans Ship-To-fält som \"Nouryon Chemicals India Pvt ltd.\". Landet India framgår i samma adressblock. Matchning i Ship-To är tillräcklig även om andra mottagarfält också finns."
+    },
+    "goods_description": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.96,
+      "certificate_value": "168 Packages -  Expancel 930 DU 120 Bag 18 KG - SE | 280 Packages -  Expancel 920 DU 40 Bag 18 KG | 112 Packages -  Expancel 909 DU 80 Bag 18 KG - SE",
+      "invoice_value": "Expancel 930 DU 120 Bag 18 KG | Expancel 920 DU 40 Bag 18 KG | Expancel 909 DU 80 Bag 18 KG",
+      "rules_applied": [
+        {
+          "rule_id": "4.3.3",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.3.4",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "De identitetsbärande huvudbeteckningarna \"Expancel 930 DU 120 Bag 18 KG\", \"Expancel 920 DU 40 Bag 18 KG\" och \"Expancel 909 DU 80 Bag 18 KG\" kan identifieras exakt i fakturan. Tilläggen \"168/280/112 Packages\" och suffixet \"- SE\" i certifikatet är icke identitetsbärande tillägg och ändrar inte produktidentiteten. Punkt-raderna i certifikatet tillför ingen separat varuidentitet och skapar ingen motsägelse."
+    },
+    "quantity": {
+      "applicable": true,
+      "status": "MISMATCH",
+      "confidence": 0.9,
+      "certificate_value": "3.326,400 KG | G.W. | 5.544,000 KG | G.W. | 2.217,600 KG | G.W. | 168 Packages | 280 Packages | 112 Packages",
+      "invoice_value": "Gross Weight 3.326,400 KG | Gross Weight 5.544,000 KG | Gross Weight 2.217,600 KG | No of Packages 168 PIECES | No of Packages 280 PIECES | No of Packages 112 PIECES",
+      "rules_applied": [
+        {
+          "rule_id": "4.4.2.2",
+          "outcome": "MISMATCH"
+        },
+        {
+          "rule_id": "4.4.2.1",
+          "outcome": "MISMATCH"
+        }
+      ],
+      "motivation": "Certifikatet innehåller explicita viktvärden i kvantitetsfältet (\"3.326,400 KG\", \"5.544,000 KG\", \"2.217,600 KG\"), men viktkategorin \"G.W.\" står i separata poster i stället för i samma kvantitetsuppgift som respektive viktvärde. Regelverket kräver att viktkategori och viktvärde hör ihop i samma kvantitetsuppgift. Fakturan visar visserligen motsvarande gross weights, men certifikatets kvantitetsformkrav är inte uppfyllt och kan därför inte verifieras som MATCH."
+    },
+    "origin": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.99,
+      "certificate_value": "sweden",
+      "invoice_value": "Country of Origin Sweden",
+      "rules_applied": [
+        {
+          "rule_id": "4.5.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.5.2",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatet anger ursprungsland som \"sweden\". Fakturan anger uttryckligen \"Country of Origin Sweden\" på varuraderna. Landet kan därför identifieras explicit i fakturan efter normalisering av versaler/gemener."
+    }
+  },
+  "overall_assessment": {
+    "comparison_result": "NOT_IDENTICAL",
+    "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
+    "auto_approval_eligible": false,
+    "confidence": 0.93,
+    "critical_failures": [
+      "Kvantitetskontrollpunkten ger MISMATCH eftersom certifikatet anger viktvärden och viktkategori i separata kvantitetsposter."
+    ],
+    "manual_review_triggers": [],
+    "decision_summary": "Dokumentparningen är giltig och avsändare, mottagare, varubeskrivning samt ursprungsland kan verifieras mot fakturan. Kvantitetskontrollpunkten underkänns eftersom certifikatets viktuppgifter inte uppfyller formkravet att viktkategori ska framgå i samma kvantitetsuppgift som viktvärdet. Därför är dokumentparet inte identiskt.",
+    "human_explanation": "Avsändare, mottagare, varubeskrivning och ursprungsland stämmer mot fakturan. Kvantiteten kan däremot inte godkännas eftersom certifikatet anger viktvärdena och \"G.W.\" i separata poster i stället för i samma kvantitetsuppgift. Därför är dokumentparet inte identiskt och kräver manuell handläggning."
+  },
+  "_meta": {
+    "tested_at": "2026-06-01T15:28:10.702491+00:00",
+    "prompt_hash": "d498a4785374",
+    "model": "gpt-5.4",
+    "tier": 2,
+    "pair": "P032_MATCH",
+    "expected": "IDENTICAL",
+    "actual": "NOT_IDENTICAL",
+    "status": "FAIL"
+  }
+}

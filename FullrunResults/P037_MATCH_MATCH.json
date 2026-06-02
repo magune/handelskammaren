@@ -1,0 +1,185 @@
+{
+  "schema_version": "3.0",
+  "metadata": {
+    "verification_timestamp": null,
+    "document_pair_id": null,
+    "certificate_issue_date": null,
+    "source_documents_received": 2
+  },
+  "task": {
+    "task_type": "customs_document_pair_verification",
+    "comparison_mode": "certificate_vs_invoice",
+    "strictness": "conservative"
+  },
+  "documents": {
+    "document_a": {
+      "label": "certificate_structured_json",
+      "assumed_role": "certificate",
+      "document_type": "Structured Certificate of Origin JSON"
+    },
+    "document_b": {
+      "label": "invoice_pdf",
+      "assumed_role": "invoice",
+      "document_type": "Invoice PDF (text-based, readable)"
+    }
+  },
+  "rule_activation": {
+    "lc_exception_active": false,
+    "lc_number_found": null,
+    "general_goods_description_with_invoice_reference_active": false,
+    "mixed_origins_rule_active": false,
+    "to_order_rule_active": false,
+    "quantity_exception_applied": null,
+    "eu_origin_normalization_active": false,
+    "activated_rules": [
+      {
+        "rule_id": "4.1.0",
+        "rule_name": "Consignor explicitly found somewhere in invoice"
+      },
+      {
+        "rule_id": "4.2.0.2",
+        "rule_name": "Consignee may match any recipient role in invoice"
+      },
+      {
+        "rule_id": "4.3.3",
+        "rule_name": "Controlled text matching of goods description"
+      },
+      {
+        "rule_id": "4.3.8.1",
+        "rule_name": "Supplementary quantity/classification text in goods field not treated as separate goods"
+      },
+      {
+        "rule_id": "4.4.3.4",
+        "rule_name": "Normalization of mixed decimal/thousand separators"
+      },
+      {
+        "rule_id": "4.5.4",
+        "rule_name": "Country normalization including ISO code"
+      }
+    ]
+  },
+  "control_points": {
+    "consignor": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.92,
+      "certificate_value": "TETRA PAK INTERNATIONAL SA | AV. GENERAL GUISAN 70 | ON BEHALF OF | TETRA PAK SOUTH EAST ASIA PTE LTD  | 1009 | PULLY | SWITZERLAND",
+      "invoice_value": "Postal address: Tetra Pak International SA P.O. Box 446 CH - 1009 PULLY / VAT reg no: FR51431929470 Tetra Pak International SA Av. Général-Guisan 70, CH-1009 Pully / From: Tetra Pak Closures France SNC",
+      "rules_applied": [
+        {
+          "rule_id": "4.1.0",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.4",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatets consignor 'TETRA PAK INTERNATIONAL SA' återfinns uttryckligen i fakturans footer/adressblock på sida 1 och sida 2. Landet kan verifieras via adressen 'CH - 1009 PULLY' / 'CH-1009 Pully', vilket efter landnormalisering motsvarar Switzerland. Att fakturan även har 'From: Tetra Pak Closures France SNC' hindrar inte MATCH eftersom regel 4.1.0 tillåter explicit förekomst någonstans i fakturan."
+    },
+    "consignee": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.97,
+      "certificate_value": "Silvermill Natural Beverages  | (PVT) LTD. | 148/1 Kynsey Road | COLOMBO 08 | Sri Lanka",
+      "invoice_value": "Consignee 980048 Silvermill Natural Beverages (Pvt) Ltd 148/1 Kynsey Road, 0000980048 COLOMBO 08 SRI LANKA",
+      "rules_applied": [
+        {
+          "rule_id": "4.2.0.2",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.2.3",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatets mottagare kan identifieras direkt i fakturans fält 'Consignee'. Företagsnamnet matchar efter normalisering av versaler/gemener och skrivsättet '(PVT) LTD.' vs '(Pvt) Ltd', och landet Sri Lanka framgår uttryckligen i båda dokumenten."
+    },
+    "goods_description": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.88,
+      "certificate_value": "576 CARTONS PLASTIC CAPS | DreamCap26 Pro Blue P2945C PA001 | Net weight: 4,968 kgs | HS CODE:392350 | FREIGHT PREPAID",
+      "invoice_value": "DreamCap26 Pro Blue P2945C PA001 / Product description: DreamCap Pro 26 mm / Total Pallets Reels and Cartons 24 Pallets 0 Reels 576 Cartons",
+      "rules_applied": [
+        {
+          "rule_id": "4.3.2",
+          "outcome": "Priority 2 applied"
+        },
+        {
+          "rule_id": "4.3.3",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.3.8.1",
+          "outcome": "Supplementary text not treated as separate goods"
+        }
+      ],
+      "motivation": "Den identitetsbärande huvudbeteckningen i certifikatet är 'DreamCap26 Pro Blue P2945C PA001', och exakt samma text finns på fakturans artikelrad. Övriga beskrivningsrader i certifikatet ('Net weight: 4,968 kgs', 'HS CODE:392350', 'FREIGHT PREPAID') är kompletterande vikt-/klassificerings-/frakttext och behandlas inte som separata varor. Den inledande raden '576 CARTONS PLASTIC CAPS' stöds av fakturans uppgift '576 Cartons' tillsammans med den matchande cap-produkten, utan att någon motstridig varubeskrivning förekommer."
+    },
+    "quantity": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.95,
+      "certificate_value": "6239,520 kgs gross | 24 PALLETS",
+      "invoice_value": "Gross weight 6,239.520 KG / Total Pallets Reels and Cartons 24 Pallets 0 Reels 576 Cartons",
+      "rules_applied": [
+        {
+          "rule_id": "4.4.2.2",
+          "outcome": "Formkrav uppfyllt"
+        },
+        {
+          "rule_id": "4.4.3.4",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.4.3.1",
+          "outcome": "MINST EN kvantitetsuppgift verifierad"
+        }
+      ],
+      "motivation": "Certifikatets kvantitetsfält anger '6239,520 kgs gross', vilket uppfyller formkravet med numeriskt värde, enhet och viktkategori. Fakturan anger 'Gross weight 6,239.520 KG'; efter normalisering av decimal-/tusentalsseparatorer är värdet numeriskt identiskt. Även '24 PALLETS' återfinns i fakturan som '24 Pallets', men MATCH uppnås redan genom den explicit verifierade bruttovikten."
+    },
+    "origin": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.97,
+      "certificate_value": "FRANCE",
+      "invoice_value": "Country of origin of goods FR / Origin FR",
+      "rules_applied": [
+        {
+          "rule_id": "4.5.1",
+          "outcome": "Explicit origin field found"
+        },
+        {
+          "rule_id": "4.5.4",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.5.5",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Ursprungslandet framgår uttryckligen i fakturan som både 'Country of origin of goods FR' och 'Origin FR'. ISO-koden 'FR' är ekvivalent med 'FRANCE' enligt landnormaliseringsregeln."
+    }
+  },
+  "overall_assessment": {
+    "comparison_result": "IDENTICAL",
+    "workflow_recommendation": "AUTO_APPROVAL_ELIGIBLE",
+    "auto_approval_eligible": true,
+    "confidence": 0.94,
+    "critical_failures": [],
+    "manual_review_triggers": [],
+    "decision_summary": "Alla fem tillämpliga kontrollpunkter verifierades som MATCH. Ingen LC-regel aktiverades, inga läsbarhetsproblem hindrade kontrollen och ingen kontrollpunkt har confidence under 0.85.",
+    "human_explanation": "Certifikatets avsändare, mottagare, vara, kvantitet och ursprungsland kan verifieras mot fakturan. Avsändaren TETRA PAK INTERNATIONAL SA återfinns i fakturans adress-/footerblock, mottagaren Silvermill Natural Beverages (Pvt) Ltd finns i consignee-fältet och varan DreamCap26 Pro Blue P2945C PA001 samt bruttovikten 6,239.520 KG och ursprunget FR framgår uttryckligen. Dokumentparet kan därför godkännas automatiskt."
+  },
+  "_meta": {
+    "tested_at": "2026-06-01T15:28:10.704555+00:00",
+    "prompt_hash": "d498a4785374",
+    "model": "gpt-5.4",
+    "tier": 2,
+    "pair": "P037_MATCH",
+    "expected": "IDENTICAL",
+    "actual": "IDENTICAL",
+    "status": "PASS"
+  }
+}
