@@ -1234,34 +1234,6 @@ framgå uttryckligen i samma uppgift.
 
 Om kvantitetsenhet saknas → MISMATCH.
 
-#### 4.4.2.2 Förtydligande – kvantitetsenhet
-En kvantitetsenhet ska ange mängd. Godkända kvantitetsenheter:
-- vikt (KG, MT, LB)
-- antal (PCS, PC, UNITS, SETS)
-- förpackning (BOXES, PACKAGES, CARTONS)
-- area (M2, m²)
-- volym (M3, m³, CBM, L)
-- löpmeter (LM)
-
-Följande är INTE kvantitetsenheter → MISMATCH:
-- Måttenheter (längd): cm, mm, m, ft
-- Vaga beteckningar: "item", "items" (utan numerisk enhet som PCS eller UNITS)
-- Ädelstensenheter: ct, carat, karats (inte en standardiserad handelskvantitet för COO-ändamål)
-
-**KRITISK REGEL – Ogiltig enhet medför alltid MISMATCH:**
-Om certifikatets kvantitetsfält innehåller en eller flera ogiltiga enheter (se listan ovan) ska kontrollpunkten klassificeras som MISMATCH — OAVSETT om andra giltiga kvantitetsuppgifter också förekommer i certifikatet. Regeln om "minst en kvantitetsuppgift räcker" (4.4.3.2) gäller INTE för ogiltiga enheter — om en ogiltig enhet som cm, mm, ft eller ct förekommer i kvantitetsfältet MÅSTE hela kvantitetskontrollpunkten bli MISMATCH. Det räcker INTE att en giltig enhet finns bredvid den ogiltiga.
-
-Undantag: Om den ogiltiga enheten förekommer uteslutande i varubeskrivningsfältet och INTE i kvantitetsfältet, ska detta INTE i sig medföra MISMATCH på kvantitetskontrollpunkten.
-
-#### 4.4.3.2.1 Flera kvantitetsuppgifter i certifikatet
-Om flera olika kvantitetsuppgifter förekommer i certifikatet ska verifieringen utgå UTESLUTANDE från den kvantitetsuppgift som är placerad i fältet "Quantity / Mängd".
-Övriga uppgifter i varubeskrivningen eller i andra delar av certifikatet ska INTE behandlas som den verifieringsgrundande kvantiteten.
-
-**KRITISK REGEL – kvantitetsfältet är alltid verifieringsgrundande:**
-Om kvantitetsfältet innehåller ett viktvärde (t.ex. "17 kilo gross W", "187,905 MT/GW") är det DETTA värde som ska verifieras mot fakturan — inte en styckvara-kvantitet (t.ex. "1 pcs") som möjligen förekommer i varubeskrivningsfältet. Systemet får INTE byta verifieringsgrundande kvantitet till en enklare kvantitet från varubeskrivningsfältet om kvantitetsfältet innehåller ett explicit värde.
-
-Om kvantitetsfältets värde inte kan identifieras i fakturan → MANUAL_REVIEW eller MISMATCH enligt 4.4.2.2. Det räcker INTE att en annan kvantitet från varubeskrivningsfältet kan verifieras.
-
 #### 4.4.2.1 Särskilt krav – viktangivelse
 Om kvantiteten anges i viktenhet (t.ex. KG, MT, LB) ska viktkategori (GW/NW) framgå som en del av KVANTITETSUPPGIFTEN (kvantitetsfältet, `OriginRows[].Quantity`) — inte i varubeskrivningen (`OriginRows[].Description`).
 Godkända viktkategoribenämningar:
@@ -1291,6 +1263,25 @@ Exempel MISMATCH: kvantiteten "5 500.000 MT" utan kategori, medan "GROSS WEIGHT"
 Exempel MISMATCH: varuraden "Testliner 2 FSC" + "189.048 MT", kategorin endast i separat varubeskrivningstext "NET WEIGHT: 189.048 MT" → MISMATCH.
 Exempel MISMATCH: "208,874 MT" helt utan viktkategori → MISMATCH.
 
+#### 4.4.2.2 Förtydligande – kvantitetsenhet
+En kvantitetsenhet ska ange mängd. Godkända kvantitetsenheter:
+- vikt (KG, MT, LB)
+- antal (PCS, PC, UNITS, SETS)
+- förpackning (BOXES, PACKAGES, CARTONS)
+- area (M2, m²)
+- volym (M3, m³, CBM, L)
+- löpmeter (LM)
+
+Följande är INTE kvantitetsenheter → MISMATCH:
+- Måttenheter (längd): cm, mm, m, ft
+- Vaga beteckningar: "item", "items" (utan numerisk enhet som PCS eller UNITS)
+- Ädelstensenheter: ct, carat, karats (inte en standardiserad handelskvantitet för COO-ändamål)
+
+**KRITISK REGEL – Ogiltig enhet medför alltid MISMATCH:**
+Om certifikatets kvantitetsfält innehåller en eller flera ogiltiga enheter (se listan ovan) ska kontrollpunkten klassificeras som MISMATCH — OAVSETT om andra giltiga kvantitetsuppgifter också förekommer i certifikatet. Regeln om "minst en kvantitetsuppgift räcker" (4.4.3.2) gäller INTE för ogiltiga enheter — om en ogiltig enhet som cm, mm, ft eller ct förekommer i kvantitetsfältet MÅSTE hela kvantitetskontrollpunkten bli MISMATCH. Det räcker INTE att en giltig enhet finns bredvid den ogiltiga.
+
+Undantag: Om den ogiltiga enheten förekommer uteslutande i varubeskrivningsfältet och INTE i kvantitetsfältet, ska detta INTE i sig medföra MISMATCH på kvantitetskontrollpunkten.
+
 ### 4.4.3 Verifiering mot faktura
 Vid verifiering ska systemet kontrollera att det numeriska värdet som anges i certifikatet kan identifieras i fakturan.
 Verifieringen avser enbart det numeriska värdet.
@@ -1303,20 +1294,6 @@ MISMATCH ska fastställas ENBART när fakturan innehåller en uppgift som UTTRYC
 Exempel på motsägelse: Certifikat anger 10 PCS, faktura anger 8 PCS → MISMATCH.
 Om värdet inte kan återfinnas i fakturan men inte heller motsägs → MANUAL_REVIEW.
 Systemet får inte blanda olika varor eller summera irrelevanta rader. Om koppling till vara inte kan fastställas → MANUAL_REVIEW.
-
-**Enhetsprefix-normalisering (avsnitt 4.4.3.4):**
-Fakturan kan använda enhetsprefix som ändrar storleksordningen. Följande ekvivalenser ska tillämpas vid verifiering:
-- "kpcs" / "kst" / "Kpcs" = 1000 pcs (kilopieces/tusen stycken)
-- "Mpcs" = 1 000 000 pcs (megapieces)
-
-Om certifikatet anger t.ex. "30640 pcs" och fakturan anger "30,640 kpcs", ska systemet kontrollera om "30,640 kpcs" = 30 640 pcs (kommatecknet som tusentalsavskiljare) ELLER 30,640 × 1000 = 30 640 pcs (kommatecknet som decimaltecken). I båda fallen matchar värdet → MATCH.
-
-Om enhetskonverteringen inte ger ett matchande värde → pröva övriga regler.
-
-**Tillåten trunkering av decimaler:**
-Om certifikatets numeriska värde är identiskt med fakturans värde efter trunkering till det antal decimaler som certifikatet anger, ska detta anses verifierat. Trunkering av decimaler från fakturans värde till certifikatets precision är en tillåten normaliseringsform.
-Exempel: Certifikatet anger 125,45 KGS. Fakturan anger 125,453 KG. Trunkering av 125,453 till två decimaler ger 125,45 — MATCH.
-Denna normalisering gäller ENBART trunkering (borttagning av ytterligare decimaler), INTE avrundning som ändrar siffervärdet uppåt. Om certifikatet anger 125,46 och fakturan anger 125,453 är detta INTE en ren trunkering och ska prövas enligt toleransreglerna (±0,1 %).
 
 #### 4.4.3.2 Flera kvantitetsuppgifter
 När flera kvantitetsuppgifter förekommer i certifikatet ska systemet verifiera MINST EN av dessa mot fakturan.
@@ -1343,6 +1320,38 @@ Om certifikatet anger BÅDE GW och NW, och fakturan anger BÅDE GW och NW:
 Regeln "MINST EN ska verifieras" gäller enbart när den andra kvantiteten SAKNAS i fakturan — inte när den FINNS och avviker.
 
 Om osäkerhet uppstår om kvantitetsuppgifternas inbördes relation → MANUAL_REVIEW.
+
+#### 4.4.3.2.1 Flera kvantitetsuppgifter i certifikatet
+Om flera olika kvantitetsuppgifter förekommer i certifikatet ska verifieringen utgå UTESLUTANDE från den kvantitetsuppgift som är placerad i fältet "Quantity / Mängd".
+Övriga uppgifter i varubeskrivningen eller i andra delar av certifikatet ska INTE behandlas som den verifieringsgrundande kvantiteten.
+
+**KRITISK REGEL – kvantitetsfältet är alltid verifieringsgrundande:**
+Om kvantitetsfältet innehåller ett viktvärde (t.ex. "17 kilo gross W", "187,905 MT/GW") är det DETTA värde som ska verifieras mot fakturan — inte en styckvara-kvantitet (t.ex. "1 pcs") som möjligen förekommer i varubeskrivningsfältet. Systemet får INTE byta verifieringsgrundande kvantitet till en enklare kvantitet från varubeskrivningsfältet om kvantitetsfältet innehåller ett explicit värde.
+
+Om kvantitetsfältets värde inte kan identifieras i fakturan → MANUAL_REVIEW eller MISMATCH enligt 4.4.2.2. Det räcker INTE att en annan kvantitet från varubeskrivningsfältet kan verifieras.
+
+**Förtydligande – avsaknad av enhetsbeteckning i faktura (avsnitt 4.4.3.3):**
+Om fakturan innehåller ett numeriskt värde som svarar mot certifikatets kvantitet, men enhetsbeteckning saknas i fakturan, får verifiering ändå ske om samtliga följande villkor är uppfyllda:
+- Det numeriska värdet i certifikatet kan identifieras i fakturan (direkt eller via summering enligt 4.4.5).
+- Det är entydigt att fakturans uppgift avser samma kvantitetstyp som certifikatets.
+- Ingen motsägelse förekommer (inget annat numeriskt värde i fakturan strider mot certifikatets).
+- Ingen alternativ enhet förekommer i fakturan för samma rad.
+
+Om samtliga villkor är uppfyllda → MATCH. Om villkoren inte är uppfyllda → MANUAL_REVIEW.
+
+**Enhetsprefix-normalisering (avsnitt 4.4.3.4):**
+Fakturan kan använda enhetsprefix som ändrar storleksordningen. Följande ekvivalenser ska tillämpas vid verifiering:
+- "kpcs" / "kst" / "Kpcs" = 1000 pcs (kilopieces/tusen stycken)
+- "Mpcs" = 1 000 000 pcs (megapieces)
+
+Om certifikatet anger t.ex. "30640 pcs" och fakturan anger "30,640 kpcs", ska systemet kontrollera om "30,640 kpcs" = 30 640 pcs (kommatecknet som tusentalsavskiljare) ELLER 30,640 × 1000 = 30 640 pcs (kommatecknet som decimaltecken). I båda fallen matchar värdet → MATCH.
+
+Om enhetskonverteringen inte ger ett matchande värde → pröva övriga regler.
+
+**Tillåten trunkering av decimaler:**
+Om certifikatets numeriska värde är identiskt med fakturans värde efter trunkering till det antal decimaler som certifikatet anger, ska detta anses verifierat. Trunkering av decimaler från fakturans värde till certifikatets precision är en tillåten normaliseringsform.
+Exempel: Certifikatet anger 125,45 KGS. Fakturan anger 125,453 KG. Trunkering av 125,453 till två decimaler ger 125,45 — MATCH.
+Denna normalisering gäller ENBART trunkering (borttagning av ytterligare decimaler), INTE avrundning som ändrar siffervärdet uppåt. Om certifikatet anger 125,46 och fakturan anger 125,453 är detta INTE en ren trunkering och ska prövas enligt toleransreglerna (±0,1 %).
 
 #### 4.4.3.5 Försändelsekvantitet
 När certifikatet anger kvantitet som avser hela försändelsen eller ett kolli, exempelvis:
@@ -1375,6 +1384,38 @@ I sådana fall ska systemet verifiera att:
 
 Systemet ska INTE försöka härleda eller summera artikelkvantiteter i fakturan för att verifiera denna typ av kvantitetsuppgift.
 
+### 4.4.3.6 Total vikt i faktura
+När certifikatet anger vikt för hela försändelsen (t.ex. Gross Weight eller Net Weight) får denna uppgift verifieras mot en total vikt som anges i fakturan, exempelvis:
+- "Total Weight"
+- "Total Gross Weight"
+- "Total Net Weight"
+- "Weight"
+
+Förutsatt att:
+- det numeriska värdet och viktenheten överensstämmer, OCH
+- uppgiften entydigt avser den aktuella fakturan eller försändningen.
+
+Skillnad i benämning mellan viktkategori i certifikatet och fakturan ska i sig INTE medföra MISMATCH när det numeriska värdet och viktenheten överensstämmer.
+
+**Strikt krav på viktuppgift i certifikatet:**
+- När vikt anges ska BÅDE numeriskt värde OCH måttenhet framgå uttryckligen i samma fält.
+- Om GW, NW, Gross eller Net anges ska även viktenheten (t.ex. KG, MT, LB) anges uttryckligen.
+- Om viktkategori (GW/NW) saknas → MISMATCH enligt 4.4.2.2.
+- Angivelse av enbart numeriskt värde tillsammans med GW/NW UTAN uttrycklig viktenhet (t.ex. "7801.920 G.W." utan KG/MT/LB) → MISMATCH. Certifikatet saknar uttrycklig viktenhet, vilket är ett formkrav. Viktenhet får INTE härledas från fakturan.
+- Enheten får INTE fastställas om fakturan inte uttryckligen anger en enhet för samma numeriska värde.
+
+**MISMATCH – Fakturan saknar kvantitets-/viktuppgift helt (avsnitt 4.4.3.7):**
+Om certifikatet anger en kvantitet eller vikt men fakturan HELT SAKNAR motsvarande typ av uppgift, och inget undantag (3A–3E), försändelsekvantitetsregeln (4.4.3.5) eller undantaget i 4.4.3.3 kan tillämpas, ska resultatet vara MISMATCH.
+Motivering: Certifikatets kvantitetsuppgift kan inte verifieras mot fakturan, vilket innebär att formkravet på verifierbarhet inte är uppfyllt.
+Denna regel gäller ENBART när fakturan HELT SAKNAR kvantitets- eller viktuppgift. Om fakturan innehåller en kvantitets- eller viktuppgift som SKILJER SIG från certifikatets → MISMATCH enligt huvudregeln.
+
+**KRITISK AVGRÄNSNING – 4.4.3.7 vs 4.4.3.2:**
+Regel 4.4.3.7 ska INTE tillämpas när certifikatet innehåller FLERA kvantitetsuppgifter och MINST EN av dem redan har verifierats som MATCH enligt 4.4.3.1. I sådana fall har kvantitetskontrollpunkten redan uppfyllt sitt verifieringskrav. Avsaknaden av en ANNAN kvantitetstyp i fakturan (t.ex. vikt saknas men styckantal verifierat) ska INTE sänka bedömningen till MISMATCH om den verifierade kvantiteten ger MATCH och den saknade kvantiteten inte uttryckligen motsägs.
+Regel 4.4.3.2 har företräde: "Systemet ska verifiera MINST EN" kvantitetsuppgift – om detta är uppfyllt är kontrollpunkten MATCH.
+
+**KRITISK AVGRÄNSNING – 4.4.3.7 vs undantag 3E:**
+Innan 4.4.3.7 tillämpas MÅSTE systemet först pröva samtliga undantag (3A–3E) fullständigt. Om fakturan innehåller radvikter som KAN summeras enligt 3E, ska 3E prövas INNAN systemet konstaterar att fakturan "helt saknar" kvantitetsuppgift. Om 3E-summering prövas och summan INTE matchar certifikatets värde → MISMATCH (inte MANUAL_REVIEW via 4.4.3.7). Regel 4.4.3.7 är avsedd för situationer där fakturan genuint saknar ALL kvantitets-/viktinformation — inte som en "escape hatch" för att undvika MISMATCH när summering misslyckas.
+
 #### 4.4.4 Tusentalsavskiljare
 Vid verifiering av kvantitet får systemet normalisera numeriska värden genom att ta bort tusentalsavskiljare NÄR SAMTLIGA villkor är uppfyllda:
 1. Den kvantitet som jämförs avser samma vara eller artikelrad.
@@ -1391,18 +1432,6 @@ Exempel: 1599 MM i certifikatet får identifieras i fakturan som 1.599 MM eller 
 **FÖRBJUDET:** Om fakturan eller certifikatet innehåller decimaldel (t.ex. 1.599,5 eller 1599,5) får normalisering enligt denna punkt INTE användas. Kvantiteten ska då kunna identifieras enligt huvudregeln 4.4.3. Om detta inte är möjligt → MISMATCH.
 
 Normalisering får ENDAST användas när det är entydigt att avskiljaren fungerar som tusentalsavskiljare och INTE som decimaltecken.
-
-#### 4.4.4.2 Normalisering av blandade decimalseparatorer (ENBART formatskillnader)
-Denna regel hanterar ENBART skillnader i FORMATERING av samma numeriska värde — INTE skillnader i de faktiska siffrorna.
-Vid kvantitets- och viktverifiering kan certifikatet och fakturan använda OLIKA konventioner för decimaltecken och tusentalsavskiljare. Systemet ska normalisera numeriska värden till samma format innan jämförelse NÄR:
-1. Det ena dokumentet använder punkt som decimaltecken (t.ex. "7801.920") och det andra använder komma som decimaltecken med punkt som tusentalsavskiljare (t.ex. "7.801,920").
-2. De normaliserade värdena är **numeriskt identiska** — d.v.s. EXAKT samma siffror i samma ordning, bara med annorlunda formatering.
-3. Tolkningen av tusentalsavskiljare respektive decimaltecken är entydig utifrån siffergruppering (t.ex. "7.801,920" = punkt efter 1 siffra + komma följt av 3 siffror → punkt är tusentalsavskiljare, komma är decimaltecken → 7801.920).
-
-**KRITISK BEGRÄNSNING:** Om de underliggande numeriska värdena SKILJER sig (t.ex. 7801 vs 7802, eller 635 vs 625) ska detta ALLTID bedömas som MISMATCH oavsett formatering. Denna regel tillåter ALDRIG att en faktisk sifferskillnad ignoreras — den hanterar ENBART notation/formatering (punkt vs komma, tusentalsavskiljare vs decimaltecken).
-
-Exempel MATCH: Certifikat "7801.920 G.W." och faktura "Gross Weight 7.801,920 KG" → normaliserat 7801.920 = 7801.920 → MATCH (samma siffror, bara annorlunda formatering).
-Exempel MISMATCH: Certifikat "635 pcs" och faktura "625 pcs" → 635 ≠ 625 → MISMATCH (faktisk sifferskillnad, inte formatskillnad).
 
 #### 4.4.4.1 Förtydligande – punkt- och kommatecken i numeriska värden
 
@@ -1434,25 +1463,17 @@ Exempel MATCH: Certifikat "3267 kg net" och faktura "3.267 Kg" → fakturans "3.
 Exempel MATCH: Certifikat "17640 kg net" och faktura "17.640 Kg" → fakturans "17.640" har 3 siffror efter punkten → tolkas som tusentalsavskiljare → 17640 = 17640 → MATCH.
 Exempel MATCH: Certifikat "Gross 104.000kg" och faktura "104.000,00 KG" → certifikatets "104.000" har 3 siffror efter punkten → tolkas som tusentalsavskiljare → 104000; fakturan har kombination punkt+komma (EU-format) → 104000,00 → 104000 = 104000 → MATCH.
 
-### 4.4.3.6 Total vikt i faktura
-När certifikatet anger vikt för hela försändelsen (t.ex. Gross Weight eller Net Weight) får denna uppgift verifieras mot en total vikt som anges i fakturan, exempelvis:
-- "Total Weight"
-- "Total Gross Weight"
-- "Total Net Weight"
-- "Weight"
+#### 4.4.4.2 Normalisering av blandade decimalseparatorer (ENBART formatskillnader)
+Denna regel hanterar ENBART skillnader i FORMATERING av samma numeriska värde — INTE skillnader i de faktiska siffrorna.
+Vid kvantitets- och viktverifiering kan certifikatet och fakturan använda OLIKA konventioner för decimaltecken och tusentalsavskiljare. Systemet ska normalisera numeriska värden till samma format innan jämförelse NÄR:
+1. Det ena dokumentet använder punkt som decimaltecken (t.ex. "7801.920") och det andra använder komma som decimaltecken med punkt som tusentalsavskiljare (t.ex. "7.801,920").
+2. De normaliserade värdena är **numeriskt identiska** — d.v.s. EXAKT samma siffror i samma ordning, bara med annorlunda formatering.
+3. Tolkningen av tusentalsavskiljare respektive decimaltecken är entydig utifrån siffergruppering (t.ex. "7.801,920" = punkt efter 1 siffra + komma följt av 3 siffror → punkt är tusentalsavskiljare, komma är decimaltecken → 7801.920).
 
-Förutsatt att:
-- det numeriska värdet och viktenheten överensstämmer, OCH
-- uppgiften entydigt avser den aktuella fakturan eller försändningen.
+**KRITISK BEGRÄNSNING:** Om de underliggande numeriska värdena SKILJER sig (t.ex. 7801 vs 7802, eller 635 vs 625) ska detta ALLTID bedömas som MISMATCH oavsett formatering. Denna regel tillåter ALDRIG att en faktisk sifferskillnad ignoreras — den hanterar ENBART notation/formatering (punkt vs komma, tusentalsavskiljare vs decimaltecken).
 
-Skillnad i benämning mellan viktkategori i certifikatet och fakturan ska i sig INTE medföra MISMATCH när det numeriska värdet och viktenheten överensstämmer.
-
-**Strikt krav på viktuppgift i certifikatet:**
-- När vikt anges ska BÅDE numeriskt värde OCH måttenhet framgå uttryckligen i samma fält.
-- Om GW, NW, Gross eller Net anges ska även viktenheten (t.ex. KG, MT, LB) anges uttryckligen.
-- Om viktkategori (GW/NW) saknas → MISMATCH enligt 4.4.2.2.
-- Angivelse av enbart numeriskt värde tillsammans med GW/NW UTAN uttrycklig viktenhet (t.ex. "7801.920 G.W." utan KG/MT/LB) → MISMATCH. Certifikatet saknar uttrycklig viktenhet, vilket är ett formkrav. Viktenhet får INTE härledas från fakturan.
-- Enheten får INTE fastställas om fakturan inte uttryckligen anger en enhet för samma numeriska värde.
+Exempel MATCH: Certifikat "7801.920 G.W." och faktura "Gross Weight 7.801,920 KG" → normaliserat 7801.920 = 7801.920 → MATCH (samma siffror, bara annorlunda formatering).
+Exempel MISMATCH: Certifikat "635 pcs" och faktura "625 pcs" → 635 ≠ 625 → MISMATCH (faktisk sifferskillnad, inte formatskillnad).
 
 ### 4.4.5 Ingen summering eller beräkning – huvudregel
 Systemet får INTE:
@@ -1463,24 +1484,6 @@ Systemet får INTE:
 
 Uppgiften ska uttryckligen kunna identifieras i fakturan.
 Undantag gäller ENDAST enligt 3A–3E nedan.
-
-### 4.4.5.6 Tillämpningsordning för undantag
-
-**KRITISK REGEL:** När verifiering enligt huvudregeln (4.4.1–4.4.2) inte kan genomföras ska systemet pröva de särskilda undantagen i EXAKT denna ordning:
-
-1. **3A** – Summering av flera fakturor (avsnitt 4.4.5.1)
-2. **3B** – Enhetsomräkning mellan MT och KG (avsnitt 4.4.5.3)
-3. **3C** – Härledning av styckvikt (avsnitt 4.4.5.4)
-4. **3D** – Summering av flera rader inom samma faktura (avsnitt 4.4.5.2)
-5. **3E** – Summering av radvikter när totalrad saknas (avsnitt 4.4.5.5)
-
-Systemet ska pröva undantagen SEKVENTIELLT i angiven ordning.
-Om villkoren i ett undantag inte är uppfyllda ska systemet FORTSÄTTA pröva nästa undantag INNAN MISMATCH fastställs.
-
-**EXAKT ETT undantag får tillämpas vid verifieringen.**
-**Regler från olika undantag får INTE kombineras.**
-
-Varje prövat undantag ska redovisas i rule_evaluation_log med utfall.
 
 ### 4.4.5.1 Undantag 3A – Summering av flera fakturor
 
@@ -1521,6 +1524,34 @@ Summering får ske för VIKT eller STYCKANTAL:
 - Summering får ENDAST ske när fler än en faktura ingår.
 - Om bara en faktura → strikt förekomstkontroll (huvudregeln).
 
+### 4.4.5.2 Undantag 3D – Summering av flera rader inom samma faktura
+
+Systemet får summera kvantiteter från flera rader ENDAST när SAMTLIGA villkor är uppfyllda:
+1. Certifikatet anger en total kvantitet för en vara.
+2. Fakturan innehåller flera rader vars kvantiteter tillsammans motsvarar totalen.
+3. Samtliga relevanta rader tillhör samma faktura och samma fakturareferens.
+4. Samma enhet på samtliga rader (eller enheter som kan omräknas via 3B, MT↔KG).
+5. Ingen annan artikelrad får inkluderas.
+6. Systemet får ENDAST inkludera fakturarader som avser SAMMA vara eller modell som certifikatet. Rader för tillval, komponenter, konfigurationsposter, kits eller andra underordnade poster får INTE inkluderas om de inte uttryckligen utgör den vara som anges i certifikatet.
+7. Summeringen sker utan omräkning — UNDANTAG: MT↔KG-konvertering enligt 3B är tillåten per rad innan summering när alla rader har samma ursprungsenhet.
+8. Totalsumman överensstämmer inom tolerans (±0,1 % eller ±0,001).
+
+**Särskild utökning – Generell/samlande varubeskrivning i certifikatet (avsnitt 4.4.5.2.1):**
+Om certifikatet använder en generell eller samlande varubeskrivning (t.ex. "Pumps", "Valves", "Bearings") och fakturan innehåller flera rader med VARIANTER av samma produktfamilj (t.ex. olika modellnummer eller storlekar inom samma produkttyp), får summering av dessa raders kvantiteter tillåtas under följande villkor:
+1. Varje fakturarads varubeskrivning kan identifieras som en variant av certifikatets samlande beskrivning (t.ex. "Pump X100" och "Pump X200" omfattas båda av certifikatets "Pumps").
+2. Samtliga fakturarader använder samma kvantitetsenhet.
+3. Summan överensstämmer inom tolerans (±0,1 % eller ±0,001).
+4. Inga fakturarader som uppenbart avser en ANNAN produktfamilj inkluderas.
+
+**KRITISK BEGRÄNSNING – Kvantitetssummering kräver enhetlig produkttyp (avsnitt 4.4.5.2.2):**
+Om certifikatet anger en total kvantitet för en specifik produkttyp (t.ex. "635 pcs Product A") och fakturan delar upp denna total i rader med OLIKA produkttyper (t.ex. 625 pcs "Product A" + 10 pcs "Product B"), utgör detta INTE en giltig summering — det är olika produkter vars kvantiteter inte får summeras.
+
+Principen är: kvantitetssummering förutsätter att ALLA summerade rader avser SAMMA produkttyp som certifikatet specificerar. Om fakturans rader innehåller produkter med ANDRA identitetsbärande huvudbeteckningar (enligt 4.3.3) än den som certifikatet anger, ska dessa rader INTE inkluderas i summeringen. Om den korrekta produkttypen ensam inte når certifikatets angivna kvantitet → MISMATCH.
+
+Om osäkerhet råder om huruvida fakturans rader tillhör samma produktfamilj → MANUAL_REVIEW.
+
+Om något villkor inte uppfylls → pröva undantag 3E.
+
 ### 4.4.5.3 Undantag 3B – Enhetsomräkning MT ↔ KG
 
 Systemet får konvertera mellan:
@@ -1560,34 +1591,6 @@ Systemet får härleda styckvikt genom division av total vikt med antal ENDAST n
 7. Resultatet överensstämmer med certifikatets angivna vikt inom tolerans (±0,1 % eller ±0,001).
 
 Om något villkor inte uppfylls → pröva undantag 3D.
-
-### 4.4.5.2 Undantag 3D – Summering av flera rader inom samma faktura
-
-Systemet får summera kvantiteter från flera rader ENDAST när SAMTLIGA villkor är uppfyllda:
-1. Certifikatet anger en total kvantitet för en vara.
-2. Fakturan innehåller flera rader vars kvantiteter tillsammans motsvarar totalen.
-3. Samtliga relevanta rader tillhör samma faktura och samma fakturareferens.
-4. Samma enhet på samtliga rader (eller enheter som kan omräknas via 3B, MT↔KG).
-5. Ingen annan artikelrad får inkluderas.
-6. Systemet får ENDAST inkludera fakturarader som avser SAMMA vara eller modell som certifikatet. Rader för tillval, komponenter, konfigurationsposter, kits eller andra underordnade poster får INTE inkluderas om de inte uttryckligen utgör den vara som anges i certifikatet.
-7. Summeringen sker utan omräkning — UNDANTAG: MT↔KG-konvertering enligt 3B är tillåten per rad innan summering när alla rader har samma ursprungsenhet.
-8. Totalsumman överensstämmer inom tolerans (±0,1 % eller ±0,001).
-
-**Särskild utökning – Generell/samlande varubeskrivning i certifikatet (avsnitt 4.4.5.2.1):**
-Om certifikatet använder en generell eller samlande varubeskrivning (t.ex. "Pumps", "Valves", "Bearings") och fakturan innehåller flera rader med VARIANTER av samma produktfamilj (t.ex. olika modellnummer eller storlekar inom samma produkttyp), får summering av dessa raders kvantiteter tillåtas under följande villkor:
-1. Varje fakturarads varubeskrivning kan identifieras som en variant av certifikatets samlande beskrivning (t.ex. "Pump X100" och "Pump X200" omfattas båda av certifikatets "Pumps").
-2. Samtliga fakturarader använder samma kvantitetsenhet.
-3. Summan överensstämmer inom tolerans (±0,1 % eller ±0,001).
-4. Inga fakturarader som uppenbart avser en ANNAN produktfamilj inkluderas.
-
-**KRITISK BEGRÄNSNING – Kvantitetssummering kräver enhetlig produkttyp (avsnitt 4.4.5.2.2):**
-Om certifikatet anger en total kvantitet för en specifik produkttyp (t.ex. "635 pcs Product A") och fakturan delar upp denna total i rader med OLIKA produkttyper (t.ex. 625 pcs "Product A" + 10 pcs "Product B"), utgör detta INTE en giltig summering — det är olika produkter vars kvantiteter inte får summeras.
-
-Principen är: kvantitetssummering förutsätter att ALLA summerade rader avser SAMMA produkttyp som certifikatet specificerar. Om fakturans rader innehåller produkter med ANDRA identitetsbärande huvudbeteckningar (enligt 4.3.3) än den som certifikatet anger, ska dessa rader INTE inkluderas i summeringen. Om den korrekta produkttypen ensam inte når certifikatets angivna kvantitet → MISMATCH.
-
-Om osäkerhet råder om huruvida fakturans rader tillhör samma produktfamilj → MANUAL_REVIEW.
-
-Om något villkor inte uppfylls → pröva undantag 3E.
 
 ### 4.4.5.5 Undantag 3E – Summering av radvikter när totalrad saknas
 
@@ -1633,6 +1636,24 @@ Om osäkerhet uppstår → MISMATCH.
 Summerad vikt ska överensstämma inom tolerans: **±0,1 % eller ±0,001 av angiven enhet**.
 Om avvikelsen överstiger toleransen → MISMATCH.
 
+### 4.4.5.6 Tillämpningsordning för undantag
+
+**KRITISK REGEL:** När verifiering enligt huvudregeln (4.4.1–4.4.2) inte kan genomföras ska systemet pröva de särskilda undantagen i EXAKT denna ordning:
+
+1. **3A** – Summering av flera fakturor (avsnitt 4.4.5.1)
+2. **3B** – Enhetsomräkning mellan MT och KG (avsnitt 4.4.5.3)
+3. **3C** – Härledning av styckvikt (avsnitt 4.4.5.4)
+4. **3D** – Summering av flera rader inom samma faktura (avsnitt 4.4.5.2)
+5. **3E** – Summering av radvikter när totalrad saknas (avsnitt 4.4.5.5)
+
+Systemet ska pröva undantagen SEKVENTIELLT i angiven ordning.
+Om villkoren i ett undantag inte är uppfyllda ska systemet FORTSÄTTA pröva nästa undantag INNAN MISMATCH fastställs.
+
+**EXAKT ETT undantag får tillämpas vid verifieringen.**
+**Regler från olika undantag får INTE kombineras.**
+
+Varje prövat undantag ska redovisas i rule_evaluation_log med utfall.
+
 **Styckantal utan uttrycklig enhet i kvantitetsfältet (avsnitt 4.4.5.7):**
 Om certifikatets kvantitetsfältet anger FLERA (minst 2) distinkta numeriska värden UTAN uttrycklig enhet (t.ex. "82", "30", "5" — bara siffror, ingen enhet som "pcs", "kg", "m³"), och fakturan anger SAMMA numeriska värden PER RAD med en enhet (t.ex. "82 pcs", "30 pcs"), ska resultatet vara MATCH — förutsatt att:
 1. VARJE numeriskt värde i certifikatets kvantitetsfältet kan matchas mot exakt motsvarande rad i fakturan.
@@ -1651,27 +1672,6 @@ Motivering: I Certificate of Origin-formulär har kvantitetsfältet ofta begrän
 - avvikelsen överstiger toleransgränsen
 - KG anges utan att GW/NW specificeras i certifikatet (och inte omfattas av undantag)
 - GW/NW anges utan att viktenhet uttryckligen framgår i certifikatet → MISMATCH enligt 4.4.3.6 (viktenhet är ett formkrav och får inte härledas från fakturan)
-
-**Förtydligande – avsaknad av enhetsbeteckning i faktura (avsnitt 4.4.3.3):**
-Om fakturan innehåller ett numeriskt värde som svarar mot certifikatets kvantitet, men enhetsbeteckning saknas i fakturan, får verifiering ändå ske om samtliga följande villkor är uppfyllda:
-- Det numeriska värdet i certifikatet kan identifieras i fakturan (direkt eller via summering enligt 4.4.5).
-- Det är entydigt att fakturans uppgift avser samma kvantitetstyp som certifikatets.
-- Ingen motsägelse förekommer (inget annat numeriskt värde i fakturan strider mot certifikatets).
-- Ingen alternativ enhet förekommer i fakturan för samma rad.
-
-Om samtliga villkor är uppfyllda → MATCH. Om villkoren inte är uppfyllda → MANUAL_REVIEW.
-
-**MISMATCH – Fakturan saknar kvantitets-/viktuppgift helt (avsnitt 4.4.3.7):**
-Om certifikatet anger en kvantitet eller vikt men fakturan HELT SAKNAR motsvarande typ av uppgift, och inget undantag (3A–3E), försändelsekvantitetsregeln (4.4.3.5) eller undantaget i 4.4.3.3 kan tillämpas, ska resultatet vara MISMATCH.
-Motivering: Certifikatets kvantitetsuppgift kan inte verifieras mot fakturan, vilket innebär att formkravet på verifierbarhet inte är uppfyllt.
-Denna regel gäller ENBART när fakturan HELT SAKNAR kvantitets- eller viktuppgift. Om fakturan innehåller en kvantitets- eller viktuppgift som SKILJER SIG från certifikatets → MISMATCH enligt huvudregeln.
-
-**KRITISK AVGRÄNSNING – 4.4.3.7 vs 4.4.3.2:**
-Regel 4.4.3.7 ska INTE tillämpas när certifikatet innehåller FLERA kvantitetsuppgifter och MINST EN av dem redan har verifierats som MATCH enligt 4.4.3.1. I sådana fall har kvantitetskontrollpunkten redan uppfyllt sitt verifieringskrav. Avsaknaden av en ANNAN kvantitetstyp i fakturan (t.ex. vikt saknas men styckantal verifierat) ska INTE sänka bedömningen till MISMATCH om den verifierade kvantiteten ger MATCH och den saknade kvantiteten inte uttryckligen motsägs.
-Regel 4.4.3.2 har företräde: "Systemet ska verifiera MINST EN" kvantitetsuppgift – om detta är uppfyllt är kontrollpunkten MATCH.
-
-**KRITISK AVGRÄNSNING – 4.4.3.7 vs undantag 3E:**
-Innan 4.4.3.7 tillämpas MÅSTE systemet först pröva samtliga undantag (3A–3E) fullständigt. Om fakturan innehåller radvikter som KAN summeras enligt 3E, ska 3E prövas INNAN systemet konstaterar att fakturan "helt saknar" kvantitetsuppgift. Om 3E-summering prövas och summan INTE matchar certifikatets värde → MISMATCH (inte MANUAL_REVIEW via 4.4.3.7). Regel 4.4.3.7 är avsedd för situationer där fakturan genuint saknar ALL kvantitets-/viktinformation — inte som en "escape hatch" för att undvika MISMATCH när summering misslyckas.
 
 ---
 
