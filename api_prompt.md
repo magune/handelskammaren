@@ -1121,7 +1121,7 @@ Systemet ska verifiera att:
 **KRITISK BEGRÄNSNING – Fakturainnehållet måste fortfarande vara konsistent:**
 Denna regel innebär att en generell varubeskrivning (t.ex. "Industrial components according to invoice no. 1418") godkänns NÄR fakturans varuinnehåll är förenligt med certifikatets beskrivning. Regeln tillåter INTE att certifikatet godkänns enbart för att det nämner ett fakturanummer — om certifikatets beskrivning är så vag att den inte kan kopplas till något specifikt i fakturan (t.ex. "spare parts" utan vidare specifikation), och fakturan innehåller varor som INTE är förenliga med certifikatets beskrivning, ska resultatet vara MISMATCH. Referensen till fakturan ersätter inte kravet på att varorna faktiskt stämmer överens.
 
-**FÖRTYDLIGANDE – Vad innebär "förenligt" vid generell varubeskrivning (avsnitt 4.3.5.2):**
+**FÖRTYDLIGANDE – Vad innebär "förenligt" vid generell varubeskrivning (avsnitt 4.3.5.3):**
 Verifieringen är ENSIDIG: systemet ska kontrollera att de varor certifikatet anger kan identifieras i fakturan — inte att fakturans samtliga varor täcks av certifikatets beskrivning.
 
 Fakturans varuinnehåll anses FÖRENLIGT med certifikatets generella beskrivning när:
@@ -1153,14 +1153,14 @@ förutsatt att dessa entydigt representerar samma kalenderdatum.
 
 **VIKTIGT:** "260311" och "20260311" representerar samma datum (2026-03-11) i kompakt format och ska behandlas som ekvivalenta. Systemet ska normalisera alla datumformat till ett jämförbart format innan jämförelse.
 
-**Datumdiskrepans (avsnitt 4.3.5.1):**
+**Datumdiskrepans (avsnitt 4.3.5.2):**
 Om certifikatets fakturadatum och fakturans datum inte överensstämmer ska resultatet vara MISMATCH. Fakturanummer och fakturadatum är obligatoriska formkrav — båda måste stämma exakt. "Shipping date" eller andra datumtyper i fakturan kan inte ersätta fakturadatum.
 
 Om dessa uppgifter överensstämmer ska varubeskrivningen anses verifierad. Ingen ytterligare kontroll av varubeskrivning eller artikelnummer ska göras.
 
 Om referensnummer, datum eller uttrycklig fakturahänvisning saknas eller inte överensstämmer → MISMATCH.
 
-**Förtydligande – flera fakturor vid generell varubeskrivning (avsnitt 4.3.5.4):**
+**Förtydligande – flera fakturor vid generell varubeskrivning (avsnitt 4.3.5.1):**
 Om certifikatet hänvisar till flera fakturor i en generell varubeskrivning:
 - samtliga fakturor som omfattas av hänvisningen ska anges med fakturanummer, ordernummer eller orderreferens
 - hänvisningen ska entydigt identifiera vilka fakturor som avses
@@ -1822,7 +1822,7 @@ Om certifikatet listar FLERA specifika länder vid sidan av EU och fakturan enba
 #### 4.5.4.3 Kina och Hongkong
 Se avsnitt 4.6 för landnormalisering av Kina/Hongkong. Ekvivalensen gäller även för ursprungslandjämförelse.
 
-### 4.5.5 MATCH / MISMATCH
+### 4.5.6 MATCH / MISMATCH
 **MATCH:** varje ursprungsland i certifikatet kan uttryckligen identifieras i fakturan efter normalisering.
 
 **KRITISK REGEL – Krav på positiv verifiering:**
@@ -1830,7 +1830,7 @@ Se avsnitt 4.6 för landnormalisering av Kina/Hongkong. Ekvivalensen gäller äv
 
 **MISMATCH:** ursprungsland saknas, inte kan identifieras, eller motstridiga uppgifter förekommer.
 
-### 4.5.6 Förtydligande – fullständighet vid generell varubeskrivning
+### 4.5.5 Förtydligande – fullständighet vid generell varubeskrivning
 
 Denna bestämmelse gäller endast när certifikatet innehåller en generell varubeskrivning med hänvisning till faktura enligt punkt 4.3.5.
 
