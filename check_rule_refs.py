@@ -55,6 +55,10 @@ def parse_prompt(text: str):
         m = re.match(r"^#{1,6}\s+(" + NUM + r")\s+(.*)", s)
         if m:
             add_def(m.group(1), i, clean(m.group(2)))
+        # (a2) toppsektion med punkt: "## 16. API input contract" -> definierar "16"
+        m = re.match(r"^#{1,6}\s+(\d+)\.\s+(.*)", s)
+        if m:
+            add_def(m.group(1), i, clean(m.group(2)))
         # (b) fet rubrik som börjar med nummer: "**4.1.3.4.1 Titel**"
         m = re.match(r"^\*\*\s*(" + NUM + r")\s+(.*)", s)
         if m:
