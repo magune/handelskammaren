@@ -47,7 +47,7 @@ SCHEMA_FILE     = BASE_DIR / "schema_slim_strict.json"
 STATE_FILE      = BASE_DIR / "fullrun_state.json"
 
 # v2: certificates supplied as structured JSON
-ORIGIN_JSON_DIR = BASE_DIR / "Testdata" / "v2 JSON files" / "origin_json"
+ORIGIN_JSON_DIR = BASE_DIR / "Testdata" / "v2 JSON files" / "origin_json joined fields"
 CERT_ID_CACHE   = BASE_DIR / "v2_cert_id_cache.json"  # cert PDF path -> SEG id
 
 RESULTS_DIR.mkdir(exist_ok=True)

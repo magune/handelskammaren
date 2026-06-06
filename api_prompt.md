@@ -1252,9 +1252,14 @@ Exempel MATCH: `OriginRows[].Quantity` = `["12.384,000KG", "G.W."]` → värde +
 Exempel MATCH: `OriginRows[].Quantity` = `["GW in KGs", "598,102", "NW in KGs", "493,829"]` → kategori (GW/NW) finns i kvantitetsfältet → MATCH.
 Exempel MATCH: kvantitetsfältet `"3.326,400 KG | G.W. | 5.544,000 KG | G.W."` → kategori (G.W.) i kvantitetsfältet → MATCH.
 
+**FÖRTYDLIGANDE – kategori på SAMMA rad via `Combined`-fältet:**
+Varje `OriginRows[]`-post har ett `Combined`-fält som slår ihop radens `Description` och `Quantity` (t.ex. `Description: "Net weight"` + `Quantity: "2640 kg"` → `Combined: "Net weight 2640 kg"`). Om viktvärdet och dess kategori (Gross/Net/GW/NW) står på SAMMA certifikatrad — även när värdet ligger i `Quantity` och kategorin i `Description` — är formkravet UPPFYLLT (→ kan ge MATCH), eftersom kategorin och värdet hör ihop på raden (vilket framgår av radens `Combined`-fält). Detta är INTE detsamma som att "hämta kategori från varubeskrivningen": det är samma rads kvantitetsuppgift, bara uppdelad i två fält av extraktionen. Kategorin måste höra till SAMMA rad som värdet — en kategori på en ANNAN rad räcker inte.
+Exempel MATCH: rad `Quantity: "2640 kg"`, `Description: "Net weight"`, `Combined: "Net weight 2640 kg"` → kategori (Net) hör till radens värde → MATCH.
+Exempel MATCH: rad `Quantity: "15.025 MT"`, `Description: "Net weight:"`, `Combined: "Net weight: 15.025 MT"` → MATCH.
+
 Formkravet är INTE uppfyllt → MISMATCH när:
 - viktkategori saknas helt, ELLER
-- kategorin förekommer ENBART i varubeskrivningen (`OriginRows[].Description`) / som en separat text skild från kvantitetsvärdet. Uppgifter i andra fält än kvantitetsfältet får INTE användas för att uppfylla formkravet.
+- kategorin förekommer ENBART på en ANNAN certifikatrad än viktvärdet (t.ex. "GROSS WEIGHT" som en egen rad skild från värderaden), eller helt skild från kvantitetsuppgiften. En kategori på SAMMA rad som värdet (synlig i radens `Combined`-fält) uppfyller däremot formkravet, se ovan.
 
 Exempel MATCH: kvantitetsfältet "214,845 kg" + "NW" → kategori i kvantiteten → MATCH.
 Exempel MATCH: kvantitetsfältet "Gross weight = 8,7 kg" jämte "6 units / 62 boxes" → kategori (Gross) i kvantiteten → MATCH.
@@ -1911,7 +1916,7 @@ Certifikat-JSON har följande form:
   "DeliveryAddress1": "...", "DeliveryAddress2": "...", "DeliveryAddress3": null,
   "DeliveryAddress4": null, "DeliveryAddress5": null, "DeliveryAddress6": null,
   "DeliveryPostalAddress": "...", "DeliveryCountry": "Honduras", "DeliveryCountryCode": "",
-  "OriginRows": [ { "Description": "varubeskrivning", "Quantity": "52.992 MT" } ],
+  "OriginRows": [ { "Description": "varubeskrivning", "Quantity": "52.992 MT", "Combined": "varubeskrivning 52.992 MT" } ],
   "OriginPackages": [ { "Package": "antal och slag av kolli" } ],
   "CountryOfOrigin1": "EU GERMANY", "CountryOfOrigin2": null, "CountryOfOrigin3": null,
   "TransportInfo1": null, "TransportInfo2": null, "TransportInfo3": null,
@@ -1926,10 +1931,11 @@ Certifikat-JSON har följande form:
 | 4.1 Avsändare (Consignor) | `Company`, `Contact`, `Address1-4`, `ZipCode`, `City`, `Country`, `CompanyVatNumber` |
 | 4.2 Mottagare (Consignee) | `DeliveryCompany`, `DeliveryAddress1-6`, `DeliveryPostalAddress`, `DeliveryCountry`, `DeliveryCountryCode` |
 | 4.3 Varubeskrivning | `OriginRows[].Description` |
-| 4.4 Kvantitet / Mängd | `OriginRows[].Quantity`, `OriginPackages[].Package` (antal/slag av kolli) |
+| 4.4 Kvantitet / Mängd | `OriginRows[].Quantity`, `OriginRows[].Combined` (radens `Description`+`Quantity` ihopslaget — används för viktkategori på samma rad, se 4.4.2.1), `OriginPackages[].Package` (antal/slag av kolli) |
 | 4.5 Ursprungsland | `CountryOfOrigin1/2/3` |
 
 - Tidigare hänvisningar i regelverket till certifikatets "fält" eller "rutor" (t.ex. varubeskrivningsfältet, kvantitetsfältet, ursprungsfältet) avser nu motsvarande JSON-fält enligt tabellen ovan.
+- Varje `OriginRows[]`-post innehåller även ett `Combined`-fält som är radens `Description` och `Quantity` sammanslagna till en sträng (t.ex. `Description: "Net weight"` + `Quantity: "2640 kg"` → `Combined: "Net weight 2640 kg"`). `Combined` representerar EN och samma certifikatrad. Det används för att avgöra om en viktkategori (Gross/Net/GW/NW) hör ihop med viktvärdet på SAMMA rad (se 4.4.2.1) — det sammanför INTE uppgifter från olika rader.
 - Fakturahänvisningar och LC-hänvisningar i certifikatet (om sådana finns) förekommer i `OriginRows[].Description`.
 - `TransportInfo1-7` avser transportsätt/transportör och används INTE i någon kontrollpunkt.
 - Certifikatets uppgifter ska aldrig betraktas som oläsbara, avkortade eller OCR-skadade — de är strukturerad text. Läsbarhets-, OCR- och avkortningsregler gäller ENBART fakturan (PDF).
