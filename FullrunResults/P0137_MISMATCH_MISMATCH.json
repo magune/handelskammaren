@@ -2,9 +2,9 @@
   "schema_version": "3.0",
   "metadata": {
     "verification_timestamp": "2026-06-06T00:00:00Z",
-    "document_pair_id": "SEG-25D-376208|SI02108",
+    "document_pair_id": "SEG-25D-376208__SI02108",
     "certificate_issue_date": null,
-    "source_documents_received": 2
+    "source_documents_received": 1
   },
   "task": {
     "task_type": "customs_document_pair_verification",
@@ -13,14 +13,14 @@
   },
   "documents": {
     "document_a": {
-      "label": "Certificate of Origin (structured JSON)",
+      "label": "Certificate of Origin structured JSON",
       "assumed_role": "certificate",
-      "document_type": "structured_json"
+      "document_type": "certificate_of_origin_structured_json"
     },
     "document_b": {
       "label": "Invoice PDF",
       "assumed_role": "invoice",
-      "document_type": "invoice_pdf"
+      "document_type": "invoice"
     }
   },
   "rule_activation": {
@@ -33,12 +33,16 @@
     "eu_origin_normalization_active": true,
     "activated_rules": [
       {
+        "rule_id": "8.6",
+        "rule_name": "Parningsvalidering passerad via identifierad consignor i fakturan"
+      },
+      {
         "rule_id": "4.1.0",
-        "rule_name": "Consignor identified explicitly elsewhere in invoice document"
+        "rule_name": "Koncernstruktur / consignor får identifieras var som helst i fakturan"
       },
       {
         "rule_id": "4.5.4.1.1",
-        "rule_name": "EC/EU plus specific EU country verified by specific EU country in invoice"
+        "rule_name": "EC/EU + specifikt EU-land kan verifieras av landet i fakturan"
       }
     ]
   },
@@ -46,8 +50,8 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.92,
-      "certificate_value": "Källbergs Industri AB | Sweden",
+      "confidence": 0.96,
+      "certificate_value": "Källbergs Industri AB",
       "invoice_value": "Källbergs Industri AB\nSkövdevägen 25\nBox 73\n54522 Töreboda\nSverige\nVAT No. : SE556059176901\nIBAN: SE0412000000012200153163",
       "rules_applied": [
         {
@@ -59,18 +63,18 @@
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.1.5",
+          "rule_id": "4.1.4",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor 'Källbergs Industri AB' återfinns uttryckligen i fakturans branding/footer och identifieringsblock. Landet verifieras genom 'Sverige' samt SE-prefix i VAT-nummer och IBAN. Därmed kan samma juridiska part och land identifieras i fakturan."
+      "motivation": "Certifikatets consignor 'Källbergs Industri AB' återfinns uttryckligen i fakturans footer på sida 1. Landet verifieras genom svensk adress ('Töreboda', 'Sverige') samt VAT-/IBAN-prefix SE. Att fakturan även visar 'Agro Food Solutions' som utställare hindrar inte MATCH eftersom certifikatets consignor finns uttryckligen i fakturan och landet överensstämmer."
     },
     "consignee": {
       "applicable": true,
       "status": "MISMATCH",
       "confidence": 0.99,
-      "certificate_value": "General Food Processing Industries | United Arab Emirates",
-      "invoice_value": "Agro Food Solutions\nLouise Henriettestraat 3\nNL-2595TN The Hague\nThe Netherlands\nShip-to Address:\nKadbanoo Co.\nNo. 24, 7th Fath St, Fath highway\nTehran\nIran",
+      "certificate_value": "General Food Processing Industries ",
+      "invoice_value": "Ship-to Address\nKadbanoo Co.\nNo. 24, 7t Fath St, Fath highway\nCommercial ID: 10100245584\nTehran REG NUMBER 38341623\nIran",
       "rules_applied": [
         {
           "rule_id": "4.2.0.2",
@@ -85,18 +89,18 @@
           "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Certifikatets mottagare 'General Food Processing Industries' i Förenade Arabemiraten kan inte identifieras i något av fakturans mottagarfält. Fakturan visar i stället 'Agro Food Solutions' i Nederländerna och separat Ship-to 'Kadbanoo Co.' i Iran. Detta är en direkt avvikelse, inte bara ytterligare information."
+      "motivation": "Certifikatets mottagare 'General Food Processing Industries' i United Arab Emirates kan inte identifieras i något mottagarfält i fakturan. Fakturans enda tydliga mottagar-/leveranspart är 'Kadbanoo Co.' i Iran, vilket både avviker i företagsnamn och land. Fakturan är läsbar, så detta är en konstaterad avvikelse och inte ett läsbarhetsfall."
     },
     "goods_description": {
       "applicable": true,
       "status": "MISMATCH",
-      "confidence": 0.97,
-      "certificate_value": "Heat Stable EYP Mayo-Max399 | 126 bags of lot 25-12818 | 462 bags of lot 25-12873",
+      "confidence": 0.95,
+      "certificate_value": "Heat Stable EYP Mayo-Max399",
       "invoice_value": "Food Shaping Compound (Mayomax)",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "No article number available in certificate"
+          "outcome": "NOT_APPLICABLE"
         },
         {
           "rule_id": "4.3.3",
@@ -107,41 +111,41 @@
           "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Certifikatet innehåller ingen artikelnummerreferens och ingen generell fakturahänvisning med fakturanummer/datum som aktiverar särskilt undantag. Den identitetsbärande huvudbeteckningen 'Heat Stable EYP Mayo-Max399' kan inte identifieras exakt i fakturans text 'Food Shaping Compound (Mayomax)' utan otillåten semantisk tolkning. Lot- och säckraderna i certifikatet återfinns inte heller i fakturan."
+      "motivation": "Certifikatet anger varan som 'Heat Stable EYP Mayo-Max399'. Fakturan anger 'Food Shaping Compound (Mayomax)'. Den identitetsbärande huvudbeteckningen kan inte identifieras exakt i fakturan utan otillåten semantisk tolkning: 'Heat Stable EYP' saknas helt och 'Mayo-Max399' är inte samma text som 'Mayomax'."
     },
     "quantity": {
       "applicable": true,
       "status": "MISMATCH",
       "confidence": 0.99,
       "certificate_value": "8820 kg net",
-      "invoice_value": "Qty. 17.640 Kg\nTotal Net Weight 17.640\nTotal Gross Weight 18.346",
+      "invoice_value": "Qty. 17.640 Kg\nTotal Net Weight 17.640",
       "rules_applied": [
         {
           "rule_id": "4.4.2.1",
-          "outcome": "Form requirement satisfied"
+          "outcome": "MATCH"
         },
         {
-          "rule_id": "4.4.3.1",
+          "rule_id": "4.4.3",
           "outcome": "MISMATCH"
         },
         {
           "rule_id": "4.4.3.2",
-          "outcome": "Explicit contradiction"
-        },
-        {
-          "rule_id": "4.4.7",
           "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Certifikatet anger uttryckligen '8820 kg net'. Fakturan anger uttryckligen 'Qty. 17.640 Kg' och 'Total Net Weight 17.640'. Oavsett notation är fakturans net quantity/net weight inte 8820 utan 17.640, vilket utgör en uttrycklig numerisk motsägelse."
+      "motivation": "Certifikatet anger net quantity '8820 kg net'. Fakturan anger uttryckligen 'Qty. 17.640 Kg' och 'Total Net Weight 17.640' för försändningen. Dessa läsbara fakturavärden motsäger certifikatets net quantity och avvikelsen är långt utanför tillåten tolerans."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.9,
+      "confidence": 0.93,
       "certificate_value": "EC: Sweden",
       "invoice_value": "Country fo origin: Sweden",
       "rules_applied": [
+        {
+          "rule_id": "4.5.1",
+          "outcome": "MATCH"
+        },
         {
           "rule_id": "4.5.4.1.1",
           "outcome": "MATCH"
@@ -151,27 +155,27 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger 'EC: Sweden', vilket innehåller ett specifikt EU-land. Fakturan anger uttryckligen 'Country fo origin: Sweden'. Sverige verifierar den specifika landsangivelsen och uppfyller samtidigt EC/EU-komponenten enligt tillåten EU-normalisering."
+      "motivation": "Fakturan innehåller en explicit ursprungsangivelse: 'Country fo origin: Sweden'. Certifikatets 'EC: Sweden' innehåller det specifika landet Sweden, vilket kan verifieras direkt mot fakturans ursprungsfält. Ursprungslandet är därför verifierat."
     }
   },
   "overall_assessment": {
     "comparison_result": "NOT_IDENTICAL",
     "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
     "auto_approval_eligible": false,
-    "confidence": 0.97,
+    "confidence": 0.98,
     "critical_failures": [
-      "Consignee mismatch: certificate names General Food Processing Industries, invoice shows Agro Food Solutions / Kadbanoo Co.",
+      "Consignee mismatch: certificate names General Food Processing Industries in United Arab Emirates, invoice shows Kadbanoo Co. in Iran.",
       "Goods description mismatch: 'Heat Stable EYP Mayo-Max399' cannot be verified against 'Food Shaping Compound (Mayomax)'.",
-      "Quantity mismatch: certificate 8820 kg net vs invoice 17.640 kg net."
+      "Quantity mismatch: certificate states 8820 kg net, invoice states 17.640 kg / Total Net Weight 17.640."
     ],
     "manual_review_triggers": [],
     "manual_review_reason": "NOT_APPLICABLE",
-    "decision_summary": "Dokumentparet passerar parningsnivån via explicit consignorträff i fakturan, men tre tillämpliga kontrollpunkter ger MISMATCH: mottagare, varubeskrivning och kvantitet. Endast avsändare och ursprungsland kan verifieras mot fakturan. Därför är dokumenten inte identiska enligt regelverket.",
-    "human_explanation": "Avsändaren och ursprungslandet kan verifieras mot fakturan. Däremot anger certifikatet mottagaren som General Food Processing Industries i Förenade Arabemiraten, medan fakturan visar Agro Food Solutions i Nederländerna och Ship-to Kadbanoo Co. i Iran. Varubeskrivningen 'Heat Stable EYP Mayo-Max399' och mängden 8820 kg net återfinns inte; fakturan anger 'Food Shaping Compound (Mayomax)' och total net weight 17.640 kg."
+    "decision_summary": "Dokumentparet är inte identiskt. Consignor och ursprungsland kan verifieras, men mottagare, varubeskrivning och kvantitet motsäger certifikatets uppgifter.",
+    "human_explanation": "Certifikatet anger mottagaren som General Food Processing Industries i Förenade Arabemiraten, men fakturan visar leveransadress till Kadbanoo Co. i Iran. Varubeskrivningen 'Heat Stable EYP Mayo-Max399' kan inte verifieras mot fakturans 'Food Shaping Compound (Mayomax)', och kvantiteten 8820 kg net motsägs av fakturans 17.640 kg. Ursprungslandet Sverige framgår av fakturan, men dokumentparet är ändå inte identiskt."
   },
   "_meta": {
-    "tested_at": "2026-06-06T09:00:14.375486+00:00",
-    "prompt_hash": "4690e976915d",
+    "tested_at": "2026-06-06T14:05:41.348515+00:00",
+    "prompt_hash": "752423deb8d7",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P0137_MISMATCH",

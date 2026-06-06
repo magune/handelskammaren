@@ -4,7 +4,7 @@
     "verification_timestamp": "2026-06-06T00:00:00Z",
     "document_pair_id": "SEG-26D-465570__D0485899-46504276",
     "certificate_issue_date": null,
-    "source_documents_received": 2
+    "source_documents_received": 1
   },
   "task": {
     "task_type": "customs_document_pair_verification",
@@ -13,14 +13,14 @@
   },
   "documents": {
     "document_a": {
-      "label": "CERTIFICATE OF ORIGIN (structured JSON)",
+      "label": "Certificate of Origin (structured JSON)",
       "assumed_role": "certificate",
-      "document_type": "structured_certificate_of_origin_json"
+      "document_type": "structured_json"
     },
     "document_b": {
-      "label": "Attached invoice PDF",
+      "label": "Invoice PDF",
       "assumed_role": "invoice",
-      "document_type": "commercial_invoice"
+      "document_type": "commercial_invoice_pdf_text_based"
     }
   },
   "rule_activation": {
@@ -33,24 +33,16 @@
     "eu_origin_normalization_active": false,
     "activated_rules": [
       {
-        "rule_id": "8.6",
-        "rule_name": "Obligatorisk parningsvalidering"
-      },
-      {
-        "rule_id": "4.1.0",
-        "rule_name": "Consignor får verifieras om företagsnamnet uttryckligen förekommer i fakturan"
-      },
-      {
-        "rule_id": "4.2.0.2",
-        "rule_name": "Consignee ska kunna identifieras i något mottagarfält i fakturan"
-      },
-      {
         "rule_id": "4.3.2",
-        "rule_name": "Artikelnummer i certifikatet ska matchas primärt och exakt mot fakturan"
+        "rule_name": "Prioritet 1: artikelnummer"
       },
       {
         "rule_id": "4.5.3",
-        "rule_name": "Vid flera ursprungsländer ska varje ursprungsland kunna identifieras uttryckligen"
+        "rule_name": "Blandade ursprung"
+      },
+      {
+        "rule_id": "8.6",
+        "rule_name": "Obligatorisk parningsvalidering"
       }
     ]
   },
@@ -58,31 +50,27 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.99,
+      "confidence": 0.98,
       "certificate_value": "Rosemount Tank Radar AB",
       "invoice_value": "Rosemount Tank Radar AB",
       "rules_applied": [
         {
           "rule_id": "8.6",
-          "outcome": "PASS"
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.1.0",
           "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.1.5",
-          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor \"Rosemount Tank Radar AB\" återfinns uttryckligen i fakturan, bl.a. i sidhuvud, Ship From och Please Remit To på flera sidor. Certifikatets landfält för consignor är null och utgör därför ingen separat verifieringspunkt här. Företagsnamnet kan verifieras entydigt mot fakturan."
+      "motivation": "Certifikatet anger consignor som \"Rosemount Tank Radar AB\". Samma företagsnamn förekommer uttryckligen i fakturans sidhuvud, Ship From-blocket och footer på fakturan (bl.a. sidorna 2 och 36). Certifikatets landfält för consignor är null och utgör därför inte en uttryckligen angiven jämförelseuppgift i denna kontrollpunkt."
     },
     "consignee": {
       "applicable": true,
       "status": "MISMATCH",
       "confidence": 0.99,
-      "certificate_value": "EMERSON ASIA PACIFIC PRIVATE LIMITE",
-      "invoice_value": "BEIJING ROSEMOUNT FAR EAST INSTRUMENT CO, 1ST FLOOR BLDG NO 1 SOUTH OF SHENGFANG R, QIAN GAO MI DIAN ECONOMIC DEVELOPMENT ZO, DA XING DISTRICT, 102600 BEIJING, CHINA",
+      "certificate_value": "EMERSON ASIA PACIFIC PRIVATE LIMITE / C/O CEVA LOGISTICS SOLUTIONS / SINGAPORE P 40 PENJURU LANE / #03-11 / 609216 SINGAPORE / SINGAPORE",
+      "invoice_value": "Sold To / Invoice To / Ship To: BEIJING ROSEMOUNT FAR EAST INSTRUMENT CO, 1ST FLOOR BLDG NO 1 SOUTH OF SHENGFANG R, QIAN GAO MI DIAN ECONOMIC DEVELOPMENT ZO, DA XING DISTRICT, 102600 BEIJING, CHINA",
       "rules_applied": [
         {
           "rule_id": "4.2.0.2",
@@ -97,14 +85,14 @@
           "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Certifikatet anger mottagaren som \"EMERSON ASIA PACIFIC PRIVATE LIMITE\" i Singapore. Fakturans mottagarfält (Sold To, Invoice To och Ship To på sida 2) anger i stället \"BEIJING ROSEMOUNT FAR EAST INSTRUMENT CO\" i Kina. Certifikatets mottagare kan inte identifieras i något mottagarfält och fakturan visar en annan mottagare i annat land."
+      "motivation": "Certifikatet anger mottagaren som \"EMERSON ASIA PACIFIC PRIVATE LIMITE\" i Singapore. Fakturans mottagarfält (Sold To, Invoice To och Ship To på sida 2) anger i stället \"BEIJING ROSEMOUNT FAR EAST INSTRUMENT CO\" i Kina. Certifikatets mottagare kan inte identifieras i något mottagarfält i fakturan, och landet motsäger dessutom certifikatets Singapore-angivelse."
     },
     "goods_description": {
       "applicable": true,
       "status": "MISMATCH",
       "confidence": 0.99,
       "certificate_value": "0565M23230AC406P1100Q1AC, Multiple Spot Temperature Sensor COO DK | 775TGXD21I7WA3WK9TJQ1, Wireless 775 THUM Adapter Assembly  - | - Tank Gauging COO: SG | 5408A1SUA2NA1GBZZPAS8M5Q4, Radar Level Transmitter COO: SE | 2410MFRW001PSNA0A2PQ1, Tank Hub COO: SE | 2240SP0840FNA0A2MQ4Q1, Multi-input Temperature Transmitter COO SE",
-      "invoice_value": "3408A1SHA2E77R4AASAAM6C2C4AWQ4Q8WR5, Radar Level Transmitter",
+      "invoice_value": "3408A1SHA2E77R4AASAAM6C2C4AWQ4Q8WR5 Radar Level Transmitter ... Country of Origin SWEDEN (återkommande på sidorna 2-36) samt serviceposter \"RTR-CERT-COMP-Q1 CERTIFICATE OF COMPLIANCE Charge\", \"Non-preferential Certificate of Origin\" och \"INSPECTION - VISUAL & WITNESS\" på sida 36",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
@@ -115,41 +103,33 @@
           "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Certifikatet innehåller uttryckliga artikelnummer och ska därför verifieras primärt via exakt artikelnummermatchning. De certifikatsangivna artikelnumren 0565M23230AC406P1100Q1AC, 775TGXD21I7WA3WK9TJQ1, 5408A1SUA2NA1GBZZPAS8M5Q4, 2410MFRW001PSNA0A2PQ1 och 2240SP0840FNA0A2MQ4Q1 återfinns inte i fakturan. Fakturan visar i stället artikelnummer 3408A1SHA2E77R4AASAAM6C2C4AWQ4Q8WR5 för Radar Level Transmitter samt service-/avgiftsrader, vilket inte uppfyller kravet på exakt identifiering av certifikatets varor."
+      "motivation": "Certifikatet innehåller uttryckliga artikelnummer och måste därför verifieras primärt via exakt artikelnummermatchning. Fakturan visar genomgående artikelnumret \"3408A1SHA2E77R4AASAAM6C2C4AWQ4Q8WR5\" för Radar Level Transmitter, medan certifikatet anger andra artikelnummer såsom \"0565M23230AC406P1100Q1AC\", \"775TGXD21I7WA3WK9TJQ1\", \"5408A1SUA2NA1GBZZPAS8M5Q4\", \"2410MFRW001PSNA0A2PQ1\" och \"2240SP0840FNA0A2MQ4Q1\". Namnlikhet för \"Radar Level Transmitter\" kan inte ersätta saknad exakt kodmatchning."
     },
     "quantity": {
       "applicable": true,
-      "status": "MANUAL_REVIEW",
-      "confidence": 0.64,
-      "certificate_value": "7 PCS | 3 PCS | 7 PCS | 3 PCS | 7 PCS",
-      "invoice_value": "Qty Shipped i fakturan anges genomgående som 1 EA per rad; Packing Summary anger 13 Pallet, Gross WT 2913.38 KG och Net WT 2075.66 KG",
+      "status": "MISMATCH",
+      "confidence": 0.99,
+      "certificate_value": "7 PCS | 3 PCS | 7 PCS | 3 PCS | 7 PCS | Gross Weight: 294,01 KG | Net Weight: 211,44 KG | 4 Packages",
+      "invoice_value": "Qty Shipped: 1 EA per rad (sidorna 2-36) | Packing Summary: 13 Pallet | Gross WT: 2913.38 KG / 6422.80 LB | Net WT: 2075.66 KG / 4575.97 LB (sidorna 1 och 37)",
       "rules_applied": [
         {
-          "rule_id": "4.4.3.1",
-          "outcome": "MANUAL_REVIEW"
-        },
-        {
           "rule_id": "4.4.3.2",
-          "outcome": "NO_CLEAR_MATCH"
+          "outcome": "MISMATCH"
         },
         {
           "rule_id": "4.4.7",
-          "outcome": "MANUAL_REVIEW"
+          "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Certifikatet anger flera styckkvantiteter (7 PCS och 3 PCS) för flera olika artiklar. Fakturan anger 1 EA per rad för andra artikelnummer än dem som står i certifikatet, och eftersom varukopplingen enligt varubeskrivningskontrollen inte kan fastställas för samma artiklar kan kvantiteterna inte verifieras säkert mot motsvarande vara. Det finns därmed inte tillräckligt underlag för MATCH, men ingen entydig explicit motsägelse för samma verifierade vara har heller kunnat fastställas på kvantitetskontrollpunkten."
+      "motivation": "Certifikatet anger flera styckantal (7 PCS, 3 PCS, 7 PCS, 3 PCS, 7 PCS) samt förpacknings-/viktuppgifter om 4 Packages, Gross Weight 294,01 KG och Net Weight 211,44 KG. Fakturan anger i stället 1 EA per varurad och Packing Summary med 13 Pallet, Gross WT 2913.38 KG och Net WT 2075.66 KG. Dessa uppgifter är uttryckligt motstridiga och innebär därför MISMATCH."
     },
     "origin": {
       "applicable": true,
       "status": "MISMATCH",
       "confidence": 0.99,
       "certificate_value": "Denmark, Sweden, Singapore",
-      "invoice_value": "Country of Origin: SWEDEN",
+      "invoice_value": "Country of Origin SWEDEN på varuraderna (sidorna 2-36)",
       "rules_applied": [
-        {
-          "rule_id": "4.5.1",
-          "outcome": "PARTIAL_MATCH"
-        },
         {
           "rule_id": "4.5.3",
           "outcome": "MISMATCH"
@@ -159,27 +139,28 @@
           "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Certifikatet anger tre ursprungsländer: Denmark, Sweden och Singapore. Fakturan anger uttryckligen endast \"Country of Origin SWEDEN\" på artikelraderna. Sweden kan identifieras, men Denmark och Singapore förekommer inte som explicit ursprungsangivelse i fakturan, vilket innebär att inte varje ursprungsland i certifikatet kan verifieras."
+      "motivation": "Certifikatet anger tre ursprungsländer: Denmark, Sweden och Singapore. Fakturan visar endast den explicita ursprungsangivelsen \"Country of Origin SWEDEN\" på varuraderna. Varken Denmark/DK eller Singapore/SG kan identifieras som explicit origin-uppgift i fakturan, vilket innebär att inte varje ursprungsland i certifikatet kan verifieras."
     }
   },
   "overall_assessment": {
     "comparison_result": "NOT_IDENTICAL",
     "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
     "auto_approval_eligible": false,
-    "confidence": 0.97,
+    "confidence": 0.99,
     "critical_failures": [
-      "Consignee i certifikatet kan inte identifieras i fakturan; fakturan anger i stället BEIJING ROSEMOUNT FAR EAST INSTRUMENT CO i Kina.",
-      "Certifikatets artikelnummer och varor återfinns inte exakt i fakturan.",
-      "Certifikatets ursprungsländer Denmark och Singapore saknas som explicit ursprungsangivelse i fakturan."
+      "Consignee mismatch: certifikatet anger EMERSON ASIA PACIFIC PRIVATE LIMITE i Singapore medan fakturan anger BEIJING ROSEMOUNT FAR EAST INSTRUMENT CO i Kina.",
+      "Goods description mismatch: certifikatets artikelnummer återfinns inte i fakturan; fakturan visar i stället artikel 3408A1SHA2E77R4AASAAM6C2C4AWQ4Q8WR5.",
+      "Quantity mismatch: certifikatets 7/3 PCS samt 294,01 KG GW och 211,44 KG NW motsägs av fakturans 1 EA-rader och Packing Summary 2913.38 KG / 2075.66 KG / 13 Pallet.",
+      "Origin mismatch: certifikatet anger Denmark, Sweden, Singapore men fakturan visar endast SWEDEN som explicit ursprung."
     ],
     "manual_review_triggers": [],
     "manual_review_reason": "NOT_APPLICABLE",
-    "decision_summary": "Dokumentparet passerar parningskontrollen endast genom att consignor-namnet återfinns i fakturan, men flera materiella kontrollpunkter faller. Consignee stämmer inte, certifikatets artikelnummer och varor kan inte identifieras i fakturan, och endast ett av tre ursprungsländer kan verifieras. Minst en tillämplig kontrollpunkt har status MISMATCH, därför är totalresultatet NOT_IDENTICAL.",
-    "human_explanation": "Certifikatet anger mottagaren som EMERSON ASIA PACIFIC PRIVATE LIMITE i Singapore, medan fakturan i stället visar BEIJING ROSEMOUNT FAR EAST INSTRUMENT CO i Kina. Certifikatets artikelnummer och varor återfinns inte i fakturan, och fakturan visar bara ursprung Sweden medan certifikatet anger Denmark, Sweden och Singapore. Ärendet måste därför hanteras manuellt."
+    "decision_summary": "Dokumentparet passerar parningsvalideringen via consignor, men mottagare, varubeskrivning, kvantitet och ursprungsland motsäger fakturan. Minst en tillämplig kontrollpunkt är MISMATCH; här är fyra kontrollpunkter MISMATCH. Därför är jämförelseresultatet NOT_IDENTICAL och ärendet kräver manuell hantering.",
+    "human_explanation": "Avsändaren Rosemount Tank Radar AB finns i fakturan, men mottagaren i certifikatet är EMERSON ASIA PACIFIC PRIVATE LIMITE i Singapore medan fakturan avser BEIJING ROSEMOUNT FAR EAST INSTRUMENT CO i Kina. Varukoderna, antal/vikter och ursprungsländerna stämmer inte heller överens; fakturan visar huvudsakligen artikel 3408A1SHA2E77R4AASAAM6C2C4AWQ4Q8WR5 med ursprung Sverige, medan certifikatet anger flera andra artiklar samt Danmark, Sverige och Singapore. Dokumentparet kan därför inte godkännas automatiskt."
   },
   "_meta": {
-    "tested_at": "2026-06-06T09:17:25.980615+00:00",
-    "prompt_hash": "4690e976915d",
+    "tested_at": "2026-06-06T13:54:17.723773+00:00",
+    "prompt_hash": "752423deb8d7",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P078_MISMATCH",

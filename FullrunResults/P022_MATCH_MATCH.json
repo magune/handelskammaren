@@ -13,14 +13,14 @@
   },
   "documents": {
     "document_a": {
-      "label": "Certificate of Origin structured JSON",
+      "label": "Certificate of Origin (structured JSON)",
       "assumed_role": "certificate",
       "document_type": "structured_json"
     },
     "document_b": {
       "label": "Invoice PDF",
       "assumed_role": "invoice",
-      "document_type": "invoice"
+      "document_type": "invoice_pdf"
     }
   },
   "rule_activation": {
@@ -33,20 +33,20 @@
     "eu_origin_normalization_active": true,
     "activated_rules": [
       {
-        "rule_id": "4.1.3.6",
-        "rule_name": "Förkortning/utelämnande av juridisk bolagsform"
+        "rule_id": "4.2.0.2",
+        "rule_name": "Consignee may be verified in any relevant recipient field"
       },
       {
-        "rule_id": "4.2.0.2",
-        "rule_name": "Consignee får verifieras i något mottagarfält"
+        "rule_id": "4.3.4",
+        "rule_name": "Additional non-identity-bearing text in goods description does not cause mismatch"
+      },
+      {
+        "rule_id": "4.4.3.2",
+        "rule_name": "At least one quantity may be verified when multiple quantity indications exist"
       },
       {
         "rule_id": "4.5.4.1.1",
-        "rule_name": "EU + specifikt EU-land i certifikat kan verifieras av enbart landet i fakturan"
-      },
-      {
-        "rule_id": "4.5.4.2",
-        "rule_name": "EU-medlemsland och EU-begrepp är utbytbara för ursprungsverifiering"
+        "rule_name": "EU plus named EU country in certificate may be verified by the named EU country in invoice"
       }
     ]
   },
@@ -54,27 +54,31 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.96,
-      "certificate_value": "Company: Nouryon Functional Chemicals | Address1: Chemicals AB | Country: SWEDEN | CompanyVatNumber: 556234-9398",
-      "invoice_value": "Nouryon Functional Chemicals AB\nBOX 47067\n402 58 Goteborg\nSweden\nOrg. no. 556234-9398\nVAT nr. Nouryon SE556234939801",
+      "confidence": 0.91,
+      "certificate_value": "Company: Nouryon Functional Chemicals; Address1: Chemicals AB; Country: SWEDEN; VAT: 556234-9398",
+      "invoice_value": "Nouryon Functional Chemicals AB, BOX 47067, 402 58 Goteborg, Sweden; Org. no. 556234-9398; VAT nr. Nouryon SE556234939801",
       "rules_applied": [
         {
-          "rule_id": "4.1.2.1",
-          "outcome": "land verifierat via adress och organisations-/VAT-uppgift"
+          "rule_id": "4.1.0",
+          "outcome": "MATCH"
         },
         {
-          "rule_id": "4.1.3.6",
+          "rule_id": "4.1.2.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.5",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets avsändarnamn 'Nouryon Functional Chemicals' kan identifieras i fakturans header som 'Nouryon Functional Chemicals AB'. Skillnaden avser juridisk bolagsform/utelämnat 'AB', vilket är tillåtet. Landet 'Sweden' framgår uttryckligen i fakturans avsändarblock och stöds dessutom av organisations-/VAT-uppgifter."
+      "motivation": "Certifikatets consignor kan identifieras i fakturan genom fakturans sidhuvud på sida 1 och 2: \"Nouryon Functional Chemicals AB\". Kärnnamnet \"Nouryon Functional Chemicals\" återfinns uttryckligen, och landet Sverige framgår explicit i adressblocket samt stöds av VAT-prefixet SE. Skillnader i övriga adressdetaljer påverkar inte bedömningen eftersom namn och land är verifierade."
     },
     "consignee": {
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.99,
-      "certificate_value": "DeliveryCompany: Pulcra Kimya Sanayi Tic AS  | DeliveryAddress1: Beylikbagi Mah. 341 Sok No 1  | DeliveryPostalAddress: 41410 GEBZE | DeliveryCountry: TÜRKIYE",
-      "invoice_value": "Ship To 41113800\nPulcra Kimya Sanayi Tic AS\nBeylikbagi Mah. 341 Sok No 1\n41410 GEBZE\nTÜRKIYE",
+      "certificate_value": "Pulcra Kimya Sanayi Tic AS | TÜRKIYE",
+      "invoice_value": "Bill To / Ship To: Pulcra Kimya Sanayi Tic AS, Beylikbagi Mah. 341 Sok No 1, 41410 GEBZE, TÜRKIYE",
       "rules_applied": [
         {
           "rule_id": "4.2.0.2",
@@ -83,20 +87,24 @@
         {
           "rule_id": "4.2.3",
           "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.2.4",
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets mottagare återfinns exakt i fakturans 'Ship To'-fält. Företagsnamn, adresskärna och land 'TÜRKIYE' överensstämmer utan otillåten tolkning."
+      "motivation": "Certifikatets mottagare återfinns uttryckligen i fakturans mottagarfält på sida 1, både under \"Bill To\" och \"Ship To\", med samma företagsnamn \"Pulcra Kimya Sanayi Tic AS\". Landet \"TÜRKIYE\" framgår explicit i fakturan. Därmed är samma juridiska part och land verifierade."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.98,
+      "confidence": 0.99,
       "certificate_value": "Diethylenetriamine",
-      "invoice_value": "Diethylenetriamine\nin Drums 195 kg on pallet",
+      "invoice_value": "Item 10: Diethylenetriamine; additional line: in Drums 195 kg on pallet",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "Prioritet 2 användes; inget artikelnummer i certifikatet"
+          "outcome": "NOT_APPLICABLE"
         },
         {
           "rule_id": "4.3.3",
@@ -104,21 +112,25 @@
         },
         {
           "rule_id": "4.3.4",
-          "outcome": "ytterligare icke-identitetsbärande tillägg i fakturan accepterades"
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.3.8",
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Den identitetsbärande huvudbeteckningen i certifikatet är 'Diethylenetriamine' och den återfinns exakt i fakturans varubeskrivning. Tillägget 'in Drums 195 kg on pallet' ändrar inte produktidentiteten."
+      "motivation": "Certifikatets varubeskrivning \"Diethylenetriamine\" återfinns exakt i fakturans artikelrad på sida 1. Den extra fakturatexten \"in Drums 195 kg on pallet\" är tillägg som inte ändrar produktidentiteten. Ingen artikelnummerregel behövde tillämpas eftersom certifikatet inte anger något artikelnummer."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.98,
-      "certificate_value": "OriginRows[].Quantity: 5.460,000 KG net | OriginPackages[].Package: 28 pcs of Drums 195 kg",
-      "invoice_value": "Net Weight 5.460,000 KG\nNo of Packages 28 PIECES",
+      "certificate_value": "OriginRows.Quantity: 5.460,000 KG net; OriginPackages.Package: 28 pcs of Drums 195 kg",
+      "invoice_value": "Quantity 5.460,000 KG; Net Weight 5.460,000 KG; No of Packages 28 PIECES",
       "rules_applied": [
         {
           "rule_id": "4.4.2.1",
-          "outcome": "formkrav uppfyllt; viktkategori net framgår i kvantitetsuppgiften"
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.4.3",
@@ -126,15 +138,19 @@
         },
         {
           "rule_id": "4.4.3.2",
-          "outcome": "minst en kvantitetsuppgift verifierad; ingen motsägelse"
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.4.7",
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger '5.460,000 KG net' och fakturan anger uttryckligen 'Net Weight 5.460,000 KG'. Den numeriska uppgiften och vikttypen överensstämmer exakt. Förpackningsuppgiften '28 pcs of Drums 195 kg' stöds dessutom av fakturans 'No of Packages 28 PIECES' och motsäger inte huvudkvantiteten."
+      "motivation": "Certifikatets kvantitet \"5.460,000 KG net\" innehåller både numeriskt värde, enhet och viktkategori och återfinns uttryckligen i fakturan som \"Net Weight 5.460,000 KG\" på sida 1. Certifikatet innehåller även förpackningsuppgift \"28 pcs of Drums 195 kg\", vilket stöds av fakturans \"No of Packages 28 PIECES\". Minst en kvantitetsuppgift är därmed verifierad utan motsägelse, och här matchar dessutom båda."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.95,
+      "confidence": 0.94,
       "certificate_value": "EU Sweden",
       "invoice_value": "Country of Origin Sweden",
       "rules_applied": [
@@ -143,31 +159,27 @@
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.5.4.2",
-          "outcome": "MATCH"
-        },
-        {
           "rule_id": "4.5.6",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Fakturan anger uttryckligen 'Country of Origin Sweden'. Detta verifierar dels det specifika landet 'Sweden' i certifikatet, dels EU-komponenten eftersom Sverige är en EU-medlemsstat."
+      "motivation": "Certifikatet anger ursprung \"EU Sweden\". Fakturan anger uttryckligen \"Country of Origin Sweden\" på sida 1. Det specifika EU-landet Sverige är direkt verifierat, och EU-komponenten är uppfylld genom att Sverige är ett EU-medlemsland."
     }
   },
   "overall_assessment": {
     "comparison_result": "IDENTICAL",
     "workflow_recommendation": "AUTO_APPROVAL_ELIGIBLE",
     "auto_approval_eligible": true,
-    "confidence": 0.97,
+    "confidence": 0.96,
     "critical_failures": [],
     "manual_review_triggers": [],
     "manual_review_reason": "NOT_APPLICABLE",
-    "decision_summary": "Samtliga tillämpliga kontrollpunkter verifieras mot fakturan. Ingen LC-regel aktiveras, ingen motsägelse har identifierats och varje kontrollpunkt har MATCH med confidence över 0.85.",
-    "human_explanation": "Alla relevanta uppgifter i certifikatet återfinns i fakturan. Avsändare, mottagare, varubeskrivning, kvantitet och ursprungsland stämmer överens. Dokumentparet kan därför godkännas automatiskt."
+    "decision_summary": "Dokumentparet kunde paras giltigt via consignor och consignee. Samtliga tillämpliga kontrollpunkter—avsändare, mottagare, varubeskrivning, kvantitet och ursprungsland—är verifierade mot fakturan enligt regelverket. Ingen LC-hänvisning förekommer, och inga motsägelser eller läsbarhetsproblem identifierades.",
+    "human_explanation": "Alla tillämpliga uppgifter i certifikatet kan verifieras mot fakturan. Avsändare, mottagare, vara, mängd och ursprungsland stämmer överens. Dokumentparet kan därför godkännas automatiskt."
   },
   "_meta": {
-    "tested_at": "2026-06-06T09:16:06.640019+00:00",
-    "prompt_hash": "4690e976915d",
+    "tested_at": "2026-06-06T14:01:49.309597+00:00",
+    "prompt_hash": "752423deb8d7",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P022_MATCH",

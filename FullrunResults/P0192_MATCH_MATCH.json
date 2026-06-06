@@ -2,9 +2,9 @@
   "schema_version": "3.0",
   "metadata": {
     "verification_timestamp": "2026-06-06T00:00:00Z",
-    "document_pair_id": "SEG-25D-389953__invoice_209542",
+    "document_pair_id": "SEG-25D-389953__invoice_pdf_1",
     "certificate_issue_date": null,
-    "source_documents_received": 1
+    "source_documents_received": 2
   },
   "task": {
     "task_type": "customs_document_pair_verification",
@@ -15,12 +15,12 @@
     "document_a": {
       "label": "Certificate of Origin structured JSON",
       "assumed_role": "certificate",
-      "document_type": "certificate_of_origin"
+      "document_type": "certificate_of_origin_structured_json"
     },
     "document_b": {
-      "label": "Export Invoice PDF",
+      "label": "Attached PDF",
       "assumed_role": "invoice",
-      "document_type": "export_invoice"
+      "document_type": "export_invoice_pdf"
     }
   },
   "rule_activation": {
@@ -33,16 +33,24 @@
     "eu_origin_normalization_active": true,
     "activated_rules": [
       {
-        "rule_id": "4.3.2",
-        "rule_name": "Artikelnummer prioriteras i varubeskrivningsverifiering"
+        "rule_id": "4.1.0",
+        "rule_name": "Consignor explicitly found in invoice text"
       },
       {
-        "rule_id": "4.4.4.2",
-        "rule_name": "Normalisering av blandade decimalseparatorer"
+        "rule_id": "4.2.0.2",
+        "rule_name": "Consignee may be verified in any relevant recipient field"
+      },
+      {
+        "rule_id": "4.3.2",
+        "rule_name": "Goods verification by article number with priority"
+      },
+      {
+        "rule_id": "4.4.3.2",
+        "rule_name": "At least one quantity statement may be verified"
       },
       {
         "rule_id": "4.5.4.2",
-        "rule_name": "EU-medlemsland och EU-samlingsbegrepp är utbytbara"
+        "rule_name": "EU/member-state bidirectional origin normalization"
       }
     ]
   },
@@ -50,31 +58,31 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.98,
-      "certificate_value": "Skylotec Nordic AB",
-      "invoice_value": "SKYLOTEC Nordic AB\nKontorsvägen 6\n246 43 Löddeköpinge\nSweden\nVAT Registration No. SE556996439701",
+      "confidence": 0.99,
+      "certificate_value": "Skylotec Nordic AB | Sweden",
+      "invoice_value": "SKYLOTEC Nordic AB ... Sweden ... Corporate Identity No. 556996-4397 ... VAT Registration No. SE556996439701",
       "rules_applied": [
         {
           "rule_id": "4.1.0",
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.1.2",
+          "rule_id": "4.1.2.1",
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.1.4",
+          "rule_id": "4.1.5",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor 'Skylotec Nordic AB' återfinns uttryckligen i fakturan som 'SKYLOTEC Nordic AB'. Landet Sverige framgår explicit i säljarblocket och stöds även av VAT-prefixet SE. Skillnad i gatuadress påverkar inte bedömningen."
+      "motivation": "Certifikatets consignor 'Skylotec Nordic AB' återfinns uttryckligen i fakturan som 'SKYLOTEC Nordic AB'. Landet Sverige verifieras explicit i adressblocket och stöds även av organisations-/VAT-uppgifter med svensk landsidentifiering. Avvikande gatuadress påverkar inte bedömningen enligt kontrollpunktens regler."
     },
     "consignee": {
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.99,
-      "certificate_value": "PARAMAHANSA DEFENCE LLP",
-      "invoice_value": "Ship-to Address**\nParamahansa Defence LLP\nF-68,First Floor, Sector-11 (UP)\nNOIDA, 201301\nIndia",
+      "certificate_value": "PARAMAHANSA DEFENCE LLP | India",
+      "invoice_value": "Ship-to Address** Paramahansa Defence LLP, F-68,First Floor, Sector-11 (UP), NOIDA, 201301, India",
       "rules_applied": [
         {
           "rule_id": "4.2.0.2",
@@ -83,83 +91,91 @@
         {
           "rule_id": "4.2.3",
           "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.2.4",
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets mottagare 'PARAMAHANSA DEFENCE LLP' kan identifieras exakt i fakturans Ship-to Address. Landet India framgår explicit i samma mottagarfält. Därmed är mottagaren verifierad."
+      "motivation": "Certifikatets mottagare 'PARAMAHANSA DEFENCE LLP' kan identifieras i fakturans Ship-to Address. Landet Indien framgår uttryckligen. Att fakturan även har ett Bill-to-block påverkar inte bedömningen eftersom mottagaren får verifieras i vilket relevant mottagarfält som helst."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.99,
       "certificate_value": "POA-030-1, 1 PCS (SE) | ICX POWER ASCENDER,COMPLETE, EU VER",
-      "invoice_value": "Item No POA-030-1\nDescription ICX POWER ASCENDER,COMPLETE, EU VER\nQty 1 Pieces\nCN No.: 84253100 Country of origin: SE",
+      "invoice_value": "Item No POA-030-1 | Description ICX POWER ASCENDER,COMPLETE, EU VER",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.3.8",
+          "rule_id": "4.3.6",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger artikelnumret 'POA-030-1', vilket exakt återfinns i fakturans item number. Den separata certifikattexten 'ICX POWER ASCENDER,COMPLETE, EU VER' återfinns också exakt i fakturans varubeskrivning. Varubeskrivningen är därför verifierad via prioritet 1 med ytterligare textstöd."
+      "motivation": "Certifikatet innehåller artikelnumret 'POA-030-1', som återfinns exakt i fakturans Item No-fält. Den kompletterande varubeskrivningen 'ICX POWER ASCENDER,COMPLETE, EU VER' återfinns också exakt i fakturan. Varubeskrivningen kan därför verifieras utan semantisk tolkning."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.93,
-      "certificate_value": "12,5 KG NW",
-      "invoice_value": "DIMS AND WEIGHT\n1 pallet 60x40x39, total weight 14 kg GW / NW 12,5 kg",
+      "confidence": 0.97,
+      "certificate_value": "12,5 KG NW | 1 PALLET, TOTAL WEIGHT 14 KG GW",
+      "invoice_value": "Net Weight 12.5 | Gross Weight 14 | Qty 1 Pieces | DIMS AND WEIGHT: 1 pallet 60x40x39, total weight 14 kg GW / NW 12,5 kg",
       "rules_applied": [
         {
           "rule_id": "4.4.2.1",
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.4.3",
+          "rule_id": "4.4.3.2",
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.4.4.2",
+          "rule_id": "4.4.3.5",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.4.3.6",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets kvantitetsfält anger '12,5 KG NW', vilket innehåller både numeriskt värde, enhet och viktkategori. Fakturan anger uttryckligen 'NW 12,5 kg' i DIMS AND WEIGHT-sektionen. Uppgiften är därför direkt verifierad; decimalformatet är förenligt efter tillåten normalisering."
+      "motivation": "Certifikatets kvantitet '12,5 KG NW' kan verifieras mot fakturans 'Net Weight 12.5'. Certifikatets paket-/försändelseuppgift '1 PALLET, TOTAL WEIGHT 14 KG GW' återfinns även i fakturans '1 pallet ... total weight 14 kg GW'. Ingen fakturauppgift motsäger certifikatets kvantiteter."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.91,
+      "confidence": 0.94,
       "certificate_value": "EUROPEAN COMMUNITY",
       "invoice_value": "Country of origin: SE",
       "rules_applied": [
         {
-          "rule_id": "4.5.4",
+          "rule_id": "4.5.4.2",
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.5.4.2",
+          "rule_id": "4.5.6",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger ursprungslandet 'EUROPEAN COMMUNITY'. Fakturan anger uttryckligen 'Country of origin: SE', där SE är ISO-kod för Sweden. Eftersom Sweden är ett EU-medlemsland är certifikatets EU-ursprung verifierat mot fakturans specifika medlemsland."
+      "motivation": "Certifikatet anger 'EUROPEAN COMMUNITY'. Fakturan anger 'Country of origin: SE', där 'SE' är ISO-landskod för Sverige. Sverige är en EU-medlemsstat, så ursprunget är verifierat enligt den uttryckliga EU-medlemsstatsnormaliseringen."
     }
   },
   "overall_assessment": {
     "comparison_result": "IDENTICAL",
     "workflow_recommendation": "AUTO_APPROVAL_ELIGIBLE",
     "auto_approval_eligible": true,
-    "confidence": 0.96,
+    "confidence": 0.98,
     "critical_failures": [],
     "manual_review_triggers": [],
     "manual_review_reason": "NOT_APPLICABLE",
-    "decision_summary": "Samtliga tillämpliga kontrollpunkter kan verifieras mot fakturan: consignor, consignee, varubeskrivning, kvantitet och ursprungsland.",
-    "human_explanation": "Alla uppgifter i certifikatet kan verifieras mot fakturan. Avsändare, mottagare, varan POA-030-1 / ICX POWER ASCENDER, nettovikten 12,5 kg och ursprunget SE/European Community stämmer överens. Dokumentparet kan godkännas automatiskt."
+    "decision_summary": "Alla tillämpliga kontrollpunkter verifieras som MATCH: consignor, consignee, varubeskrivning, kvantitet och ursprungsland.",
+    "human_explanation": "Alla tillämpliga kontrollpunkter stämmer mellan certifikatet och fakturan. Avsändare, mottagare, varubeskrivning, kvantitet och ursprungsland kan verifieras i fakturan. Dokumentparet kan därför godkännas automatiskt."
   },
   "_meta": {
-    "tested_at": "2026-06-06T09:16:06.637495+00:00",
-    "prompt_hash": "4690e976915d",
+    "tested_at": "2026-06-06T14:01:49.306933+00:00",
+    "prompt_hash": "752423deb8d7",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P0192_MATCH",

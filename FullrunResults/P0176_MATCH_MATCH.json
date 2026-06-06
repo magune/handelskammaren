@@ -13,14 +13,14 @@
   },
   "documents": {
     "document_a": {
-      "label": "CERTIFICATE OF ORIGIN (structured JSON)",
+      "label": "Certificate of Origin JSON",
       "assumed_role": "certificate",
-      "document_type": "structured_certificate_of_origin_json"
+      "document_type": "structured_json"
     },
     "document_b": {
       "label": "Invoice PDF",
       "assumed_role": "invoice",
-      "document_type": "commercial_invoice_pdf"
+      "document_type": "invoice"
     }
   },
   "rule_activation": {
@@ -33,12 +33,24 @@
     "eu_origin_normalization_active": false,
     "activated_rules": [
       {
-        "rule_id": "8.6",
-        "rule_name": "Parningsvalidering passerad via consignor och consignee"
+        "rule_id": "4.1.0",
+        "rule_name": "Consignor found explicitly in invoice"
       },
       {
         "rule_id": "4.2.0.2",
-        "rule_name": "Consignee identifierad i mottagarfält Buyer"
+        "rule_name": "Consignee may be identified in any relevant recipient field"
+      },
+      {
+        "rule_id": "4.3.8.1",
+        "rule_name": "Packaging/count text in goods field is not a separate goods item"
+      },
+      {
+        "rule_id": "4.4.3.2",
+        "rule_name": "At least one quantity may be verified when multiple quantity indications exist"
+      },
+      {
+        "rule_id": "4.4.3.5",
+        "rule_name": "Shipment quantity in goods text may be considered"
       }
     ]
   },
@@ -47,7 +59,7 @@
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.99,
-      "certificate_value": "J. UNGERTH AB | LILLA BOMMEN 2 | SE-411 04 | GÖTEBORG | SWEDEN | SE556146063401",
+      "certificate_value": "J. UNGERTH AB",
       "invoice_value": "J.UNGERTH AB\nLilla Bommen 2\nSE-411 04 Gothenburg, SWEDEN\nVAT: SE556146063401",
       "rules_applied": [
         {
@@ -59,21 +71,17 @@
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.1.2.1",
-          "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.1.5",
+          "rule_id": "4.1.4",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor 'J. UNGERTH AB' återfinns uttryckligen i fakturans sidhuvud och adressblock på sida 1 som 'J.UNGERTH AB'. Landet 'SWEDEN' framgår explicit i adressblocket och stärks även av VAT-prefixet 'SE' i 'SE556146063401'. Uppgiften kan verifieras som samma juridiska part efter tillåten normalisering av versaler/gemener och interpunktion."
+      "motivation": "Certifikatets consignor \"J. UNGERTH AB\" återfinns uttryckligen i fakturans sidhuvud som \"J.UNGERTH AB\". Adress och land stöder samma juridiska part: \"Lilla Bommen 2, SE-411 04 Gothenburg, SWEDEN\" samt VAT-prefix SE. Skillnaden i punkt/mellanslag är tillåten normalisering."
     },
     "consignee": {
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.99,
-      "certificate_value": "MINA PACK | Behind El Tawheed & El Nour Plot 11 | Block 12010 1st Industrial Zone | Northern Extension OBOUR CITY, | EGYPT VAT 274401436 | EGYPT",
+      "certificate_value": "MINA PACK",
       "invoice_value": "Buyer:\nMINA PACK\nBehind El Tawheed & El Nour Plot 11\nBlock 12010 1st Industrial Zone\nNorthern Extension OBOUR CITY,\nEGYPT VAT 274401436",
       "rules_applied": [
         {
@@ -83,24 +91,20 @@
         {
           "rule_id": "4.2.3",
           "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.2.4",
-          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignee 'MINA PACK' återfinns exakt i fakturans mottagarfält 'Buyer' på sida 1 tillsammans med samma adressuppgifter och landet 'EGYPT'. Ingen motstridande mottagare påverkar bedömningen eftersom certifikatets mottagare redan kan identifieras i ett giltigt mottagarfält."
+      "motivation": "Certifikatets mottagare \"MINA PACK\" återfinns uttryckligen i fakturans Buyer-fält tillsammans med adress i Egypten. Landet \"EGYPT\" framgår explicit i fakturan. Ingen motstridig mottagare förekommer."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.98,
-      "certificate_value": "KRAFTLINER | 59 reels",
-      "invoice_value": "Description of Goods:\nKRAFTLINER\n...\nQuality/Grade: KRAFTLINER\n...\nShipment in 3 container, 59 reels",
+      "confidence": 0.93,
+      "certificate_value": "KRAFTLINER ; 59 reels",
+      "invoice_value": "Description of Goods:\nKRAFTLINER\nShipment in 3 container, 59 reels",
       "rules_applied": [
         {
-          "rule_id": "4.3.2",
-          "outcome": "Prioritet 2 använd"
+          "rule_id": "4.3.1",
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.3.3",
@@ -108,22 +112,18 @@
         },
         {
           "rule_id": "4.3.8.1",
-          "outcome": "Tillämpad"
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Den identitetsbärande huvudbeteckningen i certifikatet är 'KRAFTLINER' och denna återfinns explicit i fakturans varubeskrivning på sida 1. Den separata certifikatraden '59 reels' behandlas inte som en egen vara utan som kvantitets-/förpackningsinformation, vilket också stöds av att fakturan anger '59 reels'. Varubeskrivningen kan därför verifieras utan semantisk tolkning."
+      "motivation": "Den identitetsbärande huvudbeteckningen i certifikatet är \"KRAFTLINER\" och den återfinns exakt i fakturans varubeskrivning. Den separata raden \"59 reels\" är förpacknings-/mängdtext och inte en separat vara, och motsvarande uppgift finns också i fakturan som \"Shipment in 3 container, 59 reels\"."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.98,
-      "certificate_value": "77,102mt net | 59 reels",
-      "invoice_value": "Quantity (MT): 77,102 | Reels: 59 | Shipment in 3 container, 59 reels",
+      "confidence": 0.88,
+      "certificate_value": "77,102mt net ; 59 reels",
+      "invoice_value": "Quality/Grade: KRAFTLINER  Quantity (MT): 77,102  Reels: 59",
       "rules_applied": [
-        {
-          "rule_id": "4.4.2",
-          "outcome": "MATCH"
-        },
         {
           "rule_id": "4.4.2.1",
           "outcome": "MATCH"
@@ -135,9 +135,13 @@
         {
           "rule_id": "4.4.3.2",
           "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.4.3.5",
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets kvantitetsfält anger '77,102mt net', vilket innehåller både numeriskt värde, enhet och viktkategori. Fakturan anger för samma vara på sida 1 'Quantity (MT): 77,102', och certifikatets ytterligare kvantitetsuppgift '59 reels' återfinns också i fakturan som 'Reels: 59' samt 'Shipment in 3 container, 59 reels'. Ingen uttrycklig motsägelse förekommer."
+      "motivation": "Certifikatets kvantitetsfält anger \"77,102mt net\", där både numeriskt värde, enhet och viktkategori framgår. Fakturan visar för samma vara \"Quantity (MT): 77,102\" och dessutom \"Reels: 59\" samt texten \"Shipment in 3 container, 59 reels\". Det numeriska värdet 77,102 kan därför verifieras för samma vara, och den separata försändelsekvantiteten 59 reels stöds också av fakturan."
     },
     "origin": {
       "applicable": true,
@@ -155,23 +159,23 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets ursprungsland 'PORTUGAL' framgår uttryckligen i ett dedikerat origin-fält i fakturan på sida 1 som 'Country of Origin: PORTUGAL'. Positiv verifiering är därmed uppfylld."
+      "motivation": "Certifikatets ursprungsland \"PORTUGAL\" återfinns uttryckligen i ett dedikerat origin-fält i fakturan: \"Country of Origin: PORTUGAL\"."
     }
   },
   "overall_assessment": {
     "comparison_result": "IDENTICAL",
     "workflow_recommendation": "AUTO_APPROVAL_ELIGIBLE",
     "auto_approval_eligible": true,
-    "confidence": 0.99,
+    "confidence": 0.94,
     "critical_failures": [],
     "manual_review_triggers": [],
     "manual_review_reason": "NOT_APPLICABLE",
-    "decision_summary": "Samtliga tillämpliga kontrollpunkter kan verifieras entydigt mot fakturan. Dokumentparet passerar parningsvalideringen via både consignor och consignee, och inga motsägelser identifierades.",
-    "human_explanation": "Alla relevanta uppgifter i certifikatet stämmer mot fakturan. Avsändare, mottagare, varubeskrivning, kvantitet och ursprungsland kan verifieras tydligt. Dokumenten kan därför godkännas automatiskt."
+    "decision_summary": "Alla fem tillämpliga kontrollpunkter verifieras som MATCH mot fakturan. Ingen LC-regel aktiveras och inga motstridiga uppgifter har identifierats.",
+    "human_explanation": "Alla kontrollpunkter stämmer mellan certifikatet och fakturan. Avsändare, mottagare, varan KRAFTLINER, kvantiteten 77,102 MT/59 reels och ursprungslandet PORTUGAL återfinns i fakturan. Dokumentparet kan godkännas automatiskt."
   },
   "_meta": {
-    "tested_at": "2026-06-06T09:16:06.629685+00:00",
-    "prompt_hash": "4690e976915d",
+    "tested_at": "2026-06-06T14:01:49.298268+00:00",
+    "prompt_hash": "752423deb8d7",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P0176_MATCH",

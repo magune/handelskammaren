@@ -13,14 +13,14 @@
   },
   "documents": {
     "document_a": {
-      "label": "Certificate of Origin structured JSON",
+      "label": "CERTIFICATE OF ORIGIN (structured JSON)",
       "assumed_role": "certificate",
-      "document_type": "structured_json_certificate_of_origin"
+      "document_type": "certificate_of_origin_structured_json"
     },
     "document_b": {
-      "label": "Invoice PDF",
+      "label": "Attached PDF",
       "assumed_role": "invoice",
-      "document_type": "invoice_pdf"
+      "document_type": "invoice_copy_pdf"
     }
   },
   "rule_activation": {
@@ -33,28 +33,16 @@
     "eu_origin_normalization_active": false,
     "activated_rules": [
       {
-        "rule_id": "8.6",
-        "rule_name": "Obligatorisk parningsvalidering"
-      },
-      {
         "rule_id": "4.1.0",
-        "rule_name": "Consignor identifierad i fakturan genom uttrycklig förekomst"
+        "rule_name": "Consignor explicitly found anywhere in invoice"
       },
       {
         "rule_id": "4.2.0.2",
-        "rule_name": "Consignee får verifieras i buyer/annan mottagarroll"
-      },
-      {
-        "rule_id": "4.3.3",
-        "rule_name": "Kontrollerad textmatchning för varubeskrivning"
+        "rule_name": "Consignee may be verified in any recipient field"
       },
       {
         "rule_id": "4.4.3.6",
-        "rule_name": "Total vikt/kvantitet i faktura"
-      },
-      {
-        "rule_id": "4.5.1",
-        "rule_name": "Explicit origin-fält i fakturan"
+        "rule_name": "Shipment weight/total quantity may be verified against invoice total"
       }
     ]
   },
@@ -63,101 +51,81 @@
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.89,
-      "certificate_value": "NILS TROEDSSON PAPER CO | Första Långgatan 17 | 41380 | Göteborg | Sweden",
-      "invoice_value": "Nils Troedsson Paper Co.\nElof Hansson Trade AB\nFörsta Långgatan 17\nSE-413 80 Göteborg,Sweden\nRegistered Office in Göteborg\nVAT No. FI14739471\n... footer: NILS TROEDSSON PAPER CO.",
+      "certificate_value": "NILS TROEDSSON PAPER CO | Sweden",
+      "invoice_value": "Nils Troedsson Paper Co.\nElof Hansson Trade AB\nFörsta Långgatan 17\nSE-413 80 Göteborg,Sweden\n...\nNILS TROEDSSON PAPER CO.",
       "rules_applied": [
         {
-          "rule_id": "8.6",
-          "outcome": "PASS"
-        },
-        {
           "rule_id": "4.1.0",
-          "outcome": "PASS"
-        },
-        {
-          "rule_id": "4.1.2",
-          "outcome": "PASS"
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.1.4",
-          "outcome": "PASS"
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor-namn återfinns uttryckligen i fakturans sidhuvud och footer som \"Nils Troedsson Paper Co.\". Landet Sweden kan verifieras via den uttryckliga adressen \"SE-413 80 Göteborg,Sweden\" i samma identifieringsblock. Därmed är samma juridiska part identifierbar i fakturan efter normalisering av versaler/gemener."
+      "motivation": "Certifikatets consignor-namn återfinns uttryckligen i fakturan både i sidhuvudet och i sidfoten som \"Nils Troedsson Paper Co.\"/\"NILS TROEDSSON PAPER CO.\". Fakturan visar även adress i Göteborg, Sweden, vilket verifierar certifikatets land Sweden. Matchning gjordes via explicit förekomst i fakturan enligt koncernstrukturregeln utan att behöva anta relationer mellan olika bolagsnamn."
     },
     "consignee": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.98,
-      "certificate_value": "Pressmaster Africa Ltd | Catherine Ndereba Road, Off-Airport North Road | P.O BOX 17560 | 00500 Nairobi | Kenya",
-      "invoice_value": "BUYER\nPressmaster Africa Ltd\nCatherine Ndereba Road, Off-Airport North Road\nP.O BOX 17560\n00500 NAIROBI\nKenya\nP051637464T",
+      "confidence": 0.99,
+      "certificate_value": "Pressmaster Africa Ltd | Kenya",
+      "invoice_value": "BUYER\nPressmaster Africa Ltd\nCatherine Ndereba Road, Off-Airport North Road\nP.O BOX 17560\n00500 NAIROBI\nKenya",
       "rules_applied": [
         {
-          "rule_id": "8.6",
-          "outcome": "PASS"
-        },
-        {
           "rule_id": "4.2.0.2",
-          "outcome": "PASS"
-        },
-        {
-          "rule_id": "4.2.2",
-          "outcome": "PASS"
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.2.3",
-          "outcome": "PASS"
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets mottagare återfinns exakt i fakturans BUYER-block som \"Pressmaster Africa Ltd\" med samma adressuppgifter och landet Kenya. Buyer är en tillåten mottagarroll för verifiering. Ingen motstridig mottagare framgår."
+      "motivation": "Certifikatets mottagare \"Pressmaster Africa Ltd\" återfinns exakt i fakturans BUYER-block tillsammans med landet Kenya. Företagsnamn och land överensstämmer utan behov av tolkning."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.99,
+      "confidence": 0.98,
       "certificate_value": "PE-Coated Board | As per agreed selections | Total quantity: 102 reels - 77,222 mt | Core/Dia: Mill Standard | Country of Supply: Finland | IDF NO: 25EMKIM001438148 | HS CODE: 48115900",
-      "invoice_value": "Description\nPE-Coated Board\nAs per agreed selections\nTotal quantity: 102 reels - 77,222 mt\nCore/Dia: Mill Standard\nCountry of Supply: Finland\nIDF NO: 25EMKIM001438148\nHS CODE: 48115900",
+      "invoice_value": "PE-Coated Board\nAs per agreed selections\nTotal quantity: 102 reels - 77,222 mt\nCore/Dia: Mill Standard\nCountry of Supply: Finland\nIDF NO: 25EMKIM001438148\nHS CODE: 48115900",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "NO_ARTICLE_NUMBER_PRIORITY_TRIGGERED"
+          "outcome": "NO_ARTICLE_NUMBER_USED"
         },
         {
           "rule_id": "4.3.3",
-          "outcome": "PASS"
-        },
-        {
-          "rule_id": "4.3.4",
-          "outcome": "PASS"
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.3.8.1",
-          "outcome": "PASS"
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Den identitetsbärande huvudbeteckningen \"PE-Coated Board\" återfinns exakt i fakturan. Även de kompletterande raderna \"As per agreed selections\", \"Total quantity: 102 reels - 77,222 mt\", \"Core/Dia: Mill Standard\", \"Country of Supply: Finland\", \"IDF NO: 25EMKIM001438148\" och \"HS CODE: 48115900\" återfinns uttryckligen i fakturan. Varubeskrivningen kan därför verifieras utan tolkning."
+      "motivation": "Den identitetsbärande huvudbeteckningen \"PE-Coated Board\" återfinns exakt i fakturan. De kompletterande raderna \"As per agreed selections\", \"Core/Dia: Mill Standard\", \"Country of Supply: Finland\", \"IDF NO: 25EMKIM001438148\" och \"HS CODE: 48115900\" återfinns också i fakturan. Raden \"Total quantity: 102 reels - 77,222 mt\" är stödjande metadata/kvantitetsinformation och motsägs inte."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.9,
+      "confidence": 0.88,
       "certificate_value": "77,222 MT G/W",
-      "invoice_value": "Quantity 77,222 MT; Total quantity: 102 reels - 77,222 mt; Total qty 77,222 MT",
+      "invoice_value": "PE-Coated Board 77,222 MT\nTotal quantity: 102 reels - 77,222 mt\nTotal qty 77,222 MT",
       "rules_applied": [
         {
           "rule_id": "4.4.2.1",
-          "outcome": "PASS"
+          "outcome": "FORM_VALID"
         },
         {
           "rule_id": "4.4.3",
-          "outcome": "PASS"
+          "outcome": "NUMERIC_VALUE_IDENTIFIED"
         },
         {
           "rule_id": "4.4.3.6",
-          "outcome": "PASS"
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger den verifieringsgrundande kvantiteten som \"77,222 MT G/W\", vilket uppfyller formkravet med värde, enhet och viktkategori. Fakturan visar samma numeriska värde och enhet som radkvantitet och total kvantitet: \"77,222 MT\". Fakturan innehåller ingen motstridig viktuppgift, så kvantiteten kan verifieras."
+      "motivation": "Certifikatet anger en uttrycklig viktkvantitet med värde, enhet och viktkategori: \"77,222 MT G/W\". Fakturan visar samma numeriska värde och enhet för varuraden och totalen: \"77,222 MT\" samt \"Total qty 77,222 MT\". Ingen uppgift i fakturan motsäger certifikatets kvantitet; skillnaden att fakturan inte upprepar \"G/W\" medför inte i sig avvikelse när samma viktvärde och enhet återfinns för försändningen."
     },
     "origin": {
       "applicable": true,
@@ -168,34 +136,30 @@
       "rules_applied": [
         {
           "rule_id": "4.5.1",
-          "outcome": "PASS"
+          "outcome": "EXPLICIT_ORIGIN_FOUND"
         },
         {
-          "rule_id": "4.5.2",
-          "outcome": "PASS"
-        },
-        {
-          "rule_id": "4.5.4",
-          "outcome": "PASS"
+          "rule_id": "4.5.6",
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets ursprungsland är \"Finland\". Fakturan anger uttryckligen \"COUNTRY OF ORIGIN Finland\" i ett dedikerat origin-fält. Ursprungslandet kan därför verifieras direkt utan tolkning."
+      "motivation": "Certifikatets ursprungsland \"Finland\" återfinns uttryckligen i fakturan i ett dedikerat origin-fält: \"COUNTRY OF ORIGIN Finland\". Matchningen är exakt och kräver ingen tolkning."
     }
   },
   "overall_assessment": {
     "comparison_result": "IDENTICAL",
     "workflow_recommendation": "AUTO_APPROVAL_ELIGIBLE",
     "auto_approval_eligible": true,
-    "confidence": 0.95,
+    "confidence": 0.94,
     "critical_failures": [],
     "manual_review_triggers": [],
     "manual_review_reason": "NOT_APPLICABLE",
-    "decision_summary": "Samtliga fem tillämpliga kontrollpunkter kan verifieras mot fakturan: consignor, consignee, varubeskrivning, kvantitet och ursprungsland.",
-    "human_explanation": "Certifikatet och fakturan stämmer överens för avsändare, mottagare, varubeskrivning, kvantitet och ursprungsland. Ursprungslandet Finland framgår uttryckligen i fakturan och övriga uppgifter återfinns utan motstridighet. Dokumentparet kan därför godkännas automatiskt."
+    "decision_summary": "Alla tillämpliga kontrollpunkter har verifierats som MATCH mot den bifogade fakturan.",
+    "human_explanation": "Alla uppgifter i certifikatet som ska kontrolleras kan återfinnas i fakturan. Avsändare, mottagare, varubeskrivning, kvantitet och ursprungsland stämmer överens. Dokumentparet kan därför godkännas automatiskt."
   },
   "_meta": {
-    "tested_at": "2026-06-06T09:00:14.353882+00:00",
-    "prompt_hash": "4690e976915d",
+    "tested_at": "2026-06-06T14:05:41.316583+00:00",
+    "prompt_hash": "752423deb8d7",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P007_MATCH",

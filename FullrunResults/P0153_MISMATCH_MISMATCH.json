@@ -4,7 +4,7 @@
     "verification_timestamp": "2026-06-06T00:00:00Z",
     "document_pair_id": "SEG-23D-868933__INV-1903",
     "certificate_issue_date": null,
-    "source_documents_received": 2
+    "source_documents_received": 1
   },
   "task": {
     "task_type": "customs_document_pair_verification",
@@ -13,7 +13,7 @@
   },
   "documents": {
     "document_a": {
-      "label": "Certificate of Origin (structured JSON)",
+      "label": "Certificate of Origin JSON",
       "assumed_role": "certificate",
       "document_type": "structured_json"
     },
@@ -33,32 +33,28 @@
     "eu_origin_normalization_active": false,
     "activated_rules": [
       {
+        "rule_id": "2.2",
+        "rule_name": "LC-undantag inte aktiverat"
+      },
+      {
         "rule_id": "8.6",
-        "rule_name": "Obligatorisk parningsvalidering"
+        "rule_name": "Parningsvalidering passerad via consignor/consignee-identifiering"
       },
       {
         "rule_id": "4.1.3.3",
-        "rule_name": "Kommersiell förkortning av consignor"
+        "rule_name": "Kommersiell förkortning av consignor-namn"
       },
       {
-        "rule_id": "4.2.0.2",
-        "rule_name": "Consignee kan verifieras i valfritt mottagarfält"
-      },
-      {
-        "rule_id": "4.2.3",
-        "rule_name": "Landkontroll för consignee"
-      },
-      {
-        "rule_id": "4.3.3",
-        "rule_name": "Kontrollerad textmatchning för varubeskrivning"
+        "rule_id": "4.3.8.1",
+        "rule_name": "Metadata i varubeskrivningsfältet"
       },
       {
         "rule_id": "4.4.2.1",
-        "rule_name": "Viktangivelse kräver GW/NW i certifikatet"
+        "rule_name": "Viktkategori krävs i certifikatets kvantitetsfält"
       },
       {
         "rule_id": "4.5.4",
-        "rule_name": "Landnormalisering inklusive ISO-kod"
+        "rule_name": "Landnormalisering med ISO-kod"
       }
     ]
   },
@@ -66,128 +62,147 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.93,
+      "confidence": 0.9,
       "certificate_value": "Berg Prop Prod. AB; Tärnvägen 15; SE-475 40 HÖNÖ; Sweden; VAT 5565683058",
-      "invoice_value": "Berg Propulsion Production AB, Tärnvägen 15, 475 40 HÖNÖ, SWEDEN; Corp. ID: SE5565683058; VAT reg. no.: SE556568305801",
+      "invoice_value": "Berg Propulsion Production AB; Tärnvägen 15; 475 40 HÖNÖ; SWEDEN; VAT reg. no.: SE556568305801",
       "rules_applied": [
         {
-          "rule_id": "4.1.3.3",
-          "outcome": "MATCH"
+          "rule_id": "4.1.0",
+          "outcome": "NOT_APPLICABLE"
+        },
+        {
+          "rule_id": "4.1.1.1",
+          "outcome": "APPLIED"
         },
         {
           "rule_id": "4.1.2.1",
-          "outcome": "MATCH"
+          "outcome": "APPLIED"
         },
         {
-          "rule_id": "4.1.5",
-          "outcome": "MATCH"
+          "rule_id": "4.1.3.3",
+          "outcome": "APPLIED"
+        },
+        {
+          "rule_id": "4.1.4",
+          "outcome": "APPLIED"
         }
       ],
-      "motivation": "Certifikatets consignor är en kommersiellt förkortad form av fakturans fullständiga bolagsnamn: 'Berg Prop Prod. AB' mot 'Berg Propulsion Production AB'. Adress och land överensstämmer uttryckligen via 'Tärnvägen 15', 'HÖNÖ', 'SWEDEN', och organisationsnumret 5565683058 återfinns i fakturan som 'SE5565683058'. Samma juridiska part kan därför verifieras."
+      "motivation": "Certifikatets consignor 'Berg Prop Prod. AB' kan verifieras mot fakturans 'Berg Propulsion Production AB' som en tydlig kommersiell förkortning av samma namn. Landet verifieras explicit genom adressen 'SWEDEN' samt landsprefixet 'SE' i VAT-/IBAN-uppgifterna. Ingen motstridig säljaridentitet framgår i fakturan."
     },
     "consignee": {
       "applicable": true,
       "status": "MISMATCH",
       "confidence": 0.99,
-      "certificate_value": "Master M/V Skoul Ruz; Llyr Marine Gabon; Rue du Colonel Parant Littoral; BP 584 Port Gentil; Gabon",
+      "certificate_value": "Master M/V Skoul Ruz; DeliveryCountry: Gabon",
       "invoice_value": "Delivery address: Master M/V Skoul Ruz, C/o Navitrans CDG, ZA du Moulin Rue de la Croix, 95734 Roissy en France, FRANCE",
       "rules_applied": [
         {
           "rule_id": "4.2.0.2",
-          "outcome": "NAME_MATCH_FOUND_IN_DELIVERY_ADDRESS"
+          "outcome": "APPLIED"
+        },
+        {
+          "rule_id": "4.2.1.1",
+          "outcome": "APPLIED"
         },
         {
           "rule_id": "4.2.3",
-          "outcome": "MISMATCH"
+          "outcome": "APPLIED"
         },
         {
           "rule_id": "4.2.4",
-          "outcome": "MISMATCH"
+          "outcome": "APPLIED"
         }
       ],
-      "motivation": "Mottagarnamnet 'Master M/V Skoul Ruz' kan identifieras i fakturans leveransadress, vilket uppfyller namnidentifieringen. Certifikatet anger dock mottagarland 'Gabon' medan fakturan uttryckligen anger 'FRANCE' för samma mottagarroll. Detta är en direkt landavvikelse och ger MISMATCH."
+      "motivation": "Mottagarnamnet 'Master M/V Skoul Ruz' återfinns i fakturans Delivery address, men landet gör det inte. Certifikatet anger Gabon medan fakturan uttryckligen anger FRANCE för samma mottagarroll. Detta är en direkt motsägelse och ska därför klassificeras som MISMATCH."
     },
     "goods_description": {
       "applicable": true,
-      "status": "MISMATCH",
-      "confidence": 0.9,
-      "certificate_value": "83x63x67 cm ; HS CODE: 84836020; Country of origin: ES",
-      "invoice_value": "GEAR TOOTH COUP; CN code: 84836020; Country of origin: Spain; 83x63x67cm 180kg",
+      "status": "MATCH",
+      "confidence": 0.87,
+      "certificate_value": "83x63x67 cm | HS CODE: 84836020 | Country of origin: ES",
+      "invoice_value": "83x63x67cm 180kg | CN code: 84836020 | Country of origin: Spain",
       "rules_applied": [
         {
-          "rule_id": "4.3.2",
-          "outcome": "ARTICLE_NUMBER_NOT_PRESENT_IN_CERTIFICATE"
+          "rule_id": "4.3.1",
+          "outcome": "APPLIED"
         },
         {
           "rule_id": "4.3.3",
-          "outcome": "MISMATCH"
+          "outcome": "APPLIED"
         },
         {
           "rule_id": "4.3.8.1",
-          "outcome": "METADATA_ROWS_IDENTIFIED"
+          "outcome": "APPLIED"
         }
       ],
-      "motivation": "Certifikatets varubeskrivningsfält innehåller endast mått, HS-kod och ursprungsrad men ingen identitetsbärande huvudbeteckning för själva varan. Fakturans identitetsbärande varubeskrivning är 'GEAR TOOTH COUP'. Att koppla certifikatets metadata till denna produkt skulle kräva otillåten tolkning i stället för strikt textbaserad verifiering, varför kontrollpunkten blir MISMATCH."
+      "motivation": "De uppgifter som faktiskt anges i certifikatets varubeskrivningsfält kan återfinnas i fakturan: måttet '83x63x67 cm' återfinns som '83x63x67cm' och HS-koden 84836020 återfinns som 'CN code: 84836020'. Raden 'Country of origin: ES' är metadata/attribut och motsägs inte; fakturan innehåller dessutom uttrycklig origin-uppgift för samma vara. Därför kan den angivna varubeskrivningen verifieras."
     },
     "quantity": {
       "applicable": true,
       "status": "MISMATCH",
-      "confidence": 0.98,
-      "certificate_value": "180 kg; Package: One case - Skoul Ruz 5467T",
+      "confidence": 0.99,
+      "certificate_value": "180 kg",
       "invoice_value": "83x63x67cm 180kg",
       "rules_applied": [
         {
+          "rule_id": "4.4.2",
+          "outcome": "APPLIED"
+        },
+        {
           "rule_id": "4.4.2.1",
-          "outcome": "MISMATCH"
+          "outcome": "APPLIED"
         },
         {
           "rule_id": "4.4.3.5.1",
-          "outcome": "WEIGHT_IN_QUANTITY_FIELD_TAKES_PRECEDENCE"
+          "outcome": "APPLIED"
         },
         {
           "rule_id": "4.4.7",
-          "outcome": "MISMATCH"
+          "outcome": "APPLIED"
         }
       ],
-      "motivation": "Certifikatet anger ett explicit viktvärde '180 kg' i kvantitetsfältet men utan viktkategori som Gross/GW eller Net/NW. För viktangivelser är viktkategori ett obligatoriskt formkrav i certifikatet. Att fakturan också visar '180kg' botar inte denna brist, och försändelseuppgiften 'One case' kan inte ersätta det uttryckliga viktvärdet i kvantitetsfältet."
+      "motivation": "Certifikatet anger vikt i kvantitetsfältet som '180 kg' men utan obligatorisk viktkategori (GW/NW/Gross/Net). Enligt formkravet för viktangivelse är detta otillräckligt och leder till MISMATCH även om samma numeriska vikt 180 kg kan ses i fakturan. Eventuell försändelseuppgift i OriginPackages kan inte ersätta kontrollen av ett explicit viktvärde i kvantitetsfältet."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.99,
+      "confidence": 0.98,
       "certificate_value": "ES",
       "invoice_value": "Country of origin: Spain",
       "rules_applied": [
         {
+          "rule_id": "4.5.1",
+          "outcome": "APPLIED"
+        },
+        {
           "rule_id": "4.5.4",
-          "outcome": "MATCH"
+          "outcome": "APPLIED"
         },
         {
           "rule_id": "4.5.6",
-          "outcome": "MATCH"
+          "outcome": "APPLIED"
         }
       ],
-      "motivation": "Certifikatet anger ursprungsland 'ES'. Fakturan anger uttryckligen 'Country of origin: Spain'. ISO-landkod och landsnamn är ekvivalenta vid ursprungsverifiering, så ursprungslandet är verifierat."
+      "motivation": "Certifikatet anger ursprungslandet som ISO-koden 'ES'. Fakturan innehåller ett explicit origin-fält med texten 'Country of origin: Spain'. ISO-kod och landsnamn är uttryckligen likvärdiga enligt reglerna, så ursprungslandet är verifierat."
     }
   },
   "overall_assessment": {
     "comparison_result": "NOT_IDENTICAL",
     "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
     "auto_approval_eligible": false,
-    "confidence": 0.97,
+    "confidence": 0.96,
     "critical_failures": [
-      "Consignee country mismatch: certificate states Gabon while invoice delivery address states FRANCE.",
-      "Goods description not verifiable without interpretation because the certificate lacks an identity-bearing product designation.",
-      "Quantity mismatch on form requirement: certificate weight '180 kg' lacks mandatory GW/NW category."
+      "Consignee country mismatch: certificate states Gabon while invoice states FRANCE for 'Master M/V Skoul Ruz'.",
+      "Quantity form requirement failure: certificate quantity '180 kg' lacks mandatory GW/NW or Gross/Net category."
     ],
     "manual_review_triggers": [],
     "manual_review_reason": "NOT_APPLICABLE",
-    "decision_summary": "Dokumentparningen är giltig eftersom consignor kan identifieras i fakturan och mottagarnamnet återfinns i leveransadressen. Trots detta finns minst en klar avvikelse: mottagarland skiljer sig mellan certifikat och faktura. Därutöver kan varubeskrivningen inte verifieras strikt och certifikatets viktangivelse saknar obligatorisk GW/NW-kategori. Minst en tillämplig kontrollpunkt är därför MISMATCH, vilket kräver totalutfallet NOT_IDENTICAL.",
-    "human_explanation": "Certifikatet anger mottagaren Master M/V Skoul Ruz i Gabon, men fakturan visar samma mottagarnamn med leveransadress i Frankrike. Certifikatet anger också vikten 180 kg utan att ange om det är brutto- eller nettovikt. Därför stämmer dokumenten inte överens och ärendet måste hanteras manuellt."
+    "decision_summary": "Dokumentparet är inte identiskt. Consignor och origin kan verifieras, men consignee har landavvikelse och kvantitetsfältet i certifikatet uppfyller inte formkravet för viktangivelse.",
+    "human_explanation": "Certifikatet anger mottagaren Master M/V Skoul Ruz i Gabon, medan fakturan visar samma mottagare i Frankrike. Certifikatet anger också vikten som 180 kg utan att ange om det är brutto- eller nettovikt. Därför kan dokumentparet inte godkännas som identiskt."
   },
   "_meta": {
-    "tested_at": "2026-06-06T09:16:06.614162+00:00",
-    "prompt_hash": "4690e976915d",
+    "tested_at": "2026-06-06T14:01:49.272463+00:00",
+    "prompt_hash": "752423deb8d7",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P0153_MISMATCH",

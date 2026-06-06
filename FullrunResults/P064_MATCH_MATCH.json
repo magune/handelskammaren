@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": null,
+    "verification_timestamp": "2026-06-06T00:00:00Z",
     "document_pair_id": "SEG-26D-465174__INV-19531",
     "certificate_issue_date": null,
     "source_documents_received": 2
@@ -13,14 +13,14 @@
   },
   "documents": {
     "document_a": {
-      "label": "Certificate of Origin structured JSON",
+      "label": "Certificate of Origin JSON",
       "assumed_role": "certificate",
-      "document_type": "structured_json_certificate"
+      "document_type": "structured_certificate_of_origin_json"
     },
     "document_b": {
       "label": "Commercial Invoice PDF",
       "assumed_role": "invoice",
-      "document_type": "commercial_invoice"
+      "document_type": "commercial_invoice_pdf"
     }
   },
   "rule_activation": {
@@ -33,24 +33,20 @@
     "eu_origin_normalization_active": false,
     "activated_rules": [
       {
-        "rule_id": "8.6",
-        "rule_name": "Obligatorisk parningsvalidering"
-      },
-      {
-        "rule_id": "4.1.0",
-        "rule_name": "Sökning efter consignor i hela fakturan"
-      },
-      {
         "rule_id": "4.2.0.2",
-        "rule_name": "Consignee kan verifieras i valfritt relevant mottagarfält"
+        "rule_name": "Consignee may be identified in any relevant recipient field"
+      },
+      {
+        "rule_id": "4.1.3.5",
+        "rule_name": "Omitted or added generic organization words may be accepted when core name is identical"
+      },
+      {
+        "rule_id": "4.4.3.2",
+        "rule_name": "At least one certificate quantity may be verified"
       },
       {
         "rule_id": "4.4.3.6",
-        "rule_name": "Total vikt i faktura kan verifiera certifikatets vikt"
-      },
-      {
-        "rule_id": "4.5.1",
-        "rule_name": "Ursprungsland ska framgå explicit i fakturan"
+        "rule_name": "Total shipment weight may be verified against invoice total weight"
       }
     ]
   },
@@ -58,9 +54,9 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.98,
+      "confidence": 0.99,
       "certificate_value": "Central National Sweden AB",
-      "invoice_value": "Central National Sweden AB\nSödra Larmgatan 6\nGothenburg, 41 116, Sweden\nVAT NO: SE559187836701 BE0768791811 DE365900313",
+      "invoice_value": "Central National Sweden AB\nSödra Larmgatan 6\nGothenburg, 41 116, Sweden\nVAT NO: SE559187836701",
       "rules_applied": [
         {
           "rule_id": "4.1.0",
@@ -69,18 +65,14 @@
         {
           "rule_id": "4.1.2.1",
           "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.1.5",
-          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor 'Central National Sweden AB' återfinns uttryckligen i fakturans sidhuvud på flera sidor. Landet Sverige verifieras både genom adressen 'Sweden' och VAT-prefixet 'SE' i 'SE559187836701'. Samma juridiska part och land kan därför verifieras entydigt."
+      "motivation": "Certifikatets consignor 'Central National Sweden AB' återfinns uttryckligen i fakturans sidhuvud på samtliga sidor. Landet Sweden verifieras både i adressblocket och via VAT-prefixet SE i 'SE559187836701'."
     },
     "consignee": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.89,
+      "confidence": 0.9,
       "certificate_value": "Omani Packaging",
       "invoice_value": "CONSIGNED TO: Omani Packaging Company SAOG\nP.O. Box 99\n124\nRusayl of Oman,\nOman\n2482",
       "rules_applied": [
@@ -97,35 +89,31 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets mottagare 'Omani Packaging' kan identifieras i fakturans mottagarfält 'CONSIGNED TO' som 'Omani Packaging Company SAOG'. Skillnaden består av tillagda generiska organisationsord och bolagsform, medan kärnnamnet 'Omani Packaging' är identiskt. Landet Oman framgår uttryckligen i samma adressblock."
+      "motivation": "Certifikatets mottagare kan identifieras i fakturans fält 'CONSIGNED TO'. Kärnnamnet 'Omani Packaging' är identiskt, medan fakturan endast lägger till det generiska organisationsordet 'Company' och bolagsformen 'SAOG'; landet Oman framgår uttryckligen i mottagarblocket."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.95,
+      "confidence": 0.96,
       "certificate_value": "Fluting & Testliner ",
       "invoice_value": "Fluting ref. Smurfit Westrock - Morai\n...\nTestliner ref. Smurfit Westrock - Morai",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "Prioritet 2 tillämpad"
+          "outcome": "PRIORITY_2_APPLIED"
         },
         {
           "rule_id": "4.3.3",
           "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.3.8",
-          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger varubeskrivningen 'Fluting & Testliner'. Fakturan innehåller upprepade varurader med både 'Fluting ref. Smurfit Westrock - Morai' och 'Testliner ref. Smurfit Westrock - Morai'. De två varutyperna i certifikatet kan därför återfinnas explicit i fakturan utan semantisk tolkning."
+      "motivation": "Certifikatet anger varubeskrivningen 'Fluting & Testliner'. Fakturan innehåller uttryckligen flera rader med 'Fluting ref. Smurfit Westrock - Morai' och flera rader med 'Testliner ref. Smurfit Westrock - Morai'. Ingen artikelnummerregel aktiveras eftersom certifikatet inte anger artikelnummer."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.92,
-      "certificate_value": "G/W 867.673 MT | 767 Rolls",
+      "confidence": 0.98,
+      "certificate_value": "G/W 867.673 MT",
       "invoice_value": "Total Weight Quantity: 867.673 MT\nTotal Unit Count: 767 Rolls",
       "rules_applied": [
         {
@@ -141,7 +129,7 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets kvantitetsfält innehåller en uttrycklig viktkategori och enhet: 'G/W 867.673 MT'. Fakturan anger exakt samma totalvikt 'Total Weight Quantity: 867.673 MT'. Certifikatets kolliuppgift '767 Rolls' återfinns dessutom som 'Total Unit Count: 767 Rolls', och ingen kvantitetsuppgift i fakturan motsäger certifikatet."
+      "motivation": "Certifikatets kvantitetsfält innehåller numeriskt värde, viktenhet och viktkategori: 'G/W 867.673 MT'. Fakturan anger totalvikten 'Total Weight Quantity: 867.673 MT', vilket exakt överensstämmer numeriskt och i enhet. Certifikatets paketuppgift '767 Rolls' stöds dessutom av fakturans 'Total Unit Count: 767 Rolls'."
     },
     "origin": {
       "applicable": true,
@@ -159,23 +147,23 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets ursprungsland 'India' återfinns explicit i fakturan i ett dedikerat ursprungsfält: 'Country of Origin: India'. Uppgiften kan därför verifieras direkt utan tolkning."
+      "motivation": "Certifikatets ursprungsland 'India' återfinns uttryckligen i fakturan i ett dedikerat origin-fält: 'Country of Origin: India'."
     }
   },
   "overall_assessment": {
     "comparison_result": "IDENTICAL",
     "workflow_recommendation": "AUTO_APPROVAL_ELIGIBLE",
     "auto_approval_eligible": true,
-    "confidence": 0.94,
+    "confidence": 0.96,
     "critical_failures": [],
     "manual_review_triggers": [],
     "manual_review_reason": "NOT_APPLICABLE",
-    "decision_summary": "Samtliga tillämpliga kontrollpunkter kan verifieras mot fakturan. Ingen motsägelse eller blockerande osäkerhet identifierades.",
-    "human_explanation": "Alla uppgifter i certifikatet kan verifieras mot fakturan. Avsändare, mottagare, varubeskrivning, kvantitet och ursprungsland stämmer överens. Dokumentparet kan därför godkännas automatiskt."
+    "decision_summary": "Alla tillämpliga kontrollpunkter kan verifieras mot fakturan: consignor, consignee, varubeskrivning, kvantitet och ursprungsland.",
+    "human_explanation": "Alla uppgifter i certifikatet kan verifieras mot fakturan. Avsändare, mottagare, varor, kvantitet och ursprungsland stämmer överens. Dokumentparet är därför lämpligt för automatiskt godkännande."
   },
   "_meta": {
-    "tested_at": "2026-06-06T09:17:25.976421+00:00",
-    "prompt_hash": "4690e976915d",
+    "tested_at": "2026-06-06T13:54:17.713166+00:00",
+    "prompt_hash": "752423deb8d7",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P064_MATCH",

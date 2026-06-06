@@ -13,14 +13,14 @@
   },
   "documents": {
     "document_a": {
-      "label": "CERTIFICATE OF ORIGIN (structured JSON)",
+      "label": "Certificate of Origin (structured JSON)",
       "assumed_role": "certificate",
-      "document_type": "certificate_of_origin_structured_json"
+      "document_type": "structured_certificate_of_origin_json"
     },
     "document_b": {
       "label": "P204_MATCH_invoice.pdf",
       "assumed_role": "invoice",
-      "document_type": "commercial_invoice_scanned_pdf"
+      "document_type": "scanned_invoice_pdf_image_based"
     }
   },
   "rule_activation": {
@@ -37,12 +37,12 @@
         "rule_name": "Skannad faktura: hittas inte är inte samma som saknas"
       },
       {
-        "rule_id": "4.1.3.4",
-        "rule_name": "Kommersiellt namn vs registrerat bolagsnamn"
+        "rule_id": "4.1.0",
+        "rule_name": "Consignor får verifieras om företagsnamnet uttryckligen förekommer någonstans i fakturan"
       },
       {
         "rule_id": "4.4.3.4",
-        "rule_name": "Enhetsprefix-normalisering för kpcs"
+        "rule_name": "Enhetsprefix-normalisering kpcs = 1000 pcs"
       }
     ]
   },
@@ -50,12 +50,12 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.88,
-      "certificate_value": "Emballator Tectubes Sweden AB",
-      "invoice_value": "Emballator / Tectubes Sweden AB / Box 103 / SE-544 22 Hjo / SWEDEN / Orgnr 556425-1998 / VAT-nr SE556425199801 / TECTUBES SWEDEN AB",
+      "confidence": 0.94,
+      "certificate_value": "Emballator Tectubes Sweden AB, Tubgatan 2, Box 103, 54422 Hjo, Sverige, VAT/Org 556425-1998",
+      "invoice_value": "Page 1 footer and page 2 footer show: \"Emballator Tectubes Sweden AB\", \"Box 103\", \"SE-544 22 Hjo\", \"SWEDEN\", \"Orgnr / Org No: 556425-1998\", \"VAT-nr/VAT No: SE556425199801\". Page 1 also shows signed text \"TECTUBES SWEDEN AB\".",
       "rules_applied": [
         {
-          "rule_id": "4.1.3.4",
+          "rule_id": "4.1.0",
           "outcome": "MATCH"
         },
         {
@@ -63,18 +63,18 @@
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.1.4",
+          "rule_id": "4.1.5",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger consignor som 'Emballator Tectubes Sweden AB'. I den skannade fakturan kan 'Tectubes Sweden AB' läsas i sidfoten på sidorna 1 och 2 tillsammans med 'Box 103', 'SE-544 22 Hjo', 'SWEDEN', organisationsnummer 556425-1998 och VAT-nr SE556425199801, och ordet 'Emballator' framgår samtidigt som branding i samma identifieringsblock. Detta uppfyller regeln för kommersiellt namn kontra registrerat bolagsnamn, och landet verifieras dessutom av adressen samt SE-prefix i VAT-numret."
+      "motivation": "Certifikatets consignor kan identifieras uttryckligen i fakturans footer på båda sidorna som \"Emballator Tectubes Sweden AB\". Landet verifieras av adressen \"SWEDEN\" samt svensk VAT/organisationsuppgift. Samma juridiska part kan därför styrkas mot fakturan."
     },
     "consignee": {
       "applicable": true,
       "status": "MANUAL_REVIEW",
-      "confidence": 0.35,
-      "certificate_value": "The Saudi British Bank",
-      "invoice_value": "No readable consignee / buyer / ship-to field identified on the visible scanned invoice pages 1-2.",
+      "confidence": 0.42,
+      "certificate_value": "The Saudi British Bank, Western Province Management Office, P.O.Box 106, SA-21411 Jeddah, Saudi Arabia",
+      "invoice_value": "No readable consignee / Ship-To / Bill-To / Buyer block could be identified in the visible scanned invoice pages.",
       "rules_applied": [
         {
           "rule_id": "8.1.1",
@@ -89,53 +89,65 @@
           "outcome": "NOT_VERIFIABLE"
         }
       ],
-      "motivation": "Fakturan är skannad och ingen maskinläsbar text kunde extraheras. På de synliga sidorna kan varurader, avsändare, kvantiteter och ursprung läsas, men något läsbart mottagarfält för 'The Saudi British Bank' kunde inte identifieras, och ingen annan tydligt läsbar motstridig mottagare framgår. Enligt reglerna för skannad faktura ska detta därför bedömas som MANUAL_REVIEW och inte som MISMATCH."
+      "motivation": "Fakturan är bildbaserad/skannad och OCR-text saknas. I de synliga sidorna kan consignor, varor, kvantiteter och ursprung läsas, men inget mottagarfält med \"The Saudi British Bank\" eller annan tydlig mottagarroll kan identifieras. Eftersom detta gäller en skannad faktura och ingen motstridig mottagare tydligt framgår läsbart ska kontrollpunkten sättas till MANUAL_REVIEW, inte MISMATCH."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.98,
-      "certificate_value": "Miragel Oral Gel 40g KSA | Miragel Oral Gel 40g KSA | Pilocin Cream 30g TP",
-      "invoice_value": "Miragel Oral Gel 40g KSA | Miragel Oral Gel 40g KSA | Pilocin Cream 30g TP",
+      "confidence": 0.92,
+      "certificate_value": "1) Miragel Oral Gel 40g KSA; 2) Miragel Oral Gel 40g KSA; 3) Pilocin Cream 30g TP",
+      "invoice_value": "Page 1 shows two rows with \"Miragel Oral Gel 40g KSA\". Page 2 shows one row with \"Pilocin Cream 30g TP\".",
       "rules_applied": [
         {
-          "rule_id": "4.3.2",
-          "outcome": "ARTICLE_NUMBER_NOT_USED"
+          "rule_id": "4.3.1",
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.3.3",
           "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.3.8",
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Varubeskrivningarna i certifikatet återfinns ordagrant i fakturans varurader: två rader med 'Miragel Oral Gel 40g KSA' på sida 1 och en rad med 'Pilocin Cream 30g TP' på sida 2. Ingen semantisk tolkning behövs och inga motstridiga varubeskrivningar identifierades för de certifierade varorna."
+      "motivation": "Samtliga varubeskrivningar i certifikatet kan läsas direkt i fakturans artikellinjer utan semantisk tolkning: två rader med \"Miragel Oral Gel 40g KSA\" på sida 1 och en rad med \"Pilocin Cream 30g TP\" på sida 2. Detta uppfyller ensidig verifiering."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.87,
-      "certificate_value": "200,725pcs | 33,670pcs | 149,370pcs",
-      "invoice_value": "200,725 kpcs | 33,670 kpcs | 149,370 kpcs",
+      "confidence": 0.88,
+      "certificate_value": "200,725pcs; 33,670pcs; 149,370pcs",
+      "invoice_value": "Page 1: \"200,725 kpcs\" and \"33,670 kpcs\" for Miragel Oral Gel 40g KSA. Page 2: \"149,370 kpcs\" for Pilocin Cream 30g TP.",
       "rules_applied": [
         {
-          "rule_id": "4.4.3.1",
+          "rule_id": "4.4.3",
           "outcome": "MATCH"
         },
         {
           "rule_id": "4.4.3.4",
           "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.4.7",
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger tre styckantal: 200,725 pcs, 33,670 pcs och 149,370 pcs. Fakturan visar motsvarande tre rader med '200,725 kpcs', '33,670 kpcs' och '149,370 kpcs'; enligt regeln om enhetsprefix får 'kpcs' tolkas som tusen stycken eller som formaterad decimalnotering när detta ger exakt samma numeriska styckantal som i certifikatet. De tre kvantiteterna kan därför verifieras mot fakturan utan motsägelse."
+      "motivation": "Certifikatets kvantiteter kan verifieras mot fakturans radkvantiteter. Fakturan använder enhetsprefixet \"kpcs\", vilket enligt regelverket får normaliseras till pcs. De tre certifikatvärdena 200,725 pcs, 33,670 pcs och 149,370 pcs återfinns därmed i fakturan för motsvarande varor."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.96,
+      "confidence": 0.9,
       "certificate_value": "Sweden",
-      "invoice_value": "The origin of the material is Sweden.",
+      "invoice_value": "Page 1 states: \"The origin of the material is Sweden.\" and \"the description of the manufacture of the goods is Sweden.\"",
       "rules_applied": [
         {
           "rule_id": "4.5.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.5.2",
           "outcome": "MATCH"
         },
         {
@@ -143,28 +155,26 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger ursprungsland 'Sweden'. På sida 1 i fakturan finns den uttryckliga ursprungsangivelsen 'The origin of the material is Sweden.', vilket är en explicit origin-uppgift och verifierar certifikatets ursprungsland direkt."
+      "motivation": "Fakturan anger ursprungslandet uttryckligen som \"Sweden\" i en dedikerad ursprungsformulering på sida 1. Certifikatets ursprungsland Sweden kan därför verifieras direkt."
     }
   },
   "overall_assessment": {
     "comparison_result": "MANUAL_REVIEW",
     "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
     "auto_approval_eligible": false,
-    "confidence": 0.71,
-    "critical_failures": [
-      "Consignee could not be verified from the scanned invoice because no readable consignee/buyer/ship-to field was identifiable."
-    ],
+    "confidence": 0.78,
+    "critical_failures": [],
     "manual_review_triggers": [
-      "Invoice PDF is scanned/image-based and produced no parseable text.",
-      "Consignee field from the certificate ('The Saudi British Bank') could neither be confirmed nor contradicted from a readable invoice recipient field."
+      "Consignee could not be verified because the invoice is scanned/image-based and no readable consignee/Ship-To/Buyer block is visible in the provided pages.",
+      "At least one applicable control point has status MANUAL_REVIEW."
     ],
     "manual_review_reason": "SCANNED_UNREADABLE",
-    "decision_summary": "Dokumentparet kan paras via consignor och flera centrala uppgifter i fakturan kan läsas visuellt trots att PDF:en är skannad. Avsändare, varubeskrivning, kvantiteter och ursprungsland verifieras mot fakturan. Mottagaren kan däremot inte verifieras eftersom något läsbart consignee-/buyer-/ship-to-fält inte kunde identifieras i den skannade fakturan, och därför krävs manuell handläggning.",
-    "human_explanation": "Avsändare, varor, kvantiteter och ursprung stämmer mellan certifikatet och fakturan. Däremot gick mottagaren 'The Saudi British Bank' inte att verifiera eftersom fakturan är skannad och något läsbart mottagarfält inte kunde identifieras. Ärendet behöver därför granskas manuellt."
+    "decision_summary": "Consignor, goods description, quantity and origin are verifiable against the scanned invoice. The consignee stated in the certificate cannot be safely located in any readable recipient field in the visible invoice pages. Because the invoice is image-based and no contradictory consignee is clearly readable, the correct overall result is MANUAL_REVIEW.",
+    "human_explanation": "Avsändare, varor, kvantiteter och ursprungsland stämmer med fakturan. Fakturan är dock skannad och mottagarfältet kan inte läsas eller verifieras i det synliga underlaget. Ärendet behöver därför manuell granskning."
   },
   "_meta": {
-    "tested_at": "2026-06-06T09:13:51.021467+00:00",
-    "prompt_hash": "4690e976915d",
+    "tested_at": "2026-06-06T14:17:35.597501+00:00",
+    "prompt_hash": "752423deb8d7",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P204_MATCH",

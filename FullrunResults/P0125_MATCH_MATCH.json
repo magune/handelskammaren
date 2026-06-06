@@ -4,7 +4,7 @@
     "verification_timestamp": null,
     "document_pair_id": "SEG-23D-945145__2023037980",
     "certificate_issue_date": null,
-    "source_documents_received": 1
+    "source_documents_received": 2
   },
   "task": {
     "task_type": "customs_document_pair_verification",
@@ -15,10 +15,10 @@
     "document_a": {
       "label": "Certificate of Origin (structured JSON)",
       "assumed_role": "certificate",
-      "document_type": "certificate_of_origin"
+      "document_type": "structured_json"
     },
     "document_b": {
-      "label": "Invoice PDF",
+      "label": "Attached PDF",
       "assumed_role": "invoice",
       "document_type": "invoice"
     }
@@ -34,19 +34,11 @@
     "activated_rules": [
       {
         "rule_id": "4.1.0",
-        "rule_name": "Consignor may be verified if company name is explicitly found anywhere in the invoice"
+        "rule_name": "Consignor identified anywhere in invoice"
       },
       {
         "rule_id": "4.2.0.2",
-        "rule_name": "Consignee may be verified in any relevant recipient field, including Ship-To"
-      },
-      {
-        "rule_id": "4.3.3",
-        "rule_name": "Controlled text match for goods description"
-      },
-      {
-        "rule_id": "4.4.3",
-        "rule_name": "Direct identification of numeric quantity in invoice"
+        "rule_name": "Consignee may be verified in any recipient field"
       },
       {
         "rule_id": "4.5.4.2",
@@ -58,31 +50,27 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.91,
-      "certificate_value": "Company: Elmo Sweden AB; CompanyVatNumber: 556821-5874; Country: null",
-      "invoice_value": "POSTADRESS/POSTAL ADRESS: Elmo Sweden AB SE-512 81 SVENLJUNGA SWEDEN; ORG.NO: 556821-5874; VAT.NO: SE556821587401",
+      "confidence": 0.97,
+      "certificate_value": "Company: Elmo Sweden AB; Country: null; CompanyVatNumber: 556821-5874",
+      "invoice_value": "POSTADRESS/POSTAL ADRESS: Elmo Sweden AB SE-512 81 SVENLJUNGA SWEDEN ... ORG.NO: 556821-5874 ... VAT.NO: SE556821587401",
       "rules_applied": [
-        {
-          "rule_id": "2.1",
-          "outcome": "Only certificate data that is actually stated must be verified"
-        },
         {
           "rule_id": "4.1.0",
           "outcome": "MATCH"
         },
         {
           "rule_id": "4.1.2.1",
-          "outcome": "Supporting identifier found via organization/VAT information"
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger consignor-namnet \"Elmo Sweden AB\" och organisationsnumret \"556821-5874\". Fakturan innehåller uttryckligen \"Elmo Sweden AB\" i footer samt \"ORG.NO: 556821-5874\", vilket verifierar samma juridiska part. Certifikatets landsfält för consignor är inte angivet (null), så någon motsägande landuppgift behöver inte övervinnas för den ensidiga verifieringen."
+      "motivation": "Certifikatets consignor 'Elmo Sweden AB' återfinns uttryckligen i fakturans footer/postadressblock på sida 1. Certifikatets organisationsnummer '556821-5874' återfinns också exakt som 'ORG.NO: 556821-5874', vilket styrker samma juridiska part. Certifikatets land är null och utgör därför inte ett uttryckligen angivet verifieringskrav i certifikatet."
     },
     "consignee": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.98,
+      "confidence": 0.96,
       "certificate_value": "DeliveryCompany: Al Muhalhel General Trading; DeliveryAddress1: & Contracting Co; DeliveryAddress2: Al Ardhiya Ind. Area. Block: 1; DeliveryAddress3: Building: 81; DeliveryPostalAddress: 15257; DeliveryCountry: KUWAIT",
-      "invoice_value": "Ship-to: Al Muhalhel General Trading & Contracting Co, Al Ardhiya Ind. Area, Block:1, Building: 81, 15257 - KUWAIT, Kuwait",
+      "invoice_value": "Ship-to Al Muhalhel General Trading & ( 18007250 ) Contracting Co Al Ardhiya Ind. Area, Block:1 Building: 81 15257 - KUWAIT , Kuwait",
       "rules_applied": [
         {
           "rule_id": "4.2.0.2",
@@ -90,14 +78,14 @@
         },
         {
           "rule_id": "4.2.1.1",
-          "outcome": "Recipient identified in alternative recipient field (Ship-To)"
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.2.3",
-          "outcome": "Country MATCH"
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets mottagare framgår sammanslaget som \"Al Muhalhel General Trading & Contracting Co\" med adress i Kuwait. Fakturans Ship-to-block anger exakt samma mottagare och samma land: \"KUWAIT, Kuwait\". Mottagaren kan därför verifieras direkt i ett godkänt mottagarfält."
+      "motivation": "Certifikatets mottagare kan identifieras i fakturans 'Ship-to'-fält. Företagsnamnet är uppdelat över två certifikatfält ('Al Muhalhel General Trading' + '& Contracting Co') men motsvarar fakturans råtext 'Al Muhalhel General Trading ... Contracting Co'. Landet 'KUWAIT' framgår uttryckligen i både certifikat och faktura."
     },
     "goods_description": {
       "applicable": true,
@@ -108,66 +96,70 @@
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "Priority 2 applied because no article number is stated in the certificate description as the primary verifier"
+          "outcome": "Prioritet 2 tillämpad"
         },
         {
           "rule_id": "4.3.3",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets varubeskrivning \"Elmobaltique 97001 Basket Weave I\" återfinns i fakturans varurad som \"ELMOBALTIQUE 97001 BASKET WEAVE I\". Skillnaden är endast versaler/gemener, vilket är tillåten normalisering. Den identitetsbärande huvudbeteckningen är därmed explicit verifierad."
+      "motivation": "Certifikatets varubeskrivning återfinns exakt i fakturans produktrad på sida 1 efter tillåten normalisering av versaler/gemener. Ingen artikelnummerstyrd verifiering behövde användas eftersom certifikatet inte uttryckligen anger ett separat artikelnummerfält; matchningen sker därför via kontrollerad textmatchning av huvudbeteckningen."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.98,
-      "certificate_value": "OriginRows[].Quantity: 288,610 M2; OriginPackages[].Package: 5 Pkgs",
-      "invoice_value": "Q-ty 288,610 M2; additionally stated in invoice text: 5 Pkg",
+      "confidence": 0.99,
+      "certificate_value": "288,610 M2",
+      "invoice_value": "Q-ty 288,610 M2",
       "rules_applied": [
         {
-          "rule_id": "4.4.3",
-          "outcome": "Direct numeric quantity MATCH"
+          "rule_id": "4.4.1",
+          "outcome": "MATCH"
         },
         {
-          "rule_id": "4.4.3.2",
-          "outcome": "At least one quantity must verify; here both the area quantity and package count are present"
+          "rule_id": "4.4.2",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.4.3",
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger kvantiteten \"288,610 M2\" och även kolliuppgiften \"5 Pkgs\". Fakturan visar exakt \"288,610 M2\" på varuraden och dessutom \"5 Pkg\" i sammanfattningstexten. Den numeriska kvantiteten i certifikatet kan därför verifieras direkt mot fakturan utan undantag eller beräkning."
+      "motivation": "Certifikatets kvantitet '288,610 M2' återfinns explicit i fakturans kvantitetskolumn för samma vara. Både numeriskt värde och enhet framgår i certifikatet och fakturan, och ingen undantagsregel behövde tillämpas."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.91,
+      "confidence": 0.92,
       "certificate_value": "EUROPEAN UNION",
       "invoice_value": "Swedish Origin",
       "rules_applied": [
         {
           "rule_id": "4.5.1",
-          "outcome": "Explicit origin statement found in invoice"
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.5.4.2",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Fakturan anger uttryckligen ursprung genom texten \"Swedish Origin\". Certifikatet anger \"EUROPEAN UNION\". Eftersom Sverige är en EU-medlemsstat är certifikatets EU-ursprung verifierat genom den explicita svenska ursprungsangivelsen i fakturan."
+      "motivation": "Fakturan innehåller den uttryckliga ursprungsangivelsen 'Swedish Origin' på sida 1. Sverige är en EU-medlemsstat och verifierar därför certifikatets ursprungsangivelse 'EUROPEAN UNION' enligt EU-medlemslandsregeln."
     }
   },
   "overall_assessment": {
     "comparison_result": "IDENTICAL",
     "workflow_recommendation": "AUTO_APPROVAL_ELIGIBLE",
     "auto_approval_eligible": true,
-    "confidence": 0.95,
+    "confidence": 0.97,
     "critical_failures": [],
     "manual_review_triggers": [],
     "manual_review_reason": "NOT_APPLICABLE",
-    "decision_summary": "Alla fem tillämpliga kontrollpunkter kan verifieras mot fakturan. Ingen LC-regel eller kvantitetsundantagsregel behövde aktiveras. Dokumentparet uppfyller kraven för IDENTICAL och automatisk hantering.",
-    "human_explanation": "Avsändare, mottagare, varubeskrivning, kvantitet och ursprungsland kan alla verifieras mot fakturan. Fakturan visar Elmo Sweden AB, mottagaren Al Muhalhel General Trading & Contracting Co i Kuwait, produkten Elmobaltique 97001 Basket Weave I, kvantiteten 288,610 M2 samt svenskt ursprung. Dokumentparet kan därför godkännas automatiskt."
+    "decision_summary": "Alla tillämpliga kontrollpunkter kan verifieras mot fakturan. Ingen MISMATCH eller MANUAL_REVIEW utlöses, och samtliga MATCH-bedömningar ligger över confidence-golvet för automatiskt godkännande.",
+    "human_explanation": "Alla uppgifter i certifikatet kan verifieras mot fakturan. Avsändare, mottagare, varubeskrivning, kvantitet och ursprungsland stämmer efter tillåten normalisering. Dokumentparet kan därför godkännas automatiskt."
   },
   "_meta": {
-    "tested_at": "2026-06-06T09:00:14.366916+00:00",
-    "prompt_hash": "4690e976915d",
+    "tested_at": "2026-06-06T14:05:41.342720+00:00",
+    "prompt_hash": "752423deb8d7",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P0125_MATCH",

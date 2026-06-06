@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": null,
+    "verification_timestamp": "2026-06-06T00:00:00Z",
     "document_pair_id": "SEG-25D-400602__P098_MISMATCH_invoice.pdf",
     "certificate_issue_date": null,
     "source_documents_received": 2
@@ -13,9 +13,9 @@
   },
   "documents": {
     "document_a": {
-      "label": "Certificate of Origin (structured JSON)",
+      "label": "CERTIFICATE OF ORIGIN (structured JSON)",
       "assumed_role": "certificate",
-      "document_type": "certificate_of_origin_structured_json"
+      "document_type": "structured_json_certificate"
     },
     "document_b": {
       "label": "P098_MISMATCH_invoice.pdf",
@@ -34,7 +34,7 @@
     "activated_rules": [
       {
         "rule_id": "8.5.1",
-        "rule_name": "Flera fakturor från samma utställare utan entydig fakturareferens"
+        "rule_name": "Flera fakturor från samma utställare utan entydig fakturareferens i certifikatet"
       },
       {
         "rule_id": "8.6",
@@ -50,9 +50,9 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.92,
-      "certificate_value": "SKF Sverige AB | Sweden",
-      "invoice_value": "Issued by: SKF Sverige AB ... Sweden; flera sidor visar även \"SKF Sverige AB SE-415 50 GÖTEBORG SWEDEN\"",
+      "confidence": 0.97,
+      "certificate_value": "SKF Sverige AB, Sweden",
+      "invoice_value": "Issued by:\nSKF Sverige AB\nvon Utfallsgatan 4\n415 50 Göteborg\nSweden",
       "rules_applied": [
         {
           "rule_id": "4.1.0",
@@ -61,42 +61,38 @@
         {
           "rule_id": "4.1.2",
           "outcome": "MATCH"
-        },
-        {
-          "rule_id": "8.6",
-          "outcome": "PASS"
         }
       ],
-      "motivation": "Certifikatet anger consignor som SKF Sverige AB i Sweden. I den skannade PDF:n kan samma företagsnamn och svenskt land identifieras tydligt, bl.a. på sida 1 och i flera sidfötter/postadressblock. Consignor kan därför verifieras, men detta löser inte den övergripande parningsoklarheten mellan flera separata fakturor i samma PDF."
+      "motivation": "Certifikatets consignor 'SKF Sverige AB' återfinns uttryckligen i faktura-PDF:ens sidfot/säljarblock, bl.a. på sida 1, med land Sweden. Namn och land kan därför verifieras."
     },
     "consignee": {
       "applicable": true,
       "status": "MANUAL_REVIEW",
-      "confidence": 0.62,
-      "certificate_value": "SKF Vietnam CO Ltd | Viet Nam",
-      "invoice_value": "På en identifierbar faktura syns \"Ship to ... Türkiye\"; PDF:n innehåller samtidigt flera separata fakturor från samma utställare.",
+      "confidence": 0.63,
+      "certificate_value": "SKF Vietnam CO Ltd , Viet Nam",
+      "invoice_value": "Page 1 shows: \"Ship to ... Türkiye\". Other first-page views in the PDF belong to separate SKF invoices, but no unique Vietnam consignee could be isolated for a single matched invoice.",
       "rules_applied": [
         {
           "rule_id": "8.5.1",
           "outcome": "MANUAL_REVIEW"
         },
         {
-          "rule_id": "4.2.0.2",
-          "outcome": "NOT_COMPLETED_DUE_TO_AMBIGUOUS_PAIRING"
+          "rule_id": "8.1.3",
+          "outcome": "MANUAL_REVIEW"
         },
         {
-          "rule_id": "8.1.3",
-          "outcome": "APPLIED"
+          "rule_id": "4.2.0.2",
+          "outcome": "NOT_COMPLETED_DUE_TO_PAIRING_AMBIGUITY"
         }
       ],
-      "motivation": "Certifikatet anger consignee SKF Vietnam CO Ltd i Viet Nam. Den bifogade PDF:n är skannad och innehåller flera separata fakturor från samma utställare, men certifikatet saknar fakturanummer eller annan entydig hänvisning som pekar ut vilken faktura som ska användas. Eftersom rätt faktura inte kan väljas revisionssäkert kan consignee-kontrollen inte avgöras entydigt."
+      "motivation": "PDF-filen innehåller flera separata fakturor från samma utställare, men certifikatet anger inget fakturanummer som entydigt pekar ut vilken faktura som ska användas. Eftersom korrekt faktura inte kan väljas säkert och dokumentet är skannat kan Vietnam-mottagaren inte verifieras eller underkännas med tillräcklig säkerhet."
     },
     "goods_description": {
       "applicable": true,
       "status": "MANUAL_REVIEW",
       "confidence": 0.66,
-      "certificate_value": "LOCK WASHER; NUTS",
-      "invoice_value": "En kandidatfaktura innehåller bl.a. \"LOCK WASHER\" och senare även \"NUTS\", men PDF:n innehåller flera separata fakturor från samma utställare.",
+      "certificate_value": "LOCK WASHER | NUTS",
+      "invoice_value": "One invoice section beginning on page 24 contains \"LOCK WASHER\" and later continuation pages contain \"NUTS\", but the PDF also contains several other separate SKF invoices.",
       "rules_applied": [
         {
           "rule_id": "8.5.1",
@@ -104,78 +100,72 @@
         },
         {
           "rule_id": "4.3.1",
-          "outcome": "PARTIAL_SUPPORT_FOUND_BUT_PAIRING_AMBIGUOUS"
-        },
-        {
-          "rule_id": "8.1.3",
-          "outcome": "APPLIED"
+          "outcome": "PARTIAL_MATCH_BUT_DOCUMENT_PAIR_NOT_UNIQUE"
         }
       ],
-      "motivation": "Varubeskrivningarna LOCK WASHER och NUTS kan återfinnas i minst en kandidatfaktura i PDF-underlaget. Eftersom samma PDF samtidigt innehåller flera separata fakturor från samma consignor och certifikatet inte pekar ut en specifik faktura går det dock inte att fastställa vilket dokument som ska ligga till grund för verifieringen. Kontrollpunkten kräver därför manuell granskning."
+      "motivation": "Varorna 'LOCK WASHER' och 'NUTS' kan läsas i en av flera separata SKF-fakturor i PDF-filen, men certifikatet saknar fakturareferens. Enligt parningsregeln får systemet då inte välja den faktura som råkar passa bäst, så kontrollpunkten kräver manuell granskning."
     },
     "quantity": {
       "applicable": true,
       "status": "MANUAL_REVIEW",
-      "confidence": 0.58,
-      "certificate_value": "2 pcs; 2 pcs",
-      "invoice_value": "Kandidatfakturor visar andra kvantiteter för liknande varor, t.ex. \"7318210000000 ... 848\" och \"731816600000 ... 526\", men rätt faktura kan inte entydigt väljas.",
+      "confidence": 0.61,
+      "certificate_value": "2 pcs | 2 pcs",
+      "invoice_value": "In the invoice section starting on page 24 the summary shows large counts, including \"LOCK WASHER ... 848\" and \"NUTS ... 526\"; however the PDF contains multiple separate invoices from the same issuer.",
       "rules_applied": [
         {
           "rule_id": "8.5.1",
           "outcome": "MANUAL_REVIEW"
         },
         {
-          "rule_id": "4.4.3.2",
-          "outcome": "NOT_COMPLETED_DUE_TO_AMBIGUOUS_PAIRING"
+          "rule_id": "8.1.3",
+          "outcome": "MANUAL_REVIEW"
         },
         {
-          "rule_id": "8.1.3",
-          "outcome": "APPLIED"
+          "rule_id": "4.4.3.1",
+          "outcome": "NOT_FINALIZED_DUE_TO_PAIRING_AMBIGUITY"
         }
       ],
-      "motivation": "Certifikatet anger 2 pcs för LOCK WASHER och 2 pcs för NUTS. I PDF-underlaget finns kandidatfakturor med läsbara kvantiteter, men eftersom flera separata fakturor från samma utställare förekommer utan entydig fakturareferens kan kvantiteten inte verifieras mot ett säkert identifierat dokumentpar. Därför blir utfallet MANUAL_REVIEW i stället för MISMATCH."
+      "motivation": "Det finns läsbara kvantiteter i en möjlig faktura, men eftersom PDF-filen innehåller flera separata fakturor från samma consignor utan entydig fakturareferens i certifikatet kan dessa värden inte säkert användas som verifieringsgrund eller motsägelsegrund. Kontrollpunkten måste därför skickas till manuell granskning."
     },
     "origin": {
       "applicable": true,
-      "status": "MANUAL_REVIEW",
-      "confidence": 0.64,
+      "status": "MATCH",
+      "confidence": 0.93,
       "certificate_value": "SWEDEN",
-      "invoice_value": "En kandidatfaktura visar blandade ursprung, bl.a. \"COUNTRY OF ORIGIN: SWEDEN\" och \"P.R. CHINA\"; andra separata fakturor finns också i samma PDF.",
+      "invoice_value": "Country of origin\nSweden",
       "rules_applied": [
         {
-          "rule_id": "8.5.1",
-          "outcome": "MANUAL_REVIEW"
-        },
-        {
           "rule_id": "4.5.1",
-          "outcome": "EXPLICIT_ORIGIN_TEXT_FOUND_IN_CANDIDATE_INVOICES"
+          "outcome": "MATCH"
         },
         {
-          "rule_id": "8.1.3",
-          "outcome": "APPLIED"
+          "rule_id": "4.5.6",
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger ursprungsland SWEDEN. I PDF-underlaget finns explicita ursprungsangivelser i flera kandidatfakturor, men eftersom flera separata fakturor från samma utställare förekommer och ingen specifik fakturareferens finns i certifikatet kan rätt faktura inte identifieras säkert. Ursprungsverifieringen kan därför inte avslutas automatiskt."
+      "motivation": "Ursprungslandet Sweden framgår uttryckligen i fakturatexten i dedikerade origin-fält, bl.a. på sida 1 och i andra invoice-sektioner. Certifikatets ursprungsland SWEDEN kan därför verifieras."
     }
   },
   "overall_assessment": {
     "comparison_result": "MANUAL_REVIEW",
     "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
     "auto_approval_eligible": false,
-    "confidence": 0.79,
-    "critical_failures": [],
+    "confidence": 0.72,
+    "critical_failures": [
+      "PDF-filen innehåller flera separata fakturor från samma utställare SKF Sverige AB.",
+      "Certifikatet saknar fakturanummer eller annan entydig dokumentreferens som pekar ut vilken av dessa fakturor som ska användas."
+    ],
     "manual_review_triggers": [
-      "PDF-underlaget innehåller flera separata fakturor från samma utställare.",
-      "Certifikatet saknar fakturanummer eller annan entydig hänvisning som pekar ut rätt faktura.",
-      "Dokumentet är skannat/bildbaserat, vilket förstärker behovet av manuell parningskontroll."
+      "Ambiguous document pairing: multiple separate SKF Sverige AB invoices in one scanned PDF without invoice reference in certificate.",
+      "Consignee, goods and quantity cannot be tied to one uniquely selected invoice."
     ],
     "manual_review_reason": "AMBIGUOUS_MULTIPLE_INVOICES",
-    "decision_summary": "Den bifogade PDF:n innehåller flera separata skannade fakturor från samma utställare, SKF Sverige AB. Certifikatet innehåller ingen entydig fakturareferens i varubeskrivningen som gör det möjligt att välja exakt vilken faktura som ska användas, vilket aktiverar regeln om tvetydig dokumentparning. Consignor kan verifieras, men övriga kontrollpunkter kan inte avgöras revisionssäkert mot ett säkert identifierat dokumentpar.",
-    "human_explanation": "PDF-underlaget innehåller flera olika fakturor från samma avsändare, men certifikatet anger inget fakturanummer som visar vilken faktura som hör ihop med certifikatet. Därför går det inte att säkert avgöra vilket dokumentpar som ska jämföras. Manuell granskning krävs."
+    "decision_summary": "Consignor och ursprungsland kan verifieras i den skannade PDF-filen, men PDF-filen innehåller flera separata fakturor från samma utställare och certifikatet anger ingen fakturareferens. Därför kan systemet inte revisionssäkert avgöra vilken faktura som ska användas för mottagare, varubeskrivning och kvantitet.",
+    "human_explanation": "PDF-filen innehåller flera separata fakturor från SKF Sverige AB, men certifikatet anger inget fakturanummer som visar vilken faktura som ska användas. En av fakturorna innehåller varor som liknar certifikatet, men det går inte att fastställa att just den fakturan hör till detta certifikat. Därför krävs manuell granskning."
   },
   "_meta": {
-    "tested_at": "2026-06-06T09:13:51.017130+00:00",
-    "prompt_hash": "4690e976915d",
+    "tested_at": "2026-06-06T14:17:35.590193+00:00",
+    "prompt_hash": "752423deb8d7",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P098_MISMATCH",

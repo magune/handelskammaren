@@ -4,7 +4,7 @@
     "verification_timestamp": "2026-06-06T00:00:00Z",
     "document_pair_id": "SEG-26D-446943__7654M&T1",
     "certificate_issue_date": null,
-    "source_documents_received": 1
+    "source_documents_received": 2
   },
   "task": {
     "task_type": "customs_document_pair_verification",
@@ -13,9 +13,9 @@
   },
   "documents": {
     "document_a": {
-      "label": "CERTIFICATE OF ORIGIN structured JSON",
+      "label": "Certificate of Origin (structured JSON)",
       "assumed_role": "certificate",
-      "document_type": "structured_json"
+      "document_type": "certificate_of_origin_structured_json"
     },
     "document_b": {
       "label": "Commercial Invoice PDF",
@@ -31,133 +31,100 @@
     "to_order_rule_active": false,
     "quantity_exception_applied": null,
     "eu_origin_normalization_active": false,
-    "activated_rules": [
-      {
-        "rule_id": "8.6",
-        "rule_name": "Parningsvalidering passerad genom fakturanummer/ordernummer, consignor och consignee i fakturan"
-      },
-      {
-        "rule_id": "4.1.3.3",
-        "rule_name": "Kommersiell förkortning av consignor-namn"
-      },
-      {
-        "rule_id": "4.2.0.2",
-        "rule_name": "Consignee får verifieras i något relevant mottagarfält"
-      },
-      {
-        "rule_id": "4.4.3.6",
-        "rule_name": "Total vikt i faktura kan verifiera certifikatets försändelsevikt"
-      },
-      {
-        "rule_id": "4.5.1",
-        "rule_name": "Ursprungsland ska framgå uttryckligen i fakturan"
-      }
-    ]
+    "activated_rules": []
   },
   "control_points": {
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.88,
-      "certificate_value": "Berg Prop Prod. AB | Sweden | VAT SE556568305801",
-      "invoice_value": "Berg Propulsion Production AB, Andvagen 26, SE-47540 Hono Sweden, VAT Number SE556568305801",
+      "confidence": 0.9,
+      "certificate_value": "Berg Prop Prod. AB | Tärnvägen 15 | SE-475 40 | HÖNÖ | Sweden | VAT: SE556568305801",
+      "invoice_value": "Address: Berg Propulsion Production AB, Andvagen 26, SE-47540 Hono Sweden | VAT Number: SE556568305801",
       "rules_applied": [
         {
-          "rule_id": "4.1.1.1",
-          "outcome": "PASS"
-        },
-        {
           "rule_id": "4.1.2.1",
-          "outcome": "PASS"
+          "outcome": "country corroborated by explicit Sweden address and VAT prefix SE"
         },
         {
           "rule_id": "4.1.3.3",
-          "outcome": "PASS"
-        },
-        {
-          "rule_id": "4.1.4",
-          "outcome": "PASS"
+          "outcome": "commercial abbreviation accepted; certificate name is abbreviated form of full legal name shown in invoice"
         },
         {
           "rule_id": "4.1.5",
-          "outcome": "PASS"
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger consignor som \"Berg Prop Prod. AB\" i Sverige med VAT-nummer \"SE556568305801\". Fakturan anger utställaren som \"Berg Propulsion Production AB\" i Sverige med exakt samma VAT-nummer. Förkortningarna \"Prop\" och \"Prod.\" kan verifieras mot den fullständiga juridiska formen i fakturan och landet överensstämmer, varför consignor kan styrkas."
+      "motivation": "Certifikatets consignor 'Berg Prop Prod. AB' kan verifieras mot fakturans 'Berg Propulsion Production AB' som en kommersiell förkortning av samma företagsnamn. Fakturan visar samma VAT-nummer 'SE556568305801' och landet Sverige framgår uttryckligen i säljaradressen. Avvikande gatunamn medför inte mismatch när företagsidentitet och land är verifierade."
     },
     "consignee": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.97,
-      "certificate_value": "Lider Gemi Sanayi Turizm Nakliyat ve Ticaret Ltd.Sti. | Turkiye",
-      "invoice_value": "Invoice to: Lider Gemi Sanayi Turizm Nakliyat ve Ticaret Ltd.Sti., Carsi Mah. Dereboyu Sok. No:18, 61000 Trabzon, TURKIYE",
+      "confidence": 0.96,
+      "certificate_value": "Lider Gemi Sanayi Turizm Nakliyat | ve Ticaret Ltd.Sti. | Carsi Mah. Dereboyu Sok. No:18 | 61000 Trabzon | Turkiye",
+      "invoice_value": "Invoice to: Lider Gemi Sanayi Turizm Nakliyat ve Ticaret Ltd.Sti. | Carsi Mah. Dereboyu Sok. No:18 | 61000 Trabzon | TURKIYE",
       "rules_applied": [
         {
           "rule_id": "4.2.0.2",
-          "outcome": "PASS"
-        },
-        {
-          "rule_id": "4.2.2",
-          "outcome": "PASS"
+          "outcome": "consignee identified in invoice recipient field 'Invoice to'"
         },
         {
           "rule_id": "4.2.3",
-          "outcome": "PASS"
+          "outcome": "country matches after case normalization: Turkiye = TURKIYE"
         },
         {
           "rule_id": "4.2.4",
-          "outcome": "PASS"
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Mottagaren i certifikatet kan identifieras direkt i fakturans fält \"Invoice to\". Företagsnamnet \"Lider Gemi Sanayi Turizm Nakliyat ve Ticaret Ltd.Sti.\" återfinns uttryckligen och landet är Turkiye/TURKIYE. Därmed är consignee verifierad utan ytterligare tolkning."
+      "motivation": "Mottagaren i certifikatet kan identifieras i fakturans fält 'Invoice to'. Företagsnamnet överensstämmer när certifikatets uppdelade namnrad läses tillsammans med efterföljande rad, och landet Turkiye/TURKIYE överensstämmer efter tillåten normalisering."
     },
     "goods_description": {
       "applicable": true,
       "status": "MISMATCH",
-      "confidence": 0.98,
+      "confidence": 0.95,
       "certificate_value": "Order 7654M&T1",
-      "invoice_value": "One shipset of Twin Berg Propulsion / Propeller Equipment type MPP690F / with Accessories / Part 2/2; One shipset of Single Berg Propulsion / MTT113FP with Accessories / Part 2/2",
+      "invoice_value": "Order No. 7654M&T1 | Description: One shipset of Twin Berg Propulsion / Propeller Equipment type MPP690F / with Accessories / Part 2/2; One shipset of Single Berg Propulsion / MTT113FP with Accessories / Part 2/2",
       "rules_applied": [
         {
-          "rule_id": "4.3.2",
-          "outcome": "NO_ARTICLE_NUMBER_IN_CERTIFICATE_DESCRIPTION"
-        },
-        {
-          "rule_id": "4.3.3",
-          "outcome": "FAIL"
+          "rule_id": "4.3.2.1",
+          "outcome": "certificate text is not an article number"
         },
         {
           "rule_id": "4.3.5",
-          "outcome": "FAIL"
+          "outcome": "general goods description with invoice reference not applicable; certificate states an order reference, not invoice reference, and no invoice date is given in the goods field"
         },
         {
           "rule_id": "4.3.8",
-          "outcome": "FAIL"
+          "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Det certifikatfält som enligt fältmappningen utgör varubeskrivning innehåller endast texten \"Order 7654M&T1\". Detta är varken en verifierbar varubeskrivning som kan återfinnas i fakturans varurader, eller en godkänd generell varubeskrivning med fakturareferens eftersom fakturadatum saknas och texten hänvisar till \"Order\" snarare än en uttrycklig fakturahänvisning. Fakturans faktiska varubeskrivning avser två propulsion shipsets och kan därför inte verifiera certifikatets angivna varubeskrivningsfält."
+      "motivation": "Certifikatets varubeskrivningsfält innehåller endast 'Order 7654M&T1', vilket är en orderreferens och inte en verifierbar varubeskrivning. Även om ordernumret återfinns i fakturan uppfyller detta inte kraven för generell varubeskrivning med fakturahänvisning, eftersom fältet inte anger fakturanummer och fakturadatum. Fakturans faktiska varubeskrivning består i stället av propulsion-utrustning med modellangivelser."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.95,
+      "confidence": 0.97,
       "certificate_value": "24: GW 11.140,00kg",
       "invoice_value": "Totally 24 cases / 11.140,00 kg",
       "rules_applied": [
         {
           "rule_id": "4.4.2.1",
-          "outcome": "PASS"
+          "outcome": "weight category GW is present in certificate quantity field together with numeric value and unit"
         },
         {
           "rule_id": "4.4.3.2",
-          "outcome": "PASS"
+          "outcome": "at least one certificate quantity is sufficient when verified and not contradicted"
         },
         {
           "rule_id": "4.4.3.6",
-          "outcome": "PASS"
+          "outcome": "gross weight verified against total weight in invoice"
+        },
+        {
+          "rule_id": "4.4.7",
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet innehåller en uttrycklig viktuppgift med kategori och enhet: \"GW 11.140,00kg\". Fakturan anger total försändelsevikt som \"Totally 24 cases / 11.140,00 kg\". Det numeriska värdet 11.140,00 kan identifieras direkt i fakturan för hela försändelsen, vilket är tillräckligt för MATCH."
+      "motivation": "Certifikatets kvantitetsfält anger brutto vikt 'GW 11.140,00kg'. Fakturan anger total försändelsekvantitet 'Totally 24 cases / 11.140,00 kg', vilket verifierar samma numeriska viktvärde för hela försändelsen. Ingen motstridig kvantitetsuppgift framgår i fakturan."
     },
     "origin": {
       "applicable": true,
@@ -168,36 +135,32 @@
       "rules_applied": [
         {
           "rule_id": "4.5.1",
-          "outcome": "PASS"
-        },
-        {
-          "rule_id": "4.5.2",
-          "outcome": "PASS"
+          "outcome": "explicit origin field found in invoice"
         },
         {
           "rule_id": "4.5.6",
-          "outcome": "PASS"
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger ursprungsland \"Sweden\". Fakturan innehåller den uttryckliga ursprungsangivelsen \"Country of origin: Sweden\". Ursprungslandet kan därför verifieras direkt och entydigt."
+      "motivation": "Certifikatets ursprungsland 'Sweden' återfinns uttryckligen i fakturan i ett dedikerat ursprungsfält: 'Country of origin: Sweden'. Ingen normalisering utöver versal/gemen behövs."
     }
   },
   "overall_assessment": {
     "comparison_result": "NOT_IDENTICAL",
     "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
     "auto_approval_eligible": false,
-    "confidence": 0.95,
+    "confidence": 0.94,
     "critical_failures": [
-      "Varubeskrivningskontrollpunkten gav MISMATCH eftersom certifikatets varubeskrivningsfält endast innehåller \"Order 7654M&T1\" och inte kan verifieras mot fakturans varubeskrivning."
+      "Goods description mismatch: certificate goods field contains only order reference 'Order 7654M&T1' and cannot be verified as a compliant goods description against the invoice."
     ],
     "manual_review_triggers": [],
     "manual_review_reason": "NOT_APPLICABLE",
-    "decision_summary": "Dokumentparet kan paras via nummer 7654M&T1 samt matchande consignor, consignee, kvantitet och ursprungsland. Den tillämpliga kontrollpunkten för varubeskrivning faller dock eftersom certifikatets auktoritativa varubeskrivningsfält endast innehåller \"Order 7654M&T1\" och inte uppfyller kraven för vare sig textmatchning eller generell varubeskrivning med fakturareferens. Minst en tillämplig kontrollpunkt är därför MISMATCH, vilket ger comparison_result NOT_IDENTICAL.",
-    "human_explanation": "Avsändare, mottagare, kvantitet och ursprungsland stämmer mot fakturan. Däremot innehåller certifikatets varubeskrivning bara texten \"Order 7654M&T1\" medan fakturan beskriver varorna som propulsion-utrustning i två shipsets. Dokumentparet kan därför inte godkännas som identiskt."
+    "decision_summary": "Consignor, consignee, quantity and origin can be verified against the invoice. The goods description cannot be verified because the certificate goods field contains only an order reference rather than a verifiable goods description or a valid invoice-reference formulation. Since one applicable control point is MISMATCH, the overall result is NOT_IDENTICAL.",
+    "human_explanation": "Certifikatet anger bara 'Order 7654M&T1' i varubeskrivningsfältet, medan fakturan visar faktiska varor som Twin Berg Propulsion och Single Berg Propulsion. Ordernumret finns i fakturan, men det är inte en tillräcklig varubeskrivning. Övriga kontrollpunkter stämmer."
   },
   "_meta": {
-    "tested_at": "2026-06-06T09:16:06.616438+00:00",
-    "prompt_hash": "4690e976915d",
+    "tested_at": "2026-06-06T14:01:49.274956+00:00",
+    "prompt_hash": "752423deb8d7",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P0154_MATCH",

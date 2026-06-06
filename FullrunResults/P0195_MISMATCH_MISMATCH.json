@@ -2,7 +2,7 @@
   "schema_version": "3.0",
   "metadata": {
     "verification_timestamp": "2026-06-06T00:00:00Z",
-    "document_pair_id": "SEG-26D-453865__INV-1418",
+    "document_pair_id": "SEG-26D-453865|1418",
     "certificate_issue_date": null,
     "source_documents_received": 1
   },
@@ -13,12 +13,12 @@
   },
   "documents": {
     "document_a": {
-      "label": "Certificate of Origin (structured JSON)",
+      "label": "CERTIFICATE OF ORIGIN (structured JSON)",
       "assumed_role": "certificate",
-      "document_type": "structured_json"
+      "document_type": "certificate_of_origin_structured_json"
     },
     "document_b": {
-      "label": "Commercial Invoice no. 1418",
+      "label": "Commercial Invoice no. 1418 PDF",
       "assumed_role": "invoice",
       "document_type": "commercial_invoice_pdf"
     }
@@ -33,16 +33,24 @@
     "eu_origin_normalization_active": false,
     "activated_rules": [
       {
-        "rule_id": "8.6",
-        "rule_name": "Parningsvalidering passerad via consignor och consignee i fakturan"
+        "rule_id": "4.1.0",
+        "rule_name": "Consignor identified anywhere in invoice"
       },
       {
         "rule_id": "4.2.2.1.1",
-        "rule_name": "Avkortning av certifikatets mottagarnamn"
+        "rule_name": "Truncated certificate consignee name prefix accepted"
+      },
+      {
+        "rule_id": "4.3.7",
+        "rule_name": "Multiple origins require goods-origin linkage or valid invoice reference in goods description field"
+      },
+      {
+        "rule_id": "4.4.2.2",
+        "rule_name": "Invalid quantity unit in certificate quantity field"
       },
       {
         "rule_id": "4.5.3",
-        "rule_name": "Blandade ursprung verifierade via radnivå i fakturan"
+        "rule_name": "Mixed origins require unambiguous linkage"
       }
     ]
   },
@@ -50,10 +58,14 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.98,
+      "confidence": 0.99,
       "certificate_value": "NOx-SOL AB, Aklejagatan 9, 43446 KUNGSBACKA, Sweden",
-      "invoice_value": "NOx-SOL AB / Address: Aklejagatan 9, 434 46 Kungsbacka, Sweden / VAT reg. No. SE559217701701",
+      "invoice_value": "NOx-SOL AB; Address: Aklejagatan 9, 434 46 Kungsbacka, Sweden; VAT reg. No. SE559217701701",
       "rules_applied": [
+        {
+          "rule_id": "8.6",
+          "outcome": "MATCH"
+        },
         {
           "rule_id": "4.1.0",
           "outcome": "MATCH"
@@ -63,19 +75,23 @@
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.1.5",
+          "rule_id": "4.1.4",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor 'NOx-SOL AB' återfinns uttryckligen i fakturan, både som branding och i adressblocket på sida 2. Landet Sverige verifieras explicit i adressen samt indirekt via VAT-prefix SE och IBAN-prefix SE. Samma juridiska part kan därför identifieras i fakturan."
+      "motivation": "Certifikatets consignor 'NOx-SOL AB' återfinns uttryckligen i fakturan, både i sidhuvud/footer och i adressblocket på sida 2. Landet Sverige verifieras explicit i adressen 'Kungsbacka, Sweden' och stöds även av VAT-prefix 'SE'. Samma juridiska part och land kan därför verifieras entydigt."
     },
     "consignee": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.94,
+      "confidence": 0.93,
       "certificate_value": "Akçansa Çimento Sanayi ve Ticaret A, Barbaros Mah. Kardelen Sok., Palladium Tower No. 2/1 K:37-38, 347 46 Atasehir - Istanbul, Turkey",
-      "invoice_value": "Delivery address: Akçansa Çimento Sanayi ve Ticaret A.S, Akcansa Çanakkale Plant, Mahmudiye Beldesi, 17640 EZİNE ÇANAKKALE, Turkey; and buyer block: Akcansa Çimento Sanayi ve Ticaret A.S, Barbaros Mah. Kardelen Sok. Palladium Tower No:2/1 K:37-38, 34746 Ataşehir-İstanbul, Turkey",
+      "invoice_value": "Akcansa Çimento Sanayi ve Ticaret A.S, Barbaros Mah. Kardelen Sok. Palladium Tower No:2/1 K:37-38, 34746 Ataşehir-İstanbul, Turkey",
       "rules_applied": [
+        {
+          "rule_id": "8.6",
+          "outcome": "MATCH"
+        },
         {
           "rule_id": "4.2.0.2",
           "outcome": "MATCH"
@@ -89,62 +105,54 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets mottagarnamn är avkortat till 'Akçansa Çimento Sanayi ve Ticaret A' och utgör en exakt inledande del av fakturans 'Akçansa Çimento Sanayi ve Ticaret A.S'. Mottagaren återfinns i fakturans relevanta mottagarfält och landet Turkey framgår uttryckligen. Detta uppfyller reglerna för avkortat certifikatnamn."
+      "motivation": "Certifikatets mottagarnamn 'Akçansa Çimento Sanayi ve Ticaret A' är ett exakt prefix till fakturans fullständiga mottagarnamn 'Akcansa Çimento Sanayi ve Ticaret A.S'. Mottagaren kan identifieras i fakturans mottagaradressblock och landet Turkey framgår explicit. Detta uppfyller regeln för avkortat namn i certifikatet med överensstämmande land."
     },
     "goods_description": {
       "applicable": true,
       "status": "MISMATCH",
-      "confidence": 0.97,
+      "confidence": 0.95,
       "certificate_value": "One packege | Gross: 8kg | Net:7kg",
       "invoice_value": "FT1517 Flowmeter Water DUK-12G4H-C3T00; IP0601 I/P-converter 500-X Model: 500-ACD Contr.air 4-20mA",
       "rules_applied": [
         {
-          "rule_id": "2.4",
-          "outcome": "Applied field isolation: only OriginRows[].Description used"
-        },
-        {
-          "rule_id": "4.3.2",
-          "outcome": "No article-number based match available from certificate description field"
-        },
-        {
-          "rule_id": "4.3.8.1",
-          "outcome": "Certificate descriptions are package/weight metadata, not identifiable goods"
+          "rule_id": "4.3.7",
+          "outcome": "MISMATCH"
         },
         {
           "rule_id": "4.3.8",
           "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Varubeskrivningsfältet i certifikatet innehåller endast 'One packege', 'Gross: 8kg' och 'Net:7kg'. Dessa texter identifierar inte de faktiska varorna i fakturan, som är 'Flowmeter Water DUK-12G4H-C3T00' och 'I/P-converter 500-X Model: 500-ACD Contr.air 4-20mA'. Fakturareferensen i OriginPackages får inte användas för kontrollpunkt 4.3 på grund av fältisolering, så varubeskrivningen kan inte verifieras."
+      "motivation": "Varubeskrivningsfältet i certifikatet innehåller inte någon verifierbar varuidentitet utan endast 'One packege', 'Gross: 8kg' och 'Net:7kg'. Certifikatet innehåller dessutom flera ursprungsländer ('Germany / USA') men saknar i OriginRows[].Description både per-artikel-koppling mellan vara och ursprung och en giltig fakturahänvisning i just varubeskrivningsfältet. Fakturan visar däremot två konkreta produkter med olika ursprung, så certifikatets varubeskrivning kan inte verifieras enligt reglerna."
     },
     "quantity": {
       "applicable": true,
       "status": "MISMATCH",
       "confidence": 0.99,
-      "certificate_value": "46*33*22cm",
+      "certificate_value": "46*33*22cm | null | null ; OriginPackages: Spare and Wareparts for SNCR-Equipment | accoring to Commercial Invoice no. 1418",
       "invoice_value": "Weight and Dimensions: 8kg 46 * 33 * 22 cm",
       "rules_applied": [
         {
           "rule_id": "4.4.1",
-          "outcome": "Quantity verification based on OriginRows[].Quantity"
+          "outcome": "CHECKED"
         },
         {
           "rule_id": "4.4.2.2",
-          "outcome": "MISMATCH - invalid unit"
+          "outcome": "MISMATCH"
         },
         {
           "rule_id": "4.4.7",
           "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Certifikatets verifieringsgrundande kvantitetsfält innehåller '46*33*22cm'. Enheten 'cm' är enligt regelverket en måttenhet och inte en giltig kvantitetsenhet för COO-verifiering. Att samma dimensionsuppgift också förekommer i fakturan ändrar inte detta, eftersom ogiltig enhet i kvantitetsfältet alltid medför MISMATCH."
+      "motivation": "Det verifieringsgrundande kvantitetsfältet i certifikatet innehåller '46*33*22cm'. Enheten 'cm' är enligt reglerna en måttenhet och inte en giltig kvantitetsenhet för COO-verifiering. Vikterna 'Gross: 8kg' och 'Net:7kg' står inte i Quantity-fältet utan i Description, och kan därför inte ersätta den ogiltiga kvantitetsuppgiften. Detta ger direkt MISMATCH."
     },
     "origin": {
       "applicable": true,
-      "status": "MATCH",
-      "confidence": 0.97,
+      "status": "MISMATCH",
+      "confidence": 0.89,
       "certificate_value": "Germany / USA",
-      "invoice_value": "(Country of Origin: Germany) and (Country of Origin: USA)",
+      "invoice_value": "(Country of Origin: Germany) ; (Country of Origin: USA)",
       "rules_applied": [
         {
           "rule_id": "4.5.1",
@@ -152,33 +160,34 @@
         },
         {
           "rule_id": "4.5.3",
-          "outcome": "MATCH"
+          "outcome": "MISMATCH"
         },
         {
           "rule_id": "4.5.6",
-          "outcome": "MATCH"
+          "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Certifikatet anger två ursprungsländer: Germany och USA. Fakturan anger uttryckligen '(Country of Origin: Germany)' för flowmetern och '(Country of Origin: USA)' för I/P-convertern. Båda ursprungsländerna kan därför identifieras explicit i fakturan."
+      "motivation": "Fakturan anger ursprung explicit per artikel som 'Country of Origin: Germany' respektive 'Country of Origin: USA'. Certifikatet anger också 'Germany / USA', men eftersom certifikatet saknar verifierbar varubeskrivning och saknar en giltig fakturahänvisning i OriginRows[].Description kan kopplingen mellan respektive vara och respektive ursprung inte fastställas entydigt vid blandade ursprung. Därför blir ursprungskontrollen MISMATCH trots att båda länderna förekommer i fakturan."
     }
   },
   "overall_assessment": {
     "comparison_result": "NOT_IDENTICAL",
     "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
     "auto_approval_eligible": false,
-    "confidence": 0.96,
+    "confidence": 0.95,
     "critical_failures": [
-      "Goods description in certificate does not identify the invoice goods.",
-      "Certificate quantity field uses invalid unit 'cm'."
+      "Goods description in the certificate does not contain a verifiable product identity and does not provide valid goods-origin linkage for mixed origins.",
+      "Certificate quantity field contains invalid unit 'cm' instead of an allowed quantity unit.",
+      "Mixed origins Germany/USA cannot be linked unambiguously to goods from the certificate fields."
     ],
     "manual_review_triggers": [],
     "manual_review_reason": "NOT_APPLICABLE",
-    "decision_summary": "Consignor, consignee and origin are verified, but the certificate's goods description does not match the invoice goods and the certificate quantity field contains an invalid measurement unit instead of a valid quantity unit. Therefore at least two applicable control points are MISMATCH.",
-    "human_explanation": "Avsändare, mottagare och ursprungsländer kan verifieras mot fakturan. Däremot anger certifikatets varubeskrivningsfält endast 'One packege', 'Gross: 8kg' och 'Net:7kg', vilket inte verifierar varorna i fakturan, och kvantitetsfältet innehåller '46*33*22cm', där cm inte är en giltig kvantitetsenhet. Därför stämmer dokumenten inte överens och kräver manuell hantering."
+    "decision_summary": "Dokumentparet är inte identiskt. Avsändare och mottagare matchar, men varubeskrivning, kvantitet och ursprungsverifiering faller enligt regelverket.",
+    "human_explanation": "Avsändare och mottagare kan verifieras mot fakturan. Certifikatet saknar en verifierbar varubeskrivning och visar inte tydligt vilken vara som hör till ursprungen Germany respektive USA. Kvantitetsfältet innehåller dessutom '46*33*22cm', vilket är ett mått och inte en giltig kvantitetsenhet."
   },
   "_meta": {
-    "tested_at": "2026-06-06T09:16:06.638455+00:00",
-    "prompt_hash": "4690e976915d",
+    "tested_at": "2026-06-06T14:01:49.307901+00:00",
+    "prompt_hash": "752423deb8d7",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P0195_MISMATCH",

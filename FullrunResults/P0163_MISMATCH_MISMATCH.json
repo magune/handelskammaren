@@ -13,14 +13,14 @@
   },
   "documents": {
     "document_a": {
-      "label": "CERTIFICATE OF ORIGIN (structured JSON)",
+      "label": "Certificate of Origin (structured JSON)",
       "assumed_role": "certificate",
       "document_type": "Certificate of Origin"
     },
     "document_b": {
       "label": "P0163_MISMATCH_invoice.pdf",
       "assumed_role": "invoice",
-      "document_type": "scanned order/invoice PDF"
+      "document_type": "scanned invoice/order document"
     }
   },
   "rule_activation": {
@@ -33,20 +33,16 @@
     "eu_origin_normalization_active": true,
     "activated_rules": [
       {
-        "rule_id": "8.1.1",
-        "rule_name": "Läsbarhetsbedömning per fält"
+        "rule_id": "8.1.3",
+        "rule_name": "Skannad faktura: hittas inte ≠ saknas"
+      },
+      {
+        "rule_id": "4.5.4.1.1",
+        "rule_name": "EU + specifikt EU-land kan verifieras av enbart landet i fakturan"
       },
       {
         "rule_id": "8.6",
         "rule_name": "Obligatorisk parningsvalidering"
-      },
-      {
-        "rule_id": "4.3.2",
-        "rule_name": "Varubeskrivning prioritet 1 artikelnummer"
-      },
-      {
-        "rule_id": "4.5.4.1.1",
-        "rule_name": "EU-land i certifikatet verifieras av specifikt EU-land i fakturan"
       }
     ]
   },
@@ -55,115 +51,130 @@
       "applicable": true,
       "status": "MISMATCH",
       "confidence": 0.98,
-      "certificate_value": "Mann Teknik AB, Sweden",
-      "invoice_value": "Breas Medical AB, Företagsvägen 1, SE-435 33 Mölnlycke, SWEDEN, VAT No. SE 5564348968-01",
+      "certificate_value": "Mann Teknik AB | Strandvägen 16 | SE542 39 MARIESTAD | Sweden | VAT: SE5564819844",
+      "invoice_value": "Breas Medical AB, Företagsvägen 1, SE-435 33 Mölnlycke, SWEDEN, Corporate Identity No. 556434-8968, VAT No. SE 5564348968-01",
       "rules_applied": [
         {
-          "rule_id": "8.6",
-          "outcome": "failed"
-        },
-        {
           "rule_id": "4.1.0",
-          "outcome": "failed"
+          "outcome": "Certifikatets consignor-namn kunde inte identifieras någonstans i fakturan på sidorna 1-5."
         },
         {
           "rule_id": "4.1.3.1",
-          "outcome": "mismatch"
+          "outcome": "Fakturans utställare är en annan juridisk part: Breas Medical AB ≠ Mann Teknik AB."
+        },
+        {
+          "rule_id": "4.1.4",
+          "outcome": "Landet Sweden överensstämmer, men företagsnamnet gör det inte; kontrollpunkten blir ändå MISMATCH."
         }
       ],
-      "motivation": "Certifikatet anger consignor 'Mann Teknik AB' i Sverige. Den skannade fakturan visar genomgående på samtliga sidor utställaren 'Breas Medical AB' med svensk adress och VAT-nummer, och namnet 'Mann Teknik AB' kan inte identifieras någonstans i den läsbara fakturatexten. Detta är en positiv avvikelse i juridisk part, därför MISMATCH."
+      "motivation": "Certifikatet anger consignor 'Mann Teknik AB'. Den skannade fakturan visar återkommande utställaruppgifter för 'Breas Medical AB' i sidfoten på sidorna 1-5, inklusive svensk adress och VAT-nummer. 'Mann Teknik AB' kunde inte identifieras någonstans i fakturan, och fakturan visar i stället en annan tydligt läsbar avsändare; detta är en positiv motsägelse och ger MISMATCH."
     },
     "consignee": {
       "applicable": true,
       "status": "MANUAL_REVIEW",
-      "confidence": 0.46,
-      "certificate_value": "Pt Usaha Jayamas Bhakti, Indonesia",
-      "invoice_value": "No explicit readable consignee/buyer/ship-to block identified on the scanned invoice pages",
+      "confidence": 0.56,
+      "certificate_value": "Pt Usaha Jayamas Bhakti | Jl. Agung Timur IV Blok 0-1 | Kaveling 49, Sunter Jaya Tanjung | Priok Jakarta Utara 14350 | Indonesia",
+      "invoice_value": null,
       "rules_applied": [
         {
-          "rule_id": "8.1.3",
-          "outcome": "manual_review"
+          "rule_id": "4.2.0.2",
+          "outcome": "Ingen mottagarroll kunde identifieras i de synliga skannade sidorna."
         },
         {
-          "rule_id": "4.2.0.2",
-          "outcome": "not_verified"
+          "rule_id": "8.1.1",
+          "outcome": "Det mottagarfält som krävs för kontrollpunkten kunde inte läsas framgångsrikt."
+        },
+        {
+          "rule_id": "8.1.3",
+          "outcome": "Eftersom fakturan är skannad och ingen tydligt läsbar motstridig consignee framgår ska resultatet vara MANUAL_REVIEW, inte MISMATCH."
         }
       ],
-      "motivation": "Certifikatet anger mottagaren 'Pt Usaha Jayamas Bhakti' i Indonesien. I den skannade fakturan kan ingen tydlig buyer, bill-to, ship-to eller consignee identifieras i läsbar text, och ingen annan tydligt läsbar mottagare framgår heller. Eftersom frånvaro på en skannad faktura inte får likställas med bevisad saknad uppgift blir utfallet MANUAL_REVIEW för denna kontrollpunkt."
+      "motivation": "Certifikatet anger consignee 'Pt Usaha Jayamas Bhakti' i Indonesia. I de tillgängliga skannade bilderna av fakturan syns radposter, säljaruppgifter, totalsumma, ursprung och handskriven kolli-/viktnotering, men inget tydligt läsbart buyer/ship-to/consignee-fält. Då fakturan är bildbaserad och ingen annan mottagare kan läsas som direkt motsäger certifikatet, kan kontrollpunkten inte avgöras säkert och sätts till MANUAL_REVIEW."
     },
     "goods_description": {
       "applicable": true,
       "status": "MISMATCH",
       "confidence": 0.99,
       "certificate_value": "2MN11A4471 Hose unit 2\" LPG-2\" NPT SS FPM LT; 4MN15B4471 Hose unit 3\" LPG-3\" NPT SS FPM LT Int. Break-Away; 2M11A4471 Hose unit 2\" LPG 2\" NPT SS FPM LT; 4M15B4471 Hose unit 3\" LPG 3\" NPT SS FPM LT; L415B4471 Tank unit 3\" LPG 3\" NPT SS FPM LT",
-      "invoice_value": "Invoice/order lines show article numbers and goods such as 004702 VIVO 5x / 6x PSU, 006774 Pneum block/PTU board, 006783 AC/DC switch kit Vivo 55/65, 006916 CPU Vivo 65 EN, 007264 LCD Display Vivo 45 / Nippy 4, 006994 AC/DC Power supply; page 4 also states 'Accessories for Respiratory Medical Equipment'",
+      "invoice_value": "Exempel på fakturatext: '004702 VIVO 5x / 6x PSU', '006774 Pneum block/PTU board, Vivo 65', '006783 AC/DC switch kit Vivo 55/65', '006994 AC/DC Power supply', samt på sida 4 'Accessories for Respiratory Medical Equipment'.",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "mismatch"
+          "outcome": "Certifikatets artikelnummer 2MN11A4471, 4MN15B4471, 2M11A4471, 4M15B4471 och L415B4471 kunde inte identifieras i fakturan."
         },
         {
           "rule_id": "4.3.8",
-          "outcome": "mismatch"
+          "outcome": "Varubeskrivningarna i fakturan avser andra produkter än de som anges i certifikatet."
         }
       ],
-      "motivation": "Certifikatet innehåller specifika artikelnummer och varor för hose units och en tank unit. Fakturan visar i stället helt andra artikelnummer och medicintekniska reservdelar/tillbehör för Breas utrustning. De certifierade artikelnumren kan inte identifieras i fakturan och fakturans läsbara varubeskrivningar motsäger certifikatets varor, därför MISMATCH."
+      "motivation": "Certifikatet innehåller specifika artikelnummer och varubeskrivningar för hose units och en tank unit. Fakturan visar andra artikelnummer och andra varor, bl.a. 'VIVO 5x / 6x PSU', 'Pneum block/PTU board, Vivo 65' och 'Accessories for Respiratory Medical Equipment'. Eftersom certifikatets artikelnummer och identitetsbärande huvudbeteckningar inte återfinns i fakturan och fakturan i stället visar andra tydligt läsbara varor, är kontrollpunkten MISMATCH."
     },
     "quantity": {
       "applicable": true,
       "status": "MANUAL_REVIEW",
-      "confidence": 0.48,
+      "confidence": 0.61,
       "certificate_value": "10 pcs; 10 pcs; 20 pcs; 20 pcs; 7 pcs",
-      "invoice_value": "Scanned invoice rows show quantities such as 2 PC, 3 PC, 1 PC, 10 PC, 5 PC, 4 PC, 2 PC and 1 PC for different medical-equipment articles",
+      "invoice_value": "Fakturan visar synliga kvantiteter per andra artiklar, t.ex. Qty 2, 3, 1, 2, 1, 3, 3, 1, 1, 1, 2, 1, 1, 1, 2, 10, 5, 2, 2, 1, 1, 1, 4, 2.",
       "rules_applied": [
         {
+          "rule_id": "4.4.3",
+          "outcome": "Kvantitet måste verifieras för samma vara som identifierats enligt kontrollpunkt 4.3."
+        },
+        {
           "rule_id": "4.4.3.1",
-          "outcome": "manual_review"
+          "outcome": "Certifikatets kvantiteter kunde inte kopplas till motsvarande varor i fakturan."
         },
         {
           "rule_id": "8.1.3",
-          "outcome": "manual_review"
+          "outcome": "Eftersom fakturan är skannad och kvantitetsverifiering kräver säker koppling till samma vara sätts kontrollpunkten till MANUAL_REVIEW när sådan koppling inte kan etableras säkert."
         }
       ],
-      "motivation": "Certifikatet anger flera styckkvantiteter för specifika hose/tank-enheter. Fakturan innehåller läsbara kvantiteter, men de avser andra artiklar än dem som anges i certifikatet. Eftersom kopplingen mellan certifikatets kvantiteter och motsvarande vara i fakturan inte kan fastställas säkert på detta skannade underlag blir utfallet MANUAL_REVIEW för kvantitetspunkten."
+      "motivation": "Certifikatet anger fem kvantiteter i pcs för hose/tank units. Fakturan visar läsbara kvantiteter, men dessa tillhör andra varor än de som anges i certifikatet. Eftersom kvantitetskontrollen måste avse samma vara och den skannade fakturan inte innehåller certifikatets varor, kan kvantiteterna inte verifieras säkert på korrekt radnivå; kontrollpunkten sätts därför till MANUAL_REVIEW."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.92,
+      "confidence": 0.93,
       "certificate_value": "EU (Sweden)",
       "invoice_value": "Country of Origin: Sweden",
       "rules_applied": [
         {
           "rule_id": "4.5.1",
-          "outcome": "matched"
+          "outcome": "Fakturan innehåller ett explicit origin-fält på sida 4: 'Country of Origin: Sweden'."
         },
         {
           "rule_id": "4.5.4.1.1",
-          "outcome": "matched"
+          "outcome": "Certifikatets 'EU (Sweden)' kan verifieras av att fakturan uttryckligen anger 'Sweden'."
+        },
+        {
+          "rule_id": "4.5.6",
+          "outcome": "Ursprungslandet i certifikatet kan uttryckligen identifieras i fakturan."
         }
       ],
-      "motivation": "Certifikatet anger ursprung 'EU (Sweden)'. På fakturans sida 4 finns den explicita ursprungsangivelsen 'Country of Origin: Sweden'. Sweden verifierar både det specifika landet Sweden och EU-komponenten enligt EU-normaliseringsregeln, därför MATCH."
+      "motivation": "Certifikatet anger ursprung 'EU (Sweden)'. Fakturan anger uttryckligen 'Country of Origin: Sweden' på sida 4. Sweden verifierar både det specifika landet Sweden och EU-komponenten enligt EU-normaliseringsregeln; kontrollpunkten är därför MATCH."
     }
   },
   "overall_assessment": {
     "comparison_result": "NOT_IDENTICAL",
     "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
     "auto_approval_eligible": false,
-    "confidence": 0.96,
+    "confidence": 0.95,
     "critical_failures": [
-      "Document pairing failed sanity check: no certificate invoice reference, no consignor match, and no consignee match could be established.",
-      "Consignor mismatch: certificate shows Mann Teknik AB, invoice shows Breas Medical AB.",
-      "Goods mismatch: certificate lists hose/tank units, invoice lists respiratory medical equipment accessories."
+      "Consignor mismatch: certifikatet anger Mann Teknik AB medan fakturan tydligt visar Breas Medical AB som utställare.",
+      "Goods description mismatch: certifikatet anger hose/tank units med artikelnummer 2MN11A4471, 4MN15B4471, 2M11A4471, 4M15B4471 och L415B4471, medan fakturan visar andra medicintekniska artiklar.",
+      "Invalid pairing under rule 8.6: ingen certifikatsreferens till fakturan, certifikatets consignor återfinns inte i fakturan och certifikatets consignee kan inte identifieras i fakturan."
     ],
-    "manual_review_triggers": [],
+    "manual_review_triggers": [
+      "Consignee could not be safely read from the scanned invoice.",
+      "Quantity cannot be tied to matching goods in the scanned invoice."
+    ],
     "manual_review_reason": "NOT_APPLICABLE",
-    "decision_summary": "Det bifogade dokumentparet är inte identiskt. Fakturan avser Breas Medical AB och medicintekniska artiklar, medan certifikatet avser Mann Teknik AB och hose/tank units; endast ursprungslandet Sweden kan verifieras.",
-    "human_explanation": "Certifikatet anger avsändaren Mann Teknik AB och varor som hose units och tank unit, men fakturan visar Breas Medical AB och andra varor för respiratorutrustning. Mottagaren Pt Usaha Jayamas Bhakti kan inte läsas fram tydligt i den skannade fakturan. Ursprungslandet Sweden stämmer, men dokumenten hör inte ihop som samma affärsdokument."
+    "decision_summary": "Dokumentparet är inte identiskt. Fakturan visar en annan avsändare och andra varor än certifikatet, även om ursprungslandet Sweden kan verifieras. Minst en tillämplig kontrollpunkt har MISMATCH och parningsvalideringen enligt 8.6 fallerar därför.",
+    "human_explanation": "Certifikatet anger avsändaren som Mann Teknik AB och varor som hose- och tank units, men fakturan visar Breas Medical AB och helt andra produkter för respiratorutrustning. Mottagaren kan inte läsas säkert i den skannade fakturan. Därför kan dokumenten inte godkännas som identiska."
   },
   "_meta": {
-    "tested_at": "2026-06-06T09:16:06.621717+00:00",
-    "prompt_hash": "4690e976915d",
+    "tested_at": "2026-06-06T14:01:49.288568+00:00",
+    "prompt_hash": "752423deb8d7",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P0163_MISMATCH",

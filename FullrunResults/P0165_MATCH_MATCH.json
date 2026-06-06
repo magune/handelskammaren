@@ -1,10 +1,10 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-06-06",
+    "verification_timestamp": "2026-06-06T00:00:00Z",
     "document_pair_id": "SEG-26D-463849__20104403",
     "certificate_issue_date": null,
-    "source_documents_received": 1
+    "source_documents_received": 2
   },
   "task": {
     "task_type": "customs_document_pair_verification",
@@ -13,12 +13,12 @@
   },
   "documents": {
     "document_a": {
-      "label": "Certificate of Origin (structured JSON)",
+      "label": "CERTIFICATE OF ORIGIN (structured JSON)",
       "assumed_role": "certificate",
-      "document_type": "certificate_of_origin_structured_json"
+      "document_type": "certificate_of_origin_json"
     },
     "document_b": {
-      "label": "Attached PDF",
+      "label": "Commercial Invoice No. 20104403",
       "assumed_role": "invoice",
       "document_type": "commercial_invoice_pdf"
     }
@@ -34,19 +34,19 @@
     "activated_rules": [
       {
         "rule_id": "8.5",
-        "rule_name": "Dokumentparning via uttrycklig fakturareferens"
-      },
-      {
-        "rule_id": "8.6",
-        "rule_name": "Obligatorisk parningsvalidering"
+        "rule_name": "Dokumentparning via fakturanummer i certifikatet"
       },
       {
         "rule_id": "4.1.0",
-        "rule_name": "Consignor identifierad någonstans i fakturan"
+        "rule_name": "Consignor identifierad uttryckligen i fakturan"
       },
       {
         "rule_id": "4.4.5.3",
         "rule_name": "Enhetsomräkning MT ↔ KG"
+      },
+      {
+        "rule_id": "4.4.5.3.1",
+        "rule_name": "Normalisering av decimalnotation vid MT-omräkning"
       }
     ]
   },
@@ -54,9 +54,9 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.93,
-      "certificate_value": "WisePartners AB | Sweden",
-      "invoice_value": "WisePartners AB Phone: +46 31 424 910 www.wisepartners.se ... Vat No. SE556753522301 ... Viktor Rydbergsgatan 20 ... SE-412 56 Gothenburg",
+      "confidence": 0.97,
+      "certificate_value": "WisePartners AB, Viktor Rydbergsgatan 20, SE-412 56 Gothenburg, Sweden",
+      "invoice_value": "WisePartners AB Phone: +46 31 424 910 www.wisepartners.se Viktor Rydbergsgatan 20 Fax: +46 31 700 98 85 Vat No. SE556753522301 SE-412 56 Gothenburg",
       "rules_applied": [
         {
           "rule_id": "4.1.0",
@@ -67,18 +67,18 @@
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.1.5",
+          "rule_id": "4.1.4",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor \"WisePartners AB\" återfinns uttryckligen i fakturans footer på sida 1. Samma block innehåller svensk adress \"Viktor Rydbergsgatan 20 ... SE-412 56 Gothenburg\" och VAT-nummer med SE-prefix (SE556753522301), vilket verifierar landet Sweden. Därmed kan samma juridiska part identifieras i fakturan."
+      "motivation": "Certifikatets consignor \"WisePartners AB\" återfinns uttryckligen i fakturans footer tillsammans med adressen \"Viktor Rydbergsgatan 20\", postorten \"Gothenburg\" och VAT-prefixet \"SE\", vilket verifierar Sverige. Företagsnamn och land kan därför styrkas mot fakturan utan otillåten tolkning."
     },
     "consignee": {
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.98,
-      "certificate_value": "AL BAYAN PACKAGING INDUSTRY LLC | UNITED ARAB EMIRATES",
-      "invoice_value": "Al Bayan Packaging Industry LLC, PO Box 1985, Warehouse C-7, New Industrial Area, Umm Al Thoub, Umm Al Quwain, United Arab Emirates",
+      "certificate_value": "AL BAYAN PACKAGING INDUSTRY LLC, PO BOX 1985, WAREHOUSE C-7, NEW INDUSTRIAL AREA, UMM AL THOUB, UMM AL QUWAIN, UNITED ARAB EMIRATES",
+      "invoice_value": "Al Bayan Packaging Industry LLC PO Box 1985 Warehouse C-7, New Industrial Area Umm Al Thoub, Umm Al Quwain United Arab Emirates",
       "rules_applied": [
         {
           "rule_id": "4.2.0.2",
@@ -93,44 +93,40 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets mottagare \"AL BAYAN PACKAGING INDUSTRY LLC\" återfinns exakt i fakturans mottagarblock överst på sida 1. Adressen innehåller även \"United Arab Emirates\", vilket verifierar landet. Skillnader i versaler/gemener är tillåten normalisering."
+      "motivation": "Certifikatets mottagare \"AL BAYAN PACKAGING INDUSTRY LLC\" återfinns i fakturans mottagarblock högst upp på sidan med samma företagsnamn och landet \"United Arab Emirates\". Skillnader i versaler saknar betydelse efter tillåten normalisering."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.97,
+      "confidence": 0.95,
       "certificate_value": "Kraftliner | as per commercial invoice 20104403 dd 10.02.2026",
       "invoice_value": "Kraftliner | COMMERCIAL INVOICE. NO. 20104403 10.02.2026",
       "rules_applied": [
-        {
-          "rule_id": "4.3.2",
-          "outcome": "PRIORITY_2_USED"
-        },
         {
           "rule_id": "4.3.3",
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.3.8.1",
-          "outcome": "SUPPORTING_TEXT_NOT_TREATED_AS_SEPARATE_GOODS"
+          "rule_id": "8.5.1.1",
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Den identitetsbärande huvudbeteckningen i certifikatet är \"Kraftliner\" och samma ord återfinns explicit i fakturans varubeskrivning på sida 1. Den andra certifikatraden \"as per commercial invoice 20104403 dd 10.02.2026\" är en referensrad och inte en separat vara; den överensstämmer dessutom med fakturans nummer och datum. Varubeskrivningen kan därför verifieras utan semantisk tolkning."
+      "motivation": "Den identitetsbärande huvudbeteckningen i certifikatet är \"Kraftliner\", och samma ord förekommer exakt i fakturans varubeskrivning. Den kompletterande certifikatraden med fakturareferens är också förenlig med fakturans nummer 20104403 och datum 10.02.2026."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.91,
+      "confidence": 0.9,
       "certificate_value": "175940 kg net | 89 reels",
-      "invoice_value": "Number of Reels: 89 | Net Weight mt: 175,940",
+      "invoice_value": "Number of Reels 89 | Net Weight mt 175,940 | TOTAL: 89 175,940 175,940",
       "rules_applied": [
         {
           "rule_id": "4.4.2.1",
-          "outcome": "FORM_REQUIREMENT_MET"
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.4.3.2",
-          "outcome": "AT_LEAST_ONE_QUANTITY_VERIFIED"
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.4.5.3",
@@ -141,14 +137,14 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger explicit \"175940 kg net\", vilket uppfyller formkravet för vikt med kategori och enhet. Fakturan anger \"Net Weight mt 175,940\"; med fakturans MT-enhet och kommatecken som decimaltecken motsvarar detta 175.940 MT = 175,940 KG, alltså exakt samma net quantity. Certifikatets paketuppgift \"89 reels\" stöds också av fakturans \"Number of Reels 89\" och ingen motsägelse förekommer."
+      "motivation": "Certifikatet anger \"175940 kg net\", och fakturan anger \"Net Weight mt 175,940\". I fakturans tabell är kommatecknet decimaltecken, så värdet läses som 175.940 MT; efter tillåten omräkning enligt 1 MT = 1000 KG motsvarar detta exakt 175940 KG. Dessutom återfinns certifikatets förpackningskvantitet \"89 reels\" uttryckligen i fakturans kolumn \"Number of Reels 89\", och ingen motstridig kvantitet förekommer."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.99,
       "certificate_value": "Australia",
-      "invoice_value": "the goods are of Australia origin",
+      "invoice_value": "We hereby certify that this Invoice is true and correct and that the goods are of Australia origin.",
       "rules_applied": [
         {
           "rule_id": "4.5.1",
@@ -159,23 +155,23 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets ursprungsland \"Australia\" återfinns uttryckligen i fakturans avslutande ursprungsuttalande: \"the goods are of Australia origin.\" Ursprunget verifieras därmed i ett explicit origin-uttalande."
+      "motivation": "Certifikatets ursprungsland \"Australia\" framgår uttryckligen i fakturan genom texten \"the goods are of Australia origin\". Ursprunget är därmed positivt verifierat i ett explicit origin-uttalande."
     }
   },
   "overall_assessment": {
     "comparison_result": "IDENTICAL",
     "workflow_recommendation": "AUTO_APPROVAL_ELIGIBLE",
     "auto_approval_eligible": true,
-    "confidence": 0.95,
+    "confidence": 0.96,
     "critical_failures": [],
     "manual_review_triggers": [],
     "manual_review_reason": "NOT_APPLICABLE",
-    "decision_summary": "Dokumentparet är giltigt parat via fakturanummer 20104403 och datum 10.02.2026. Avsändare, mottagare, varubeskrivning, kvantitet och ursprungsland kan alla verifieras mot fakturan; kvantiteten verifieras genom tillåten MT↔KG-omräkning. Ingen kontrollpunkt gav MISMATCH eller MANUAL_REVIEW och samtliga tillämpliga kontrollpunkter har confidence över auto-approval-golvet.",
-    "human_explanation": "Alla relevanta uppgifter i certifikatet kan verifieras mot fakturan. Avsändare, mottagare, varubeskrivning, kvantitet och ursprungsland stämmer efter tillåten normalisering. Dokumentparet kan godkännas automatiskt."
+    "decision_summary": "Dokumentparet kunde paras via certifikatets hänvisning till commercial invoice 20104403 daterad 10.02.2026. Avsändare, mottagare, varubeskrivning och ursprungsland kunde verifieras direkt mot fakturan. Kvantiteten verifierades genom att fakturans \"175,940 mt\" normaliserades till 175.940 MT och omräknades till 175940 KG; även \"89 reels\" återfanns uttryckligen i fakturan. Ingen LC-hänvisning identifierades.",
+    "human_explanation": "Alla kontrollpunkter stämmer mot fakturan. Certifikatet hänvisar till kommersiell faktura 20104403 daterad 10.02.2026, och avsändare, mottagare, vara, kvantitet och ursprungsland kan verifieras. Dokumentparet kan därför godkännas automatiskt."
   },
   "_meta": {
-    "tested_at": "2026-06-06T09:16:06.622747+00:00",
-    "prompt_hash": "4690e976915d",
+    "tested_at": "2026-06-06T14:01:49.290250+00:00",
+    "prompt_hash": "752423deb8d7",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P0165_MATCH",

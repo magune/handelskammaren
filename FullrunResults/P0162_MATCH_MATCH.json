@@ -13,14 +13,14 @@
   },
   "documents": {
     "document_a": {
-      "label": "Certificate of Origin (structured JSON)",
+      "label": "CERTIFICATE OF ORIGIN (structured JSON)",
       "assumed_role": "certificate",
-      "document_type": "structured_json_certificate"
+      "document_type": "structured_certificate_of_origin_json"
     },
     "document_b": {
       "label": "P0162_MATCH_invoice.pdf",
       "assumed_role": "invoice",
-      "document_type": "scanned_invoice_or_supporting_trade_document"
+      "document_type": "scanned_invoice_like_commercial_document"
     }
   },
   "rule_activation": {
@@ -33,16 +33,12 @@
     "eu_origin_normalization_active": false,
     "activated_rules": [
       {
-        "rule_id": "8.1.3",
-        "rule_name": "Scanned invoice safeguard applied for missing-but-not-contradicted fields"
-      },
-      {
-        "rule_id": "4.4.3.6",
-        "rule_name": "Total weight in invoice used to verify shipment weight"
-      },
-      {
         "rule_id": "8.6",
-        "rule_name": "Document pairing sanity check passed via consignor identification"
+        "rule_name": "Parningsvalidering passerad via identifierad consignor i fakturan"
+      },
+      {
+        "rule_id": "8.1.3",
+        "rule_name": "Skannad faktura: uppgift som inte hittas utan motstridig läsbar uppgift ger MANUAL_REVIEW"
       }
     ]
   },
@@ -50,28 +46,24 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.98,
-      "certificate_value": "Breas Medical AB, Företagsvägen 1, 43533 Mölnlycke, Sweden",
-      "invoice_value": "Breas Medical AB; Företagsvägen 1; SE-435 33 MÖLNLYCKE; SWEDEN; Registration No. 556434-8968; VAT Registration No. SE556434896801",
+      "confidence": 0.97,
+      "certificate_value": "Breas Medical AB, Sweden",
+      "invoice_value": "Breas Medical AB ... SWEDEN; Registration No. 556434-8968; VAT Registration No. SE556434896801",
       "rules_applied": [
         {
-          "rule_id": "8.6",
-          "outcome": "Document pairing passed because certificate consignor was identified in invoice"
-        },
-        {
           "rule_id": "4.1.0",
-          "outcome": "Certificate consignor explicitly found in invoice/footer and branding"
+          "outcome": "MATCH"
         },
         {
-          "rule_id": "4.1.2.1",
-          "outcome": "Country verified through explicit address and VAT prefix SE"
+          "rule_id": "4.1.2",
+          "outcome": "MATCH"
         },
         {
-          "rule_id": "4.1.5",
+          "rule_id": "4.1.4",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor 'Breas Medical AB' återfinns uttryckligen i fakturans nederdel tillsammans med adressen 'Företagsvägen 1', orten 'MÖLNLYCKE', landet 'SWEDEN' och VAT-nummer med SE-prefix. Företagsnamn och land kan därför verifieras som samma juridiska part utan otillåten tolkning."
+      "motivation": "Certifikatets consignor 'Breas Medical AB' återfinns uttryckligen i fakturans nedre adressblock och branding. Landet 'SWEDEN' framgår explicit i adressblocket och organisationsuppgifterna stödjer samma juridiska part."
     },
     "consignee": {
       "applicable": true,
@@ -82,99 +74,86 @@
       "rules_applied": [
         {
           "rule_id": "4.2.0.2",
-          "outcome": "Certificate consignee could not be identified in any visible recipient field"
-        },
-        {
-          "rule_id": "8.1.1",
-          "outcome": "Scanned page is readable for other fields, but no readable consignee/buyer/ship-to field was identified"
+          "outcome": "NOT_FOUND"
         },
         {
           "rule_id": "8.1.3",
-          "outcome": "Because the invoice is scanned/image-based and no contradictory consignee is clearly shown, missing consignee is treated as MANUAL_REVIEW rather than MISMATCH"
+          "outcome": "MANUAL_REVIEW"
         }
       ],
-      "motivation": "Certifikatets mottagare 'Swift Egypt Limited' med land Egypt kan inte identifieras i något synligt Buyer/Bill-To/Ship-To/Consignee-fält på den skannade fakturasidan. Dokumentet visar heller ingen tydligt läsbar annan mottagare som motsäger certifikatet. På en skannad faktura ska detta därför hanteras som MANUAL_REVIEW, inte MISMATCH."
+      "motivation": "Den skannade fakturasidan visar ingen tydligt läsbar buyer/consignee/ship-to/delivery-adress för 'Swift Egypt Limited, Egypt'. Eftersom dokumentet är skannat och ingen annan motstridig mottagare framgår läsbart ska utebliven träff inte klassificeras som MISMATCH utan som MANUAL_REVIEW."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.93,
+      "confidence": 0.92,
       "certificate_value": "Medical devices and accessories, 2 Pallets",
-      "invoice_value": "Description of goods: MEDICAL DEVICES AND ACCESSORIES; No of pkgs: 2 Pallets",
+      "invoice_value": "No of pkgs: 2 Pallets; Description of goods: MEDICAL DEVICES AND ACCESSORIES",
       "rules_applied": [
         {
-          "rule_id": "4.3.2",
-          "outcome": "No article number in certificate goods description; moved to controlled text matching"
-        },
-        {
           "rule_id": "4.3.3",
-          "outcome": "Identity-bearing text 'Medical devices and accessories' matched exactly after case normalization"
+          "outcome": "MATCH"
         },
         {
-          "rule_id": "4.3.8",
+          "rule_id": "4.3.4",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets varubeskrivning 'Medical devices and accessories, 2 Pallets' återfinns i fakturans övre tabell som 'MEDICAL DEVICES AND ACCESSORIES' och separat '2 Pallets'. Den identitetsbärande huvudbeteckningen matchar direkt efter normalisering av versaler/gemener, och förpackningsuppgiften stöds samtidigt av fakturan."
+      "motivation": "Den identitetsbärande huvudbeteckningen 'Medical devices and accessories' återfinns uttryckligen i fakturan som 'MEDICAL DEVICES AND ACCESSORIES'. Tillägget '2 Pallets' återfinns samtidigt i kolumnen 'No of pkgs' och motsäger inte varubeskrivningen."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.89,
+      "confidence": 0.94,
       "certificate_value": "156 KG GROSS",
-      "invoice_value": "Total Weight: 156 KG",
+      "invoice_value": "Total Weight 156 KG",
       "rules_applied": [
         {
           "rule_id": "4.4.2.1",
-          "outcome": "Certificate quantity includes numeric value, unit and weight category"
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.4.3.6",
-          "outcome": "Shipment weight verified against invoice total weight"
-        },
-        {
-          "rule_id": "4.4.7",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger '156 KG GROSS'. Fakturan anger i övre tabellen 'Total Weight 156 KG' för samma försändning. Numeriskt värde och viktenhet överensstämmer, och skillnad i benämning mellan 'GROSS' och det mer generella 'Total Weight' medför inte i sig MISMATCH när värdet tydligt avser samma dokumenterade försändning."
+      "motivation": "Certifikatet anger uttryckligen viktvärdet 156 KG med viktkategori GROSS. Fakturan visar 'Total Weight 156 KG' för samma försändning; skillnad i benämning mellan 'GROSS' och 'Total Weight' medför inte avvikelse när numeriskt värde och enhet överensstämmer."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.95,
+      "confidence": 0.96,
       "certificate_value": "Sweden",
       "invoice_value": "The exporter of the products covered by this document declares that except where otherwise clearly indicated these products are of the origin of Sweden.",
       "rules_applied": [
         {
           "rule_id": "4.5.1",
-          "outcome": "Explicit origin statement identified in invoice"
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.5.6",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger ursprungsland 'Sweden'. Fakturan innehåller en uttrycklig ursprungsdeklaration: 'these products are of the origin of Sweden'. Ursprungslandet kan därmed verifieras explicit i fakturan."
+      "motivation": "Ursprungslandet 'Sweden' framgår uttryckligen i fakturatexten genom en explicit origin-deklaration. Verifieringskravet för ursprungsland är därmed uppfyllt."
     }
   },
   "overall_assessment": {
     "comparison_result": "MANUAL_REVIEW",
     "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
     "auto_approval_eligible": false,
-    "confidence": 0.77,
+    "confidence": 0.78,
     "critical_failures": [],
     "manual_review_triggers": [
-      "Consignee 'Swift Egypt Limited, Egypt' could not be verified in any readable recipient field on the scanned invoice page.",
-      "The document is image-based/scanned, so absence of a located consignee is not treated as proven mismatch without a contradictory readable consignee."
+      "Consignee 'Swift Egypt Limited, Egypt' kunde inte identifieras i något läsbart mottagarfält på den skannade fakturan."
     ],
-    "manual_review_reason": "IDENTIFIER_NOT_VERIFIABLE",
-    "decision_summary": "Document pairing is supported by an exact consignor match. Goods description, quantity and origin are verifiable against the scanned invoice, but the consignee from the certificate cannot be confirmed from any readable recipient field and is not explicitly contradicted. Therefore the case requires manual review.",
-    "human_explanation": "Avsändare, varubeskrivning, kvantitet och ursprungsland kan verifieras mot dokumentet. Mottagaren 'Swift Egypt Limited' kan däremot inte identifieras i den skannade fakturan, och dokumentet visar ingen tydlig mottagarruta som säkert bekräftar eller motsäger uppgiften. Därför krävs manuell granskning."
+    "manual_review_reason": "SCANNED_UNREADABLE",
+    "decision_summary": "Consignor, goods description, quantity and origin are verified against the scanned invoice. Consignee cannot be safely verified because no readable consignee/ship-to field is identifiable on the scanned page and no contradictory consignee is visible.",
+    "human_explanation": "Avsändare, varubeskrivning, vikt och ursprungsland stämmer med den bifogade fakturan. Fakturan är dock en skannad en-sideshandling där mottagaren 'Swift Egypt Limited, Egypt' inte kan identifieras i något läsbart mottagarfält. Därför krävs manuell granskning."
   },
   "_meta": {
-    "tested_at": "2026-06-06T09:16:06.621072+00:00",
-    "prompt_hash": "4690e976915d",
+    "tested_at": "2026-06-06T14:01:49.287748+00:00",
+    "prompt_hash": "752423deb8d7",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P0162_MATCH",

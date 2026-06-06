@@ -1,10 +1,10 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-06-06",
+    "verification_timestamp": "2026-06-06T00:00:00Z",
     "document_pair_id": "SEG-26D-463278__9209877429",
     "certificate_issue_date": null,
-    "source_documents_received": 1
+    "source_documents_received": 2
   },
   "task": {
     "task_type": "customs_document_pair_verification",
@@ -13,14 +13,14 @@
   },
   "documents": {
     "document_a": {
-      "label": "Certificate of Origin (structured JSON)",
+      "label": "Certificate of Origin structured JSON",
       "assumed_role": "certificate",
-      "document_type": "Certificate of Origin"
+      "document_type": "structured_json"
     },
     "document_b": {
       "label": "Attached PDF",
       "assumed_role": "invoice",
-      "document_type": "Customs Invoice"
+      "document_type": "customs_invoice"
     }
   },
   "rule_activation": {
@@ -34,31 +34,23 @@
     "activated_rules": [
       {
         "rule_id": "8.5",
-        "rule_name": "Dokumentparning via fakturanummer"
+        "rule_name": "Document pairing by explicit invoice number and invoice date"
       },
       {
         "rule_id": "8.6",
-        "rule_name": "Obligatorisk parningsvalidering"
+        "rule_name": "Mandatory pairing validation"
       },
       {
         "rule_id": "4.1.0",
-        "rule_name": "Sökning efter consignor i alla fakturadelar"
+        "rule_name": "Consignor found explicitly in invoice text"
       },
       {
-        "rule_id": "4.2.2.1",
-        "rule_name": "Normalisering av mottagarnamn"
-      },
-      {
-        "rule_id": "4.3.2",
-        "rule_name": "Kontrollerad textmatchning av varubeskrivning"
+        "rule_id": "4.2.0.2",
+        "rule_name": "Consignee may match any recipient role in invoice"
       },
       {
         "rule_id": "4.4.2.2",
-        "rule_name": "Ogiltig kvantitetsenhet"
-      },
-      {
-        "rule_id": "4.5.4",
-        "rule_name": "Landnormalisering med ISO-kod"
+        "rule_name": "Invalid quantity unit in certificate quantity field"
       }
     ]
   },
@@ -67,8 +59,8 @@
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.99,
-      "certificate_value": "ERICSSON AB | SWEDEN",
-      "invoice_value": "Ericsson AB ... SE-164 83 STOCKHOLM ... Stockholm,Sweden | VAT no : SE556056625801",
+      "certificate_value": "ERICSSON AB | SWEDEN | VAT SE556056625801",
+      "invoice_value": "Ericsson AB | VAT no : SE556056625801 | SE-164 83 STOCKHOLM | Stockholm,Sweden",
       "rules_applied": [
         {
           "rule_id": "4.1.0",
@@ -77,20 +69,16 @@
         {
           "rule_id": "4.1.2.1",
           "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.1.5",
-          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor 'ERICSSON AB' återfinns uttryckligen i fakturans sidhuvud/footer och landet Sverige styrks både av adressen 'Stockholm,Sweden' och VAT-prefix 'SE'. Samma juridiska part kan verifieras utan tolkning."
+      "motivation": "Certifikatets consignor 'ERICSSON AB' återfinns uttryckligen i fakturans footer på sida 1 som 'Ericsson AB'. Landet verifieras av 'Stockholm,Sweden' samt VAT-prefixet 'SE' i 'SE556056625801'. Samma juridiska part kan identifieras utan otillåten tolkning."
     },
     "consignee": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.94,
+      "confidence": 0.93,
       "certificate_value": "SAFARICOM LIMITED | KENYA",
-      "invoice_value": "Ship to / Bill to / Sold to: SAFARICOM ... KENYA",
+      "invoice_value": "Ship to SAFARICOM, SAFARICOM HOUSE WAIYAKI WAY NAIROBI, 00800 NAIROBI, KENYA",
       "rules_applied": [
         {
           "rule_id": "4.2.0.2",
@@ -101,18 +89,18 @@
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.2.3",
+          "rule_id": "4.1.3.6",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Mottagaren i certifikatet kan identifieras i flera mottagarfält i fakturan ('Ship to', 'Bill to', 'Sold to') som 'SAFARICOM' i Kenya. Skillnaden mot 'SAFARICOM LIMITED' utgör tillåten normalisering av bolagsbeteckning och landet Kenya framgår uttryckligen."
+      "motivation": "Certifikatets mottagare kan identifieras i fakturans 'Ship to'-fält. Kärnnamnet 'SAFARICOM' matchar, och skillnaden består endast i juridisk bolagsform ('LIMITED' utelämnad i fakturan), vilket accepteras efter tillåten normalisering. Landet 'KENYA' framgår uttryckligen i fakturan."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.97,
+      "confidence": 0.98,
       "certificate_value": "PRINTED BOARD ASSEMB/NPU 1006 /HS code 851779000000/ Hungary",
-      "invoice_value": "Description: PRINTED BOARD ASSEMB/NPU 1006 | HS code 851779000000 | CoO HU",
+      "invoice_value": "Description: PRINTED BOARD ASSEMB/NPU 1006 | HS code: 851779000000 | CoO: HU",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
@@ -121,13 +109,9 @@
         {
           "rule_id": "4.3.3",
           "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.3.4",
-          "outcome": "MATCH"
         }
       ],
-      "motivation": "Den identitetsbärande huvudbeteckningen 'PRINTED BOARD ASSEMB/NPU 1006' återfinns exakt i fakturaraden. HS-koden 851779000000 återfinns också. Den efterföljande landsuppgiften i certifikatraden ändrar inte produktidentiteten i denna kontrollpunkt."
+      "motivation": "Den identitetsbärande huvudbeteckningen 'PRINTED BOARD ASSEMB/NPU 1006' återfinns exakt i fakturans varurad på sida 1. HS-koden 851779000000 återfinns också i samma rad. Varubeskrivningen kan därför verifieras direkt utan semantisk tolkning."
     },
     "quantity": {
       "applicable": true,
@@ -137,19 +121,19 @@
       "invoice_value": "Qty 1,00 PC | Number of packages 1 | Total gross weight 1,500 KG",
       "rules_applied": [
         {
+          "rule_id": "4.4.1",
+          "outcome": "Quantity must be verified from certificate quantity field"
+        },
+        {
           "rule_id": "4.4.2",
-          "outcome": "quantity examined"
+          "outcome": "Unit present"
         },
         {
           "rule_id": "4.4.2.2",
           "outcome": "MISMATCH"
-        },
-        {
-          "rule_id": "4.4.7",
-          "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Det verifieringsgrundande kvantitetsfältet i certifikatet anger '1 item'. 'item' är uttryckligen en ogiltig kvantitetsenhet enligt regelverket. Att fakturan samtidigt visar '1,00 PC' och att certifikatet även innehåller ett paketantal ändrar inte utfallet, eftersom förekomst av ogiltig enhet i kvantitetsfältet medför MISMATCH."
+      "motivation": "Den verifieringsgrundande kvantiteten i certifikatet är '1 item' i fältet OriginRows[].Quantity. Enligt reglerna är 'item/items' inte en godkänd kvantitetsenhet i COO-sammanhang, vilket medför MISMATCH. Den separata texten 'Total gross weight: 1,500 KG' ligger i varubeskrivningen med Quantity=null och får därför inte användas som certifikatets verifieringsgrundande kvantitet."
     },
     "origin": {
       "applicable": true,
@@ -160,36 +144,32 @@
       "rules_applied": [
         {
           "rule_id": "4.5.1",
-          "outcome": "origin field identified"
+          "outcome": "Explicit origin field identified"
         },
         {
           "rule_id": "4.5.4",
           "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.5.6",
-          "outcome": "MATCH"
         }
       ],
-      "motivation": "Fakturan anger ursprung explicit per rad i CoO-kolumnen som 'HU'. ISO-koden HU är ekvivalent med 'Hungary', så certifikatets ursprungsland kan verifieras uttryckligen."
+      "motivation": "Certifikatet anger ursprungsland 'Hungary'. Fakturan anger uttryckligen 'CoO HU' i varuraden på sida 1. ISO-landkoden HU är ekvivalent med Hungary, så ursprungslandet är verifierat."
     }
   },
   "overall_assessment": {
     "comparison_result": "NOT_IDENTICAL",
     "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
     "auto_approval_eligible": false,
-    "confidence": 0.98,
+    "confidence": 0.97,
     "critical_failures": [
-      "Kvantitetsfältet i certifikatet innehåller den ogiltiga enheten 'item'."
+      "Quantity control point is MISMATCH because the certificate quantity field uses the invalid unit 'item'."
     ],
     "manual_review_triggers": [],
     "manual_review_reason": "NOT_APPLICABLE",
-    "decision_summary": "Dokumentparet är korrekt parat via fakturanummer 9209877429 och fakturadatum 2026-01-22. Avsändare, mottagare, varubeskrivning och ursprungsland kan verifieras mot fakturan. Kvantitetskontrollpunkten faller dock på ett uttryckligt formfel i certifikatet: '1 item' är inte en godkänd kvantitetsenhet, vilket ger MISMATCH och därmed totalt NOT_IDENTICAL.",
-    "human_explanation": "Certifikatet och fakturan stämmer för avsändare, mottagare, varubeskrivning och ursprungsland. Kvantitetsfältet i certifikatet anger '1 item', men 'item' är inte en godkänd kvantitetsenhet enligt regelverket. Därför är dokumenten inte identiska och måste hanteras manuellt."
+    "decision_summary": "Dokumentparet är korrekt parat via fakturanummer 9209877429 och datum 2026-01-22. Consignor, consignee, goods description och origin kan verifieras mot fakturan. Kvantitetskontrollpunkten faller dock ut som MISMATCH eftersom certifikatets verifieringsgrundande kvantitetsfält anger '1 item', vilket inte är en godkänd kvantitetsenhet enligt regelverket.",
+    "human_explanation": "Certifikatet och fakturan stämmer för avsändare, mottagare, varubeskrivning och ursprungsland. Kvantiteten i certifikatet anges däremot som '1 item', och det är inte en godkänd enhet för automatisk verifiering. Därför är dokumenten inte identiska."
   },
   "_meta": {
-    "tested_at": "2026-06-06T09:16:06.631747+00:00",
-    "prompt_hash": "4690e976915d",
+    "tested_at": "2026-06-06T14:01:49.299864+00:00",
+    "prompt_hash": "752423deb8d7",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P017_MISMATCH",

@@ -2,9 +2,9 @@
   "schema_version": "3.0",
   "metadata": {
     "verification_timestamp": "2026-06-06T00:00:00Z",
-    "document_pair_id": "SEG-26D-466610",
+    "document_pair_id": "SEG-26D-466610__4870996",
     "certificate_issue_date": null,
-    "source_documents_received": 2
+    "source_documents_received": 1
   },
   "task": {
     "task_type": "customs_document_pair_verification",
@@ -13,14 +13,14 @@
   },
   "documents": {
     "document_a": {
-      "label": "Certificate of Origin JSON",
+      "label": "CERTIFICATE OF ORIGIN structured JSON",
       "assumed_role": "certificate",
-      "document_type": "structured_certificate_of_origin_json"
+      "document_type": "certificate_of_origin_json"
     },
     "document_b": {
       "label": "P0159_MATCH_invoice.pdf",
       "assumed_role": "invoice",
-      "document_type": "scanned_invoice_pdf"
+      "document_type": "invoice_pdf_scanned"
     }
   },
   "rule_activation": {
@@ -38,7 +38,7 @@
       },
       {
         "rule_id": "4.5.3",
-        "rule_name": "Blandade ursprung"
+        "rule_name": "Blandade ursprung med per-rad-koppling i faktura"
       },
       {
         "rule_id": "4.5.4.1",
@@ -46,7 +46,7 @@
       },
       {
         "rule_id": "4.5.4.2",
-        "rule_name": "EU-medlemsland"
+        "rule_name": "EU-medlemsland som verifierar EU-begrepp"
       }
     ]
   },
@@ -54,10 +54,14 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.87,
-      "certificate_value": "Husqvarna Construction",
-      "invoice_value": "Seller: HUSQVARNA CONSTRUCTION PRODUCTS, 43381 PARTILLE, Sweden; Foreign Exporter ID: SE556000533101; Foreign Exporter Country: SWEDEN",
+      "confidence": 0.89,
+      "certificate_value": "Husqvarna Construction | Sweden | SE556000533101",
+      "invoice_value": "Seller: HUSQVARNA CONSTRUCTION PRODUCTS, 43381 PARTILLE, Sweden; Foreign Exporter ID: SE556000533101",
       "rules_applied": [
+        {
+          "rule_id": "4.1.0",
+          "outcome": "REVIEWED_NO_MATCH"
+        },
         {
           "rule_id": "4.1.3.5",
           "outcome": "MATCH"
@@ -65,19 +69,15 @@
         {
           "rule_id": "4.1.4",
           "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.1.5",
-          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger consignor som \"Husqvarna Construction\" i Sverige. Fakturan visar säljaren som \"HUSQVARNA CONSTRUCTION PRODUCTS\" i Sverige, med SE-prefix i företagsidentifieraren. Skillnaden består av det generiska tillägget \"Products\", medan huvudnamnet \"Husqvarna Construction\" och landet Sverige kan identifieras i fakturan."
+      "motivation": "Certifikatet anger \"Husqvarna Construction\" i Sverige med VAT-nummer SE556000533101. Fakturan anger säljaren som \"HUSQVARNA CONSTRUCTION PRODUCTS\" i Sweden och innehåller exakt samma VAT-/exportörs-ID SE556000533101. Skillnaden består av tillägget \"PRODUCTS\", vilket accepteras som generiskt organisationsord; land stämmer."
     },
     "consignee": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.99,
-      "certificate_value": "MODERN AGE CREATIVE SOULTION",
+      "confidence": 0.97,
+      "certificate_value": "MODERN AGE CREATIVE SOULTION | 415N ELGAISH ST | 12522 HADABET AL-AHRAM | ARAB REPUBLIC OF EGYPT",
       "invoice_value": "Consignee: MODERN AGE CREATIVE SOULTION, 415N ELGAISH ST, 12522 HADABET AL-AHRAM, ARAB REPUBLIC OF EGYPT",
       "rules_applied": [
         {
@@ -87,40 +87,36 @@
         {
           "rule_id": "4.2.3",
           "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.2.4",
-          "outcome": "MATCH"
         }
       ],
-      "motivation": "Mottagaren i certifikatet återfinns ordagrant i fakturans consignee-fält på fakturan. Landet anges uttryckligen som Arab Republic of Egypt/EGYPT i fakturan och överensstämmer med certifikatets uppgift."
+      "motivation": "Mottagaren återfinns uttryckligen i fakturans consignee-fält med samma företagsnamn, samma gatuadress och samma land. Ingen motstridig mottagare ersätter denna part."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.91,
-      "certificate_value": "ATTACHED INVOICE DATED ON 260203; Scarifiers, Shot Blasters",
-      "invoice_value": "Goods specification: Scarifiers / Shot Blasters; item lines include SHOT BLASTER BLASTRAC 1-8DPS55 and FLOOR SCARIFIER BMP 265 I 400",
+      "confidence": 0.92,
+      "certificate_value": "ATTACHED INVOICE DATED ON 260203 | Scarifiers, Shot Blasters",
+      "invoice_value": "Page 3 GOODS SPECIFICATION: \"Scarifiers\" and \"Shot Blasters\"; Page 1 line items: \"SHOT BLASTER BLASTRAC 1-8DPS55\" and \"FLOOR SCARIFIER BMP 265 | 400\"",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "Prioritet 2 använd"
+          "outcome": "NO_ARTICLE_NUMBER_IN_CERTIFICATE"
         },
         {
           "rule_id": "4.3.3",
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.3.8",
+          "rule_id": "4.3.1.1",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet innehåller de identitetsbärande varubeteckningarna \"Scarifiers, Shot Blasters\". På fakturans goods specification-sida framgår samma varutyper uttryckligen som \"Scarifiers\" och \"Shot Blasters\". Den första certifikatraden är en referenstext till bilagd faktura med datum och används inte som enda grund för varuverifieringen."
+      "motivation": "Den konkreta varubeskrivningen i certifikatet är \"Scarifiers, Shot Blasters\". Dessa varor återfinns uttryckligen i fakturans goods specification på sida 3 och stöds även av artikelraderna på sida 1. Texten \"ATTACHED INVOICE DATED ON 260203\" behandlas som kompletterande referenstext och användes inte som ensam grund för generell varubeskrivning."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.96,
+      "confidence": 0.95,
       "certificate_value": "Gross 589 kg",
       "invoice_value": "Gross weight, kg: 589,00",
       "rules_applied": [
@@ -129,23 +125,23 @@
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.4.3",
-          "outcome": "MATCH"
-        },
-        {
           "rule_id": "4.4.3.6",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger en uttrycklig viktkvantitet med kategori och enhet: \"Gross 589 kg\". Fakturan anger total \"Gross weight, kg 589,00\", vilket är samma numeriska värde och samma vikttyp för försändningen."
+      "motivation": "Certifikatet anger uttryckligen bruttovikt med värde, enhet och kategori: \"Gross 589 kg\". Fakturan anger total \"Gross weight, kg 589,00\" för försändningen. Numeriskt värde, enhet och viktkategori överensstämmer efter normalisering av decimalnotation."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.88,
+      "confidence": 0.91,
       "certificate_value": "the European Community BG PL",
-      "invoice_value": "Origin column on invoice lines: BG and PL*",
+      "invoice_value": "Origin column on page 1: \"BG\" for one line and \"PL*\" for one line",
       "rules_applied": [
+        {
+          "rule_id": "4.5.1",
+          "outcome": "MATCH"
+        },
         {
           "rule_id": "4.5.3",
           "outcome": "MATCH"
@@ -159,23 +155,23 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger Europeiska gemenskapen samt de specifika ursprungen BG och PL. Fakturans origin-kolumn visar \"BG\" för en artikel och \"PL*\" för en annan; BG och PL är EU-medlemsländer och den enkla asterisken i \"PL*\" ändrar inte landskoden. Därmed kan varje ursprungskomponent i certifikatet identifieras i fakturan."
+      "motivation": "Certifikatet anger Europeiska gemenskapen samt BG och PL. Fakturan har en explicit origin-kolumn med BG och PL* per rad. BG och PL verifierar de specifikt angivna EU-länderna, och därmed verifieras även EU-/European Community-komponenten. Den enkla asterisken i \"PL*\" ändrar inte landskoden och skapar ingen motsägelse."
     }
   },
   "overall_assessment": {
     "comparison_result": "IDENTICAL",
     "workflow_recommendation": "AUTO_APPROVAL_ELIGIBLE",
     "auto_approval_eligible": true,
-    "confidence": 0.92,
+    "confidence": 0.93,
     "critical_failures": [],
     "manual_review_triggers": [],
     "manual_review_reason": "NOT_APPLICABLE",
-    "decision_summary": "Alla fem tillämpliga kontrollpunkter kunde verifieras mot den bifogade fakturan. Fakturan är skannad men tillräckligt läsbar för säker regelbaserad kontroll, och ingen tillämplig kontrollpunkt gav MISMATCH eller MANUAL_REVIEW.",
-    "human_explanation": "Alla uppgifter i certifikatet kan återfinnas i fakturan. Avsändare, mottagare, varor, bruttovikt 589 kg och ursprung BG/PL inom EU stämmer överens. Dokumentparet kan därför godkännas automatiskt."
+    "decision_summary": "Alla tillämpliga kontrollpunkter kunde verifieras mot den bifogade fakturan. Fakturan är skannad/bildbaserad men de relevanta fälten var läsbara på sidorna 1 och 3, och ingen kontrollpunkt föll under confidence-golvet för auto approval.",
+    "human_explanation": "Uppgifterna i certifikatet kan verifieras mot den bifogade fakturan. Avsändare, mottagare, varubeskrivning, bruttovikt 589 kg och ursprung BG/PL inom Europeiska gemenskapen framgår av fakturan. Dokumentparet kan godkännas automatiskt."
   },
   "_meta": {
-    "tested_at": "2026-06-06T09:16:06.619549+00:00",
-    "prompt_hash": "4690e976915d",
+    "tested_at": "2026-06-06T14:01:49.280871+00:00",
+    "prompt_hash": "752423deb8d7",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P0159_MATCH",

@@ -2,9 +2,9 @@
   "schema_version": "3.0",
   "metadata": {
     "verification_timestamp": "2026-06-06T00:00:00Z",
-    "document_pair_id": "SEG-26D-439625__P203_MATCH_invoice.pdf",
+    "document_pair_id": "SEG-26D-439625::P203_MATCH_invoice.pdf",
     "certificate_issue_date": null,
-    "source_documents_received": 1
+    "source_documents_received": 2
   },
   "task": {
     "task_type": "customs_document_pair_verification",
@@ -13,14 +13,14 @@
   },
   "documents": {
     "document_a": {
-      "label": "CERTIFICATE OF ORIGIN (structured JSON)",
+      "label": "Certificate of Origin (structured JSON)",
       "assumed_role": "certificate",
-      "document_type": "certificate_of_origin"
+      "document_type": "structured_json_certificate_of_origin"
     },
     "document_b": {
       "label": "P203_MATCH_invoice.pdf",
       "assumed_role": "invoice",
-      "document_type": "commercial_invoice_pdf_scanned"
+      "document_type": "scanned_invoice_pdf"
     }
   },
   "rule_activation": {
@@ -33,16 +33,16 @@
     "eu_origin_normalization_active": false,
     "activated_rules": [
       {
+        "rule_id": "8.1.3",
+        "rule_name": "Skannad faktura: hittas inte är inte samma som saknas"
+      },
+      {
         "rule_id": "4.1.0",
         "rule_name": "Consignor får verifieras om företagsnamnet uttryckligen förekommer någonstans i fakturan"
       },
       {
         "rule_id": "4.4.3.4",
-        "rule_name": "Enhetsprefix-normalisering för kpcs"
-      },
-      {
-        "rule_id": "8.1.3",
-        "rule_name": "Skannad faktura: hittas inte är inte samma som saknas"
+        "rule_name": "Enhetsprefix-normalisering för kpcs/pcs"
       }
     ]
   },
@@ -50,9 +50,9 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.96,
-      "certificate_value": "Emballator Tectubes Sweden AB",
-      "invoice_value": "Emballator Tectubes Sweden AB, Box 103, SE-544 22 Hjo, SWEDEN, Orgnr / Org No: 556425-1998",
+      "confidence": 0.95,
+      "certificate_value": "Emballator Tectubes Sweden AB, Sweden",
+      "invoice_value": "Footer: \"Emballator Tectubes Sweden AB ... SE-54422 Hjo SWEDEN\"; signature block also shows \"TECTUBES SWEDEN AB\"",
       "rules_applied": [
         {
           "rule_id": "4.1.0",
@@ -67,76 +67,76 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor kan identifieras uttryckligen i fakturans nederdel på sida 1 som 'Emballator Tectubes Sweden AB'. Landet 'SWEDEN' och organisationsnumret '556425-1998' framgår också i samma block, vilket verifierar samma juridiska part och land."
+      "motivation": "Certifikatets consignor kan identifieras uttryckligen i fakturans footer som \"Emballator Tectubes Sweden AB\". Landet Sverige framgår uttryckligen i samma block som \"SWEDEN\" och stöds även av svensk adress och svensk bank/VAT-kontext. Därmed är samma juridiska part och land verifierade."
     },
     "consignee": {
       "applicable": true,
       "status": "MANUAL_REVIEW",
-      "confidence": 0.42,
-      "certificate_value": "The Saudi British Bank",
-      "invoice_value": null,
+      "confidence": 0.44,
+      "certificate_value": "The Saudi British Bank, Saudi Arabia",
+      "invoice_value": "Ingen läsbar consignee/ship-to/bill-to-part kunde identifieras på den skannade fakturasidan; endast \"CIF Jeddah\" och \"Your Ref: Zahid Hassan\" är läsbart",
       "rules_applied": [
         {
           "rule_id": "4.2.0.2",
-          "outcome": "NOT_FOUND"
+          "outcome": "NOT_VERIFIED"
         },
         {
           "rule_id": "8.1.1",
-          "outcome": "FIELD_NOT_READABLE"
+          "outcome": "FIELD_NOT_READABLE_ENOUGH"
         },
         {
           "rule_id": "8.1.3",
           "outcome": "MANUAL_REVIEW"
         }
       ],
-      "motivation": "Den tillgängliga fakturan är skannad/bildbaserad och inget läsbart mottagarblock med 'The Saudi British Bank' kan identifieras på den visade sidan. Ingen annan tydligt läsbar, motstridig mottagare framgår heller. Eftersom frånvaron kan bero på begränsad läsbarhet eller att mottagarblocket inte kan avläsas säkert ska kontrollpunkten skickas till manuell granskning i stället för att klassificeras som mismatch."
+      "motivation": "Fakturan är bildbaserad/skannad och någon tydlig mottagarruta med företagsnamn för consignee kan inte läsas eller lokaliseras på den tillgängliga sidan. Det finns samtidigt ingen annan tydligt läsbar, motstridig mottagare som motsäger certifikatet. Enligt reglerna för skannad faktura ska detta därför hanteras som MANUAL_REVIEW och inte som MISMATCH."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.99,
-      "certificate_value": "Sure Cure Gel-CMN 30g | Sure Cure Gel-CMN 30g",
-      "invoice_value": "Sure Cure Gel-CMN 30g",
+      "confidence": 0.98,
+      "certificate_value": "Sure Cure Gel-CMN 30g",
+      "invoice_value": "Två varurader med texten \"Sure Cure Gel-CMN 30g\"",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "PRIORITY_2_APPLIED"
+          "outcome": "PRIORITY_2_TEXT_MATCH_USED"
         },
         {
           "rule_id": "4.3.3",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger varubeskrivningen 'Sure Cure Gel-CMN 30g' i båda originraderna. Samma identitetsbärande huvudbeteckning kan läsas i fakturan på sida 1 på båda produktraderna utan behov av semantisk tolkning."
+      "motivation": "Certifikatets varubeskrivning \"Sure Cure Gel-CMN 30g\" återfinns ordagrant i fakturan på båda produkt-raderna. Ingen semantisk tolkning eller undantagsregel behövdes."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.88,
-      "certificate_value": "30640pcs | 30640pcs",
-      "invoice_value": "30,640 kpcs | 30,640 kpcs",
+      "certificate_value": "30640pcs; 30640pcs",
+      "invoice_value": "Två rader med \"30,640 kpcs\" för \"Sure Cure Gel-CMN 30g\"",
       "rules_applied": [
         {
-          "rule_id": "4.4.2",
-          "outcome": "FORM_REQUIREMENT_MET"
+          "rule_id": "4.4.3.1",
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.4.3.2",
-          "outcome": "MATCH"
+          "outcome": "AT_LEAST_ONE_QUANTITY_VERIFIED"
         },
         {
           "rule_id": "4.4.3.4",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger två kvantitetsuppgifter om '30640pcs'. Fakturan visar två motsvarande rader med '30,640 kpcs'. Enligt regeln för enhetsprefix får 'kpcs' normaliseras, och i denna kontext motsvarar '30,640 kpcs' certifikatets 30 640 pcs per rad. Minst en kvantitetsuppgift måste verifieras, och här kan båda identifieras."
+      "motivation": "Certifikatet anger 30640 pcs per rad för två rader. Fakturan anger motsvarande kvantitet som \"30,640 kpcs\" på två rader för samma vara. Enligt enhetsprefix-normalisering för kpcs/pcs kan detta verifieras som samma kvantitet, och minst en kvantitetsuppgift är därmed säkert verifierad utan någon uttrycklig motsägelse."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.97,
+      "confidence": 0.98,
       "certificate_value": "Sweden",
-      "invoice_value": "The origin of the material is Sweden. ... the description of the manufacture of the goods is Sweden.",
+      "invoice_value": "\"The origin of the material is Sweden.\"",
       "rules_applied": [
         {
           "rule_id": "4.5.1",
@@ -147,25 +147,25 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Ursprungslandet i certifikatet är 'Sweden'. Fakturan innehåller en explicit ursprungsangivelse på sida 1: 'The origin of the material is Sweden' samt ytterligare text som bekräftar att varorna är av svenskt ursprung. Detta uppfyller kravet på positiv verifiering i ett dedikerat ursprungsuttalande."
+      "motivation": "Certifikatets ursprungsland Sverige framgår uttryckligen i fakturan genom texten \"The origin of the material is Sweden.\" Ursprunget är därför positivt verifierat i ett explicit origin-uttalande."
     }
   },
   "overall_assessment": {
     "comparison_result": "MANUAL_REVIEW",
     "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
     "auto_approval_eligible": false,
-    "confidence": 0.79,
+    "confidence": 0.73,
     "critical_failures": [],
     "manual_review_triggers": [
-      "Mottagaren i certifikatet kan inte verifieras säkert eftersom fakturan är skannad/bildbaserad och relevant mottagartext inte kan läsas på den tillgängliga sidan."
+      "Consignee kunde inte verifieras eftersom den skannade fakturan saknar eller inte tydligt visar ett läsbart mottagarfält på den tillgängliga sidan."
     ],
     "manual_review_reason": "SCANNED_UNREADABLE",
-    "decision_summary": "Consignor, varubeskrivning, kvantitet och ursprungsland kan verifieras mot fakturan. Mottagaren kan däremot inte läsas/verifieras säkert i den skannade fakturan, och ärendet måste därför granskas manuellt.",
-    "human_explanation": "Avsändare, vara, mängd och ursprungsland stämmer mot fakturan. Mottagaren 'The Saudi British Bank' kan däremot inte verifieras säkert eftersom fakturan är skannad och mottagaruppgiften inte går att läsa tydligt. Ärendet behöver därför manuell granskning."
+    "decision_summary": "Consignor, varubeskrivning, kvantitet och ursprungsland kunde verifieras mot den skannade fakturan. Mottagaren kunde däremot inte läsas eller lokaliseras säkert i något mottagarfält på den tillgängliga fakturasidan. Eftersom fakturan är skannad och ingen motstridig mottagare är tydligt läsbar ska slutresultatet vara MANUAL_REVIEW.",
+    "human_explanation": "De flesta uppgifter stämmer mot fakturan, inklusive avsändare, vara, kvantitet och ursprungsland. Mottagaren \"The Saudi British Bank\" kan däremot inte läsas fram säkert i den skannade fakturan. Ärendet behöver därför granskas manuellt."
   },
   "_meta": {
-    "tested_at": "2026-06-06T09:13:51.020964+00:00",
-    "prompt_hash": "4690e976915d",
+    "tested_at": "2026-06-06T14:17:35.596860+00:00",
+    "prompt_hash": "752423deb8d7",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P203_MATCH",

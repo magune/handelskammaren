@@ -13,14 +13,14 @@
   },
   "documents": {
     "document_a": {
-      "label": "Certificate of Origin structured JSON",
+      "label": "CERTIFICATE OF ORIGIN (structured JSON)",
       "assumed_role": "certificate",
-      "document_type": "certificate_of_origin_json"
+      "document_type": "structured_json_certificate_of_origin"
     },
     "document_b": {
       "label": "Invoice PDF",
       "assumed_role": "invoice",
-      "document_type": "invoice"
+      "document_type": "invoice_pdf"
     }
   },
   "rule_activation": {
@@ -33,20 +33,20 @@
     "eu_origin_normalization_active": true,
     "activated_rules": [
       {
-        "rule_id": "8.5",
-        "rule_name": "Dokumentparning via uttrycklig fakturareferens"
-      },
-      {
         "rule_id": "8.6",
         "rule_name": "Obligatorisk parningsvalidering"
       },
       {
         "rule_id": "4.4.3.2",
-        "rule_name": "Minst en kvantitetsuppgift räcker om övriga inte motsägs"
+        "rule_name": "Flera kvantitetsuppgifter – minst en verifierad räcker om ingen annan uttryckligen motsägs"
       },
       {
         "rule_id": "4.5.4.1",
-        "rule_name": "EU-normalisering"
+        "rule_name": "EU-normalisering med särskild begränsning för specifikt namngivna EU-länder"
+      },
+      {
+        "rule_id": "4.5.4.2",
+        "rule_name": "EU-medlemsland"
       }
     ]
   },
@@ -55,7 +55,7 @@
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.99,
-      "certificate_value": "Acoem AB, Box 7, 43121 Mölndal, Sweden",
+      "certificate_value": "Acoem AB | Box 7 | 43121 | Mölndal | Sweden | VAT 5562384437",
       "invoice_value": "Acoem AB\nSWEDEN\nBox 7\n431 21 MÖLNDAL\nVAT No: SE556238443701",
       "rules_applied": [
         {
@@ -71,14 +71,14 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor 'Acoem AB' återfinns uttryckligen i fakturans sidhuvud och företagsblock. Landet 'Sweden' framgår explicit i fakturan och stöds även av VAT-prefix/IBAN med SE. Samma juridiska part kan verifieras utan tolkning."
+      "motivation": "Certifikatets consignor 'Acoem AB' återfinns uttryckligen i fakturans sidhuvud och footer på båda sidor. Landet Sverige verifieras explicit i adressblocket samt indirekt via VAT-prefix/IBAN-prefix SE. Samma juridiska part och land kan därför verifieras entydigt."
     },
     "consignee": {
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.88,
-      "certificate_value": "AU VIET TECHNICAL EQUIPMENT JSC, 113/4D, Cong Lo Street, Ward 15, Tan Binh District, VN-70500 HO CHI MINH CITY, Viet Nam",
-      "invoice_value": "Customer / Delivery address:\nAu Viet Techn Equip Joint Stock Comp\n113/4D Cong Lo Street\nTan Son Ward\nVN-70500 HO CHI MINH CITY\nVIETNAM",
+      "certificate_value": "AU VIET TECHNICAL EQUIPMENT JSC | 113/4D, Cong Lo Street, | Ward 15, Tan Binh District, | VN-70500 HO CHI MINH CITY | Viet Nam",
+      "invoice_value": "Customer / Delivery address\nAu Viet Techn Equip Joint Stock Comp\n113/4D Cong Lo Street\nTan Son Ward\nVN-70500 HO CHI MINH CITY\nVIETNAM",
       "rules_applied": [
         {
           "rule_id": "4.2.0.2",
@@ -89,30 +89,22 @@
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.1.3.3",
-          "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.1.3.6",
-          "outcome": "MATCH"
-        },
-        {
           "rule_id": "4.2.3",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets mottagare kan identifieras i fakturans Customer/Delivery address-block. 'TECHNICAL' motsvaras av den vedertagna förkortningen 'Techn', 'EQUIPMENT' av 'Equip', och 'JSC' motsvaras av 'Joint Stock Comp' som juridisk bolagsforms-/företagsformsvariant. Landet Vietnam/Viet Nam överensstämmer uttryckligen."
+      "motivation": "Certifikatets mottagare kan identifieras i fakturans både Customer- och Delivery address-fält. Namnmatchningen stöds av tillåten normalisering och vedertagna förkortningar: 'TECHNICAL'↔'Techn', 'EQUIPMENT'↔'Equip', 'JSC'↔'Joint Stock Comp'. Landet Viet Nam/VIETNAM framgår uttryckligen i fakturan."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.98,
-      "certificate_value": "Acoem AT-400 T Ultimate | VT-300 Essential",
-      "invoice_value": "1-1288 Acoem AT-400 T Ultimate\n1-1210 VT-300 Essential",
+      "confidence": 0.96,
+      "certificate_value": "Acoem AT-400 T Ultimate | VT-300 Essential | Invoice 59948, NETWEIGHT 14,9kg",
+      "invoice_value": "1-1288 Acoem AT-400 T Ultimate\n1-1210 VT-300 Essential\nInvoice No 59948",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "MATCH"
+          "outcome": "NOT_APPLICABLE"
         },
         {
           "rule_id": "4.3.3",
@@ -123,14 +115,14 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "De två varubeteckningarna i certifikatet återfinns explicit i fakturans artikelrader med samma identitetsbärande huvudbeteckningar. Texten 'Invoice 59948, NETWEIGHT 14,9kg' behandlas inte som en separat vara utan som referens-/metadata, och påverkar därför inte varubeskrivningsmatchningen."
+      "motivation": "De två konkreta varubeskrivningarna i certifikatet, 'Acoem AT-400 T Ultimate' och 'VT-300 Essential', återfinns exakt i fakturans varurader. Den tredje certifikatraden 'Invoice 59948, NETWEIGHT 14,9kg' är referens-/metadata-text och utgör inte en separat vara som kräver egen produktmatchning. Varubeskrivningen är därför verifierad."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.97,
-      "certificate_value": "OriginRows[2].Quantity: GROSSWEIGHT15,9 KG; OriginPackages[0].Package: 2 ct.",
-      "invoice_value": "Gross weight: 15,9 kg\nNumber of packages: 2 ct.",
+      "confidence": 0.98,
+      "certificate_value": "OriginPackages: 2 ct. | OriginRows[2].Quantity: GROSSWEIGHT15,9 KG | OriginRows[2].Combined: Invoice 59948, NETWEIGHT 14,9kg GROSSWEIGHT15,9 KG",
+      "invoice_value": "Number of packages: 2 ct.\nNet weight: 14,9 kg\nGross weight: 15,9 kg",
       "rules_applied": [
         {
           "rule_id": "4.4.2.1",
@@ -143,53 +135,53 @@
         {
           "rule_id": "4.4.3.5",
           "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.4.3.6",
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet innehåller en explicit kvantitetsuppgift 'GROSSWEIGHT15,9 KG' med viktkategori och en separat försändelsekvantitet '2 ct.'. Fakturan anger exakt 'Gross weight: 15,9 kg' och även 'Number of packages: 2 ct.'. Minst en verifierbar kvantitetsuppgift krävs och här matchar båda utan motsägelse."
+      "motivation": "Certifikatet innehåller flera kvantitetsuppgifter: '2 ct.' som antal kolli och 'GROSSWEIGHT15,9 KG' som vikt. Fakturan anger uttryckligen 'Number of packages: 2 ct.' samt 'Gross weight: 15,9 kg' och även 'Net weight: 14,9 kg'. Minst en kvantitetsuppgift kan verifieras och ingen kvantitetsuppgift motsägs."
     },
     "origin": {
       "applicable": true,
       "status": "MISMATCH",
-      "confidence": 0.98,
+      "confidence": 0.99,
       "certificate_value": " EUROPEAN COMMUNITY; SWEDEN&FRANCE",
       "invoice_value": "Origin: European Community; Sweden",
       "rules_applied": [
-        {
-          "rule_id": "4.5.1",
-          "outcome": "MATCH"
-        },
         {
           "rule_id": "4.5.4.1",
           "outcome": "PARTIAL_MATCH"
         },
         {
           "rule_id": "4.5.4.2",
-          "outcome": "MISMATCH"
+          "outcome": "PARTIAL_MATCH"
         },
         {
           "rule_id": "4.5.6",
           "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Fakturan innehåller en explicit origin-angivelse, men den anger endast 'European Community; Sweden'. Certifikatet anger tre ursprungskomponenter: European Community, Sweden och France. European Community och Sweden kan verifieras, men France kan inte identifieras explicit i fakturans ursprungsfält. Eftersom varje ursprungsland i certifikatet måste kunna verifieras blir resultatet MISMATCH."
+      "motivation": "Fakturan anger uttryckligen ursprung 'European Community; Sweden'. Detta verifierar 'European Community' och 'Sweden' men INTE det ytterligare specifikt namngivna ursprungslandet 'France' som finns i certifikatet. Eftersom varje ursprungsland i certifikatet måste kunna identifieras i fakturan och Frankrike saknas där, är resultatet MISMATCH."
     }
   },
   "overall_assessment": {
     "comparison_result": "NOT_IDENTICAL",
     "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
     "auto_approval_eligible": false,
-    "confidence": 0.97,
+    "confidence": 0.98,
     "critical_failures": [
-      "Certifikatets ursprungsangivelse inkluderar FRANCE, men fakturans explicita origin-fält anger endast European Community; Sweden."
+      "Certifikatets ursprungsangivelse innehåller 'France' men fakturan anger endast 'European Community; Sweden'."
     ],
     "manual_review_triggers": [],
     "manual_review_reason": "NOT_APPLICABLE",
-    "decision_summary": "Dokumentparningen är giltig via fakturareferensen 59948 och avsändare, mottagare, varor samt kvantitet kan verifieras mot fakturan. Ursprungsland kan dock inte verifieras fullt ut eftersom certifikatet anger 'EUROPEAN COMMUNITY; SWEDEN&FRANCE' medan fakturan endast anger 'Origin: European Community; Sweden'. Minst en tillämplig kontrollpunkt är därför MISMATCH och totalresultatet måste vara NOT_IDENTICAL.",
-    "human_explanation": "Avsändare, mottagare, varor och kvantitet stämmer mot fakturan. Certifikatet anger ursprung 'EUROPEAN COMMUNITY; SWEDEN&FRANCE' medan fakturan endast anger 'Origin: European Community; Sweden'. Frankrike kan därför inte verifieras i fakturan."
+    "decision_summary": "Dokumentparet är inte identiskt. Avsändare, mottagare, varubeskrivning och kvantitet kan verifieras mot fakturan, men ursprungslandet kan inte verifieras fullt ut eftersom certifikatet anger European Community; Sweden&France medan fakturan endast anger European Community; Sweden.",
+    "human_explanation": "Certifikatet anger ursprung som European Community; Sweden&France medan fakturan endast anger Origin: European Community; Sweden. Frankrike kan därför inte verifieras mot fakturan. Övriga kontrollpunkter kan verifieras."
   },
   "_meta": {
-    "tested_at": "2026-06-06T09:13:51.022055+00:00",
-    "prompt_hash": "4690e976915d",
+    "tested_at": "2026-06-06T14:17:35.598062+00:00",
+    "prompt_hash": "752423deb8d7",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P205_MISMATCH",

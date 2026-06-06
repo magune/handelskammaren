@@ -13,14 +13,14 @@
   },
   "documents": {
     "document_a": {
-      "label": "Certificate of Origin (structured JSON)",
+      "label": "CERTIFICATE OF ORIGIN (structured JSON)",
       "assumed_role": "certificate",
       "document_type": "structured_json"
     },
     "document_b": {
-      "label": "Invoice PDF",
+      "label": "Attached PDF",
       "assumed_role": "invoice",
-      "document_type": "invoice"
+      "document_type": "invoice_pdf"
     }
   },
   "rule_activation": {
@@ -33,107 +33,103 @@
     "eu_origin_normalization_active": false,
     "activated_rules": [
       {
-        "rule_id": "8.6",
-        "rule_name": "Obligatorisk parningsvalidering passerad via consignor och consignee"
-      },
-      {
         "rule_id": "4.3.4",
         "rule_name": "Tillägg som inte påverkar produktidentitet"
       },
       {
         "rule_id": "4.4.3.2",
-        "rule_name": "Minst en kvantitetsuppgift räcker om övriga inte motsägs"
+        "rule_name": "Flera kvantitetsuppgifter – minst en ska verifieras och övriga får inte motsägas"
       }
     ]
   },
   "control_points": {
     "consignor": {
       "applicable": true,
-      "status": "MISMATCH",
+      "status": "MATCH",
       "confidence": 0.93,
-      "certificate_value": "ESS-ENN TIMBER AB | VAT No: SE559119212401 | Sweden",
-      "invoice_value": "ESS-ENN Timber AB - Skruvbyvägen 2 A - S-365 94 Skruv | VAT-no SE556381721101 | Ess-Enn Timber AB, Skruvbyvägen 2, 365 94 SKRUV. ID: 556381-7211, VAT: SE556381721101",
+      "certificate_value": "ESS-ENN TIMBER AB, SKRUVBYVAGEN 2A, 365 94 SKRUV, Sweden",
+      "invoice_value": "ESS-ENN Timber AB - Skruvbyvägen 2 A - S-365 94 Skruv; VAT-no SE556381721101",
       "rules_applied": [
         {
-          "rule_id": "4.1.2",
-          "outcome": "issuer name and country identified, but legal-party verification weakened by conflicting issuer VAT identifier"
+          "rule_id": "4.1.0",
+          "outcome": "MATCH"
         },
         {
-          "rule_id": "2.1",
-          "outcome": "invoice contains contradictory identifier for same consignor field"
+          "rule_id": "4.1.2.1",
+          "outcome": "MATCH"
         },
         {
-          "rule_id": "4.1.5",
-          "outcome": "MISMATCH"
+          "rule_id": "4.1.4",
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Fakturan identifierar uttryckligen ESS-ENN Timber AB i Sverige, men fakturan visar VAT-no SE556381721101 medan certifikatet anger VAT No: SE559119212401. Eftersom kontrollpunkten ska avse samma juridiska part och fakturan innehåller en motstridig företagsidentifierare för avsändaren kan consignor inte verifieras entydigt som samma juridiska part."
+      "motivation": "Certifikatets consignor 'ESS-ENN TIMBER AB' återfinns uttryckligen i fakturans header och footer som 'ESS-ENN Timber AB'. Landet verifieras som Sverige via svensk adressmarkering 'S-365 94 Skruv' och VAT-prefix 'SE'."
     },
     "consignee": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.95,
-      "certificate_value": "K.R. INDUSTRIES | NO.29. KOSAPUR VILLAGE, Puzhal Panchayat Union, Ambattur Taluk, Madhavaram, Chennai, India | IEC:AATFK6824H,GST:33AATFK6824H1Z0 | 600060",
-      "invoice_value": "Invoice address: K.R.INDUSTRIES, NO 29, Kosapur Village, Puzhal Panchayat Union, Madhavaram, 600060 CHENNAI, Indien | IEC: AATFK6824H | GST: 33AATFK6824H1Z0",
+      "confidence": 0.88,
+      "certificate_value": "K.R. INDUSTRIES, NO.29. KOSAPUR VILLAGE, Puzhal Panchayat Union, Ambattur Taluk, Madhavaram, Chennai, India, 600060",
+      "invoice_value": "Invoice address: K.R.INDUSTRIES, NO 29, Kosapur Village, Puzhal Panchayat Union, Madhavaram, 600060 CHENNAI, Indien",
       "rules_applied": [
         {
           "rule_id": "4.2.0.2",
-          "outcome": "matched in invoice address block"
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.2.2.1",
-          "outcome": "normalization applied for punctuation/case"
+          "outcome": "MATCH"
         },
         {
-          "rule_id": "4.2.4",
+          "rule_id": "4.2.3",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Mottagaren kan identifieras i fakturans invoice address-blokk som K.R.INDUSTRIES. Adress, postnummer 600060 samt IEC AATFK6824H och GST 33AATFK6824H1Z0 överensstämmer med certifikatet efter tillåten normalisering. Landet framgår som Indien/India och avser samma mottagarland."
+      "motivation": "Certifikatets mottagare 'K.R. INDUSTRIES' kan identifieras i fakturans invoice address som 'K.R.INDUSTRIES'. Landet framgår i adressblocket som 'Indien', vilket motsvarar certifikatets India i fakturans språk."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.92,
-      "certificate_value": "Pine sawn timber | -",
+      "confidence": 0.94,
+      "certificate_value": "Pine sawn timber",
       "invoice_value": "Pine sawn timber 19x89, 157 packages",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "no article number used; controlled text match applied"
+          "outcome": "TEXT_MATCH_APPLIED"
+        },
+        {
+          "rule_id": "4.3.3",
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.3.4",
-          "outcome": "extra dimension/package text treated as non-identity-bearing addition"
-        },
-        {
-          "rule_id": "4.3.8.1",
-          "outcome": "second description row '-' treated as non-goods placeholder tied to quantity line"
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Den identitetsbärande huvudbeteckningen 'Pine sawn timber' återfinns uttryckligen i fakturan. Tillägget '19x89, 157 packages' ändrar inte produktens kärnidentitet enligt tillåten regel för icke-identitetsbärande tillägg. Den andra certifikatraden med beskrivningen '-' utgör inte en separat vara."
+      "motivation": "Den identitetsbärande huvudbeteckningen 'Pine sawn timber' återfinns exakt i fakturans varubeskrivning. Tilläggen '19x89, 157 packages' är ytterligare specifikationer och ändrar inte produktidentiteten."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.88,
-      "certificate_value": "468.149 CBM | 214920.000KGSgross | Packages: 10 containers, 157 packages",
-      "invoice_value": "Quantity 468,149 | Unit M3 | 10 containers, 157 packages",
+      "confidence": 0.9,
+      "certificate_value": "468.149 CBM; 214920.000KGSgross",
+      "invoice_value": "Quantity 468,149 Volume M3; 10 containers, 157 packages",
       "rules_applied": [
         {
           "rule_id": "4.4.3",
-          "outcome": "numeric value 468.149 identified for same goods line"
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.4.3.2",
-          "outcome": "at least one certificate quantity verified; other quantity not contradicted"
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.4.4.2",
-          "outcome": "format normalization applied between dot/comma numeric notation"
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets volym 468.149 CBM kan verifieras mot fakturans 468,149 M3 för samma vara efter tillåten numerisk normalisering. Den separata certifikatuppgiften 214920.000KGSgross återfinns inte uttryckligen i fakturan, men fakturan innehåller inte heller något motstridigt gross weight-värde. Enligt regeln räcker därför den verifierade volymuppgiften för MATCH på kontrollpunkten."
+      "motivation": "Certifikatet innehåller flera kvantitetsuppgifter. Den uttryckliga kvantiteten '468.149 CBM' kan verifieras mot fakturans '468,149 M3' som samma numeriska värde efter normalisering av decimalformat; därmed är kontrollpunkten uppfylld. Den andra certifikatuppgiften '214920.000KGSgross' återfinns inte uttryckligen i fakturan men motsägs inte heller, vilket inte sänker utfallet när minst en kvantitetsuppgift är verifierad."
     },
     "origin": {
       "applicable": true,
@@ -144,37 +140,35 @@
       "rules_applied": [
         {
           "rule_id": "4.5.1",
-          "outcome": "explicit origin field identified"
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.5.6",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Ursprungslandet anges uttryckligen i fakturan som 'Country of origin: Sweden' och överensstämmer exakt med certifikatets 'Sweden'."
+      "motivation": "Certifikatets ursprungsland 'Sweden' återfinns uttryckligen i fakturan i ett dedikerat origin-fält: 'Country of origin: Sweden'."
     }
   },
   "overall_assessment": {
-    "comparison_result": "NOT_IDENTICAL",
-    "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
-    "auto_approval_eligible": false,
-    "confidence": 0.94,
-    "critical_failures": [
-      "Consignor mismatch: certificate VAT No SE559119212401 conflicts with invoice VAT-no SE556381721101 for issuer ESS-ENN Timber AB."
-    ],
+    "comparison_result": "IDENTICAL",
+    "workflow_recommendation": "AUTO_APPROVAL_ELIGIBLE",
+    "auto_approval_eligible": true,
+    "confidence": 0.93,
+    "critical_failures": [],
     "manual_review_triggers": [],
     "manual_review_reason": "NOT_APPLICABLE",
-    "decision_summary": "Dokumentparet är inte identiskt. Consignee, varubeskrivning, kvantitet och ursprungsland kan verifieras mot fakturan, men avsändaruppgiften kan inte verifieras som samma juridiska part eftersom certifikatet och fakturan anger olika VAT-nummer för ESS-ENN Timber AB.",
-    "human_explanation": "Certifikatet anger avsändaren som ESS-ENN TIMBER AB i Sverige med VAT No SE559119212401. Fakturan visar samma företagsnamn men ett annat VAT-nummer, SE556381721101, vilket innebär att avsändarens juridiska identitet inte kan verifieras fullt ut. Övriga uppgifter om mottagare, varubeskrivning, mängd och ursprung stämmer."
+    "decision_summary": "Alla tillämpliga kontrollpunkter kan verifieras mot fakturan. Ingen MISMATCH eller MANUAL_REVIEW utlöses enligt regelverket.",
+    "human_explanation": "Avsändare, mottagare, varubeskrivning, kvantitet och ursprungsland kan verifieras mot fakturan. Certifikatet anger ESS-ENN TIMBER AB, K.R. INDUSTRIES, Pine sawn timber, 468.149 CBM och Sweden, och fakturan innehåller motsvarande uppgifter. Dokumentparet kan därför godkännas automatiskt."
   },
   "_meta": {
-    "tested_at": "2026-06-06T09:00:14.383341+00:00",
-    "prompt_hash": "4690e976915d",
+    "tested_at": "2026-06-06T14:05:41.353424+00:00",
+    "prompt_hash": "752423deb8d7",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P0149_MATCH",
     "expected": "IDENTICAL",
-    "actual": "NOT_IDENTICAL",
-    "status": "FAIL"
+    "actual": "IDENTICAL",
+    "status": "PASS"
   }
 }

@@ -2,9 +2,9 @@
   "schema_version": "3.0",
   "metadata": {
     "verification_timestamp": "2026-06-06T00:00:00Z",
-    "document_pair_id": "SEG-26D-454855__INV-1095",
+    "document_pair_id": "SEG-26D-454855__1095",
     "certificate_issue_date": null,
-    "source_documents_received": 1
+    "source_documents_received": 2
   },
   "task": {
     "task_type": "customs_document_pair_verification",
@@ -13,14 +13,14 @@
   },
   "documents": {
     "document_a": {
-      "label": "Certificate of Origin (structured JSON)",
+      "label": "CERTIFICATE OF ORIGIN (structured JSON)",
       "assumed_role": "certificate",
-      "document_type": "structured_json_certificate_of_origin"
+      "document_type": "Certificate of Origin"
     },
     "document_b": {
-      "label": "Invoice PDF (2 pages: invoice + packing list)",
+      "label": "invoice_pdf_pages_1_2",
       "assumed_role": "invoice",
-      "document_type": "invoice_pdf"
+      "document_type": "Invoice with packing list support"
     }
   },
   "rule_activation": {
@@ -33,12 +33,8 @@
     "eu_origin_normalization_active": false,
     "activated_rules": [
       {
-        "rule_id": "4.1.1.1",
-        "rule_name": "Logotyp/branding som säljaridentifikation"
-      },
-      {
         "rule_id": "4.1.3.9",
-        "rule_name": "Consignor som fakturautställare utan explicit säljaradress"
+        "rule_name": "Consignor identifierad via header/branding utan explicit säljaradress, med två landkorroborerande element"
       },
       {
         "rule_id": "4.1.3.8",
@@ -46,7 +42,11 @@
       },
       {
         "rule_id": "4.4.3.2",
-        "rule_name": "Flera kvantitetsuppgifter – minst en verifierad räcker om övriga inte motsägs"
+        "rule_name": "Minst en kvantitetsuppgift räcker när övriga inte motsägs"
+      },
+      {
+        "rule_id": "4.4.3.5",
+        "rule_name": "Försändelsekvantitet i antal kolli/containers"
       }
     ]
   },
@@ -54,8 +54,8 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.89,
-      "certificate_value": "WOODPIE AB, Sweden",
+      "confidence": 0.86,
+      "certificate_value": "WOODPIE AB, Backadalsgatan 13, 54332 Tibro, Sweden",
       "invoice_value": "Wood Pie; Country of Origin: Sweden; Port of loading: Any port in Sweden",
       "rules_applied": [
         {
@@ -67,14 +67,14 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger consignor som WOODPIE AB i Sverige. Fakturan saknar separat seller-/issuer-adressblock men visar branding \"Wood Pie\" i sidhuvudet på sida 1, vilket identifierar utställaren efter tillåten normalisering av bolagsform och spacing. Landet Sverige stöds dessutom av två oberoende landkorroborerande element i fakturan: \"Country of Origin: Sweden\" och \"Port of loading: Any port in Sweden\". Ingen uppgift i fakturan motsäger Sverige."
+      "motivation": "Fakturan saknar explicit seller/issuer-adressblock, men headern på sida 1 visar brandingtexten \"Wood Pie\". Efter normalisering av versaler/gemener, mellanslag och juridisk bolagsform kan kärnan i certifikatets \"WOODPIE AB\" identifieras i fakturan. Landet Sweden stöds dessutom av två oberoende landkorroborerande element i fakturan: \"Country of Origin: Sweden\" och \"Port of loading: Any port in Sweden\". Ingen uppgift i fakturan motsäger Sweden."
     },
     "consignee": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.96,
-      "certificate_value": "SARASWATI WOOD PRIVATE LIMITED, India",
-      "invoice_value": "INVOICE TO: SARASATI WOOD PRIVATE LIMITED ... INDIA GST NO: 24AAPCS6579L1ZG",
+      "confidence": 0.89,
+      "certificate_value": "SARASWATI WOOD PRIVATE LIMITED, SURVEY NO. 362/1, MITHI ROHAR, NATIONAL HIGHWAY, GANDHIDHAMGUJARAT-370201, GST NO: 24AAPCS6579L1ZG, India",
+      "invoice_value": "INVOICE TO: SARASATI WOOD PRIVATE LIMITED, SURVEY NO. 362/1, MITHI ROHAR, NATIONAL HIGHWAY, GANDHIDHAMGUJARAT-370201, INDIA GST NO: 24AAPCS6579L1ZG",
       "rules_applied": [
         {
           "rule_id": "4.2.0.2",
@@ -89,32 +89,36 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger mottagaren som \"SARASWATI WOOD PRIVATE LIMITED\" i Indien. Fakturan anger i mottagarfältet \"SARASATI WOOD PRIVATE LIMITED\" i Indien med GST-nummer \"24AAPCS6579L1ZG\", vilket är samma identifierare som i certifikatets adressuppgifter. Namnskillnaden består av en enstaka bokstav (utelämnat \"W\") och stöds av exakt matchande GST-nummer och samma land, vilket ger matchning."
+      "motivation": "Mottagaren återfinns i fakturans \"INVOICE TO\"-block på sida 1. Företagsnamnet skiljer sig med ett enstaka tecken (\"SARASWATI\" i certifikatet mot \"SARASATI\" i fakturan), men GST-numret 24AAPCS6579L1ZG och adressen överensstämmer, vilket uppfyller regeln för enstaka teckenavvikelse med bekräftande identifierare. Landet India framgår uttryckligen i fakturan."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.88,
-      "certificate_value": "Pine AB Grade/pine",
-      "invoice_value": "Product: Pine ab grade; Description: PINE AB GRADE;PINE",
+      "confidence": 0.94,
+      "certificate_value": ". | Pine AB Grade/pine",
+      "invoice_value": "Product: Pine ab grade; Packing list description: PINE AB GRADE;PINE",
       "rules_applied": [
         {
-          "rule_id": "4.3.1",
-          "outcome": "MATCH"
+          "rule_id": "4.3.2",
+          "outcome": "NOT_APPLICABLE"
         },
         {
           "rule_id": "4.3.3",
           "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.3.4",
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Den substantiella varubeskrivningen i certifikatet är \"Pine AB Grade/pine\". Fakturan anger på sida 1 produkten \"Pine ab grade\" och den tillhörande packing list-sidan med samma fakturanummer 1095 anger \"Description: PINE AB GRADE;PINE\". Certifikatets identitetsbärande beteckning kan därför återfinnas explicit i fakturaunderlaget utan semantisk tolkning."
+      "motivation": "Certifikatet innehåller ingen artikelnummerstyrd varurad, så kontrollen sker med kontrollerad textmatchning. Den meningsbärande varubeskrivningen i certifikatet är \"Pine AB Grade/pine\"; den separata punkten \".\" är endast icke-informativ punctuation och utgör inte en egen vara. Fakturan på sida 1 anger \"Pine ab grade\" och packlistan på sida 2 anger \"Description: PINE AB GRADE;PINE\", vilket tillsammans verifierar certifikatets varubeskrivning efter tillåten normalisering av versaler/gemener och skiljetecken."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.9,
       "certificate_value": "38.459 CBM | 24000.000 KGSgross | Total no of containers: 1 | Total no of packages: 8",
-      "invoice_value": "Qty m3: 38.459 m3 | NO OF CONTAINERS: 1 | Total no of packages: 8",
+      "invoice_value": "Qty 38.459 m3 | NO OF CONTAINERS: 1 | Total no of packages: 8 | Total volume: 38.459 m3",
       "rules_applied": [
         {
           "rule_id": "4.4.3",
@@ -123,14 +127,18 @@
         {
           "rule_id": "4.4.3.2",
           "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.4.3.5",
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet innehåller flera kvantitetsuppgifter. Fakturan verifierar uttryckligen volymen \"38.459 m3\" på sida 1, vilket motsvarar certifikatets \"38.459 CBM\", och fakturaunderlaget verifierar även \"1\" container samt \"8\" packages. Den ytterligare viktuppgiften \"24000.000 KGSgross\" återfinns inte uttryckligen i fakturan, men fakturan innehåller ingen läsbar uppgift som motsäger detta värde. Enligt regeln om flera kvantitetsuppgifter räcker det att minst en certifikatskvantitet verifieras när övriga inte uttryckligen motsägs."
+      "motivation": "Minst en kvantitetsuppgift i certifikatet måste kunna verifieras. Certifikatets \"38.459 CBM\" återfinns uttryckligen i fakturan som \"Qty 38.459 m3\" på sida 1 och som \"Total volume: 38.459 m3\" på sida 2. Därtill verifieras försändelsekvantiteterna \"Total no of containers: 1\" och \"Total no of packages: 8\" av motsvarande uppgifter i faktura/packlista. Certifikatets viktuppgift \"24000.000 KGSgross\" kan inte verifieras i fakturan, men den motsägs inte uttryckligen; därför kvarstår MATCH enligt regeln att minst en kvantitetsuppgift räcker när övriga inte motsägs."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.99,
+      "confidence": 0.98,
       "certificate_value": "SWEDEN",
       "invoice_value": "Country of Origin: Sweden",
       "rules_applied": [
@@ -143,23 +151,23 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger ursprungsland \"SWEDEN\". Fakturan anger uttryckligen i ett dedikerat ursprungsfält på sida 1: \"Country of Origin: Sweden\". Ursprungslandet kan därmed verifieras direkt."
+      "motivation": "Certifikatets ursprungsland \"SWEDEN\" återfinns uttryckligen i fakturan på sida 1 som \"Country of Origin: Sweden\". Ingen ytterligare tolkning behövs."
     }
   },
   "overall_assessment": {
     "comparison_result": "IDENTICAL",
     "workflow_recommendation": "AUTO_APPROVAL_ELIGIBLE",
     "auto_approval_eligible": true,
-    "confidence": 0.92,
+    "confidence": 0.91,
     "critical_failures": [],
     "manual_review_triggers": [],
     "manual_review_reason": "NOT_APPLICABLE",
-    "decision_summary": "Dokumentparet kunde paras via consignor/consignee och samma fakturaunderlag. Ingen LC-hänvisning aktiverades. Samtliga tillämpliga kontrollpunkter verifierades som MATCH: consignor via branding och landkorroborering, consignee via mottagarfält och GST-nummer, varubeskrivning via explicit produkttext, kvantitet via 38.459 m3 samt containers/packages, och ursprung via explicit origin-fält.",
-    "human_explanation": "Uppgifterna i certifikatet kan verifieras mot fakturan. Avsändare, mottagare, varubeskrivning, kvantitet och ursprungsland stämmer, bland annat genom matchande mottagare med samma GST-nummer, produkten Pine AB Grade/Pine, kvantiteten 38.459 m3 och ursprunget Sweden. Dokumenten kan därför godkännas automatiskt."
+    "decision_summary": "Alla tillämpliga kontrollpunkter kunde verifieras mot fakturan eller tillhörande packlista med stöd av tillåtna regler och normaliseringar. Ingen kontrollpunkt gav MISMATCH eller MANUAL_REVIEW, och samtliga MATCH-bedömningar ligger på minst 0.85 confidence.",
+    "human_explanation": "Alla relevanta uppgifter i certifikatet kan verifieras mot fakturan. Avsändaren stöds av fakturans header och Sverige-angivelser, mottagaren matchar trots en enstaka bokstavsavvikelse eftersom adress och GST-nummer stämmer. Dokumentparet kan därför godkännas automatiskt."
   },
   "_meta": {
-    "tested_at": "2026-06-06T09:00:14.384381+00:00",
-    "prompt_hash": "4690e976915d",
+    "tested_at": "2026-06-06T14:05:41.354313+00:00",
+    "prompt_hash": "752423deb8d7",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P0150_MATCH",

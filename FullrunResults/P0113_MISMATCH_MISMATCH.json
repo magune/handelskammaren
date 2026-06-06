@@ -2,9 +2,9 @@
   "schema_version": "3.0",
   "metadata": {
     "verification_timestamp": "2026-06-06T00:00:00Z",
-    "document_pair_id": "SEG-25D-335014__775696",
+    "document_pair_id": "SEG-25D-335014__INV-775696",
     "certificate_issue_date": null,
-    "source_documents_received": 1
+    "source_documents_received": 2
   },
   "task": {
     "task_type": "customs_document_pair_verification",
@@ -13,32 +13,48 @@
   },
   "documents": {
     "document_a": {
-      "label": "CERTIFICATE OF ORIGIN (structured JSON)",
+      "label": "Certificate of Origin (structured JSON)",
       "assumed_role": "certificate",
-      "document_type": "structured_json_certificate_of_origin"
+      "document_type": "structured_json"
     },
     "document_b": {
-      "label": "Invoice PDF",
+      "label": "Invoice 775696 (PDF)",
       "assumed_role": "invoice",
-      "document_type": "invoice"
+      "document_type": "invoice_pdf"
     }
   },
   "rule_activation": {
     "lc_exception_active": false,
     "lc_number_found": null,
     "general_goods_description_with_invoice_reference_active": false,
-    "mixed_origins_rule_active": false,
+    "mixed_origins_rule_active": true,
     "to_order_rule_active": false,
     "quantity_exception_applied": null,
     "eu_origin_normalization_active": false,
     "activated_rules": [
       {
+        "rule_id": "8.6",
+        "rule_name": "Obligatorisk parningsvalidering"
+      },
+      {
         "rule_id": "4.1.0",
-        "rule_name": "Sökning efter consignor i hela fakturan"
+        "rule_name": "Consignor kan identifieras i fakturan"
+      },
+      {
+        "rule_id": "4.2.0.2",
+        "rule_name": "Consignee ska kunna identifieras i något mottagarfält"
       },
       {
         "rule_id": "4.3.2",
-        "rule_name": "Artikelnummer har prioritet vid varubeskrivningsverifiering"
+        "rule_name": "Artikelnummer har prioritet vid varubeskrivning"
+      },
+      {
+        "rule_id": "4.4.3.1",
+        "rule_name": "Motsägelse vs avsaknad vid kvantitet"
+      },
+      {
+        "rule_id": "4.5.3",
+        "rule_name": "Blandade ursprung i fakturan kräver entydig täckning"
       }
     ]
   },
@@ -47,34 +63,34 @@
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.99,
-      "certificate_value": "Volvo Merchandise AB | Bror Nilssons gata 5 | SE-40508 GÖTEBORG | Sweden | VAT 556744-9151",
+      "certificate_value": "Volvo Merchandise AB | Bror Nilssons gata 5 | SE-40508 GÖTEBORG | Sweden | 556744-9151",
       "invoice_value": "Volvo Merchandise AB | Bror Nilssons gata 5 | 40508 GÖTEBORG | Sweden | VAT no SE556744915101",
       "rules_applied": [
+        {
+          "rule_id": "8.6",
+          "outcome": "MATCH"
+        },
         {
           "rule_id": "4.1.0",
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.1.2",
-          "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.1.5",
+          "rule_id": "4.1.2.1",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor 'Volvo Merchandise AB' återfinns uttryckligen i fakturans footer/visiting address på sida 1 tillsammans med svensk adress och svensk VAT-kod. Företagsnamn och land kan därmed verifieras som samma juridiska part."
+      "motivation": "Certifikatets consignor 'Volvo Merchandise AB' återfinns uttryckligen i fakturans sidfot/säljarblock tillsammans med adressen 'Bror Nilssons gata 5', '40508 GÖTEBORG', 'Sweden' och VAT-prefix 'SE'. Företagsnamn och land kan därför verifieras entydigt mot fakturan."
     },
     "consignee": {
       "applicable": true,
       "status": "MISMATCH",
-      "confidence": 0.98,
+      "confidence": 0.97,
       "certificate_value": "Volvo Group Korea Ltd | Volvo Bldg., 5th fl., | 726-173 Hannam-dong, | Yongsan-gu 140-210 Seoul | Korea, Republic of",
-      "invoice_value": "Invoicing address: Volvo Trucks Korea Co., Ltd | 64-106, Dongtangiheung-Ro, GYEONGGI-DO | 18488 HWASEONG-SI | Korea; Delivery address: Volvo Trucks Korea Co., Ltd | 64-106, Dongtangiheung-Ro, GYEONGGI-DO | 18488 HWASEONG-SI | Korea",
+      "invoice_value": "Volvo Trucks Korea Co., Ltd | 64-106, Dongtangiheung-Ro, GYEONGGI-DO | 18488 HWASEONG-SI | Korea",
       "rules_applied": [
         {
           "rule_id": "4.2.0.2",
-          "outcome": "CHECKED_ALL_RECIPIENT_FIELDS"
+          "outcome": "MISMATCH"
         },
         {
           "rule_id": "4.1.3.1",
@@ -83,13 +99,9 @@
         {
           "rule_id": "4.2.3",
           "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.2.4",
-          "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Samtliga relevanta mottagarfält i fakturan har kontrollerats. Fakturan anger mottagaren som 'Volvo Trucks Korea Co., Ltd' i både invoicing address och delivery address, medan certifikatet anger 'Volvo Group Korea Ltd'. Skillnaden gäller identitetsbärande ord i företagsnamnet ('Group' respektive 'Trucks') och får inte normaliseras bort; landet Korea överensstämmer men företagsnamnet gör det inte."
+      "motivation": "Fakturans mottagarfält ('Invoicing address' och 'Delivery address') anger 'Volvo Trucks Korea Co., Ltd', inte 'Volvo Group Korea Ltd'. Delat varumärkesprefix 'Volvo' räcker inte när det juridiska företagsnamnet skiljer sig, och certifikatets mottagare kan inte identifieras i något mottagarfält i fakturan. Landet Korea överensstämmer, men namnkravet faller."
     },
     "goods_description": {
       "applicable": true,
@@ -100,87 +112,80 @@
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "ARTICLE_NUMBER_PRIORITY_APPLIED"
-        },
-        {
-          "rule_id": "4.3.2.1",
-          "outcome": "CERTIFICATE_CODES_TREATED_AS_ARTICLE_NUMBERS"
+          "outcome": "MISMATCH"
         },
         {
           "rule_id": "4.3.8",
           "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Certifikatet innehåller uttryckliga artikelnummer 113066 och 113470 i varubeskrivningen. Fakturan visar endast artikelnummer 113871 ('Passport Holder') och 113834 ('Travel Neck Pillow'). Certifikatets artikelnummer återfinns inte exakt i fakturan, vilket enligt prioritetsregeln för artikelnummer ger MISMATCH."
+      "motivation": "Certifikatet innehåller uttryckliga artikelnummer 113066 och 113470. Enligt prioritetsregeln för varubeskrivning måste dessa exakta artikelnummer återfinnas i fakturan, men fakturan innehåller endast artikelnummer 113871 och 113834 samt andra produktnamn ('Passport Holder' och 'Travel Neck Pillow'). Varubeskrivningen kan därför inte verifieras."
     },
     "quantity": {
       "applicable": true,
-      "status": "MISMATCH",
-      "confidence": 0.91,
-      "certificate_value": "OriginRows[].Quantity: 14,69 KG NET | OriginPackages[].Package: 1 packages",
-      "invoice_value": "Qty/Kg per rad i fakturan: 180 / 18.00 för 113871 Passport Holder; 180 / 63.00 för 113834 Travel Neck Pillow",
+      "status": "MANUAL_REVIEW",
+      "confidence": 0.72,
+      "certificate_value": "14,69 KG NET | 1 packages",
+      "invoice_value": "Qty 180 / Kg 18.00 for item 113871; Qty 180 / Kg 63.00 for item 113834",
       "rules_applied": [
         {
           "rule_id": "4.4.2.1",
-          "outcome": "FORMKRAV_UPPFYLLT"
+          "outcome": "MATCH"
         },
         {
-          "rule_id": "4.4.3",
-          "outcome": "SAME_GOODS_LINK_REQUIRED"
+          "rule_id": "4.4.3.1",
+          "outcome": "MANUAL_REVIEW"
         },
         {
-          "rule_id": "4.4.5.6",
-          "outcome": "NO_EXCEPTION_APPLICABLE"
-        },
-        {
-          "rule_id": "4.4.7",
-          "outcome": "MISMATCH"
+          "rule_id": "4.4.3.5",
+          "outcome": "NOT_APPLICABLE"
         }
       ],
-      "motivation": "Certifikatet anger en verifieringsgrundande kvantitet '14,69 KG NET' samt kolliuppgift '1 packages'. Fakturan innehåller andra kvantiteter för andra varor: 180 st / 18.00 kg och 180 st / 63.00 kg. Eftersom certifikatets varor inte kan identifieras i fakturan får dessa invoice-rader inte användas som stöd för certifikatets kvantitet, och ingen tillåten undantagsregel 3A-3E är tillämplig. Certifikatets kvantitet kan därför inte verifieras mot fakturan."
+      "motivation": "Certifikatet anger en verifieringsgrundande kvantitet '14,69 KG NET' samt ett kolliantal '1 packages'. Fakturan visar andra kvantiteter och vikter för andra artiklar än dem som anges i certifikatet, och kvantiteten 14,69 kg netto kan därför inte säkert kopplas till motsvarande vara i fakturan. Detta är inte en tydlig positiv motsägelse för samma vara, men uppgiften kan inte verifieras entydigt."
     },
     "origin": {
       "applicable": true,
       "status": "MISMATCH",
       "confidence": 0.96,
       "certificate_value": "CN",
-      "invoice_value": "CoO IN för 113871 Passport Holder; CoO CN för 113834 Travel Neck Pillow",
+      "invoice_value": "CoO IN for item 113871; CoO CN for item 113834",
       "rules_applied": [
         {
           "rule_id": "4.5.1",
-          "outcome": "EXPLICIT_ORIGIN_FOUND"
+          "outcome": "MATCH"
         },
         {
-          "rule_id": "4.5.4",
-          "outcome": "NORMALIZATION_APPLIED"
+          "rule_id": "4.5.3",
+          "outcome": "MISMATCH"
         },
         {
           "rule_id": "4.5.6",
           "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Fakturan innehåller explicit ursprung i CoO-kolumnen. Certifikatets ursprung 'CN' återfinns visserligen i fakturan, men fakturan anger också ett ytterligare ursprung 'IN' som inte anges i certifikatet. Därmed föreligger motstridiga ursprungsuppgifter mellan dokumenten."
+      "motivation": "Certifikatets ursprungsland 'CN' förekommer i fakturan, men fakturan anger också ett ytterligare explicit ursprungsland 'IN' för en annan artikel. Fakturan innehåller därmed blandade ursprung som inte fullt ut täcks av certifikatets ursprungsfält, vilket ger avvikelse."
     }
   },
   "overall_assessment": {
     "comparison_result": "NOT_IDENTICAL",
     "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
     "auto_approval_eligible": false,
-    "confidence": 0.98,
+    "confidence": 0.97,
     "critical_failures": [
-      "Consignee mismatch: certifikatet anger 'Volvo Group Korea Ltd' medan fakturan anger 'Volvo Trucks Korea Co., Ltd'.",
-      "Goods mismatch: certifikatet anger artiklarna 113066 och 113470 medan fakturan anger 113871 och 113834.",
-      "Quantity mismatch: certifikatets '14,69 KG NET' och '1 packages' kan inte verifieras mot fakturans kvantiteter.",
-      "Origin mismatch: fakturan anger både IN och CN medan certifikatet anger endast CN."
+      "Consignee mismatch: 'Volvo Group Korea Ltd' kan inte verifieras mot fakturans 'Volvo Trucks Korea Co., Ltd'.",
+      "Goods description mismatch: certifikatets artikelnummer 113066 och 113470 saknas i fakturan.",
+      "Origin mismatch: fakturan anger både IN och CN medan certifikatet endast anger CN."
     ],
-    "manual_review_triggers": [],
+    "manual_review_triggers": [
+      "Kvantiteten 14,69 KG NET kan inte entydigt kopplas till motsvarande vara i fakturan."
+    ],
     "manual_review_reason": "NOT_APPLICABLE",
-    "decision_summary": "Dokumentparet kan inte godkännas som identiskt. Consignor matchar, men consignee, varubeskrivning, kvantitet och ursprungsland avviker från den bifogade fakturan.",
-    "human_explanation": "Certifikatet avser artiklarna 113066 Short Winter Jacket och 113470 Iron Mark Pin, medan fakturan avser 113871 Passport Holder och 113834 Travel Neck Pillow. Mottagaren i certifikatet är Volvo Group Korea Ltd men fakturan anger Volvo Trucks Korea Co., Ltd, och fakturan innehåller dessutom ursprung både IN och CN medan certifikatet bara anger CN. Dokumenten stämmer därför inte överens och kräver manuell handläggning."
+    "decision_summary": "Dokumentparet passerar parningskontrollen via consignor, men mottagare, varubeskrivning och ursprungsland avviker från certifikatet. Kvantiteten kan inte verifieras entydigt mot motsvarande varor i fakturan. Minst en tillämplig kontrollpunkt ger MISMATCH, därför är resultatet NOT_IDENTICAL.",
+    "human_explanation": "Certifikatet anger mottagaren som Volvo Group Korea Ltd medan fakturan anger Volvo Trucks Korea Co., Ltd. Certifikatet listar artiklarna 113066/113470, men fakturan avser artiklarna 113871/113834. Fakturan innehåller dessutom ursprung IN och CN medan certifikatet endast anger CN."
   },
   "_meta": {
-    "tested_at": "2026-06-06T09:00:14.362651+00:00",
-    "prompt_hash": "4690e976915d",
+    "tested_at": "2026-06-06T14:05:41.334417+00:00",
+    "prompt_hash": "752423deb8d7",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P0113_MISMATCH",

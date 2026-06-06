@@ -1,10 +1,10 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-06-06T00:00:00Z",
+    "verification_timestamp": null,
     "document_pair_id": "SEG-26D-442884__8392007846",
     "certificate_issue_date": null,
-    "source_documents_received": 1
+    "source_documents_received": 2
   },
   "task": {
     "task_type": "customs_document_pair_verification",
@@ -13,14 +13,14 @@
   },
   "documents": {
     "document_a": {
-      "label": "Certificate of Origin (structured JSON)",
+      "label": "CERTIFICATE OF ORIGIN (structured JSON)",
       "assumed_role": "certificate",
-      "document_type": "structured_json"
+      "document_type": "structured_json_certificate_of_origin"
     },
     "document_b": {
-      "label": "Invoice PDF",
+      "label": "Attached PDF",
       "assumed_role": "invoice",
-      "document_type": "invoice"
+      "document_type": "invoice_pdf"
     }
   },
   "rule_activation": {
@@ -33,16 +33,20 @@
     "eu_origin_normalization_active": false,
     "activated_rules": [
       {
+        "rule_id": "8.6",
+        "rule_name": "Obligatorisk parningsvalidering passerad via matchande fakturanummer"
+      },
+      {
         "rule_id": "4.2.2.2",
-        "rule_name": "To order-undantag aktiverat"
+        "rule_name": "Särskilt undantag – To order"
       },
       {
         "rule_id": "4.3.5",
-        "rule_name": "Generell varubeskrivning med fakturareferens aktiverad"
+        "rule_name": "Generell varubeskrivning med fakturareferens"
       },
       {
-        "rule_id": "4.3.7",
-        "rule_name": "Flera ursprung med fakturahänvisning aktiverad"
+        "rule_id": "4.5.3",
+        "rule_name": "Blandade ursprung"
       }
     ]
   },
@@ -50,12 +54,16 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.99,
-      "certificate_value": "ERICSSON AB | SWEDEN",
-      "invoice_value": "Ericsson AB ... Sweden",
+      "confidence": 0.98,
+      "certificate_value": "ERICSSON AB, SWEDEN",
+      "invoice_value": "Ericsson AB ... Sweden ... VAT no: SE556056625801 ... IBAN: SE8150000000057468212767",
       "rules_applied": [
         {
           "rule_id": "4.1.0",
+          "outcome": "NOT_NEEDED"
+        },
+        {
+          "rule_id": "4.1.2",
           "outcome": "MATCH"
         },
         {
@@ -63,18 +71,18 @@
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.1.5",
+          "rule_id": "4.1.4",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor \"ERICSSON AB\" återfinns uttryckligen i fakturans sidhuvud och sidfot på samtliga sidor som \"Ericsson AB\". Landet Sverige kan verifieras explicit i adressblocket (\"Sweden\") och stöds även av VAT-prefix/IBAN med SE. Samma juridiska part och land kan därför verifieras."
+      "motivation": "Certifikatet anger consignor ERICSSON AB i Sverige. Fakturan identifierar utställaren som Ericsson AB och landet verifieras uttryckligen genom adressuppgiften Sweden samt indirekt genom VAT-prefix SE och IBAN-prefix SE. Samma juridiska part och samma land kan därför verifieras."
     },
     "consignee": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.92,
-      "certificate_value": "TO ORDER OF | Algeria",
-      "invoice_value": "Customer/Delivery address/Invoice address: WATANIYA TELECOM ALGERIE SPA ... Algeria",
+      "confidence": 0.91,
+      "certificate_value": "TO ORDER OF / Algeria",
+      "invoice_value": "Customer / Delivery address / Invoice address: WATANIYA TELECOM ALGERIE SPA ... Algeria",
       "rules_applied": [
         {
           "rule_id": "4.2.2.2",
@@ -83,20 +91,16 @@
         {
           "rule_id": "4.2.3",
           "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.2.4",
-          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger mottagaren som \"TO ORDER OF\", vilket innebär att företagsnamn inte behöver verifieras. Enligt undantaget ska endast landet verifieras. Fakturan anger uttryckligen \"Algeria\" i mottagarfälten, vilket verifierar certifikatets landuppgift."
+      "motivation": "Certifikatets mottagare är angiven som TO ORDER OF, vilket innebär att företagsnamn inte behöver verifieras. Endast landet ska kunna identifieras. Fakturan anger uttryckligen Algeria i mottagarfälten, vilket uppfyller landkravet."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.9,
-      "certificate_value": "EQUIPMENT DE TELECOMMUNICATION | INVOICE NO. 8392007846 DATED 09.01.2026",
-      "invoice_value": "Invoice number 8392007846 | Invoice Date 09.01.2026 | \"EQUIPMENT DE TELECOMMUNICATION\" på sida 2",
+      "confidence": 0.94,
+      "certificate_value": "EQUIPMENT DE TELECOMMUNICATION / INVOICE NO. 8392007846 DATED 09.01.2026",
+      "invoice_value": "Invoice number 8392007846 09.01.2026; footer text on page 2: EQUIPMENT DE TELECOMMUNICATION AS PER PROFORMA INVOICE NR 720-PO103388 DD 12/11/2025 LC NO. 09990LCA2501298",
       "rules_applied": [
         {
           "rule_id": "4.3.5",
@@ -105,49 +109,73 @@
         {
           "rule_id": "4.3.5.2",
           "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.3.8",
-          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet använder en generell varubeskrivning tillsammans med uttrycklig fakturareferens: fakturanummer 8392007846 och datum 09.01.2026. Fakturan bär exakt samma nummer och datum. Den generella varubeskrivningen är förenlig med fakturans innehåll och uttrycket \"EQUIPMENT DE TELECOMMUNICATION\" framgår också i fakturan på sida 2."
+      "motivation": "Certifikatet innehåller generell varubeskrivning tillsammans med uttrycklig fakturareferens: fakturanummer 8392007846 och datum 09.01.2026. Fakturan bär exakt samma fakturanummer och fakturadatum, och fakturatexten innehåller även den identitetsbärande beskrivningen EQUIPMENT DE TELECOMMUNICATION. Varubeskrivningen är därför verifierad enligt regeln för generell varubeskrivning med fakturareferens."
     },
     "quantity": {
       "applicable": true,
       "status": "MISMATCH",
       "confidence": 0.97,
-      "certificate_value": "3216.200 KGS | GROSS | 31 PACKAGES OF",
-      "invoice_value": "Ingen explicit verifierbar totalvikt 3216.200 KGS eller paketuppgift 31 PACKAGES identifierad i fakturan",
+      "certificate_value": "3216.200 KGS / GROSS; OriginPackages: 31 PACKAGES OF",
+      "invoice_value": null,
       "rules_applied": [
         {
+          "rule_id": "4.4.2",
+          "outcome": "PASS"
+        },
+        {
           "rule_id": "4.4.2.1",
-          "outcome": "MISMATCH"
+          "outcome": "PASS"
         },
         {
-          "rule_id": "4.4.3.6",
-          "outcome": "MISMATCH"
+          "rule_id": "4.4.3.2.1",
+          "outcome": "WEIGHT_IN_QUANTITY_FIELD_IS_VERIFICATION_GROUNDING"
         },
         {
-          "rule_id": "4.4.7",
+          "rule_id": "4.4.5.1",
+          "outcome": "NOT_APPLICABLE"
+        },
+        {
+          "rule_id": "4.4.5.3",
+          "outcome": "NOT_APPLICABLE"
+        },
+        {
+          "rule_id": "4.4.5.4",
+          "outcome": "NOT_APPLICABLE"
+        },
+        {
+          "rule_id": "4.4.5.2",
+          "outcome": "NOT_APPLICABLE"
+        },
+        {
+          "rule_id": "4.4.5.5",
+          "outcome": "NOT_APPLICABLE"
+        },
+        {
+          "rule_id": "4.4.3.7",
           "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Certifikatet anger viktkvantiteten som \"3216.200 KGS\", men viktkategorin står inte tillsammans med viktvärdet i samma kvantitetsuppgift eller på samma certifikatrad. Ordet \"GROSS\" förekommer i en separat rad utan numeriskt viktvärde och uppfyller därför inte formkravet för GW/NW-kategori. Fakturan innehåller dessutom ingen explicit totalvikt med värdet 3216.200 KGS eller annan verifierbar motsvarande kvantitetsuppgift som uppfyller certifikatets formkrav."
+      "motivation": "Certifikatet anger en uttrycklig viktkvantitet i kvantitetsfältet: 3216.200 KGS med viktkategori GROSS, där kategorin framgår i separat kvantitetspost och därmed uppfyller formkravet. Fakturan innehåller styckantal per rad men ingen uttrycklig total gross/net weight, ingen total weight och inga radvikter som kan användas enligt undantagen 3A–3E. Eftersom den verifieringsgrundande viktuppgiften i kvantitetsfältet inte kan återfinnas i fakturan ska kontrollpunkten klassificeras som MISMATCH."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.98,
+      "confidence": 0.97,
       "certificate_value": "HU, IT, CN",
-      "invoice_value": "Origins-kolumnen visar HU, IT och CN på artikelraderna",
+      "invoice_value": "Origins column on pages 1-2 shows HU, IT, CN",
       "rules_applied": [
         {
-          "rule_id": "4.3.7",
+          "rule_id": "4.5.1",
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.5.1",
+          "rule_id": "4.5.3",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.5.4",
           "outcome": "MATCH"
         },
         {
@@ -155,25 +183,25 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger ursprungsländerna HU, IT och CN. Fakturans origins-kolumn innehåller uttryckligen HU, IT och CN på artikelraderna. Eftersom certifikatet också innehåller fakturareferens i varubeskrivningsfältet är kopplingen vid flera ursprung tillräcklig, och samtliga angivna ursprung kan verifieras."
+      "motivation": "Certifikatet anger tre ursprungsländer: HU, IT och CN. Fakturan innehåller en explicit origin-kolumn där artiklarna är märkta med HU, IT och CN. Samtliga ursprungsländer i certifikatet kan därför identifieras uttryckligen i fakturan."
     }
   },
   "overall_assessment": {
     "comparison_result": "NOT_IDENTICAL",
     "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
     "auto_approval_eligible": false,
-    "confidence": 0.95,
+    "confidence": 0.96,
     "critical_failures": [
-      "Kvantitetskontrollpunkten är MISMATCH: certifikatets vikt \"3216.200 KGS\" saknar korrekt verifierbar GW/NW-kategori i samma kvantitetsuppgift och kan inte verifieras mot fakturan."
+      "Kvantiteten 3216.200 KGS GROSS i certifikatet kan inte verifieras mot fakturan eftersom fakturan saknar uttrycklig viktuppgift."
     ],
     "manual_review_triggers": [],
     "manual_review_reason": "NOT_APPLICABLE",
-    "decision_summary": "Consignor, consignee, varubeskrivning och ursprungsland kan verifieras mot fakturan. Kvantitetskontrollpunkten faller eftersom certifikatets viktuppgift inte uppfyller formkravet för viktkategori och inte kan verifieras i fakturan. Minst en tillämplig kontrollpunkt är därför MISMATCH, vilket ger NOT_IDENTICAL.",
-    "human_explanation": "Avsändare, mottagare, varubeskrivning och ursprungsland stämmer mot fakturan. Certifikatet anger kvantiteten som \"3216.200 KGS\", men det framgår inte korrekt om detta är brutto- eller nettovikt och fakturan visar ingen verifierbar totalvikt med detta värde. Därför är dokumenten inte identiska och måste hanteras manuellt."
+    "decision_summary": "Dokumentparningen är giltig genom matchande fakturanummer 8392007846. Consignor, consignee, varubeskrivning och ursprungsland kan verifieras mot fakturan, men certifikatets viktkvantitet 3216.200 KGS GROSS kan inte verifieras eftersom fakturan inte innehåller någon uttrycklig viktuppgift. Minst en tillämplig kontrollpunkt ger därför MISMATCH och totalresultatet blir NOT_IDENTICAL.",
+    "human_explanation": "Certifikatet anger kvantiteten 3216.200 KGS gross, men fakturan visar ingen uttrycklig viktuppgift som styrker detta. Avsändare, mottagare, varubeskrivning och ursprung kan däremot verifieras. Ärendet kan därför inte godkännas automatiskt."
   },
   "_meta": {
-    "tested_at": "2026-06-06T09:16:06.620158+00:00",
-    "prompt_hash": "4690e976915d",
+    "tested_at": "2026-06-06T14:01:49.286310+00:00",
+    "prompt_hash": "752423deb8d7",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P015_MISMATCH",

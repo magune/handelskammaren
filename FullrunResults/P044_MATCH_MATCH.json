@@ -2,7 +2,7 @@
   "schema_version": "3.0",
   "metadata": {
     "verification_timestamp": "2026-06-06T00:00:00Z",
-    "document_pair_id": "SEG-25D-424768__8391985785_8391985798",
+    "document_pair_id": "SEG-25D-424768__8391985785-8391985798",
     "certificate_issue_date": null,
     "source_documents_received": 2
   },
@@ -15,12 +15,12 @@
     "document_a": {
       "label": "Certificate of Origin (structured JSON)",
       "assumed_role": "certificate",
-      "document_type": "structured_json"
+      "document_type": "certificate_of_origin_json"
     },
     "document_b": {
-      "label": "Invoice PDF",
+      "label": "Attached PDF invoice",
       "assumed_role": "invoice",
-      "document_type": "invoice"
+      "document_type": "invoice_pdf"
     }
   },
   "rule_activation": {
@@ -37,12 +37,12 @@
         "rule_name": "Generell varubeskrivning med fakturareferens"
       },
       {
-        "rule_id": "4.4.4.2",
-        "rule_name": "Normalisering av blandade decimal- och tusentalsavskiljare"
+        "rule_id": "4.5.3",
+        "rule_name": "Blandade ursprung på artikelnivå"
       },
       {
-        "rule_id": "4.5.3",
-        "rule_name": "Blandade ursprung med tydlig koppling i fakturan"
+        "rule_id": "8.6",
+        "rule_name": "Obligatorisk parningsvalidering"
       }
     ]
   },
@@ -52,8 +52,12 @@
       "status": "MATCH",
       "confidence": 0.99,
       "certificate_value": "ERICSSON AB | TORSHAMNSGATAN 23 | 164 80 STOCKHOLM | SWEDEN | VAT SE556056625801",
-      "invoice_value": "Ericsson AB (EAB) | V.A.T. No.: SE556056625801 | Torshamnsgatan 23 | S-164 80 Stockholm, Sweden",
+      "invoice_value": "Ericsson AB (EAB) | V.A.T. No.: SE556056625801 | Torshamnsgatan 23 | SE-164 80 STOCKHOLM | Stockholm, Sweden",
       "rules_applied": [
+        {
+          "rule_id": "8.6",
+          "outcome": "PASS"
+        },
         {
           "rule_id": "4.1.2",
           "outcome": "MATCH"
@@ -61,46 +65,42 @@
         {
           "rule_id": "4.1.2.1",
           "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.1.5",
-          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets avsändare ERICSSON AB kan identifieras direkt i fakturan. Fakturans footer anger Ericsson AB, adressen Torshamnsgatan 23, Stockholm, Sweden samt VAT-numret SE556056625801, vilket verifierar samma juridiska part och land som i certifikatet."
+      "motivation": "Certifikatets avsändare ERICSSON AB i Sverige kan identifieras uttryckligen i fakturan. Fakturan visar Ericsson AB med samma VAT-nummer SE556056625801 samt adress Torshamnsgatan 23, SE-164 80 Stockholm, Sweden, vilket verifierar både juridisk part och land."
     },
     "consignee": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.95,
-      "certificate_value": "SUBSIDIARY ENTERPRISE WITH 100% FOREIGN INVESTMENT ERICSSON | 13 MYKOLY PYMONENKA STR., BLOCK 7, OFF. 7B/21 | 04050 KYIV | UKRAINE",
-      "invoice_value": "Invoice to 503575 / Customer-Sold to 503575: SUBSIDIARY ENTERPRISE WITH 100% FOREIGN INVESTMENT ERICSSON | 13 MYKOLY PYMONENKA STR., BLOCK 7, OFF. 7B/21 | 04050 KYIV | UKRAINE",
+      "confidence": 0.98,
+      "certificate_value": "SUBSIDIARY ENTERPRISE WITH 100% FOREIGN INVESTMENT ERICSSON | 13 MYKOLY PYMONENKA STR., BLOCK 7, BLOCK 7, OFF. 7B/21 | 04050 KYIV | UKRAINE",
+      "invoice_value": "Customer/Sold to 503575 SUBSIDIARY ENTERPRISE WITH 100% FOREIGN INVESTMENT ERICSSON 13 MYKOLY PYMONENKA STR., BLOCK 7, OFF. 7B/21 04050 KYIV UKRAINE | Invoice to 503575 SUBSIDIARY ENTERPRISE WITH 100% FOREIGN INVESTMENT ERICSSON 13 MYKOLY PYMONENKA STR., BLOCK 7, OFF. 7B/21 04050 KYIV UKRAINE",
       "rules_applied": [
+        {
+          "rule_id": "8.6",
+          "outcome": "PASS"
+        },
         {
           "rule_id": "4.2.0.2",
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.2.2.1.3",
+          "rule_id": "4.2.2.1.1",
           "outcome": "MATCH"
         },
         {
           "rule_id": "4.2.3",
           "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.2.4",
-          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets mottagare kan identifieras i fakturans mottagarfält Invoice to/Customer-Sold to. Certifikatets uppdelade namn- och adressuppgifter bildar samma mottagare som i fakturan, och landet UKRAINE överensstämmer."
+      "motivation": "Certifikatets mottagare kan identifieras i fakturans Customer/Sold to och Invoice to-fält. Certifikatets mottagarnamn är uppdelat mellan DeliveryCompany och adressrader men motsvarar fakturans fullständiga namn, och landet Ukraine överensstämmer."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.89,
+      "confidence": 0.92,
       "certificate_value": "TELECOM EQUIPMENT | AS PER INVOICE  8391985785/8391985798 | DATED 17/12/2025",
-      "invoice_value": "Invoice № 8391985785/8391985798 | Invoice date 17/12/2025 | item descriptions include telecom products such as optical transceivers, routers, fiber cables and related equipment",
+      "invoice_value": "Invoice № 8391985785/8391985798 | Invoice date 17/12/2025 | Product code / Description rows showing telecom equipment items such as OPTICAL TRANSCEIVER, ROUTER, FIBER CABLE",
       "rules_applied": [
         {
           "rule_id": "4.3.5",
@@ -111,44 +111,40 @@
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.3.8",
+          "rule_id": "4.3.5.3",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet använder en generell varubeskrivning tillsammans med uttrycklig fakturahänvisning och fakturadatum. Fakturanummer 8391985785/8391985798 och datum 17/12/2025 återfinns exakt i fakturan, och fakturans varurader är förenliga med den generella beskrivningen TELECOM EQUIPMENT."
+      "motivation": "Certifikatet använder generell varubeskrivning med uttrycklig fakturahänvisning och fakturadatum: 'AS PER INVOICE 8391985785/8391985798' och 'DATED 17/12/2025'. Fakturan bär exakt samma fakturanummer och datum, och dess varurader är förenliga med den generella beskrivningen 'TELECOM EQUIPMENT'."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.93,
-      "certificate_value": "G.W 370,890 KG",
-      "invoice_value": "Total gross weight 370.890 kg",
+      "confidence": 0.91,
+      "certificate_value": "G.W 370,890 KG | 7 PACKAGES",
+      "invoice_value": "Total gross weight 370.890 kg | Packages 7",
       "rules_applied": [
         {
           "rule_id": "4.4.2.1",
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.4.3.6",
+          "rule_id": "4.4.3",
           "outcome": "MATCH"
         },
         {
           "rule_id": "4.4.4.2",
           "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.4.7",
-          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger uttryckligen gross weight med värde och enhet: G.W 370,890 KG. Fakturan anger Total gross weight 370.890 kg; efter tillåten normalisering av komma/punkt är det samma numeriska värde och samma viktkategori."
+      "motivation": "Certifikatets kvantitetsfält anger uttryckligen bruttovikt med kategori och enhet: 'G.W 370,890 KG'. Fakturan anger 'Total gross weight 370.890 kg'; värdet är numeriskt identiskt efter tillåten normalisering av decimaltecken. Uppgiften '7 PACKAGES' stöds dessutom av fakturans 'Packages 7'."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.98,
+      "confidence": 0.99,
       "certificate_value": "US, MX, AT, CN, TW, MY",
-      "invoice_value": "Country of origin column lists US, MX, AT, CN, TW, MY across the invoice lines",
+      "invoice_value": "Country of origin column with item origins including US, MX, AT, CN, TW, MY",
       "rules_applied": [
         {
           "rule_id": "4.5.1",
@@ -161,29 +157,25 @@
         {
           "rule_id": "4.5.4",
           "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.5.6",
-          "outcome": "MATCH"
         }
       ],
-      "motivation": "Samtliga ursprungsländer som anges i certifikatet återfinns uttryckligen i fakturans kolumn Country of origin: US, MX, AT, CN, TW och MY. Fakturan visar tydlig per-rad-koppling mellan varor och ursprung, och inga andra ursprungsländer förekommer."
+      "motivation": "Certifikatet anger ursprungsländerna US, MX, AT, CN, TW och MY. Fakturan har en explicit kolumn 'Country of origin' på artikelnivå, och samtliga dessa länder förekommer där; inga ytterligare ursprungsländer framgår."
     }
   },
   "overall_assessment": {
     "comparison_result": "IDENTICAL",
     "workflow_recommendation": "AUTO_APPROVAL_ELIGIBLE",
     "auto_approval_eligible": true,
-    "confidence": 0.95,
+    "confidence": 0.96,
     "critical_failures": [],
     "manual_review_triggers": [],
     "manual_review_reason": "NOT_APPLICABLE",
-    "decision_summary": "Alla tillämpliga kontrollpunkter verifierades som MATCH. Certifikatets avsändare, mottagare, generella varubeskrivning med korrekt fakturareferens, gross weight och samtliga angivna ursprungsländer kan identifieras i fakturan.",
-    "human_explanation": "Alla uppgifter i certifikatet kan verifieras mot fakturan. Avsändare, mottagare, fakturareferens, bruttovikt 370,890 KG och ursprungsländerna US, MX, AT, CN, TW och MY återfinns i fakturan. Dokumentparet kan godkännas automatiskt."
+    "decision_summary": "Alla tillämpliga kontrollpunkter är verifierade som MATCH. Dokumentparningen stöds av exakt fakturanummer 8391985785/8391985798, avsändaren Ericsson AB i Sverige, mottagaren i Ukraina, generell varubeskrivning med korrekt fakturahänvisning och datum, bruttovikt 370.890 kg samt ursprungsländerna US, MX, AT, CN, TW och MY.",
+    "human_explanation": "Alla uppgifter i certifikatet kan verifieras mot fakturan. Fakturan visar ERICSSON AB i Sverige, rätt mottagare i Ukraina, fakturareferens 8391985785/8391985798 daterad 17/12/2025, bruttovikt 370.890 kg och ursprungsländerna US, MX, AT, CN, TW och MY. Ärendet kan godkännas automatiskt."
   },
   "_meta": {
-    "tested_at": "2026-06-06T09:17:25.970059+00:00",
-    "prompt_hash": "4690e976915d",
+    "tested_at": "2026-06-06T13:54:17.704144+00:00",
+    "prompt_hash": "752423deb8d7",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P044_MATCH",

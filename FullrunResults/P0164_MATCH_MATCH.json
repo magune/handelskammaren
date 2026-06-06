@@ -2,9 +2,9 @@
   "schema_version": "3.0",
   "metadata": {
     "verification_timestamp": "2026-06-06T00:00:00Z",
-    "document_pair_id": "SEG-26D-443262|P0164_MATCH_invoice.pdf",
+    "document_pair_id": "SEG-26D-443262__P0164_MATCH_invoice.pdf",
     "certificate_issue_date": null,
-    "source_documents_received": 2
+    "source_documents_received": 1
   },
   "task": {
     "task_type": "customs_document_pair_verification",
@@ -15,12 +15,12 @@
     "document_a": {
       "label": "CERTIFICATE OF ORIGIN (structured JSON)",
       "assumed_role": "certificate",
-      "document_type": "structured_json_certificate_of_origin"
+      "document_type": "certificate_of_origin_structured_json"
     },
     "document_b": {
       "label": "P0164_MATCH_invoice.pdf",
       "assumed_role": "invoice",
-      "document_type": "scanned_invoice_pdf"
+      "document_type": "invoice_pdf_scanned_image_based"
     }
   },
   "rule_activation": {
@@ -33,20 +33,20 @@
     "eu_origin_normalization_active": true,
     "activated_rules": [
       {
-        "rule_id": "8.1.3",
-        "rule_name": "Skannad faktura: 'hittas inte' är inte samma sak som 'saknas'"
-      },
-      {
         "rule_id": "4.3.2",
-        "rule_name": "Varubeskrivning verifierad primärt via artikelnummer"
-      },
-      {
-        "rule_id": "4.4.3.3",
-        "rule_name": "Kvantitet kan verifieras även om enhetsbeteckning saknas i fakturan"
+        "rule_name": "Artikelnummer prioriteras för varubeskrivning"
       },
       {
         "rule_id": "4.5.4.1.1",
-        "rule_name": "EU-samlingsbegrepp kombinerat med specifikt EU-land"
+        "rule_name": "EU + specifikt EU-land kan verifieras av specifikt EU-land i fakturan"
+      },
+      {
+        "rule_id": "4.5.4.2",
+        "rule_name": "EU-samlingsbegrepp och EU-medlemsland är utbytbara"
+      },
+      {
+        "rule_id": "8.1.3",
+        "rule_name": "Skannad faktura: ej återfunnen uppgift utan motsägelse ger MANUAL_REVIEW"
       }
     ]
   },
@@ -54,120 +54,112 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.98,
-      "certificate_value": "Mann Teknik AB | Strandvägen 16 | SE542 39 MARIESTAD | Sweden | VAT SE5564819844",
-      "invoice_value": "Mann Teknik AB | Delivery address: Strandvägen 16 | SE-542 39 MARIESTAD | SWEDEN | EORI no: SE5564819844",
+      "confidence": 0.93,
+      "certificate_value": "Mann Teknik AB | Sweden",
+      "invoice_value": "Mann Teknik AB ... SE-542 39 MARIESTAD ... SWEDEN ... VAT NO: SE556481984401",
       "rules_applied": [
         {
-          "rule_id": "4.1.1",
-          "outcome": "Seller/issuer identified in invoice footer block"
-        },
-        {
-          "rule_id": "4.1.2",
-          "outcome": "Company name and country identified"
+          "rule_id": "4.1.0",
+          "outcome": "matched"
         },
         {
           "rule_id": "4.1.2.1",
-          "outcome": "Country corroborated by explicit country text and SE-prefixed EORI/VAT-style identifier"
+          "outcome": "country_verified_by_address_and_vat_prefix"
         },
         {
-          "rule_id": "4.1.5",
-          "outcome": "MATCH"
+          "rule_id": "4.1.4",
+          "outcome": "matched"
         }
       ],
-      "motivation": "Certifikatets consignor 'Mann Teknik AB' återfinns uttryckligen i fakturans nederdel på sida 1 tillsammans med adressen 'Strandvägen 16', 'SE-542 39 MARIESTAD', 'SWEDEN' och identifieraren 'EORI no: SE5564819844'. Företagsnamn och land överensstämmer utan otillåten tolkning."
+      "motivation": "Certifikatets consignor 'Mann Teknik AB' återfinns uttryckligen i fakturans footer på sidan 1. Fakturan visar även 'SWEDEN' och VAT-nummer med SE-prefix, vilket verifierar landet Sverige. Samma juridiska part och land kan därmed identifieras."
     },
     "consignee": {
       "applicable": true,
       "status": "MANUAL_REVIEW",
       "confidence": 0.42,
-      "certificate_value": "Kanon Liquid Handling | Suite 4, Brookside Business C. | Spring Road, Ibstock | Leicestershire LE67 6LR | United Kingdom of Great Britain and Northern Ireland",
-      "invoice_value": "",
+      "certificate_value": "Kanon Liquid Handling | United Kingdom of Great Britain and Northern Ireland",
+      "invoice_value": null,
       "rules_applied": [
         {
+          "rule_id": "4.2.0.2",
+          "outcome": "recipient_not_identified_in_visible_invoice_fields"
+        },
+        {
           "rule_id": "8.1.1",
-          "outcome": "Invoice is scanned/image-based; field-level readability must be assessed separately"
+          "outcome": "relevant_recipient_field_not_successfully_read"
         },
         {
           "rule_id": "8.1.3",
-          "outcome": "Consignee not readable/locatable in scanned invoice; no contradictory consignee was positively identified"
-        },
-        {
-          "rule_id": "4.2.0.2",
-          "outcome": "No readable consignee found in visible buyer/ship-to style content"
-        },
-        {
-          "rule_id": "4.2.4",
-          "outcome": "MANUAL_REVIEW"
+          "outcome": "manual_review_due_to_scanned_invoice_without_clear_contradictory_consignee"
         }
       ],
-      "motivation": "Fakturan är skannad och saknar maskinläsbar text. I den synliga sidan kan consignor, varor, kvantitet och ursprung läsas, men mottagarfält för 'Kanon Liquid Handling' kan inte identifieras med tillräcklig säkerhet och ingen annan tydligt motstridig mottagare framgår läsbart. Enligt regeln för skannade fakturor ska detta därför hanteras som MANUAL_REVIEW, inte MISMATCH."
+      "motivation": "Den tillgängliga fakturan är skannad/bildbaserad och någon läsbar mottagarruta med 'Kanon Liquid Handling' kan inte identifieras på den synliga sidan. Den synliga texten 'YOUR REFERENCE..: Paul Smith' är inte ett mottagarfält och kan inte användas som consignee. Ingen annan tydligt läsbar, motstridig consignee framgår, därför ska kontrollpunkten sättas till MANUAL_REVIEW och inte MISMATCH."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.97,
+      "confidence": 0.96,
       "certificate_value": "N6100D4401 Breakaway Ind. 6\"-6\" ANSI Cl. 150 SS FPM",
-      "invoice_value": "N6100D4401 | BREAKAWAY IND. 6\"- 6\" ANSI Cl.150 | SS FPM",
+      "invoice_value": "N6100D4401 ... BREAKAWAY IND. 6\"- 6\" ANSI Cl.150 SS FPM",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "Article number present and matched exactly"
+          "outcome": "matched_by_article_number"
         },
         {
           "rule_id": "4.3.8",
-          "outcome": "MATCH"
+          "outcome": "matched"
         }
       ],
-      "motivation": "Certifikatet anger artikelidentifieraren 'N6100D4401'. På fakturans artikelrad 1 på sida 1 återfinns exakt samma artikelnummer tillsammans med beskrivningen 'BREAKAWAY IND. 6\"- 6\" ANSI Cl.150' och raden 'SS FPM'. Tillåtna skillnader i versaler, radbrytning och mellanrum påverkar inte matchningen."
+      "motivation": "Certifikatets varubeskrivning innehåller artikelnumret 'N6100D4401'. Samma artikelnummer och den identitetsbärande texten 'BREAKAWAY IND. 6\"- 6\" ANSI Cl.150 SS FPM' återfinns uttryckligen i fakturans artikelrad på sidan 1. Matchning sker därför enligt prioritet 1 via artikelnummer."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.88,
+      "confidence": 0.89,
       "certificate_value": "1 pcs",
-      "invoice_value": "Article line 1 quantity: 1",
+      "invoice_value": "QUANT. 1 (for article N6100D4401)",
       "rules_applied": [
         {
-          "rule_id": "4.4.2",
-          "outcome": "Certificate quantity contains numeric value and unit"
+          "rule_id": "4.4.1",
+          "outcome": "quantity_field_used"
         },
         {
           "rule_id": "4.4.3",
-          "outcome": "Numeric value identified for same goods line"
-        },
-        {
-          "rule_id": "4.4.3.3",
-          "outcome": "Invoice quantity accepted although explicit unit is not shown on the line"
+          "outcome": "numeric_value_identified_for_same_goods_row"
         },
         {
           "rule_id": "4.4.7",
-          "outcome": "MATCH"
+          "outcome": "matched"
         }
       ],
-      "motivation": "Certifikatet anger '1 pcs'. På samma fakturarad som artikel 'N6100D4401' visas kvantiteten '1' i kolumnen QUANT. Ingen alternativ eller motstridig kvantitet anges för denna artikelrad. Därför kan kvantiteten verifieras."
+      "motivation": "Certifikatet anger kvantiteten '1 pcs'. I fakturans rad för artikel 'N6100D4401' framgår kvantiteten '1' i kolumnen QUANT. För samma vara kan därmed certifikatets numeriska värde verifieras utan motsägelse."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.96,
+      "confidence": 0.94,
       "certificate_value": "EU (Sweden)",
       "invoice_value": "These products are of European Community preferential origin. Country of origin: Sweden",
       "rules_applied": [
         {
           "rule_id": "4.5.1",
-          "outcome": "Explicit origin statement identified in invoice"
+          "outcome": "explicit_origin_field_found"
         },
         {
           "rule_id": "4.5.4.1.1",
-          "outcome": "EU/European Community plus specific EU country verified"
+          "outcome": "eu_plus_named_member_state_verified_by_sweden"
+        },
+        {
+          "rule_id": "4.5.4.2",
+          "outcome": "eu_member_state_equivalence_applied"
         },
         {
           "rule_id": "4.5.6",
-          "outcome": "MATCH"
+          "outcome": "matched"
         }
       ],
-      "motivation": "Fakturan anger uttryckligen både 'European Community preferential origin' och 'Country of origin: Sweden' i nederdelen av sida 1. Detta verifierar certifikatets ursprungsangivelse 'EU (Sweden)'."
+      "motivation": "Certifikatet anger ursprung 'EU (Sweden)'. Fakturan innehåller uttryckligen både 'European Community preferential origin' och 'Country of origin: Sweden'. Därmed verifieras både EU-samlingsbegreppet och det specifikt angivna EU-landet Sverige."
     }
   },
   "overall_assessment": {
@@ -177,16 +169,16 @@
     "confidence": 0.78,
     "critical_failures": [],
     "manual_review_triggers": [
-      "Mottagaren 'Kanon Liquid Handling' kunde inte identifieras säkert i den skannade fakturan.",
-      "Fakturan saknar maskinläsbar text och mottagarfältet kan därför inte verifieras automatiskt."
+      "Consignee 'Kanon Liquid Handling' kunde inte verifieras eftersom den tillgängliga fakturan är skannad/bildbaserad och ingen läsbar mottagarruta kunde utläsas.",
+      "Ingen tydligt läsbar, motstridig consignee framgår; därför krävs manuell granskning enligt skannad-faktura-regeln."
     ],
     "manual_review_reason": "SCANNED_UNREADABLE",
-    "decision_summary": "Giltig dokumentparning kunde etableras genom tydlig consignor-matchning. Consignor, varubeskrivning, kvantitet och ursprungsland matchar fakturan. Consignee kan dock inte verifieras säkert från den skannade fakturan, vilket kräver manuell granskning.",
-    "human_explanation": "Avsändare, varubeskrivning, kvantitet och ursprungsland stämmer mellan certifikatet och fakturan. Fakturan är skannad och mottagaren 'Kanon Liquid Handling' kan inte läsas fram säkert i dokumentet. Därför krävs manuell granskning."
+    "decision_summary": "Avsändare, varubeskrivning, kvantitet och ursprungsland kan verifieras mot fakturan. Mottagaren kan däremot inte verifieras säkert eftersom fakturan är skannad och någon läsbar mottagarruta inte kan identifieras. Därför ska ärendet skickas till manuell handläggning.",
+    "human_explanation": "Avsändare, vara, kvantitet och ursprungsland stämmer mellan certifikatet och fakturan. Mottagaren 'Kanon Liquid Handling' kan inte läsas fram säkert i den skannade fakturan, och därför krävs manuell granskning."
   },
   "_meta": {
-    "tested_at": "2026-06-06T09:16:06.622280+00:00",
-    "prompt_hash": "4690e976915d",
+    "tested_at": "2026-06-06T14:01:49.289687+00:00",
+    "prompt_hash": "752423deb8d7",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P0164_MATCH",

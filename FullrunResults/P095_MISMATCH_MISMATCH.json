@@ -2,7 +2,7 @@
   "schema_version": "3.0",
   "metadata": {
     "verification_timestamp": "2026-06-06T00:00:00Z",
-    "document_pair_id": "SEG-25D-320941__invoice_25-815758",
+    "document_pair_id": "SEG-25D-320941__25-815758",
     "certificate_issue_date": null,
     "source_documents_received": 1
   },
@@ -15,12 +15,12 @@
     "document_a": {
       "label": "Certificate of Origin (structured JSON)",
       "assumed_role": "certificate",
-      "document_type": "structured_json"
+      "document_type": "certificate_of_origin"
     },
     "document_b": {
-      "label": "Invoice PDF",
+      "label": "Attached PDF",
       "assumed_role": "invoice",
-      "document_type": "original_invoice_for_customs_clearance_pdf"
+      "document_type": "invoice_for_customs_clearance"
     }
   },
   "rule_activation": {
@@ -33,28 +33,8 @@
     "eu_origin_normalization_active": false,
     "activated_rules": [
       {
-        "rule_id": "4.1.0",
-        "rule_name": "Consignor identified anywhere in invoice"
-      },
-      {
-        "rule_id": "4.2.0.2",
-        "rule_name": "Consignee may be verified in any recipient field"
-      },
-      {
-        "rule_id": "4.2.2.1.3",
-        "rule_name": "Certificate consignee name as strict subset of invoice consignee name"
-      },
-      {
-        "rule_id": "4.3.3",
-        "rule_name": "Controlled text matching for goods description"
-      },
-      {
-        "rule_id": "4.4.3.2",
-        "rule_name": "Explicit contradiction in quantity"
-      },
-      {
-        "rule_id": "4.5.1",
-        "rule_name": "Explicit origin field in invoice"
+        "rule_id": "8.6",
+        "rule_name": "Parningsvalidering passerad via consignor och consignee"
       }
     ]
   },
@@ -62,9 +42,9 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.99,
-      "certificate_value": "Volvo Bus Corporation",
-      "invoice_value": "Volvo Bus Corporation / VAT No SE556197382601 / SE-405 08 Göteborg / Sweden / Registered Office Göteborg, Sweden",
+      "confidence": 0.98,
+      "certificate_value": "Volvo Bus Corporation | Gropegårdsgatan 1 | 405 08 | GOTEBORG | Sweden | VAT SE556197382601",
+      "invoice_value": "Volvo Bus Corporation | VAT No SE556197382601 | SE-405 08 Göteborg Sweden | Registered Office Göteborg, Sweden",
       "rules_applied": [
         {
           "rule_id": "4.1.0",
@@ -79,14 +59,14 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor 'Volvo Bus Corporation' återfinns uttryckligen i fakturans sidhuvud och footer. Landet Sweden verifieras explicit i adressen 'Göteborg, Sweden' och stöds även av VAT-prefixet 'SE'. Samma juridiska part och land kan därför verifieras."
+      "motivation": "Certifikatets consignor 'Volvo Bus Corporation' återfinns uttryckligen i fakturans sidhuvud och footer. Landet verifieras av 'Sweden' samt VAT-prefixet 'SE' i 'SE556197382601'."
     },
     "consignee": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.92,
-      "certificate_value": "Manufacturing Commercial Vehicles",
-      "invoice_value": "Manufacturing Commercial Vehicles (MCV) S.A.E. / Km 24 Cairo Ismailia Desert Road / El-Obour City, Cairo - Egypt",
+      "confidence": 0.94,
+      "certificate_value": "Manufacturing Commercial Vehicles | (MCV) S.A.E | Km 24 Cairo Ismailia Desert Road | El-Obour City, Cairo | Egypt",
+      "invoice_value": "Manufacturing Commercial Vehicles (MCV) S.A.E. | Km 24 Cairo Ismailia Desert Road | El-Obour City, Cairo - Egypt",
       "rules_applied": [
         {
           "rule_id": "4.2.0.2",
@@ -105,58 +85,62 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets mottagarnamn 'Manufacturing Commercial Vehicles' kan identifieras i fakturans Consignee-fält som 'Manufacturing Commercial Vehicles (MCV) S.A.E.'. Fakturatexten innehåller samma kärnnamn med tillägg av förkortning och juridisk form, och landet Egypt framgår uttryckligen i adressblocket."
+      "motivation": "Mottagaren kan identifieras i fakturans consignee-fält. Certifikatets 'Manufacturing Commercial Vehicles' är en strikt delmängd av fakturans 'Manufacturing Commercial Vehicles (MCV) S.A.E.' och adressen visar samma mottagare i Egypten."
     },
     "goods_description": {
       "applicable": true,
       "status": "MISMATCH",
       "confidence": 0.99,
-      "certificate_value": "4 VOLVO BUS CHASSIS B8RLE | YV3T7U529TA224281, YV3T7U524TA224317, YV3T7U526TA224318 | YV3T7U528TA224319",
-      "invoice_value": "Volvo Bus chassis B8R / Chassis No 224321, 224336 / VIN No YV3T7U526TA224321, YV3T7U528TA224336",
+      "certificate_value": "4 VOLVO BUS CHASSIS B8RLE | YV3T7U529TA224281, YV3T7U524TA224317, YV3T7U526TA224318 | YV3T7U528TA224319 | ACID: 1001808412025070646 | Egyptian Importer Tax ID: 100180841 | Foreign Exporter ID: SE556197382601 | Foreign Exporter Country: SWEDEN | Foreign Exporter Country Code: SE",
+      "invoice_value": "Volvo Bus chassis B8R | Chassis No 224321, 224336 | VIN No YV3T7U526TA224321, YV3T7U528TA224336",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "ARTICLE_NUMBER_NOT_USED"
+          "outcome": "NO_ARTICLE_NUMBER_IN_CERTIFICATE_USE_TEXT_MATCH"
         },
         {
           "rule_id": "4.3.3",
           "outcome": "MISMATCH"
         },
         {
-          "rule_id": "4.3.8.1",
+          "rule_id": "4.3.3.4",
+          "outcome": "MISMATCH"
+        },
+        {
+          "rule_id": "4.3.8",
           "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Certifikatet anger varan som '4 VOLVO BUS CHASSIS B8RLE', medan fakturan anger 'Volvo Bus chassis B8R'. Modellbeteckningen överensstämmer därmed inte. Dessutom anger certifikatet fyra specifika VIN-nummer som inte återfinns i fakturan, medan fakturan i stället visar andra VIN-nummer ('...224321' och '...224336'). Detta är en positiv motsägelse, inte enbart avsaknad."
+      "motivation": "Certifikatet anger huvudbeteckningen 'VOLVO BUS CHASSIS B8RLE' medan fakturan anger 'Volvo Bus chassis B8R'. Dessutom återfinns inga av certifikatets VIN-nummer (YV3T7U529TA224281, YV3T7U524TA224317, YV3T7U526TA224318, YV3T7U528TA224319) i fakturan, som i stället visar YV3T7U526TA224321 och YV3T7U528TA224336. Uppgiften kan därför inte verifieras utan är en faktisk avvikelse."
     },
     "quantity": {
       "applicable": true,
       "status": "MISMATCH",
       "confidence": 0.99,
       "certificate_value": "GW 24040 kg",
-      "invoice_value": "Bruttovikt/Gross Weight 11884,00",
+      "invoice_value": "Bruttovikt/Gross Weight 11884,00 (kg)",
       "rules_applied": [
         {
           "rule_id": "4.4.2.1",
           "outcome": "FORM_REQUIREMENT_MET"
         },
         {
-          "rule_id": "4.4.3.2",
-          "outcome": "MISMATCH"
+          "rule_id": "4.4.3.1",
+          "outcome": "EXPLICIT_CONTRADICTION"
         },
         {
           "rule_id": "4.4.7",
           "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Certifikatets kvantitetsfält anger uttryckligen 'GW 24040 kg'. Fakturan anger uttryckligen 'Gross Weight 11884,00'. Båda dokumenten anger samma kvantitetstyp (gross weight), men värdena skiljer sig tydligt och ligger inte inom tillåten tolerans. Detta är därför en uttrycklig motsägelse."
+      "motivation": "Certifikatet anger bruttovikt 'GW 24040 kg'. Fakturan anger uttryckligen 'Gross Weight 11884,00' kg för samma försändning. Detta är en direkt motsägelse för samma kvantitetstyp och avvikelsen ligger långt över tillåten tolerans."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.99,
+      "confidence": 0.98,
       "certificate_value": "Sweden",
-      "invoice_value": "Ursprungsland/Country of Origin of Goods Sweden; and the county of origin or manufacturer of the goods is Sweden.",
+      "invoice_value": "Ursprungsland/Country of Origin of Goods: Sweden | 'the country of origin or manufacturer of the goods is Sweden.'",
       "rules_applied": [
         {
           "rule_id": "4.5.1",
@@ -167,7 +151,7 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger ursprungsland Sweden. Fakturan innehåller ett explicit origin-fält med texten 'Ursprungsland/Country of Origin of Goods Sweden' och bekräftar även längst ned att varornas ursprung eller tillverkare är Sweden. Ursprungslandet kan därför verifieras uttryckligen."
+      "motivation": "Ursprungslandet 'Sweden' framgår uttryckligen i fakturans origin-fält och bekräftas även i ursprungsintyget längst ned på fakturan."
     }
   },
   "overall_assessment": {
@@ -176,17 +160,17 @@
     "auto_approval_eligible": false,
     "confidence": 0.98,
     "critical_failures": [
-      "Goods description mismatch: certificate states '4 VOLVO BUS CHASSIS B8RLE' and four VIN numbers ending 224281/224317/224318/224319, while the invoice states 'Volvo Bus chassis B8R' and VIN numbers ending 224321/224336.",
-      "Quantity mismatch: certificate states 'GW 24040 kg' while the invoice states 'Gross Weight 11884,00'."
+      "Goods description mismatch: certificate describes Volvo Bus chassis B8RLE with VIN numbers that do not appear in the invoice.",
+      "Quantity mismatch: certificate gross weight 24040 kg contradicts invoice gross weight 11884,00 kg."
     ],
     "manual_review_triggers": [],
     "manual_review_reason": "NOT_APPLICABLE",
-    "decision_summary": "Consignor, consignee and origin can be verified against the invoice, but goods description and quantity are explicitly contradicted by the invoice. Because at least one applicable control point is MISMATCH, the overall comparison result is NOT_IDENTICAL.",
-    "human_explanation": "Certifikatet anger varan som 4 VOLVO BUS CHASSIS B8RLE med fyra andra VIN-nummer än de som står i fakturan. Certifikatet anger också bruttovikt 24 040 kg medan fakturan anger 11 884,00 kg. Avsändare, mottagare och ursprungsland kan verifieras, men vara och kvantitet stämmer inte."
+    "decision_summary": "Parningen är giltig eftersom consignor och consignee kan identifieras i fakturan, men dokumenten är inte identiska. Avsändare, mottagare och ursprungsland matchar. Varubeskrivningen och kvantiteten motsägs uttryckligen av fakturan.",
+    "human_explanation": "Certifikatet anger fyra Volvo Bus chassis B8RLE med VIN-nummer som inte finns på fakturan, medan fakturan avser två Volvo Bus chassis B8R med andra VIN-nummer. Certifikatet anger dessutom bruttovikt 24 040 kg, men fakturan anger 11 884,00 kg. Därför stämmer dokumenten inte överens."
   },
   "_meta": {
-    "tested_at": "2026-06-06T09:13:51.015938+00:00",
-    "prompt_hash": "4690e976915d",
+    "tested_at": "2026-06-06T14:17:35.587999+00:00",
+    "prompt_hash": "752423deb8d7",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P095_MISMATCH",

@@ -13,12 +13,12 @@
   },
   "documents": {
     "document_a": {
-      "label": "CERTIFICATE OF ORIGIN (structured JSON)",
+      "label": "Certificate of Origin (structured JSON)",
       "assumed_role": "certificate",
-      "document_type": "certificate_of_origin_structured_json"
+      "document_type": "certificate_of_origin"
     },
     "document_b": {
-      "label": "Commercial Invoice PDF",
+      "label": "Attached PDF",
       "assumed_role": "invoice",
       "document_type": "commercial_invoice"
     }
@@ -34,19 +34,27 @@
     "activated_rules": [
       {
         "rule_id": "8.6",
-        "rule_name": "Parningsvalidering godkänd via consignor och consignee"
+        "rule_name": "Parningsvalidering passerad via consignor- och consignee-matchning"
       },
       {
-        "rule_id": "4.1.0",
-        "rule_name": "Consignor identifierad uttryckligen i fakturan"
+        "rule_id": "4.1.2",
+        "rule_name": "Consignor verifieras via företagsnamn och land i fakturan"
       },
       {
         "rule_id": "4.2.0.2",
-        "rule_name": "Consignee identifierad i relevant mottagarfält"
+        "rule_name": "Consignee får verifieras i något mottagarfält i fakturan"
+      },
+      {
+        "rule_id": "4.3.3",
+        "rule_name": "Kontrollerad textmatchning för varubeskrivning"
       },
       {
         "rule_id": "4.4.3.6",
-        "rule_name": "Total vikt i faktura används för kvantitetsverifiering"
+        "rule_name": "Total vikt i faktura får verifiera certifikatets försändelsevikt"
+      },
+      {
+        "rule_id": "4.5.1",
+        "rule_name": "Ursprungsland ska framgå explicit i fakturan"
       }
     ]
   },
@@ -55,56 +63,60 @@
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.99,
-      "certificate_value": "Fortex International AB | Vallgatan 22 | 41116 | GÖTEBORG | Sweden",
-      "invoice_value": "Fortex International AB, Vallgatan 22, 411 16 Gothenburg, Sweden",
+      "certificate_value": "Fortex International AB, Vallgatan 22, 41116 GÖTEBORG, Sweden",
+      "invoice_value": "Fortex International AB\nVallgatan 22\n411 16 Gothenburg, Sweden\n+46 31 797 7000 invoice@fortex.se, VAT no. SE556800788301",
       "rules_applied": [
         {
-          "rule_id": "4.1.0",
-          "outcome": "MATCH"
+          "rule_id": "8.6",
+          "outcome": "PASS"
         },
         {
           "rule_id": "4.1.2",
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.1.4",
+          "rule_id": "4.1.5",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger consignor som \"Fortex International AB\" i Sverige. Fakturan visar samma företagsnamn i sidhuvudet och samma land i adressen: \"Fortex International AB ... Gothenburg, Sweden\". Företagsnamn och land kan därför verifieras entydigt mot fakturan."
+      "motivation": "Certifikatets consignor \"Fortex International AB\" återfinns uttryckligen i fakturans issuer/header. Landet \"Sweden\" framgår explicit i adressblocket och stöds även av VAT-prefix \"SE\". Samma juridiska part kan därför verifieras utan ytterligare tolkning."
     },
     "consignee": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.98,
-      "certificate_value": "Odil Parer LLC | 100161, Tashkent City | Chilanzar District | Chorbok Street 6 | INN: 302686363 | Tashkent | Uzbekistan",
-      "invoice_value": "CONSIGNED TO: ODIL PARER LLC, 100161, Tashkent city, Chilanzar district, Chorbok street, 6, Tashkent, Uzbekistan, Company INN 302686363",
+      "confidence": 0.99,
+      "certificate_value": "Odil Parer LLC, 100161, Tashkent City, Chilanzar District, Chorbok Street 6, Tashkent, Uzbekistan",
+      "invoice_value": "CONSIGNED TO: ODIL PARER LLC\n100161, Tashkent city, Chilanzar district,\nChorbok street, 6\nTashkent,\nUzbekistan\nCompany INN 302686363",
       "rules_applied": [
+        {
+          "rule_id": "8.6",
+          "outcome": "PASS"
+        },
         {
           "rule_id": "4.2.0.2",
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.2.2",
+          "rule_id": "4.2.3",
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.2.3",
+          "rule_id": "4.2.4",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets mottagare \"Odil Parer LLC\" kan identifieras exakt i fakturans mottagarfält \"CONSIGNED TO\". Fakturan visar även samma adressort och samma land, Uzbekistan. Mottagaren kan därför verifieras entydigt."
+      "motivation": "Certifikatets mottagare \"Odil Parer LLC\" kan identifieras direkt i fakturans fält \"CONSIGNED TO\". Landet \"Uzbekistan\" framgår explicit i samma mottagarblock. Skillnader i versaler/gemener och interpunktion är tillåten normalisering och påverkar inte matchningen."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.93,
       "certificate_value": "69 Reels of Coated White Top Testliner - SAICA IC | HS Code: 4810923000",
-      "invoice_value": "69 Reels: Coated White Top Testliner SAICA IC Subs 125gsm & 135gsm, RW 600mm - 1050mm, PO# 506536 | HS CODE: 4810923000",
+      "invoice_value": "69 Reels: Coated White Top Testliner SAICA IC\nSubs 125gsm & 135gsm, RW 600mm - 1050mm, PO# 506536\nHS CODE: 4810923000",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "NO_ARTICLE_NUMBER_USED"
+          "outcome": "No article number in certificate; proceeded to controlled text match"
         },
         {
           "rule_id": "4.3.3",
@@ -115,33 +127,29 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Den identitetsbärande huvudbeteckningen \"Coated White Top Testliner SAICA IC\" återfinns uttryckligen i fakturans varubeskrivning. Skillnaderna \"69 Reels of\" jämfört med \"69 Reels:\" samt ytterligare specifikationer i fakturan (\"Subs 125gsm & 135gsm, RW 600mm - 1050mm\") ändrar inte produktidentiteten. Den separata certifikatraden \"HS Code: 4810923000\" återfinns också exakt i fakturan."
+      "motivation": "Certifikatets huvudbeteckning \"69 Reels of Coated White Top Testliner - SAICA IC\" kan identifieras i fakturans varubeskrivning som \"69 Reels: Coated White Top Testliner SAICA IC\" efter tillåten normalisering av versaler/gemener, skiljetecken, bindestreck och trivial preposition (\"of\"). Tilläggen i fakturan (\"Subs 125gsm & 135gsm, RW 600mm - 1050mm, PO# 506536\") ändrar inte den identitetsbärande huvudbeteckningen. Den andra beskrivningsraden \"HS Code: 4810923000\" återfinns också uttryckligen i fakturan som \"HS CODE: 4810923000\"."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.9,
       "certificate_value": "Gross 65.132MT",
-      "invoice_value": "65.132 MT AT USD 740.00/MT | Total Weight Quantity: 65.132 MT | Total Unit Count: 69 Reels",
+      "invoice_value": "Total Weight Quantity: 65.132 MT",
       "rules_applied": [
         {
-          "rule_id": "4.4.2",
-          "outcome": "MATCH"
-        },
-        {
           "rule_id": "4.4.2.1",
-          "outcome": "MATCH"
+          "outcome": "Formkrav uppfyllt: viktkategori och enhet finns i certifikatet"
         },
         {
           "rule_id": "4.4.3",
-          "outcome": "MATCH"
+          "outcome": "Numeric value identified in invoice"
         },
         {
           "rule_id": "4.4.3.6",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets kvantitetsfält innehåller ett uttryckligt viktvärde med kategori och enhet: \"Gross 65.132MT\". Fakturan anger samma numeriska värde och samma viktenhet som total försändelsevikt: \"Total Weight Quantity: 65.132 MT\" och även i varuraden \"65.132 MT\". Den avvikande benämningen \"Gross\" i certifikatet jämfört med \"Total Weight Quantity\" i fakturan medför inte avvikelse när värde och enhet överensstämmer."
+      "motivation": "Certifikatets kvantitetsfält anger en uttrycklig vikt med kategori och enhet: \"Gross 65.132MT\". Fakturan anger den totala försändelsevikten som \"Total Weight Quantity: 65.132 MT\". Det numeriska värdet och enheten överensstämmer exakt, och regelverket tillåter att skillnad i benämning mellan certifikatets viktkategori och fakturans totalvikt inte i sig medför avvikelse när värde och enhet stämmer."
     },
     "origin": {
       "applicable": true,
@@ -152,18 +160,14 @@
       "rules_applied": [
         {
           "rule_id": "4.5.1",
-          "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.5.4",
-          "outcome": "MATCH"
+          "outcome": "Explicit origin field found in invoice"
         },
         {
           "rule_id": "4.5.6",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets ursprungsland \"EU (Spain)\" återfinns uttryckligen i fakturans dedikerade origin-fält som \"Country of Origin: EU (Spain)\". Ursprungsangivelsen är därmed verifierad utan ytterligare tolkning."
+      "motivation": "Certifikatets ursprungsland \"EU (Spain)\" återfinns uttryckligen i fakturans dedikerade ursprungsfält som \"Country of Origin: EU (Spain)\". Ingen normalisering utöver versaler/gemener behövs och ingen motstridig ursprungsuppgift förekommer i fakturan."
     }
   },
   "overall_assessment": {
@@ -174,12 +178,12 @@
     "critical_failures": [],
     "manual_review_triggers": [],
     "manual_review_reason": "NOT_APPLICABLE",
-    "decision_summary": "Dokumentparningen är giltig och samtliga tillämpliga kontrollpunkter kan verifieras entydigt mot fakturan. Consignor, consignee, varubeskrivning, kvantitet och ursprungsland matchar enligt regelverket. Ingen LC-regel eller manuell granskningsutlösare är tillämplig.",
-    "human_explanation": "Alla kontrollpunkter i certifikatet kan återfinnas i fakturan. Avsändare, mottagare, varubeskrivning, kvantitet 65.132 MT och ursprunget EU (Spain) stämmer överens. Dokumentparet kan därför godkännas automatiskt."
+    "decision_summary": "Alla tillämpliga kontrollpunkter är verifierade som MATCH mot den bifogade, textläsbara kommersiella fakturan. Ingen LC-regel aktiverades och ingen motsägelse identifierades mellan certifikatets uppgifter och fakturan.",
+    "human_explanation": "Alla uppgifter i certifikatet kan återfinnas i fakturan. Avsändare, mottagare, varubeskrivning, kvantitet 65.132 MT och ursprung EU (Spain) stämmer överens. Dokumentparet kan godkännas automatiskt."
   },
   "_meta": {
-    "tested_at": "2026-06-06T09:00:14.352137+00:00",
-    "prompt_hash": "4690e976915d",
+    "tested_at": "2026-06-06T14:05:41.313468+00:00",
+    "prompt_hash": "752423deb8d7",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P001_MATCH",

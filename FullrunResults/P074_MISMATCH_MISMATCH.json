@@ -2,7 +2,7 @@
   "schema_version": "3.0",
   "metadata": {
     "verification_timestamp": "2026-06-06T00:00:00Z",
-    "document_pair_id": "SEG-25D-360772__INV-11394",
+    "document_pair_id": "SEG-25D-360772__invoice_11394",
     "certificate_issue_date": null,
     "source_documents_received": 1
   },
@@ -15,7 +15,7 @@
     "document_a": {
       "label": "CERTIFICATE OF ORIGIN (structured JSON)",
       "assumed_role": "certificate",
-      "document_type": "certificate_of_origin_json"
+      "document_type": "certificate_of_origin_structured_json"
     },
     "document_b": {
       "label": "Invoice PDF",
@@ -33,12 +33,12 @@
     "eu_origin_normalization_active": true,
     "activated_rules": [
       {
-        "rule_id": "4.3.8.1",
-        "rule_name": "Metadata/vikttext i varubeskrivningsfältet är inte separat vara"
+        "rule_id": "8.6",
+        "rule_name": "Parningsvalidering passerad via consignor och consignee i fakturan"
       },
       {
         "rule_id": "4.5.4.2",
-        "rule_name": "EU ↔ specifikt EU-medlemsland"
+        "rule_name": "EU-medlemsland accepteras mot EU-ursprung"
       }
     ]
   },
@@ -47,111 +47,119 @@
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.99,
-      "certificate_value": "SOIC Global Trading AB | Sweden | VAT SE559328674201",
-      "invoice_value": "SOIC Global Trading AB, Forsta Langgatan 28B, Gothenburg 41327 Sweden | VAT ID: SE559328674201",
+      "certificate_value": "SOIC Global Trading AB",
+      "invoice_value": "SOIC Global Trading AB\nForsta Langgatan 28B\nGothenburg 41327 Sweden",
       "rules_applied": [
         {
-          "rule_id": "4.1.0",
-          "outcome": "MATCH"
+          "rule_id": "4.1.1",
+          "outcome": "issuer identified"
         },
         {
-          "rule_id": "4.1.2.1",
-          "outcome": "MATCH"
+          "rule_id": "4.1.2",
+          "outcome": "name and country verified"
         },
         {
           "rule_id": "4.1.5",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor 'SOIC Global Trading AB' återfinns uttryckligen i fakturans sidhuvud på sida 1 och sida 2. Landet Sweden framgår explicit i adressen och stöds även av VAT-prefixet 'SE'."
+      "motivation": "Certifikatet anger consignor \"SOIC Global Trading AB\" i Sverige. Fakturan visar samma juridiska namn i sidhuvudet på sida 1 och 2 samt adress med landet \"Sweden\". Företagsnamn och land kan därför verifieras direkt utan vidare undantag."
     },
     "consignee": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.99,
-      "certificate_value": "Cartones de Guatemala S.A | Guatemala",
-      "invoice_value": "CONSIGNEE / INVOICE TO: Cartones de Guatemala S.A., 2da Calle 24-00, Zona 15, Vista Hermosa II Edificio Domani Sexto Nivel Oficina 601, Guatemala 1015, Guatemala",
+      "confidence": 0.98,
+      "certificate_value": "Cartones de Guatemala S.A",
+      "invoice_value": "CONSIGNEE\nCartones de Guatemala S.A.\n2da Calle 24-00, Zona 15, Vista\nHermosa II Edificio Domani Sexto\nNivel Oficina 601\nGuatemala 1015\nGuatemala",
       "rules_applied": [
         {
           "rule_id": "4.2.0.2",
-          "outcome": "MATCH"
+          "outcome": "identified in consignee field"
+        },
+        {
+          "rule_id": "4.2.2.1",
+          "outcome": "punctuation normalization accepted"
         },
         {
           "rule_id": "4.2.3",
-          "outcome": "MATCH"
+          "outcome": "country verified"
         },
         {
           "rule_id": "4.2.4",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets mottagare 'Cartones de Guatemala S.A' kan identifieras exakt i fakturans fält både 'CONSIGNEE' och 'INVOICE TO'. Landet Guatemala framgår uttryckligen i samma adressblock."
+      "motivation": "Certifikatet anger mottagaren \"Cartones de Guatemala S.A\" i Guatemala. Fakturan anger i fältet \"CONSIGNEE\" samma företagsnamn med endast skiljeteckensskillnad (\"S.A.\" vs \"S.A\") samt landet \"Guatemala\". Detta är en tillåten normaliseringsskillnad och mottagaren kan verifieras."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.96,
       "certificate_value": "Testliner 2 FSC  | NET WEIGHT: 189.048 MT",
-      "invoice_value": "Flera artikelrader med 'Testliner 2 FSC' på sida 1",
+      "invoice_value": "Testliner 2 FSC",
       "rules_applied": [
         {
+          "rule_id": "4.3.2",
+          "outcome": "no article number used"
+        },
+        {
           "rule_id": "4.3.3",
-          "outcome": "MATCH"
+          "outcome": "controlled text match on main product designation"
         },
         {
           "rule_id": "4.3.8.1",
-          "outcome": "MATCH"
+          "outcome": "weight text treated as metadata, not separate goods line"
         },
         {
           "rule_id": "4.3.8",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Den identitetsbärande huvudbeteckningen 'Testliner 2 FSC' återfinns exakt i fakturans varurader. Den separata certifikatraden 'NET WEIGHT: 189.048 MT' är metadata/vikttext och inte en separat vara, och påverkar därför inte varubeskrivningsmatchningen."
+      "motivation": "Den identitetsbärande huvudbeteckningen i certifikatet är \"Testliner 2 FSC\" och denna text återfinns uttryckligen i samtliga relevanta varurader i fakturan. Den andra certifikatraden \"NET WEIGHT: 189.048 MT\" är en vikt-/metadatauppgift och utgör inte en separat vara. Varubeskrivningen kan därför verifieras."
     },
     "quantity": {
       "applicable": true,
       "status": "MISMATCH",
-      "confidence": 0.98,
-      "certificate_value": "189.048 MT",
-      "invoice_value": "189.048 MT (totalrad på sida 1)",
+      "confidence": 0.97,
+      "certificate_value": "189.048 MT | NET WEIGHT: 189.048 MT",
+      "invoice_value": "189.048 MT 66 ROLLS",
       "rules_applied": [
         {
-          "rule_id": "4.4.2.1",
-          "outcome": "MISMATCH"
+          "rule_id": "4.4.1",
+          "outcome": "verification based on quantity field"
         },
         {
-          "rule_id": "4.4.3.6",
-          "outcome": "NOT_DECISIVE"
+          "rule_id": "4.4.2.1",
+          "outcome": "weight category missing from certificate quantity field"
         },
         {
           "rule_id": "4.4.7",
           "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Certifikatets verifieringsgrundande kvantitetsfält anger vikten '189.048 MT' utan att viktkategori (GW/NW/Gross/Net) framgår i själva kvantitetsuppgiften. Den separata raden 'NET WEIGHT: 189.048 MT' ligger inte i kvantitetsfältet för samma rad och botar därför inte formkravet. Fakturan visar visserligen totalen 189.048 MT, men det kan inte åsidosätta certifikatets formella brist."
+      "motivation": "Certifikatets kvantitetsfält anger \"189.048 MT\" men saknar viktkategori i själva kvantitetsuppgiften. Viktkategorin framgår endast i en separat beskrivningsrad som \"NET WEIGHT: 189.048 MT\", vilket enligt reglerna inte uppfyller formkravet för viktangivelse i kvantitetsfältet. Fakturan visar visserligen totalen \"189.048 MT\", men certifikatets kvantitetsuppgift är formellt otillräcklig och ska därför bedömas som MISMATCH."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.95,
+      "confidence": 0.94,
       "certificate_value": "EU",
       "invoice_value": "Country of origin: Germany",
       "rules_applied": [
         {
           "rule_id": "4.5.1",
-          "outcome": "MATCH"
+          "outcome": "explicit origin field identified"
         },
         {
           "rule_id": "4.5.4.2",
-          "outcome": "MATCH"
+          "outcome": "EU in certificate verified by specific EU member state in invoice"
         },
         {
           "rule_id": "4.5.6",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Fakturan innehåller ett explicit ursprungsfält: 'Country of origin: Germany'. Germany är ett specifikt EU-medlemsland och verifierar därför certifikatets ursprungsangivelse 'EU'."
+      "motivation": "Certifikatet anger ursprungsland \"EU\". Fakturan anger uttryckligen \"Country of origin: Germany\" i ett dedikerat origin-fält. Tyskland är en EU-medlemsstat vid relevant tidpunkt, varför ursprungslandet verifieras genom EU-normaliseringen."
     }
   },
   "overall_assessment": {
@@ -160,16 +168,16 @@
     "auto_approval_eligible": false,
     "confidence": 0.97,
     "critical_failures": [
-      "Kvantitetskontrollpunkten är MISMATCH eftersom certifikatets kvantitetsfält anger '189.048 MT' utan kravställd viktkategori i kvantitetsuppgiften."
+      "Quantity control point is MISMATCH because certificate weight value lacks required GW/NW category in the quantity field."
     ],
     "manual_review_triggers": [],
     "manual_review_reason": "NOT_APPLICABLE",
-    "decision_summary": "Consignor, consignee, varubeskrivning och ursprungsland kan verifieras mot fakturan. Dokumentparet är ändå NOT_IDENTICAL eftersom certifikatets kvantitetsfält inte uppfyller formkravet för viktkategori.",
-    "human_explanation": "Avsändare, mottagare, varubeskrivning och ursprung kan verifieras mot fakturan. Kvantitetsfältet i certifikatet anger '189.048 MT' utan att gross/net framgår i själva kvantitetsuppgiften, medan viktkategori bara förekommer på en separat rad. Därför är dokumenten inte identiska."
+    "decision_summary": "Consignor, consignee, goods description and origin are verified against the invoice. Quantity fails because the certificate quantity field contains a weight value without required weight category, while the category appears only in a separate description row. At least one applicable control point is therefore MISMATCH, so the overall result is NOT_IDENTICAL.",
+    "human_explanation": "Avsändare, mottagare, varubeskrivning och ursprungsland stämmer mot fakturan. Kvantiteten kan däremot inte godkännas eftersom certifikatet anger \"189.048 MT\" utan att viktkategori framgår i själva kvantitetsfältet. Därför kan dokumentparet inte godkännas automatiskt."
   },
   "_meta": {
-    "tested_at": "2026-06-06T09:17:25.979211+00:00",
-    "prompt_hash": "4690e976915d",
+    "tested_at": "2026-06-06T13:54:17.718358+00:00",
+    "prompt_hash": "752423deb8d7",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P074_MISMATCH",

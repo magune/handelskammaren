@@ -15,12 +15,12 @@
     "document_a": {
       "label": "CERTIFICATE OF ORIGIN (structured JSON)",
       "assumed_role": "certificate",
-      "document_type": "Certificate of Origin"
+      "document_type": "structured_json_certificate_of_origin"
     },
     "document_b": {
-      "label": "Attached PDF",
+      "label": "Invoice PDF",
       "assumed_role": "invoice",
-      "document_type": "Invoice"
+      "document_type": "commercial_invoice"
     }
   },
   "rule_activation": {
@@ -33,28 +33,16 @@
     "eu_origin_normalization_active": false,
     "activated_rules": [
       {
-        "rule_id": "2.2",
-        "rule_name": "LC-undantag prövat men ej aktiverat; ingen uttrycklig LC-hänvisning med nummer i OriginRows[].Description"
-      },
-      {
-        "rule_id": "8.6",
-        "rule_name": "Parningsvalidering passerad genom identifierad consignor i fakturan"
-      },
-      {
         "rule_id": "4.3.2",
-        "rule_name": "Varubeskrivning verifierad primärt via artikelnummer"
+        "rule_name": "Artikelnummer prioriteras vid varubeskrivningsverifiering"
       },
       {
         "rule_id": "4.3.7",
-        "rule_name": "Flera ursprung med per-artikel-koppling i certifikatet"
-      },
-      {
-        "rule_id": "4.4.3.2",
-        "rule_name": "Flera kvantitetsuppgifter; uttrycklig motsägelse på NW ger MISMATCH"
+        "rule_name": "Koppling vara–ursprungsland vid flera ursprung"
       },
       {
         "rule_id": "4.5.3",
-        "rule_name": "Blandade ursprung verifierade via fakturans radnivå-origin"
+        "rule_name": "Blandade ursprung"
       }
     ]
   },
@@ -63,75 +51,67 @@
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.99,
-      "certificate_value": "Mölnlycke Health Care AB",
-      "invoice_value": "Mölnlycke Health Care AB, PO Box 6, 431 21 Mölndal, Sweden; Reg. No: 556547-5489; Our VAT no: SE556547548901",
+      "certificate_value": "Mölnlycke Health Care AB | SWEDEN",
+      "invoice_value": "Mölnlycke Health Care AB, PO Box 6, 431 21 Mölndal, Sweden; Our VAT no: SE556547548901",
       "rules_applied": [
         {
           "rule_id": "4.1.0",
-          "outcome": "match"
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.1.2.1",
-          "outcome": "land verified via address and VAT prefix"
+          "outcome": "MATCH"
         },
         {
-          "rule_id": "4.1.5",
+          "rule_id": "4.1.4",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor 'Mölnlycke Health Care AB' återfinns uttryckligen i fakturans footer/supplierblock tillsammans med adressen 'PO Box 6, 431 21 Mölndal, Sweden'. Landet verifieras explicit genom 'Sweden' samt indirekt genom VAT-prefixet 'SE' i 'SE556547548901'. Samma juridiska part kan identifieras utan tolkning."
+      "motivation": "Certifikatets consignor 'Mölnlycke Health Care AB' återfinns uttryckligen i fakturans footer på flera sidor tillsammans med adressen 'PO Box 6, 431 21 Mölndal, Sweden'. Landet Sweden framgår explicit och stöds även av VAT-prefix 'SE'."
     },
     "consignee": {
       "applicable": true,
       "status": "MISMATCH",
       "confidence": 0.97,
-      "certificate_value": "Tamer Mölnlycke Care Arabica LLC",
-      "invoice_value": "Tamer Mölnlycke Arabic LLC",
+      "certificate_value": "Tamer Mölnlycke Care Arabica LLC | Saudi Arabia",
+      "invoice_value": "Tamer Mölnlycke Arabic LLC | SAUDI ARABIA",
       "rules_applied": [
         {
           "rule_id": "4.2.0.2",
-          "outcome": "candidate found in invoice address fields"
+          "outcome": "invoice_recipient_identified"
         },
         {
           "rule_id": "4.1.3.1",
-          "outcome": "name mismatch applies to consignee"
+          "outcome": "MISMATCH"
         },
         {
           "rule_id": "4.2.3",
-          "outcome": "country match but insufficient due to company-name mismatch"
-        },
-        {
-          "rule_id": "4.2.4",
-          "outcome": "MISMATCH"
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Fakturan anger mottagaren som 'Tamer Mölnlycke Arabic LLC' i både Invoice Address och Delivery Address. Certifikatet anger 'Tamer Mölnlycke Care Arabica LLC'. Skillnaden består av ett extra ord ('Care') och ett annat ord ('Arabica' vs 'Arabic'), vilket inte är tillåten normalisering eller godkänd förkortning. Landet Saudi Arabia matchar, men företagsnamnet kan inte verifieras som samma juridiska part."
+      "motivation": "Fakturan identifierar mottagaren som 'Tamer Mölnlycke Arabic LLC' i både Invoice Address och Delivery Address. Certifikatet anger 'Tamer Mölnlycke Care Arabica LLC'. Skillnaden består inte enbart av bolagsform, layoutavkortning eller ett enstaka tecken; ordet 'Care' saknas i fakturan och 'Arabica' avviker från 'Arabic'. Landet Saudi Arabia matchar, men företagsnamnet kan inte verifieras som samma juridiska part."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.95,
-      "certificate_value": "Medical Components, ; 2323971-00, 2323982-00 Country of origin DE, ; 2315866-00, 2315886-00 Country of origin DO, ; 496450-12 Country of origin FI, ; 2322325-00, 2324593-00, 2326010-00 Country of origin IT, ; 2322061-00 Country of origin NL, ; 2325921-00 Country of origin PK, ; 2315127-00, 2318461-00 Country of origin US,",
-      "invoice_value": "2315127-00; 2315866-00; 2315886-00; 2318461-00; 2322061-00; 2322325-00; 2323971-00; 2323982-00; 2324593-00; 2325921-00; 2326010-00; 496450-12",
+      "confidence": 0.91,
+      "certificate_value": "Medical Components,  | 2323971-00, 2323982-00 Country of origin DE,  | 2315866-00, 2315886-00 Country of origin DO,  | 496450-12 Country of origin FI,  | 2322325-00, 2324593-00, 2326010-00 Country of origin IT,  | 2322061-00 Country of origin NL,  | 2325921-00 Country of origin PK,  | 2315127-00, 2318461-00 Country of origin US,  ",
+      "invoice_value": "Article numbers found in invoice: 2315127-00, 2315866-00, 2315886-00, 2318461-00, 2322061-00, 2322325-00, 2323971-00, 2323982-00, 2324593-00, 2325921-00, 2326010-00, 496450-12",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "article-number priority applied"
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.3.2.1",
-          "outcome": "codes treated as article numbers, not quantities"
+          "outcome": "article_numbers_confirmed"
         },
         {
-          "rule_id": "4.3.7",
-          "outcome": "per-article origin linkage present"
-        },
-        {
-          "rule_id": "4.3.8",
-          "outcome": "MATCH"
+          "rule_id": "4.3.8.1",
+          "outcome": "generic_category_text_not_treated_as_separate_item"
         }
       ],
-      "motivation": "Certifikatet innehåller uttryckliga artikelnummer i varubeskrivningen. Samtliga artikelnummer som anges i certifikatet kan identifieras exakt i fakturan: 2315127-00, 2315866-00, 2315886-00, 2318461-00, 2322061-00, 2322325-00, 2323971-00, 2323982-00, 2324593-00, 2325921-00, 2326010-00 och 496450-12. Därmed är varubeskrivningen verifierad via prioritet 1 utan semantisk tolkning."
+      "motivation": "Certifikatets varubeskrivning innehåller uttryckliga artikelnummer. Samtliga artikelnummer i certifikatet kan återfinnas exakt i fakturans artikelrader. Den inledande texten 'Medical Components' behandlas som samlande kategoritext, medan de konkreta varorna verifieras via artikelnummer enligt prioritetsregel 1."
     },
     "quantity": {
       "applicable": true,
@@ -142,67 +122,67 @@
       "rules_applied": [
         {
           "rule_id": "4.4.2.1",
-          "outcome": "formkrav uppfyllda för viktkategori och enhet"
+          "outcome": "form_requirements_met"
+        },
+        {
+          "rule_id": "4.4.3.6",
+          "outcome": "gross_weight_match"
         },
         {
           "rule_id": "4.4.3.2",
-          "outcome": "multiple quantities assessed"
-        },
-        {
-          "rule_id": "4.4.3.2",
-          "outcome": "explicit contradiction on NW"
-        },
-        {
-          "rule_id": "4.4.7",
           "outcome": "MISMATCH"
+        },
+        {
+          "rule_id": "4.4.3.2.1",
+          "outcome": "quantity_field_values_used"
         }
       ],
-      "motivation": "Certifikatet anger två uttryckliga viktuppgifter: GW 170,586 KG och NW 114 KG. Fakturan anger total gross weight 170,586KG, vilket matchar, men total net weight 113,902KG, vilket uttryckligen motsäger certifikatets NW 114 KG. Vid flera kvantitetsuppgifter räcker inte en matchande GW när fakturan samtidigt innehåller ett avvikande explicit NW-värde för samma kvantitetstyp. Avvikelsen överstiger tillåten tolerans."
+      "motivation": "Certifikatets gross weight '170,586 KG' kan verifieras exakt mot fakturans 'Total gross weight: 170,586KG'. Certifikatet anger dock även 'NW 114 KG' och fakturan anger uttryckligen 'Total net weight: 113,902KG'. Detta är en uttrycklig motsägelse för samma kvantitetstyp (NW) och avvikelsen överstiger tillåten tolerans; därför ska kontrollpunkten klassificeras som MISMATCH även om GW matchar."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.97,
+      "confidence": 0.99,
       "certificate_value": "DE, DO, FI, IT, NL, PK, US",
-      "invoice_value": "Origin: US; Origin: DO; Origin: NL; Origin: IT; Origin: DE; Origin: PK; Origin: FI",
+      "invoice_value": "Origin: DE; Origin: DO; Origin: FI; Origin: IT; Origin: NL; Origin: PK; Origin: US",
       "rules_applied": [
         {
           "rule_id": "4.5.1",
-          "outcome": "explicit origin fields found on invoice lines"
+          "outcome": "origins_identified"
         },
         {
           "rule_id": "4.5.3",
-          "outcome": "mixed origins linked per article in invoice"
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.5.4",
-          "outcome": "country-code normalization applied"
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.5.6",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger ursprungsländerna DE, DO, FI, IT, NL, PK och US. Fakturan anger explicit 'Origin:' på artikelraderna och samtliga dessa ursprung återfinns: DE, DO, FI, IT, NL, PK och US. Ingen av certifikatets angivna ursprungskoder saknas i fakturan."
+      "motivation": "Varje ursprungsland som anges i certifikatet kan identifieras uttryckligen i fakturans artikelrader via fältet 'Origin:'. Följande länder återfinns i fakturan: DE, DO, FI, IT, NL, PK och US."
     }
   },
   "overall_assessment": {
     "comparison_result": "NOT_IDENTICAL",
     "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
     "auto_approval_eligible": false,
-    "confidence": 0.97,
+    "confidence": 0.98,
     "critical_failures": [
-      "Consignee mismatch: certificate 'Tamer Mölnlycke Care Arabica LLC' vs invoice 'Tamer Mölnlycke Arabic LLC'.",
-      "Quantity contradiction: certificate NW 114 KG vs invoice total net weight 113,902KG."
+      "Consignee name in certificate does not match invoice recipient name.",
+      "Certificate net weight 114 KG is explicitly contradicted by invoice total net weight 113,902 KG."
     ],
     "manual_review_triggers": [],
     "manual_review_reason": "NOT_APPLICABLE",
-    "decision_summary": "Consignor, goods description and origin are verified against the invoice. Consignee cannot be verified as the same legal entity, and the certificate's net weight conflicts with the invoice's explicit total net weight. Because at least one applicable control point is MISMATCH, the document pair is NOT_IDENTICAL.",
-    "human_explanation": "Certifikatet anger mottagaren som 'Tamer Mölnlycke Care Arabica LLC' medan fakturan anger 'Tamer Mölnlycke Arabic LLC'. Certifikatet anger också nettovikten som 114 KG medan fakturan anger total nettovikt 113,902 KG. Därför är dokumenten inte identiska och måste hanteras manuellt."
+    "decision_summary": "Consignor, goods description and origin can be verified, but consignee and quantity cannot be fully verified. The invoice shows a different consignee name and an explicit net-weight contradiction.",
+    "human_explanation": "Certifikatet anger mottagaren som 'Tamer Mölnlycke Care Arabica LLC' medan fakturan anger 'Tamer Mölnlycke Arabic LLC'. Certifikatet anger även nettovikten 114 KG, men fakturan anger total nettovikt 113,902 KG. Därför stämmer dokumenten inte överens och kräver manuell hantering."
   },
   "_meta": {
-    "tested_at": "2026-06-06T09:16:06.618024+00:00",
-    "prompt_hash": "4690e976915d",
+    "tested_at": "2026-06-06T14:01:49.278196+00:00",
+    "prompt_hash": "752423deb8d7",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P0157_MISMATCH",

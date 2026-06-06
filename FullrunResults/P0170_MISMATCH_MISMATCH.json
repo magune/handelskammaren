@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-06-06T00:00:00Z",
+    "verification_timestamp": null,
     "document_pair_id": "SEG-26D-463377__S230672",
     "certificate_issue_date": null,
     "source_documents_received": 1
@@ -33,24 +33,24 @@
     "eu_origin_normalization_active": true,
     "activated_rules": [
       {
-        "rule_id": "8.6",
-        "rule_name": "Parningsvalidering passerad"
+        "rule_id": "4.1.0",
+        "rule_name": "Consignor kan verifieras om företagsnamnet förekommer uttryckligen någonstans i fakturan"
       },
       {
         "rule_id": "4.2.2.1.1",
-        "rule_name": "Avkortning av certifikatets mottagarnamn"
+        "rule_name": "Avkortning av certifikatets mottagarnamn som exakt prefix av fakturans fullständiga namn"
       },
       {
         "rule_id": "4.3.2",
-        "rule_name": "Artikelnummer prioriteras vid varubeskrivning"
+        "rule_name": "Varubeskrivning verifieras primärt via artikelnummer"
       },
       {
         "rule_id": "4.4.3.6",
-        "rule_name": "Total vikt i faktura"
+        "rule_name": "Total vikt i certifikatet får verifieras mot total vikt i fakturan"
       },
       {
         "rule_id": "4.5.4.1",
-        "rule_name": "EU-normalisering med begränsning för icke-EU-ursprung"
+        "rule_name": "EU-normalisering med begränsning att icke-EU-ursprung i fakturan måste anges uttryckligen i certifikatets ursprungsfält"
       }
     ]
   },
@@ -59,111 +59,127 @@
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.95,
-      "certificate_value": "Humphree AB | Sweden",
-      "invoice_value": "Humphree AB ... VAT Registration No. SE556616762201 ... IBAN: SE7650000000050451106466",
+      "certificate_value": "Humphree AB, Grimboåsen 16, SE-417 05 GÖTEBORG, Sweden, VAT 556616-7622",
+      "invoice_value": "Humphree AB ... Grimboåsen 16 ... 417 05 GÖTEBORG ... VAT Registration No. SE556616762201 ... IBAN: SE7650000000050451106466",
       "rules_applied": [
         {
-          "rule_id": "4.1.1",
-          "outcome": "issuer identified as Humphree AB in invoice header/footer"
+          "rule_id": "8.6",
+          "outcome": "PASS"
+        },
+        {
+          "rule_id": "4.1.0",
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.1.2.1",
-          "outcome": "country Sweden corroborated indirectly via SE VAT prefix and SE IBAN"
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.1.5",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger consignor 'Humphree AB' i Sverige. Fakturan visar 'Humphree AB' som utställare, och Sverige kan verifieras via indirekta landidentifierare i fakturan (SE-prefix i VAT/IBAN)."
+      "motivation": "Certifikatet anger consignor som 'Humphree AB' i Sverige. Fakturan visar 'Humphree AB' i sidhuvud/fot och innehåller svenska landindikatorer via VAT-prefix 'SE' och IBAN som börjar med 'SE'. Företagsnamn och land kan därför verifieras som samma juridiska part."
     },
     "consignee": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.93,
-      "certificate_value": "Sinerji Denizcilik | Türkiye",
-      "invoice_value": "Sinerji Denizcilik San ve Tic. Ltd. Sti ... Atasehir 34779 Istanbul-Turkey",
+      "confidence": 0.91,
+      "certificate_value": "Sinerji Denizcilik, Türkiye",
+      "invoice_value": "Sell-to Address / Bill-to Address: Sinerji Denizcilik San ve Tic. Ltd. Sti ... Atasehir 34779 Istanbul-Turkey",
       "rules_applied": [
         {
+          "rule_id": "8.6",
+          "outcome": "PASS"
+        },
+        {
           "rule_id": "4.2.0.2",
-          "outcome": "consignee identified in Sell-to and Bill-to blocks"
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.2.2.1.1",
-          "outcome": "certificate name is an exact initial prefix of the invoice full name"
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.2.3",
-          "outcome": "Türkiye and Turkey accepted as same country"
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.2.4",
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets mottagarnamn 'Sinerji Denizcilik' återfinns som exakt inledande del av fakturans fullständiga mottagarnamn 'Sinerji Denizcilik San ve Tic. Ltd. Sti'. Landet anges i fakturan som Turkey, vilket är ekvivalent med Türkiye enligt landnormaliseringsregeln."
+      "motivation": "Certifikatets mottagarnamn 'Sinerji Denizcilik' är ett exakt inledande prefix av fakturans fullständiga mottagarnamn 'Sinerji Denizcilik San ve Tic. Ltd. Sti' i både Sell-to och Bill-to. Landet i certifikatet är 'Türkiye' och fakturan anger 'Turkey', vilket är tillåten landnormalisering. Mottagaren kan därför verifieras."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.97,
-      "certificate_value": "1- Planet Gear 2 PINWIDE Service Size (P/N 024126)... 15-SU5XX shaft extracting puller (P/N 041794 )",
-      "invoice_value": "Invoice lines 1-15 with P/N 024126, 024127, 024128, 024129, 024130, 024138, 024131, 020829, 021920, 021922, 021479, 021919, 020822, 022115, 041794",
+      "confidence": 0.96,
+      "certificate_value": "1- Planet Gear 2 PINWIDE Service Size (P/N 024126),Qty.12 Pcs; 2-Planet Gear 1 W5 Wide Service Size(P/N024127 ),Qty.8 Pcs; 3-PIN 3 WIDE Service Size (P/N024128) ,Qty.8 Pcs; 4-SU5X3 Center Ring Service Size (P/N024129) ,Qty.4 Pcs; 5-Planet carrier 1V2 WIDE Service Adaption (P/N024130),Qty.4 Pcs; 6-Output Shaft Cover Puller (P/N024138),Qty.1 Pc; 7-Output shaft cover WIDE Service Adaption (P/N024131),Qty.4 Pcs; 8-Seal 5x15x6 TRA000050-VC2V5 (P/N020829),Qty.4 Pcs; 9-Retaining ring M1302NJB185 (P/N021920) ,Qty.4 Pcs; 10-Seal 20x47x7 (P/N021922),Qty.4 Pcs; 11-Bolt Plug (P/N021479),Qty.8 Pcs; 12-Lager Axial AXK 3552 (P/N021919),Qty.16 Pcs; 13-NEEDLE ROLL & CAGE K 25x30x17 (P/N020822),Qty.4 Pcs; 14-NEEDLE ROLLER SETNKS 35 (P/N022115),Qty.12 Pcs; 15-SU5XX shaft extracting puller (P/N 041794 ),Qty.1 Pc",
+      "invoice_value": "1 - Planet Gear 2 PINWIDE Service Size (P/N 024126); 2 - Planet Gear 1 W5 Wide Service Size(P/N024127 ); 3- PIN 3 WIDE Service Size (P/N024128); 4- SU5X3 Center Ring Service Size (P/N024129); 5- Planet carrier 1V2 WIDE Service Adaption (P/N024130); 6- Output Shaft Cover Puller (P/N024138); 7- Output shaft cover WIDE Service Adaption (P/N024131); 8- Seal 5x15x6 TRA000050-VC2V5 (P/N020829); 9 - Retaining ring M1302NJB185 (P/N021920); 10 - Seal 20x47x7 (P/N021922); 11 - Bolt Plug (P/N021479); 12 - Lager Axial AXK 3552 (P/N021919); 13 - NEEDLE ROLL & CAGE K 25x30x17 (P/N020822); 14 - NEEDLE ROLLER SETNKS 35 (P/N022115); 15 - SU5XX shaft extracting puller (P/N 041794 )",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "article number matching used as priority 1"
+          "outcome": "MATCH"
         },
         {
-          "rule_id": "4.3.2.1",
-          "outcome": "identified P/N values as article numbers, not quantities"
+          "rule_id": "4.3.6",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.3.8.1",
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.3.8",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger specifika artikelnummer i varubeskrivningen. Samtliga 15 P/N-nummer kan identifieras exakt i fakturans artikelrader, vilket uppfyller prioritet 1 för varubeskrivningsverifiering."
+      "motivation": "Certifikatet innehåller uttryckliga artikelnummer/P/N för samtliga 15 varurader. Varje artikelnummer kan återfinnas exakt i fakturan för motsvarande rad, vilket enligt prioritetsordningen räcker för MATCH. Rader som endast anger 'Made in ...' behandlas här som attribut/metadatatext till redan identifierade varor och ändrar inte varubeskrivningsbedömningen."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.92,
+      "confidence": 0.93,
       "certificate_value": "37kg Gross weight",
       "invoice_value": "TOTAL WEIGHT: 37KG",
       "rules_applied": [
         {
           "rule_id": "4.4.2.1",
-          "outcome": "weight category and unit present in certificate quantity field"
+          "outcome": "PASS"
         },
         {
           "rule_id": "4.4.3.6",
-          "outcome": "shipment weight verified against total weight in invoice"
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.4.7",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets kvantitetsfält anger '37kg Gross weight'. Fakturan anger 'TOTAL WEIGHT: 37KG' för försändningen. Numeriskt värde och viktenhet överensstämmer, och skillnad i etiketten 'Gross weight' kontra 'Total weight' medför inte avvikelse enligt regeln för total vikt i faktura."
+      "motivation": "Certifikatets kvantitetsfält anger numeriskt värde, enhet och viktkategori: '37kg Gross weight'. Fakturan anger total vikt för samma försändning som 'TOTAL WEIGHT: 37KG'. Numeriskt värde och enhet överensstämmer, och skillnaden mellan 'Gross weight' och 'Total Weight' medför inte avvikelse när uppgiften entydigt avser samma sändning."
     },
     "origin": {
       "applicable": true,
       "status": "MISMATCH",
-      "confidence": 0.99,
+      "confidence": 0.98,
       "certificate_value": "EU",
       "invoice_value": "Made in Italy; Made in Sweden; Made in Germany; Made in Slovakia; Made in Austria; Made in Serbia",
       "rules_applied": [
         {
           "rule_id": "4.5.4.2",
-          "outcome": "EU in certificate is verified by EU member-state origins in invoice for Italy, Sweden, Germany, Slovakia and Austria"
+          "outcome": "PARTIAL_MATCH"
         },
         {
           "rule_id": "4.5.4.1",
-          "outcome": "invoice also contains non-EU origin Serbia, which is not covered by certificate origin field EU"
+          "outcome": "MISMATCH"
         },
         {
           "rule_id": "4.5.6",
           "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Certifikatets ursprungsfält anger endast 'EU'. Fakturan innehåller flera EU-ursprung som kan omfattas av EU-normalisering, men den innehåller också 'Made in Serbia'. Serbia är inte ett EU-land och anges inte uttryckligen i certifikatets ursprungsfält, vilket är en motsägelse och leder till MISMATCH."
+      "motivation": "Certifikatets ursprungsfält anger endast 'EU'. Fakturan innehåller flera EU-ursprung som kan omfattas av EU-normalisering, men den innehåller även ett uttryckligt icke-EU-ursprung: 'Made in Serbia' för artikel 15. Ett icke-EU-ursprung i fakturan som inte uttryckligen anges i certifikatets ursprungsfält är en motsägelse och leder därför till MISMATCH."
     }
   },
   "overall_assessment": {
@@ -172,16 +188,16 @@
     "auto_approval_eligible": false,
     "confidence": 0.96,
     "critical_failures": [
-      "Origin mismatch: certificate origin field states only EU, while the invoice explicitly includes non-EU origin Serbia."
+      "Ursprungsland avviker: certifikatet anger endast EU medan fakturan uttryckligen anger även Serbia som ursprung."
     ],
     "manual_review_triggers": [],
     "manual_review_reason": "NOT_APPLICABLE",
-    "decision_summary": "Consignor, consignee, goods description and quantity are verified against the invoice. Origin fails because the certificate states only EU, while the invoice explicitly shows one article as made in Serbia.",
-    "human_explanation": "De flesta uppgifter stämmer mellan certifikatet och fakturan. Ursprungslandet stämmer däremot inte fullt ut eftersom certifikatet bara anger EU medan fakturan också innehåller en artikel med ursprung i Serbien. Därför kan dokumentparet inte godkännas som identiskt."
+    "decision_summary": "Dokumentparningen är giltig genom matchande fakturanummer S230672 samt verifierad consignor och consignee. Avsändare, mottagare, varubeskrivning och kvantitet kan verifieras mot fakturan. Ursprungsland kan däremot inte godkännas eftersom certifikatet anger endast EU medan fakturan uttryckligen innehåller ett icke-EU-ursprung, Serbia.",
+    "human_explanation": "Certifikatet och fakturan stämmer för avsändare, mottagare, varor och vikt. Men certifikatet anger ursprung endast som EU, medan fakturan också anger Serbia som ursprungsland för en av artiklarna. Därför är dokumenten inte identiska och måste hanteras manuellt."
   },
   "_meta": {
-    "tested_at": "2026-06-06T09:16:06.626809+00:00",
-    "prompt_hash": "4690e976915d",
+    "tested_at": "2026-06-06T14:01:49.293071+00:00",
+    "prompt_hash": "752423deb8d7",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P0170_MISMATCH",

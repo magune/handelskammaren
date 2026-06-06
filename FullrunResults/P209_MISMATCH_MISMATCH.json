@@ -4,7 +4,7 @@
     "verification_timestamp": "2026-06-06T00:00:00Z",
     "document_pair_id": "SEG-23D-888600__SEN236800082",
     "certificate_issue_date": null,
-    "source_documents_received": 1
+    "source_documents_received": 2
   },
   "task": {
     "task_type": "customs_document_pair_verification",
@@ -15,12 +15,12 @@
     "document_a": {
       "label": "CERTIFICATE OF ORIGIN (structured JSON)",
       "assumed_role": "certificate",
-      "document_type": "certificate_of_origin_structured_json"
+      "document_type": "structured_json"
     },
     "document_b": {
-      "label": "Attached PDF invoice",
+      "label": "Invoice PDF",
       "assumed_role": "invoice",
-      "document_type": "invoice_pdf"
+      "document_type": "invoice"
     }
   },
   "rule_activation": {
@@ -33,28 +33,24 @@
     "eu_origin_normalization_active": false,
     "activated_rules": [
       {
-        "rule_id": "8.6",
-        "rule_name": "Parningsvalidering passerad via consignor och consignee"
-      },
-      {
         "rule_id": "4.1.0",
-        "rule_name": "Consignor identifierad någonstans i fakturan"
+        "rule_name": "Consignor identified elsewhere in invoice documentation"
       },
       {
         "rule_id": "4.2.0.2",
-        "rule_name": "Consignee identifierad i relevant mottagarfält"
+        "rule_name": "Consignee may be identified in any recipient field"
       },
       {
         "rule_id": "4.3.3",
-        "rule_name": "Kontrollerad textmatchning av varubeskrivning"
+        "rule_name": "Controlled text match for goods description"
       },
       {
-        "rule_id": "4.4.2.1",
-        "rule_name": "Viktangivelse kräver GW/NW i kvantitetsuppgiften"
+        "rule_id": "4.3.8.1",
+        "rule_name": "Commodity-code row treated as descriptive metadata"
       },
       {
         "rule_id": "4.5.4",
-        "rule_name": "Landnormalisering inklusive ISO-kod"
+        "rule_name": "Origin normalization using ISO code and country name"
       }
     ]
   },
@@ -62,9 +58,9 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.97,
-      "certificate_value": "ESAB AB Production Equipment",
-      "invoice_value": "Page 1 footer: \"ESAB AB\" / \"Box 8004\" / \"Goteborg\" / \"402 77\" / \"Sweden\" / \"Org / Tax No. 556005-7738\"; Page 2 stamp: \"ESAB AB Production Equipment\"",
+      "confidence": 0.93,
+      "certificate_value": "ESAB AB Production Equipment | Box 8004 | 402 77 | Gothenburg | SWEDEN | VAT 556005-7738",
+      "invoice_value": "ESAB AB\nBox 8004,\n_Goteborg\n402 77\nSweden\nOrg / Tax No. 556005-7738; page 2 stamp: ESAB AB Production Equipment",
       "rules_applied": [
         {
           "rule_id": "4.1.0",
@@ -73,20 +69,16 @@
         {
           "rule_id": "4.1.2.1",
           "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.1.4",
-          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor kan identifieras i fakturan. Fakturan visar utställaren som ESAB AB med adress Box 8004, 402 77, Sweden och organisationsnummer 556005-7738, vilket överensstämmer med certifikatets adress- och företagsidentifierare. Dessutom framgår texten \"ESAB AB Production Equipment\" i stämpeln på sida 2, vilket verifierar det fullständiga namnet."
+      "motivation": "Certifikatets consignor kan verifieras mot fakturan. På sida 1 framgår säljaren som 'ESAB AB' med adress Box 8004, 402 77, Sweden och organisationsnummer 556005-7738, vilket matchar certifikatets företagsidentifierare och land. Dessutom visar stämpeln på sida 2 texten 'ESAB AB Production Equipment', vilket gör att certifikatets fulla consignor-namn återfinns uttryckligen i fakturaunderlaget."
     },
     "consignee": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.89,
-      "certificate_value": "ENTPL SPA UNITE DE PRODUCTION",
-      "invoice_value": "Page 1 Customer Address / Invoice Address: \"ENTPL SPA UNITE DE PROD TREFISOUD\" / \"BP 09 Z.I. EL EULMA\" / \"SETIF\" / \"19600\" / \"Algeria\"",
+      "confidence": 0.86,
+      "certificate_value": "ENTPL SPA UNITE DE PRODUCTION | TREFISOUD | B.P. 09 Z.I. EL EULMA | WILAYA DE SETIF | 19600 | Algeria",
+      "invoice_value": "Customer Address / Invoice Address:\nENTPL SPA UNITE DE PROD TREFISOUD\nBP 09 Z.I. EL EULMA\n_SETIF\n19600\nAlgeria",
       "rules_applied": [
         {
           "rule_id": "4.2.0.2",
@@ -101,25 +93,17 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Mottagaren kan identifieras i fakturans Customer Address och Invoice Address. Certifikatets \"ENTPL SPA UNITE DE PRODUCTION\" motsvaras av fakturans \"ENTPL SPA UNITE DE PROD TREFISOUD\", där \"PROD\" är en förkortad form och \"TREFISOUD\" återfinns i certifikatets adressfält. Landet Algeria överensstämmer uttryckligen."
+      "motivation": "Mottagaren kan verifieras i fakturans Customer Address/Invoice Address. Företagskärnan 'ENTPL SPA UNITE DE PROD...' motsvarar certifikatets 'ENTPL SPA UNITE DE PRODUCTION', medan 'TREFISOUD' finns i certifikatets adressdel och i fakturan står på samma mottagarrad. Landet Algeria framgår uttryckligen i båda dokumenten. Den separata delivery addressen till banken motsäger inte detta eftersom mottagaren får identifieras i något av fakturans mottagarfält."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.98,
+      "confidence": 0.97,
       "certificate_value": "12 psc of FEEDING RING, PAIR | 4 pcs of PISTON COMPLETE | 3 pcs of UPPER INSERT HM | 200 pcs of BUCKET | 2 pcs of BUFFER BELT 61/71 799 | Commodity Codes: 84669400 and 40103900",
-      "invoice_value": "Page 1 lines 1-5: \"FEEDING RING, PAIR\"; \"PISTON COMPLETE\"; \"UPPER INSERT HM\"; \"BUCKET\"; \"BUFFER BELT 61/71 799\"; commodity codes shown as \"84669400\" and \"40103900\"",
+      "invoice_value": "FEEDING RING, PAIR | PISTON COMPLETE | UPPER INSERT HM | BUCKET | BUFFER BELT 61/71 799 | Commodity Code 84669400 | Commodity Code 40103900",
       "rules_applied": [
         {
-          "rule_id": "4.3.2",
-          "outcome": "ARTICLE_NUMBER_NOT_USED"
-        },
-        {
           "rule_id": "4.3.3",
-          "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.3.4",
           "outcome": "MATCH"
         },
         {
@@ -127,15 +111,19 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Samtliga varor som anges i certifikatet återfinns explicit i fakturans varurader på sida 1: FEEDING RING, PAIR; PISTON COMPLETE; UPPER INSERT HM; BUCKET; BUFFER BELT 61/71 799. De angivna commodity codes 84669400 och 40103900 återfinns också i fakturan. Varubeskrivningen kan därför verifieras genom kontrollerad textmatchning utan otillåten tolkning."
+      "motivation": "De identitetsbärande varubeteckningarna i certifikatet återfinns explicit i fakturan: 'FEEDING RING, PAIR', 'PISTON COMPLETE', 'UPPER INSERT HM', 'BUCKET' och 'BUFFER BELT 61/71 799'. Skillnaden 'psc'/'pcs' påverkar inte varans identitet. Raden 'Commodity Codes: 84669400 and 40103900' är kompletterande metadata och motsvarande commodity codes finns också i fakturan."
     },
     "quantity": {
       "applicable": true,
       "status": "MISMATCH",
       "confidence": 0.99,
       "certificate_value": "70 KG",
-      "invoice_value": "Page 1 weights shown per item: \"10.32 KG\", \"0.60 KG\", \"6.12 KG\", \"20.00 KG\", \"14.70 KG\"; no certificate-compliant \"70 KG\" quantity with GW/NW category is present",
+      "invoice_value": "FEEDING RING, PAIR 10.32 KG | PISTON COMPLETE 0.60 KG | UPPER INSERT HM 6.12 KG | BUCKET 20.00 KG | BUFFER BELT 61/71 799 14.70 KG",
       "rules_applied": [
+        {
+          "rule_id": "4.4.2",
+          "outcome": "MATCH"
+        },
         {
           "rule_id": "4.4.2.1",
           "outcome": "MISMATCH"
@@ -145,14 +133,14 @@
           "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Certifikatets kvantitetsfält anger \"70 KG\" som vikt, men viktkategori saknas. Regelverket kräver att en vikt i certifikatets kvantitetsfält uttryckligen ska ange om den avser gross/net (GW/NW/Gross/Net). Eftersom certifikatet bara anger \"70 KG\" utan sådan kategori uppfylls inte formkravet och kontrollpunkten ska klassificeras som MISMATCH."
+      "motivation": "Certifikatets kvantitetsfält anger '70 KG'. När kvantiteten anges i viktenhet kräver regelverket att viktkategori som Gross/GW eller Net/NW framgår i kvantitetsuppgiften, men någon sådan kategori finns inte i certifikatets kvantitetsfält eller på samma rad. Därmed faller kontrollpunkten som MISMATCH redan på formkravet. Fakturan innehåller dessutom endast radvikterna 10.32 KG, 0.60 KG, 6.12 KG, 20.00 KG och 14.70 KG, inte en verifierbar uppgift om 70 KG."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.98,
+      "confidence": 0.96,
       "certificate_value": "Sweden",
-      "invoice_value": "Page 1 under each item: \"Country of origin SE\"",
+      "invoice_value": "Country of origin SE (for each item line)",
       "rules_applied": [
         {
           "rule_id": "4.5.1",
@@ -163,25 +151,26 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger ursprungsland Sweden. Fakturan anger explicit \"Country of origin SE\" för samtliga varurader på sida 1. ISO-koden SE är ekvivalent med Sweden, ולכן ursprungslandet är verifierat."
+      "motivation": "Certifikatet anger ursprungsland 'Sweden'. Fakturan anger uttryckligen 'Country of origin SE' för samtliga artikelrader. ISO-koden SE är en tillåten och entydig motsvarighet till Sweden, så ursprungslandet är verifierat."
     }
   },
   "overall_assessment": {
     "comparison_result": "NOT_IDENTICAL",
     "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
     "auto_approval_eligible": false,
-    "confidence": 0.97,
+    "confidence": 0.95,
     "critical_failures": [
-      "Kvantitetskontrollpunkten är MISMATCH eftersom certifikatet anger \"70 KG\" utan obligatorisk viktkategori (gross/net)."
+      "Quantity field in certificate states '70 KG' without required GW/NW or Gross/Net category.",
+      "No explicit 70 KG quantity could be verified in the invoice."
     ],
     "manual_review_triggers": [],
     "manual_review_reason": "NOT_APPLICABLE",
-    "decision_summary": "Dokumentparningen är giltig och avsändare, mottagare, varubeskrivning samt ursprungsland kan verifieras mot fakturan SEN236800082. Kvantitetsfältet i certifikatet anger dock en vikt som saknar obligatorisk GW/NW-kategori, vilket enligt regelverket ger MISMATCH. Därför är den samlade jämförelsebedömningen NOT_IDENTICAL och ärendet kräver manuell handläggning.",
-    "human_explanation": "Avsändare, mottagare, varor och ursprungsland stämmer mot fakturan. Däremot anger certifikatet kvantiteten som \"70 KG\" utan att ange om det är brutto- eller nettovikt. Därför kan dokumentparet inte godkännas automatiskt."
+    "decision_summary": "Dokumentparningen är giltig eftersom både consignor och consignee kan identifieras i fakturan. Avsändare, mottagare, varubeskrivning och ursprungsland verifieras mot fakturan. Kvantitetskontrollpunkten ger dock MISMATCH eftersom certifikatet anger '70 KG' utan obligatorisk viktkategori och fakturan inte visar någon verifierbar 70 KG-uppgift. Minst en tillämplig kontrollpunkt är därmed MISMATCH, vilket medför comparison_result NOT_IDENTICAL.",
+    "human_explanation": "De flesta uppgifter stämmer mellan certifikatet och fakturan, inklusive avsändare, mottagare, varor och ursprungsland. Kvantitetsfältet i certifikatet anger '70 KG' utan att det framgår om det är brutto- eller nettovikt, och någon motsvarande verifierbar 70 KG-uppgift finns inte i fakturan. Därför är dokumenten inte identiska."
   },
   "_meta": {
-    "tested_at": "2026-06-06T09:13:51.025124+00:00",
-    "prompt_hash": "4690e976915d",
+    "tested_at": "2026-06-06T14:17:35.600128+00:00",
+    "prompt_hash": "752423deb8d7",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P209_MISMATCH",

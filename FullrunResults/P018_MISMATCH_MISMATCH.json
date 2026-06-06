@@ -13,7 +13,7 @@
   },
   "documents": {
     "document_a": {
-      "label": "CERTIFICATE OF ORIGIN (structured JSON)",
+      "label": "Certificate of Origin JSON",
       "assumed_role": "certificate",
       "document_type": "structured_json"
     },
@@ -33,16 +33,24 @@
     "eu_origin_normalization_active": false,
     "activated_rules": [
       {
-        "rule_id": "4.3.5",
-        "rule_name": "Generell varubeskrivning med fakturareferens"
-      },
-      {
         "rule_id": "4.1.1.1",
         "rule_name": "Logotyp/branding som säljaridentifikation"
       },
       {
         "rule_id": "4.1.3.10",
-        "rule_name": "Consignor utan explicit säljaradress men med identifierbart företagsnamn"
+        "rule_name": "Consignor utan explicit säljaradress men med välkänt landursprung – MANUAL_REVIEW"
+      },
+      {
+        "rule_id": "4.3.5",
+        "rule_name": "Generell varubeskrivning med fakturareferens"
+      },
+      {
+        "rule_id": "4.4.3.6",
+        "rule_name": "Total vikt i faktura"
+      },
+      {
+        "rule_id": "4.5.4",
+        "rule_name": "Landnormalisering inklusive ISO-landkod"
       }
     ]
   },
@@ -50,60 +58,60 @@
     "consignor": {
       "applicable": true,
       "status": "MANUAL_REVIEW",
-      "confidence": 0.68,
-      "certificate_value": "ERICSSON AB, Sweden",
+      "confidence": 0.72,
+      "certificate_value": "ERICSSON AB | Sweden",
       "invoice_value": "ERICSSON",
       "rules_applied": [
         {
           "rule_id": "4.1.1.1",
-          "outcome": "invoice issuer identified via header branding/logo text 'ERICSSON'"
-        },
-        {
-          "rule_id": "4.1.3.6",
-          "outcome": "AB treated as legal-form variation only"
+          "outcome": "Seller identity identified via ERICSSON branding in invoice header."
         },
         {
           "rule_id": "4.1.3.10",
-          "outcome": "name identifiable but seller address/country not explicitly shown; no contradictory country found"
+          "outcome": "MANUAL_REVIEW because invoice lacks explicit seller address/country for Sweden and contains no contradiction."
         }
       ],
-      "motivation": "Certifikatet anger consignor 'ERICSSON AB' i Sverige. Fakturan visar 'ERICSSON' tydligt i sidhuvudet på båda sidor, vilket identifierar utställaren efter normalisering av bolagsform. Fakturan saknar dock explicit säljaradress eller annan tydlig landuppgift för utställaren, så Sverige kan inte verifieras säkert och kontrollpunkten ska därför skickas till manuell granskning, inte underkännas."
+      "motivation": "Certifikatet anger consignor som 'ERICSSON AB' i Sverige. Fakturan visar 'ERICSSON' tydligt i sidhuvudet på sida 1 och 2, vilket identifierar utställaren via branding efter normalisering av bolagsform, men fakturan saknar ett uttryckligt säljaradressblock eller annan explicit landidentifierare för utställaren. Därför kan företagsidentiteten stödjas men Sverige kan inte verifieras positivt; utfallet blir MANUAL_REVIEW, inte MISMATCH."
     },
     "consignee": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.99,
-      "certificate_value": "UNITEL SA, Angola",
-      "invoice_value": "UNITEL SA / KINAXIXI INGOMBOTAS / RUA MARECHAL BROZ TITO 77C-79D S/N / LUANDA-KINAXIXI INGOMBOTAS / ANGOLA",
+      "confidence": 0.98,
+      "certificate_value": "UNITEL SA | Angola",
+      "invoice_value": "UNITEL SA\nKINAXIXI INGOMBOTAS\nRUA MARECHAL BROZ TITO 77C-79D S/N\nLUANDA-KINAXIXI INGOMBOTAS\nANGOLA",
       "rules_applied": [
         {
           "rule_id": "4.2.0.2",
-          "outcome": "consignee found in invoice address and delivery address fields"
+          "outcome": "Consignee identified in invoice recipient fields."
         },
         {
           "rule_id": "4.2.3",
-          "outcome": "country Angola matches explicitly"
+          "outcome": "Country Angola matches explicitly."
+        },
+        {
+          "rule_id": "4.2.4",
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets mottagare 'UNITEL SA' återfinns uttryckligen i fakturans 'Invoice address' och 'Delivery address'. Landet Angola anges explicit i fakturan. Skillnader i fullständighet mellan adressrader påverkar inte bedömningen eftersom företagsnamn och land överensstämmer."
+      "motivation": "Certifikatets mottagare 'UNITEL SA' i Angola återfinns uttryckligen i fakturans 'Invoice address' och även i 'Delivery address'. Företagsnamn och land överensstämmer explicit. Mindre skillnader i adressutformning påverkar inte bedömningen."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.91,
       "certificate_value": "Telecom equipment as INV. 9209878872  dated 11.02.2026",
-      "invoice_value": "Invoice number 9209878872 / Invoice Date 11.02.2026 / Goods Marking: Soluções Compactas [8 sites] 5G - Site Material / line items: RPM2533512/10M 2F LC-LC SM 10M",
+      "invoice_value": "Invoice number 9209878872 | Invoice Date 11.02.2026 | Line items: RPM2533512/10M 2F LC-LC SM 10M",
       "rules_applied": [
         {
           "rule_id": "4.3.5",
-          "outcome": "general goods description with invoice reference accepted"
+          "outcome": "General goods description with invoice reference accepted."
         },
         {
           "rule_id": "4.3.5.2",
-          "outcome": "invoice number and invoice date match exactly"
+          "outcome": "Invoice date matched exactly."
         }
       ],
-      "motivation": "Certifikatets varubeskrivning är generell men innehåller både fakturanummer 9209878872 och fakturadatum 11.02.2026 i varubeskrivningsfältet. Fakturan bär exakt samma nummer och datum. Därmed är kontrollpunkten verifierad enligt regeln för generell varubeskrivning med fakturareferens."
+      "motivation": "Varubeskrivningen i certifikatet är generell men innehåller uttrycklig fakturahänvisning: 'as INV. 9209878872 dated 11.02.2026'. Fakturan visar exakt fakturanummer 9209878872 och fakturadatum 11.02.2026. Därmed är kontrollpunkten verifierad enligt regeln för generell varubeskrivning med fakturareferens."
     },
     "quantity": {
       "applicable": true,
@@ -114,54 +122,58 @@
       "rules_applied": [
         {
           "rule_id": "4.4.2.1",
-          "outcome": "certificate quantity contains weight category, value and unit"
+          "outcome": "Weight category and unit are explicitly present in certificate quantity field."
         },
         {
           "rule_id": "4.4.3.6",
-          "outcome": "matched against invoice total gross weight"
+          "outcome": "Matched against invoice total gross weight."
         },
         {
           "rule_id": "4.4.4.2",
-          "outcome": "comma/dot formatting normalized only as numeric format difference"
+          "outcome": "Comma/dot formatting normalized: 14,93 = 14.93."
         }
       ],
-      "motivation": "Certifikatet anger kvantiteten som gross weight: 14,93 kgs. Fakturan anger 'Total Gross Weight KG 14.93'. Efter tillåten normalisering av decimaltecken är värdet identiskt och avser samma viktkategori."
+      "motivation": "Certifikatet anger 'GW 14,93 kgs', dvs. gross weight med numeriskt värde och enhet i kvantitetsfältet. Fakturan anger 'Total Gross Weight KG 14.93'. Efter tillåten normalisering av decimaltecken är värdena numeriskt identiska."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.98,
-      "certificate_value": "CHINA",
+      "confidence": 0.97,
+      "certificate_value": " CHINA",
       "invoice_value": "CoO CN",
       "rules_applied": [
         {
           "rule_id": "4.5.1",
-          "outcome": "origin identified explicitly in invoice line-item CoO column"
+          "outcome": "Origin identified in explicit CoO column."
         },
         {
           "rule_id": "4.5.4",
-          "outcome": "CN normalized to China"
+          "outcome": "ISO country code CN normalized to China."
+        },
+        {
+          "rule_id": "4.5.6",
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger ursprungsland China. Fakturan visar 'CoO CN' på samtliga artikelrader. ISO-koden CN är en tillåten ekvivalens för China, så ursprungslandet är verifierat uttryckligen."
+      "motivation": "Certifikatet anger ursprungsland 'CHINA'. Fakturan har en explicit ursprungskolumn 'CoO' där raderna anger 'CN'. ISO-koden CN är ekvivalent med China, så ursprungslandet kan verifieras uttryckligen."
     }
   },
   "overall_assessment": {
     "comparison_result": "MANUAL_REVIEW",
     "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
     "auto_approval_eligible": false,
-    "confidence": 0.79,
+    "confidence": 0.84,
     "critical_failures": [],
     "manual_review_triggers": [
-      "Consignor name is identifiable via ERICSSON header branding, but the invoice does not show an explicit seller address or other clear seller-country evidence confirming Sweden."
+      "Consignor-namnet kan identifieras via ERICSSON-branding i fakturan, men fakturan saknar uttrycklig säljaradress eller annan tydlig landidentifierare som verifierar certifikatets consignor-land Sweden."
     ],
     "manual_review_reason": "IDENTIFIER_NOT_VERIFIABLE",
-    "decision_summary": "Invoice number, date, consignee, quantity and origin are verified against the certificate. Consignor identity is partially supported by invoice branding, but consignor country Sweden cannot be explicitly verified from the invoice. Therefore the document pair requires manual review.",
-    "human_explanation": "Fakturans mottagare, fakturanummer, datum, kvantitet och ursprungsland stämmer med certifikatet. Avsändarnamnet kan kopplas till fakturan via Ericsson-logotypen, men fakturan saknar säljaradress eller annan tydlig uppgift som bekräftar Sverige. Därför behövs manuell granskning."
+    "decision_summary": "Consignee, goods description, quantity and origin are verified. Consignor identity is supported by invoice branding and matching invoice number, but the seller country Sweden is not explicitly verifiable from the invoice, so the pair requires manual review.",
+    "human_explanation": "Mottagare, varubeskrivning, vikt och ursprungsland stämmer mot fakturan. Avsändaren kan kopplas till ERICSSON i fakturans sidhuvud, men fakturan visar inte säljarens land uttryckligen. Därför behöver ärendet granskas manuellt."
   },
   "_meta": {
-    "tested_at": "2026-06-06T09:16:06.635983+00:00",
-    "prompt_hash": "4690e976915d",
+    "tested_at": "2026-06-06T14:01:49.304735+00:00",
+    "prompt_hash": "752423deb8d7",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P018_MISMATCH",

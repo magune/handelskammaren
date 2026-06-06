@@ -4,7 +4,7 @@
     "verification_timestamp": "2026-06-06T00:00:00Z",
     "document_pair_id": "SEG-26D-464425__P0100_MISMATCH_invoice.pdf",
     "certificate_issue_date": null,
-    "source_documents_received": 1
+    "source_documents_received": 2
   },
   "task": {
     "task_type": "customs_document_pair_verification",
@@ -13,14 +13,14 @@
   },
   "documents": {
     "document_a": {
-      "label": "Certificate of Origin structured JSON",
+      "label": "Certificate of Origin (structured JSON)",
       "assumed_role": "certificate",
-      "document_type": "structured_json"
+      "document_type": "certificate_of_origin_structured_json"
     },
     "document_b": {
       "label": "P0100_MISMATCH_invoice.pdf",
       "assumed_role": "invoice",
-      "document_type": "scanned_invoice_pdf"
+      "document_type": "invoice_pdf"
     }
   },
   "rule_activation": {
@@ -33,24 +33,20 @@
     "eu_origin_normalization_active": false,
     "activated_rules": [
       {
-        "rule_id": "8.1",
-        "rule_name": "Fakturan identifierades som skannad/bildbaserad och verifieringen gjordes från sidbild"
-      },
-      {
         "rule_id": "8.1.3",
-        "rule_name": "På skannad faktura leder utebliven lokalisering utan motstridig uppgift till MANUAL_REVIEW"
-      },
-      {
-        "rule_id": "4.3.3.3",
-        "rule_name": "Förkortning/kod i faktura kontra fullständigt varunamn i certifikat kräver manuell granskning"
-      },
-      {
-        "rule_id": "4.4.3.2",
-        "rule_name": "Minst en av flera kvantitetsuppgifter i certifikatet får verifieras"
+        "rule_name": "Skannad faktura: hittas inte är inte samma som saknas"
       },
       {
         "rule_id": "8.6",
-        "rule_name": "Parningsvalidering passerad via explicit consignorträff i fakturan"
+        "rule_name": "Obligatorisk parningsvalidering"
+      },
+      {
+        "rule_id": "4.3.3.3",
+        "rule_name": "Kortbeteckning för varutyp"
+      },
+      {
+        "rule_id": "4.4.3.2",
+        "rule_name": "Minst en kvantitetsuppgift räcker om övriga inte motsägs"
       }
     ]
   },
@@ -58,76 +54,80 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.97,
-      "certificate_value": "FORPAC INTERNATIONAL AB | KUNGSPORTEN 4E | SE-427 50 | BILLDAL | SWEDEN | VAT 556598-1551",
-      "invoice_value": "Seller Forpac International AB Kungsporten 4E 427 50 Billdal Sweden Reg no: 556598-1551 VAT no. SE556598155101",
+      "confidence": 0.99,
+      "certificate_value": "FORPAC INTERNATIONAL AB, KUNGSPORTEN 4E, SE-427 50 BILLDAL, SWEDEN",
+      "invoice_value": "Seller: Forpac International AB, Kungsporten 4E, 427 50 Billdal, Sweden; Reg no: 556598-1551; VAT no. SE556598155101",
       "rules_applied": [
         {
           "rule_id": "4.1.0",
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.1.2.1",
+          "rule_id": "4.1.2",
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.1.4",
+          "rule_id": "4.1.2.1",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor FORPAC INTERNATIONAL AB återfinns uttryckligen i fakturans säljarblock på sida 1. Landet Sweden framgår explicit i samma block, och registreringsuppgifterna stödjer samma juridiska part."
+      "motivation": "Certifikatets consignor återfinns uttryckligen i fakturans säljarblock på sidan 1 som 'Forpac International AB' med adress 'Kungsporten 4E, 427 50 Billdal, Sweden'. Landet verifieras dessutom av explicit landsangivelse samt VAT-prefix 'SE'."
     },
     "consignee": {
       "applicable": true,
       "status": "MANUAL_REVIEW",
-      "confidence": 0.41,
-      "certificate_value": "NAPACK | 4 RUE NABEUL ZONE INDUSTRIELLE | MGHIRA II | 2082 FOUCHANA | BEN AROUS | Tunisia",
-      "invoice_value": "No readable buyer / consignee / ship-to field visible on the scanned invoice page.",
+      "confidence": 0.44,
+      "certificate_value": "NAPACK, 4 RUE NABEUL ZONE INDUSTRIELLE, MGHIRA II, 2082 FOUCHANA, BEN AROUS, Tunisia",
+      "invoice_value": null,
       "rules_applied": [
         {
           "rule_id": "4.2.0.2",
-          "outcome": "RECIPIENT_NOT_IDENTIFIED_IN_READABLE_FIELDS"
+          "outcome": "NOT_FOUND"
         },
         {
           "rule_id": "8.1.1",
-          "outcome": "RELEVANT_RECIPIENT_TEXT_NOT_SUCCESSFULLY_READ"
+          "outcome": "FIELD_NOT_READABLY_VERIFIABLE"
         },
         {
           "rule_id": "8.1.3",
           "outcome": "MANUAL_REVIEW"
         }
       ],
-      "motivation": "Ingen läsbar mottagarruta med NAPACK eller tunisisk leveransadress kunde identifieras på den skannade fakturasidan. Eftersom fakturan är bildbaserad och ingen tydligt motstridig consignee framgår, ska detta enligt reglerna ge MANUAL_REVIEW och inte MISMATCH."
+      "motivation": "Den tillgängliga fakturan är skannad/bildbaserad och den visade sidan innehåller inget läsbart mottagarblock där 'NAPACK' eller 'Tunisia' kan identifieras. Ingen annan tydligt motstridig mottagare framgår på den läsbara sidan, därför ska utebliven träff på en skannad faktura hanteras som MANUAL_REVIEW och inte MISMATCH."
     },
     "goods_description": {
       "applicable": true,
       "status": "MANUAL_REVIEW",
-      "confidence": 0.63,
+      "confidence": 0.64,
       "certificate_value": "FLUTING & TESTLINER",
-      "invoice_value": "Fluting de 80 a 115gsm. rw:200 a 250cm / TL3 80 a 115gsm. rw:200 a 250cm",
+      "invoice_value": "Fluting de 80 a 115gsm. rw:200 a 250cm; TL3 80 a 115gsm. rw:200 a 250cm",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "PRIORITY_2_TEXT_MATCH_APPLIED"
+          "outcome": "NO_ARTICLE_NUMBER_IN_CERTIFICATE"
         },
         {
           "rule_id": "4.3.3",
-          "outcome": "PARTIAL_EXACT_MATCH_ONLY"
+          "outcome": "PARTIAL_TEXT_MATCH"
         },
         {
           "rule_id": "4.3.3.3",
           "outcome": "MANUAL_REVIEW"
         }
       ],
-      "motivation": "Varutermen FLUTING kan identifieras direkt i fakturan. Certifikatets TESTLINER återfinns däremot inte utskrivet; fakturan visar i stället koden TL3, vilket kräver tolkning av om koden avser Testliner och därför ska bedömas manuellt."
+      "motivation": "'FLUTING' kan identifieras direkt i fakturan som 'Fluting'. Den andra delen av certifikatets beskrivning, 'TESTLINER', återfinns inte uttryckligen; fakturan använder koden 'TL3', vilket kan tyda på en testliner-variant men kräver branschmässig tolkning. Därför kan varubeskrivningen inte auto-verifieras entydigt."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.89,
-      "certificate_value": "187,905 MT/GW | TOTAL 73 REELS",
-      "invoice_value": "Total qty. 73 Reel 187,905 MT",
+      "confidence": 0.91,
+      "certificate_value": "187,905 MT/GW; TOTAL 73 REELS",
+      "invoice_value": "Total qty. 73 Reel 187,905 MT; line quantities 133,827 MT and 54,078 MT",
       "rules_applied": [
+        {
+          "rule_id": "4.4.2.1",
+          "outcome": "FORM_REQUIREMENT_MET"
+        },
         {
           "rule_id": "4.4.3.2",
           "outcome": "MATCH"
@@ -141,44 +141,48 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet innehåller både totalvikt 187,905 MT/GW och kolliantal TOTAL 73 REELS. Fakturan visar explicit total qty. 73 Reel och 187,905 MT, vilket verifierar minst en och i praktiken båda kvantitetsuppgifterna utan motstridighet."
+      "motivation": "Certifikatet anger total kvantitet '187,905 MT/GW' och paketuppgift 'TOTAL 73 REELS'. Fakturan visar på sidan 1 'Total qty. 73 Reel 187,905 MT'. Minst en kvantitetsuppgift ska verifieras, och här återfinns både 73 reels och 187,905 MT utan motstridiga värden."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.92,
+      "confidence": 0.97,
       "certificate_value": "FRANCE",
-      "invoice_value": "Nous certifions que les marchandises faisant l'objet de cette livraison sont d´origine francais.",
+      "invoice_value": "Nous certifions que les marchandises faisant l'objet de cette livraison sont d’origine français",
       "rules_applied": [
         {
           "rule_id": "4.5.1",
           "outcome": "EXPLICIT_ORIGIN_FOUND"
         },
         {
+          "rule_id": "4.5.4",
+          "outcome": "LANGUAGE_NORMALIZATION_APPLIED"
+        },
+        {
           "rule_id": "4.5.6",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Fakturan innehåller en uttrycklig ursprungsangivelse på franska som anger att varorna är av franskt ursprung. Den separata engelska texten om EU preferential origin motsäger inte France."
+      "motivation": "Fakturan innehåller en uttrycklig ursprungsformulering på franska om att varorna är av franskt ursprung. Detta verifierar certifikatets ursprungsland 'FRANCE' direkt."
     }
   },
   "overall_assessment": {
     "comparison_result": "MANUAL_REVIEW",
     "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
     "auto_approval_eligible": false,
-    "confidence": 0.64,
+    "confidence": 0.68,
     "critical_failures": [],
     "manual_review_triggers": [
-      "Consignee 'NAPACK' med adress i Tunisia kunde inte identifieras i någon läsbar mottagar-/leveransruta på den skannade fakturan.",
-      "Certifikatet anger 'TESTLINER' medan fakturan anger 'TL3'; sambandet kräver tolkning och kan därför inte autoverifieras."
+      "Consignee 'NAPACK' i Tunisien kunde inte identifieras i något läsbart mottagarfält på den skannade fakturan.",
+      "Varubeskrivningen kunde bara delvis verifieras: 'FLUTING' återfinns, men 'TESTLINER' motsvaras endast av koden 'TL3', vilket kräver manuell tolkning."
     ],
     "manual_review_reason": "SCANNED_UNREADABLE",
-    "decision_summary": "Dokumentparningen är giltig eftersom consignor FORPAC INTERNATIONAL AB identifieras tydligt i fakturans seller-block. Consignor, kvantitet och ursprungsland kan verifieras, men consignee kan inte läsas fram säkert i den skannade fakturan och varubeskrivningen kräver manuell bedömning på grund av koden TL3 kontra TESTLINER.",
-    "human_explanation": "Avsändaren FORPAC INTERNATIONAL AB, kvantiteten 73 Reel / 187,905 MT och ursprunget Frankrike kan läsas i fakturan. Mottagaren NAPACK i Tunisien kan däremot inte identifieras säkert i den skannade fakturan, och varubeskrivningen använder \"TL3\" där certifikatet anger \"TESTLINER\". Därför krävs manuell granskning."
+    "decision_summary": "Consignor, quantity and origin were verified against the invoice. The consignee could not be verified from the available scanned invoice page, and the goods description was not fully explicit because the invoice uses 'TL3' instead of explicit 'TESTLINER'. Therefore the document pair requires manual review.",
+    "human_explanation": "Avsändare, kvantitet och ursprungsland stämmer mot fakturan. Mottagaren NAPACK kan inte verifieras säkert eftersom den skannade fakturan inte visar någon läsbar mottagaruppgift. Varubeskrivningen är också inte entydig eftersom certifikatet anger 'FLUTING & TESTLINER' medan fakturan visar 'Fluting' och 'TL3'."
   },
   "_meta": {
-    "tested_at": "2026-06-06T09:00:14.354642+00:00",
-    "prompt_hash": "4690e976915d",
+    "tested_at": "2026-06-06T14:05:41.319964+00:00",
+    "prompt_hash": "752423deb8d7",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P0100_MISMATCH",

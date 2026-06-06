@@ -2,9 +2,9 @@
   "schema_version": "3.0",
   "metadata": {
     "verification_timestamp": "2026-06-06T00:00:00Z",
-    "document_pair_id": "SEG-26D-460860",
+    "document_pair_id": null,
     "certificate_issue_date": null,
-    "source_documents_received": 2
+    "source_documents_received": 3
   },
   "task": {
     "task_type": "customs_document_pair_verification",
@@ -13,12 +13,12 @@
   },
   "documents": {
     "document_a": {
-      "label": "Certificate of Origin (structured JSON)",
+      "label": "Certificate of Origin structured JSON",
       "assumed_role": "certificate",
-      "document_type": "certificate_of_origin_structured_json"
+      "document_type": "structured_json_certificate"
     },
     "document_b": {
-      "label": "Invoice PDFs",
+      "label": "Attached invoice PDFs (2 files)",
       "assumed_role": "invoice",
       "document_type": "invoice_pdf_set"
     }
@@ -38,11 +38,11 @@
       },
       {
         "rule_id": "4.4.5.1",
-        "rule_name": "Summering av flera fakturor"
+        "rule_name": "Summering av flera fakturor för kvantitet"
       },
       {
         "rule_id": "4.5.4.1.1",
-        "rule_name": "EU-begrepp kombinerat med specifikt EU-land verifieras av det specifika landet i fakturan"
+        "rule_name": "EU-begrepp kombinerat med specifikt EU-land kan verifieras av det specifika landet i fakturan"
       }
     ]
   },
@@ -50,34 +50,38 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.96,
-      "certificate_value": "VOLVO TRUCK CORPORATION, GÖTEBORG, Sweden",
-      "invoice_value": "Volvo Truck Corporation / S-405 08 Göteborg / Sweden; page 2 also shows \"VOLVO TRUCK CORPORATION\"",
+      "confidence": 0.98,
+      "certificate_value": "VOLVO TRUCK CORPORATION | 405 08 | GÖTEBORG | Sweden | VAT/Org: 556013-9700",
+      "invoice_value": "Postal address Volvo Truck Corporation, S-405 08 Göteborg, Sweden; Org No. 556013-9700; IBAN: SE52...; Volvo header on both invoices",
       "rules_applied": [
-        {
-          "rule_id": "4.1.0",
-          "outcome": "MATCH"
-        },
         {
           "rule_id": "4.1.2",
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.1.4",
+          "rule_id": "4.1.2.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.5",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor \"VOLVO TRUCK CORPORATION\" återfinns uttryckligen i fakturorna, både som \"Volvo Truck Corporation\" i postadressblocket och som \"VOLVO TRUCK CORPORATION\" på sida 2. Landet Sweden framgår explicit i adressblocket. Därmed är samma juridiska part och land verifierade."
+      "motivation": "Certifikatets avsändare 'VOLVO TRUCK CORPORATION' kan identifieras uttryckligen i båda fakturorna som 'Postal address Volvo Truck Corporation'. Landet Sverige verifieras explicit i adressen och stöds även av svensk IBAN-prefix 'SE' samt organisationsnummerblock. Ingen motstridig avsändare förekommer."
     },
     "consignee": {
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.97,
-      "certificate_value": "MARUBENI DAGITIM VE SERVIS A.S, KUCUKBAKKALKOY MAH, KAYISDAGI CAD ALLIANZ PLAZA BLOK N1, 34750 ISTANBUL, Türkiye",
-      "invoice_value": "Customer: Marubeni Dagitim Ve Servis A.S / Kucukbakkalkoy Mah. / Kayisdagi Cad. Allianz Plaza Blok N / 34750 ISTANBUL / Turkey",
+      "certificate_value": "MARUBENI DAGITIM VE SERVIS A.S | KUCUKBAKKALKOY MAH | KAYISDAGI CAD ALLIANZ PLAZA BLOK N1 | 34750 ISTANBUL | Türkiye",
+      "invoice_value": "Customer: Marubeni Dagitim Ve Servis A.S, Kucukbakkalkoy Mah., Kayisdagi Cad. Allianz Plaza Blok N, 34750 ISTANBUL, Turkey",
       "rules_applied": [
         {
           "rule_id": "4.2.0.2",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.2.2.1",
           "outcome": "MATCH"
         },
         {
@@ -85,17 +89,17 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets mottagare återfinns i fakturornas Customer-block med samma företagsnamn och samma adressort. Landet anges som Turkey i fakturan, vilket är ekvivalent med certifikatets Türkiye enligt tillåten landnormalisering."
+      "motivation": "Certifikatets mottagare kan identifieras direkt i fakturornas kundblock. Företagsnamnet överensstämmer och landet 'Türkiye' i certifikatet motsvarar 'Turkey' i fakturan enligt tillåten landnormalisering. Mindre adressformatering och 'N1' kontra 'N' förändrar inte att samma mottagare i samma land framgår."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.88,
+      "confidence": 0.9,
       "certificate_value": "VOLVO TRUCK CHASSIS NO: / 548984,549160",
-      "invoice_value": "Invoice 260207022: \"VOLVO FMX84R RIGID TRUCK\" and chassis \"548984\"; Invoice 260207023: \"VOLVO FMX84R RIGID TRUCK\" and chassis \"549160\"",
+      "invoice_value": "Invoice 260207022: FM-TRUCK 548984 YV2XT40GXTB548984; Invoice 260207023: FM-TRUCK 549160 YV2XT40G2TB549160; both invoices also describe VOLVO FMX84R RIGID TRUCK",
       "rules_applied": [
         {
-          "rule_id": "4.3.3",
+          "rule_id": "4.3.2",
           "outcome": "MATCH"
         },
         {
@@ -103,14 +107,14 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger Volvo truck med chassinummer 548984 och 549160. Båda chassinumren återfinns uttryckligen i de två bifogade fakturorna, och båda fakturorna avser \"VOLVO FMX84R RIGID TRUCK\". De specifika identifierarna i certifikatet kan därmed verifieras mot fakturaunderlaget."
+      "motivation": "Certifikatet anger uttryckligen två specifika chassis-/identifieringsnummer: 548984 och 549160. Dessa identifierare återfinns exakt i de bifogade fakturorna, en per faktura, tillsammans med beskrivning av Volvo FMX84R rigid truck. Därmed kan certifikatets varubeskrivning verifieras mot fakturaunderlaget utan semantisk tolkning."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.9,
+      "confidence": 0.88,
       "certificate_value": "GW/22426KG",
-      "invoice_value": "Invoice 260207022: \"WEIGHT: 11213 KG\"; Invoice 260207023: \"WEIGHT: 11213 KG\"",
+      "invoice_value": "Invoice 260207022: WEIGHT: 11213 KG; Invoice 260207023: WEIGHT: 11213 KG; summed total = 22426 KG",
       "rules_applied": [
         {
           "rule_id": "4.4.2.1",
@@ -121,21 +125,25 @@
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.4.5.6",
+          "rule_id": "4.4.7",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger grossvikt 22426 KG. Varje faktura anger explicit vikt 11213 KG, och summering av de två bifogade fakturorna ger 22426 KG. Kvantiteten kan därför verifieras genom undantaget för summering av flera fakturor."
+      "motivation": "Certifikatet anger en uttrycklig bruttovikt: 22426 KG GW. Varje bifogad faktura anger 'WEIGHT: 11213 KG', och summan av de två fakturorna blir exakt 22426 KG. Kvantiteten kan därför verifieras genom summering av flera fakturor, men säkerheten är något lägre eftersom certifikatet inte själv anger några fakturanummer."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.98,
+      "confidence": 0.94,
       "certificate_value": "The European Community, Belgium",
-      "invoice_value": "\"COUNTRY OF ORIGIN: BELGIUM\"; \"THE GOODS ARE OF BELGIAN ORIGIN\"; \"ORIGINATE IN BELGIUM\"",
+      "invoice_value": "COUNTRY OF ORIGIN: BELGIUM; THE GOODS ARE OF BELGIAN ORIGIN; ORIGINATE IN BELGIUM",
       "rules_applied": [
         {
           "rule_id": "4.5.4.1.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.5.4.2",
           "outcome": "MATCH"
         },
         {
@@ -143,27 +151,25 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger \"The European Community, Belgium\". Fakturorna anger uttryckligen Belgium som ursprungsland. Belgium verifierar den specifika landsangivelsen och uppfyller samtidigt EU-komponenten enligt EU-normaliseringsregeln."
+      "motivation": "Fakturorna anger uttryckligen Belgien som ursprungsland i flera origin-fält och deklarationstexter. Detta verifierar den specifika certifikatuppgiften 'Belgium'. Eftersom Belgien är ett EU-land verifierar samma uppgift även delen 'The European Community' enligt EU-normaliseringsregeln."
     }
   },
   "overall_assessment": {
     "comparison_result": "MANUAL_REVIEW",
     "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
     "auto_approval_eligible": false,
-    "confidence": 0.83,
+    "confidence": 0.67,
     "critical_failures": [],
     "manual_review_triggers": [
-      "Två separata fakturor från samma utställare har bifogats: 260207022 och 260207023.",
-      "Certifikatet innehåller inget fakturanummer eller fakturadatum som entydigt anger att just dessa två fakturor är de avsedda verifieringsdokumenten.",
-      "Även om uppgifterna i praktiken stämmer mot de två fakturorna kräver dokumentparningen manuell kontroll."
+      "Två separata fakturor från samma utställare är bifogade och certifikatet innehåller inget fakturanummer som entydigt pekar ut vilka fakturor som avses."
     ],
     "manual_review_reason": "AMBIGUOUS_MULTIPLE_INVOICES",
-    "decision_summary": "Samtliga kontrollpunkter kan materiellt verifieras mot de två bifogade fakturorna: consignor, consignee, varuidentifiering via chassinummer, total grossvikt 22426 KG och ursprung Belgium. Underlaget innehåller dock flera separata fakturor från samma utställare utan att certifikatet uttryckligen refererar till fakturanummer, vilket gör dokumentparningen formellt tvetydig. Därför ska ärendet skickas till manuell granskning.",
-    "human_explanation": "Avsändare, mottagare, varor, vikt och ursprung kan återfinnas i de bifogade fakturorna. Underlaget innehåller dock två separata fakturor från samma utställare och certifikatet anger inget fakturanummer som entydigt kopplar certifikatet till fakturorna. Ärendet behöver därför granskas manuellt."
+    "decision_summary": "Samtliga kontrollpunkter kan materiellt verifieras mot de två bifogade Volvo-fakturorna: consignor, consignee, chassisnummer, total GW 22426 KG och ursprung Belgien. Det finns dock två separata fakturor från samma utställare och certifikatet saknar uttrycklig fakturareferens, vilket enligt dokumentparningsregeln kräver manuell handläggning.",
+    "human_explanation": "Två bifogade fakturor från samma utställare matchar certifikatets uppgifter om mottagare, chassinummer, vikt och ursprung. Certifikatet anger dock inget fakturanummer, så det går inte att entydigt fastställa att just dessa två fakturor är de avsedda verifieringsunderlagen. Ärendet behöver därför manuell granskning."
   },
   "_meta": {
-    "tested_at": "2026-06-06T09:13:51.030293+00:00",
-    "prompt_hash": "4690e976915d",
+    "tested_at": "2026-06-06T14:17:35.605361+00:00",
+    "prompt_hash": "752423deb8d7",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "SEG-26D-460860_MATCH",

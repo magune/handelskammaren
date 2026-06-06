@@ -2,7 +2,7 @@
   "schema_version": "3.0",
   "metadata": {
     "verification_timestamp": "2026-06-06T00:00:00Z",
-    "document_pair_id": "SEG-25D-394888__INV-19110",
+    "document_pair_id": "SEG-25D-394888|INV-19110",
     "certificate_issue_date": null,
     "source_documents_received": 2
   },
@@ -15,12 +15,12 @@
     "document_a": {
       "label": "Certificate of Origin (structured JSON)",
       "assumed_role": "certificate",
-      "document_type": "structured_json_certificate_of_origin"
+      "document_type": "certificate_of_origin_structured_json"
     },
     "document_b": {
-      "label": "Commercial Invoice No. 19110",
+      "label": "Commercial Invoice PDF",
       "assumed_role": "invoice",
-      "document_type": "commercial_invoice_pdf"
+      "document_type": "commercial_invoice_pdf_text_based"
     }
   },
   "rule_activation": {
@@ -31,22 +31,43 @@
     "to_order_rule_active": false,
     "quantity_exception_applied": null,
     "eu_origin_normalization_active": false,
-    "activated_rules": []
+    "activated_rules": [
+      {
+        "rule_id": "8.6",
+        "rule_name": "Parningsvalidering passerad via identifierbar consignor och consignee i fakturan"
+      },
+      {
+        "rule_id": "4.2.0.2",
+        "rule_name": "Consignee får verifieras i något relevant mottagarfält"
+      },
+      {
+        "rule_id": "4.3.4",
+        "rule_name": "Tillägg som inte påverkar produktidentitet accepteras"
+      },
+      {
+        "rule_id": "4.4.2.1",
+        "rule_name": "Viktkategori på samma rad via Combined-fältet uppfyller formkravet"
+      },
+      {
+        "rule_id": "4.4.3.2",
+        "rule_name": "Minst en kvantitetsuppgift ska verifieras; uttrycklig motsägelse saknas"
+      },
+      {
+        "rule_id": "4.4.3.6",
+        "rule_name": "Total vikt i faktura får användas för verifiering av försändelsens vikt"
+      }
+    ]
   },
   "control_points": {
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.99,
-      "certificate_value": "Central National Sweden AB",
-      "invoice_value": "Central National Sweden AB\nSödra Larmgatan 6\nGothenburg, 41 116, Sweden\nVAT NO: SE559187836701 BE0768791811 DE365900313",
+      "confidence": 0.98,
+      "certificate_value": "Central National Sweden AB, Sweden",
+      "invoice_value": "Central National Sweden AB, Södra Larmgatan 6, Gothenburg, 41 116, Sweden; VAT NO: SE559187836701",
       "rules_applied": [
         {
-          "rule_id": "4.1.0",
-          "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.1.2",
+          "rule_id": "4.1.3.1",
           "outcome": "MATCH"
         },
         {
@@ -58,21 +79,17 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger consignor \"Central National Sweden AB\" i Sverige. Fakturan identifierar samma juridiska part uttryckligen i sidhuvud/issuer-blocket som \"Central National Sweden AB\" med adress i Sweden och VAT-prefix \"SE559187836701\", vilket verifierar landet. Företagsnamn och land överensstämmer utan behov av fri tolkning."
+      "motivation": "Certifikatet anger consignor 'Central National Sweden AB' i Sverige. Fakturan visar samma juridiska namn i sidhuvudet på sida 1 och 2 samt svensk adress och svenskt VAT-prefix 'SE559187836701'. Företagsnamn och land kan därför identifieras uttryckligen i fakturan."
     },
     "consignee": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.93,
-      "certificate_value": "SOCARTO",
-      "invoice_value": "SOLD TO: Socarto S.A\nBP 5028\nDouala,\nCameroon\nVAT: M067200005390Z\nCONSIGNED TO: Socarto S.A\nBP 5028\nDouala,\nCameroon\nVAT: M067200005390Z",
+      "confidence": 0.95,
+      "certificate_value": "SOCARTO, Cameroon",
+      "invoice_value": "CONSIGNED TO: Socarto S.A, BP 5028, Douala, Cameroon",
       "rules_applied": [
         {
           "rule_id": "4.2.0.2",
-          "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.2.2.1",
           "outcome": "MATCH"
         },
         {
@@ -84,7 +101,7 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger mottagaren som \"SOCARTO\" i Cameroon. Fakturan visar både \"SOLD TO\" och \"CONSIGNED TO\" som \"Socarto S.A\" i Cameroon. Skillnaden består endast av tillagd juridisk bolagsform \"S.A\", vilket är tillåten normalisering; kärnnamnet \"Socarto\" och landet Cameroon kan identifieras tydligt."
+      "motivation": "Certifikatet anger mottagaren som 'SOCARTO' i Kamerun. Fakturan anger 'CONSIGNED TO: Socarto S.A' i Douala, Cameroon. Kärnnamnet 'Socarto' återfinns uttryckligen och skillnaden består endast av juridisk bolagsform/tillägg 'S.A', medan landet överensstämmer."
     },
     "goods_description": {
       "applicable": true,
@@ -93,10 +110,6 @@
       "certificate_value": "Unbleached Kraft Standard + XBR",
       "invoice_value": "Unbleached Kraft Standard + XBR (120+50)",
       "rules_applied": [
-        {
-          "rule_id": "4.3.2",
-          "outcome": "TEXT_MATCH_PATH_USED"
-        },
         {
           "rule_id": "4.3.3",
           "outcome": "MATCH"
@@ -110,14 +123,14 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Den identitetsbärande huvudbeteckningen i certifikatet är \"Unbleached Kraft Standard + XBR\". Samma ordsekvens återfinns uttryckligen i fakturan som \"Unbleached Kraft Standard + XBR (120+50)\". Tillägget \"(120+50)\" och de efterföljande specifikationsraderna är kompletterande text och ändrar inte att huvudbeteckningen kan identifieras exakt. Raderna \"Net weight:\" och \"Gross weight:\" i certifikatet behandlas som kvantitetsmetadata, inte som separata varuposter."
+      "motivation": "Certifikatets identitetsbärande huvudbeteckning är 'Unbleached Kraft Standard + XBR'. Fakturan innehåller exakt samma huvudbeteckning på produkt­raden, med tillägget '(120+50)' och ytterligare specifikationer på efterföljande rader. Dessa tillägg ändrar inte den identifierade huvudbeteckningen, och raderna 'Net weight' och 'Gross weight' i certifikatet behandlas som metadata/kvantitetsrader, inte separata varor."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.9,
-      "certificate_value": "Net weight: 15.025 MT | Gross weight: 15.305 MT | 28 Packages (124 Reels)",
-      "invoice_value": "Total Gross Weight Quantity: 15.305 MT\nTotal Weight Quantity: 15.025 MT",
+      "confidence": 0.93,
+      "certificate_value": "Net weight: 15.025 MT; Gross weight: 15.305 MT",
+      "invoice_value": "Total Weight Quantity: 15.025 MT; Total Gross Weight Quantity: 15.305 MT",
       "rules_applied": [
         {
           "rule_id": "4.4.2.1",
@@ -132,7 +145,7 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet innehåller två uttryckliga viktuppgifter på samma rad via Combined-fälten: \"Net weight: 15.025 MT\" och \"Gross weight: 15.305 MT\". Fakturan anger motsvarande totalvikter som \"Total Gross Weight Quantity: 15.305 MT\" och \"Total Weight Quantity: 15.025 MT\". De numeriska värdena och enheten MT överensstämmer exakt; skillnaden i benämning mellan \"Net weight\" och \"Total Weight Quantity\" medför inte avvikelse när motsvarande nettovärde kan identifieras. Paketuppgiften \"28 Packages (124 Reels)\" behöver inte separat verifieras eftersom minst en kvantitetsuppgift ska kunna verifieras och ingen fakturauppgift motsäger certifikatets kvantiteter."
+      "motivation": "Certifikatet innehåller två viktuppgifter där viktkategori och värde hör ihop på samma rad via Combined-fältet: 'Net weight: 15.025 MT' och 'Gross weight: 15.305 MT'. Fakturan anger 'Total Weight Quantity: 15.025 MT' och 'Total Gross Weight Quantity: 15.305 MT'. De numeriska värdena och enheten MT överensstämmer, och fakturan innehåller ingen motsägande kvantitetsuppgift."
     },
     "origin": {
       "applicable": true,
@@ -150,23 +163,23 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger ursprungsland \"Italy\". Fakturan innehåller en explicit ursprungsangivelse: \"Country of Origin: Italy\". Ursprungslandet kan därför verifieras direkt utan normalisering utöver versal/gemen."
+      "motivation": "Certifikatet anger ursprungsland 'Italy'. Fakturan innehåller en uttrycklig ursprungsangivelse 'Country of Origin: Italy' på sida 1. Ursprungslandet kan därför verifieras direkt utan normalisering utöver versalisering."
     }
   },
   "overall_assessment": {
     "comparison_result": "IDENTICAL",
     "workflow_recommendation": "AUTO_APPROVAL_ELIGIBLE",
     "auto_approval_eligible": true,
-    "confidence": 0.95,
+    "confidence": 0.96,
     "critical_failures": [],
     "manual_review_triggers": [],
     "manual_review_reason": "NOT_APPLICABLE",
-    "decision_summary": "Alla fem tillämpliga kontrollpunkter kan verifieras mot fakturan. Certifikatets consignor, consignee, varubeskrivning, kvantiteter och ursprungsland återfinns i fakturan enligt regelverket.",
-    "human_explanation": "Alla kontrollpunkter i certifikatet kan verifieras mot fakturan. Avsändare, mottagare, varubeskrivning, viktuppgifter och ursprungsland stämmer överens. Dokumentparet kan därför godkännas automatiskt."
+    "decision_summary": "Samtliga tillämpliga kontrollpunkter är verifierade som MATCH. Certifikatets consignor, consignee, varubeskrivning, kvantitet och ursprungsland återfinns uttryckligen i den bifogade kommersiella fakturan.",
+    "human_explanation": "Alla relevanta uppgifter i certifikatet kan återfinnas i fakturan. Certifikatet anger Central National Sweden AB i Sverige, mottagaren SOCARTO i Kamerun, varan 'Unbleached Kraft Standard + XBR', vikterna 15.025 MT och 15.305 MT samt ursprung Italy, och dessa uppgifter finns i fakturan. Dokumentparet kan därför godkännas automatiskt."
   },
   "_meta": {
-    "tested_at": "2026-06-06T09:17:25.976729+00:00",
-    "prompt_hash": "4690e976915d",
+    "tested_at": "2026-06-06T13:54:17.713455+00:00",
+    "prompt_hash": "752423deb8d7",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P065_MATCH",

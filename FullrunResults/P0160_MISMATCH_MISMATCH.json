@@ -1,10 +1,10 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-06-06",
+    "verification_timestamp": null,
     "document_pair_id": "SEG-25D-375689__4859319",
     "certificate_issue_date": null,
-    "source_documents_received": 1
+    "source_documents_received": 2
   },
   "task": {
     "task_type": "customs_document_pair_verification",
@@ -13,36 +13,36 @@
   },
   "documents": {
     "document_a": {
-      "label": "CERTIFICATE OF ORIGIN (structured JSON)",
+      "label": "Certificate of Origin (structured JSON)",
       "assumed_role": "certificate",
-      "document_type": "certificate_of_origin_structured_json"
+      "document_type": "structured_json"
     },
     "document_b": {
-      "label": "Invoice PDF (2 pages)",
+      "label": "Invoice PDF",
       "assumed_role": "invoice",
-      "document_type": "commercial_invoice"
+      "document_type": "invoice"
     }
   },
   "rule_activation": {
     "lc_exception_active": false,
     "lc_number_found": null,
     "general_goods_description_with_invoice_reference_active": true,
-    "mixed_origins_rule_active": true,
+    "mixed_origins_rule_active": false,
     "to_order_rule_active": false,
     "quantity_exception_applied": null,
     "eu_origin_normalization_active": true,
     "activated_rules": [
-      {
-        "rule_id": "4.1.3.7.1",
-        "rule_name": "Certifikatet innehåller divisionsord som saknas i fakturans företagsnamn"
-      },
       {
         "rule_id": "4.3.5",
         "rule_name": "Generell varubeskrivning med fakturareferens"
       },
       {
         "rule_id": "4.5.4.1",
-        "rule_name": "EU-normalisering och hantering av ursprungskod med asterisk/oförklarat suffix"
+        "rule_name": "EU-normalisering och suffixregel för ursprungskod"
+      },
+      {
+        "rule_id": "4.1.3.7.1",
+        "rule_name": "Certifikatet innehåller divisionsord som saknas i fakturans företagsnamn"
       }
     ]
   },
@@ -50,35 +50,35 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.89,
-      "certificate_value": "Husqvarna Construction | Sweden | VAT SE556000533101",
-      "invoice_value": "Seller: HUSQVARNA AB | Sweden | VAT no SE556000533101",
+      "confidence": 0.88,
+      "certificate_value": "Husqvarna Construction",
+      "invoice_value": "Seller: HUSQVARNA AB; Sweden; VAT no SE556000533101",
       "rules_applied": [
         {
-          "rule_id": "4.1.0",
-          "outcome": "NO_MATCH_FOUND_FOR_EXACT_CONSIGNOR_NAME"
+          "rule_id": "4.1.3.1",
+          "outcome": "NO_MATCH_DIRECT_NAME"
         },
         {
-          "rule_id": "4.1.3.1",
-          "outcome": "NO_DIRECT_JURIDICAL_NAME_MATCH"
+          "rule_id": "4.1.3.6",
+          "outcome": "LEGAL_FORM_NORMALIZED"
         },
         {
           "rule_id": "4.1.3.7.1",
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.1.4",
-          "outcome": "MATCH"
+          "rule_id": "4.1.2.1",
+          "outcome": "LAND_VERIFIED"
         }
       ],
-      "motivation": "Certifikatet anger consignor som \"Husqvarna Construction\" i Sverige med VAT-nummer SE556000533101. Fakturan anger säljaren som \"HUSQVARNA AB\" i Sverige och visar samma VAT-nummer. Ordet \"Construction\" bedöms här som divisions-/segmentord som saknas i fakturans juridiska bolagsnamn; eftersom fakturans namn är en delmängd av certifikatets namn, land stämmer och exakt VAT-nummer bekräftar samma juridiska part uppfylls villkoren för MATCH enligt 4.1.3.7.1."
+      "motivation": "Certifikatet anger 'Husqvarna Construction' medan fakturan anger 'HUSQVARNA AB'. Efter normalisering av bolagsform återstår kärnnamnet 'Husqvarna', och ordet 'Construction' bedöms som divisionsord. Matchande VAT-nummer 'SE556000533101' i certifikat och faktura bekräftar samma juridiska part. Landet Sverige framgår uttryckligen i fakturan."
     },
     "consignee": {
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.99,
-      "certificate_value": "ORIENTAL TRADING COMPANY. LTD (AIR) | QATAR",
-      "invoice_value": "Consignee: ORIENTAL TRADING COMPANY. LTD (AIR) | QATAR",
+      "certificate_value": "ORIENTAL TRADING COMPANY. LTD (AIR)",
+      "invoice_value": "Consignee: ORIENTAL TRADING COMPANY. LTD (AIR), 1ST FLOOR, E-BLOCK, SALWA RD, BOX96, ALWAB AREA, DOHA, QATAR",
       "rules_applied": [
         {
           "rule_id": "4.2.0.2",
@@ -86,39 +86,43 @@
         },
         {
           "rule_id": "4.2.3",
-          "outcome": "MATCH"
+          "outcome": "LAND_VERIFIED"
         }
       ],
-      "motivation": "Mottagarnamnet i certifikatet kan identifieras exakt i fakturans consignee-fält på sida 1 och upprepas även på sida 2. Landet QATAR framgår uttryckligen i samma mottagarblock. Ingen normalisering utöver versaler/gemener behövs."
+      "motivation": "Mottagaren i certifikatet kan identifieras exakt i fakturans Consignee-fält, inklusive tillägget '(AIR)'. Landet Qatar framgår uttryckligen i samma mottagarblock."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.91,
+      "confidence": 0.9,
       "certificate_value": "Attached invoice 4859319 dated on 251015 | Machines and spareparts",
-      "invoice_value": "Invoice No. 4859319 dated 2025-10-15 | Goods: Drill motors / DRILL MOTOR DM 430 / DRILL STAND DS 500 / WATER TANK",
+      "invoice_value": "Invoice No. 4859319; Invoice date 2025-10-15; goods include Drill motors / DRILL MOTOR DM 430 / DRILL STAND DS 500! / WATER TANK",
       "rules_applied": [
         {
           "rule_id": "4.3.5",
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.3.5.3",
-          "outcome": "CONSISTENT_WITH_INVOICE_CONTENT"
+          "rule_id": "4.3.5.2",
+          "outcome": "DATE_MATCH_AFTER_NORMALIZATION"
+        },
+        {
+          "rule_id": "8.5.1.1",
+          "outcome": "INVOICE_NUMBER_MATCH"
         }
       ],
-      "motivation": "Certifikatet innehåller uttrycklig fakturahänvisning: \"Attached invoice 4859319 dated on 251015\". Fakturan visar nummer 4859319 och datum 2025-10-15, vilket motsvarar 251015 efter tillåten datumformatnormalisering. Den kompletterande generella beskrivningen \"Machines and spareparts\" är förenlig med fakturans varor (drill motor, drill stand och water tank), varför varubeskrivningen verifieras enligt regeln för generell varubeskrivning med fakturareferens."
+      "motivation": "Certifikatet innehåller en uttrycklig fakturahänvisning: 'Attached invoice 4859319 dated on 251015'. Fakturans nummer är 4859319 och fakturadatum 2025-10-15, vilket matchar certifikatets kompakta datumformat 251015. Den generella varubeskrivningen 'Machines and spareparts' är förenlig med fakturans angivna varor."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.97,
+      "confidence": 0.94,
       "certificate_value": "Gross 1328.66kg",
       "invoice_value": "Gross weight, kg 1328,66",
       "rules_applied": [
         {
           "rule_id": "4.4.2.1",
-          "outcome": "FORM_REQUIREMENTS_MET"
+          "outcome": "FORM_REQUIREMENT_MET"
         },
         {
           "rule_id": "4.4.3.6",
@@ -129,29 +133,25 @@
           "outcome": "DECIMAL_FORMAT_NORMALIZED"
         }
       ],
-      "motivation": "Certifikatets kvantitetsfält innehåller både viktkategori (Gross), numeriskt värde (1328.66) och enhet (kg). Fakturan anger total bruttovikt som \"1328,66\" kg för försändningen. Skillnaden är endast decimalnotation punkt/komma; efter normalisering är värdena numeriskt identiska."
+      "motivation": "Certifikatet anger både viktkategori, numeriskt värde och enhet i samma kvantitetsuppgift: 'Gross 1328.66kg'. Fakturan anger total bruttoikt som 'Gross weight, kg 1328,66'. Efter normalisering av decimaltecken är värdet identiskt."
     },
     "origin": {
       "applicable": true,
       "status": "MANUAL_REVIEW",
-      "confidence": 0.44,
+      "confidence": 0.62,
       "certificate_value": "The European Community",
-      "invoice_value": "Country of origin: SEE BELOW | Origin column: DE*, CH*, DE*",
+      "invoice_value": "Origin column: DE*, CH*, DE*",
       "rules_applied": [
         {
-          "rule_id": "4.5.1",
-          "outcome": "ORIGIN_FIELD_FOUND"
-        },
-        {
           "rule_id": "4.5.4.1",
-          "outcome": "MANUAL_REVIEW"
+          "outcome": "MANUAL_REVIEW_TRIGGERED"
         },
         {
-          "rule_id": "4.5.5",
-          "outcome": "CANNOT_BE_FINALLY_RESOLVED_DUE_TO_UNEXPLAINED_SUFFIX"
+          "rule_id": "4.5.4.2",
+          "outcome": "PARTIAL_EU_MATCH_PRESENT"
         }
       ],
-      "motivation": "Certifikatet anger ursprung som \"The European Community\". Fakturan hänvisar till origin-kolumnen och visar ursprungskoderna \"DE*\", \"CH*\" och \"DE*\" på sida 1, men ingen legend eller förklaring till asterisken finns i dokumentet. DE motsvarar ett EU-land, men CH är normalt Schweiz (icke-EU); eftersom suffixet är oförklarat får det inte automatiskt tolkas som verifierad eller motstridig ursprungsuppgift. Ursprungskontrollen ska därför skickas till manuell granskning."
+      "motivation": "Certifikatet anger ursprung 'The European Community'. Fakturan visar ursprungskoderna 'DE*', 'CH*' och 'DE*' på radnivå. 'DE*' pekar mot ett EU-land efter avskiljning av enkel asterisk, men 'CH*' är en icke-EU-kod med oförklarat suffix. Regelverket anger då MANUAL_REVIEW i stället för automatisk MATCH eller MISMATCH."
     }
   },
   "overall_assessment": {
@@ -161,16 +161,16 @@
     "confidence": 0.78,
     "critical_failures": [],
     "manual_review_triggers": [
-      "Fakturans origin-kolumn använder koderna DE* och CH* utan förklarande legend.",
-      "Certifikatet anger endast \"The European Community\", medan fakturan innehåller en möjlig icke-EU-kod med oförklarat suffix."
+      "Fakturan anger ursprungskoden 'CH*' utan förklaring till suffixet '*'.",
+      "Certifikatet anger endast 'The European Community', medan fakturans radursprung innehåller både 'DE*' och 'CH*'."
     ],
     "manual_review_reason": "ORIGIN_SUFFIX_UNEXPLAINED",
-    "decision_summary": "Avsändare, mottagare, fakturareferens/varubeskrivning och kvantitet kan verifieras mot fakturan. Ursprungslandet kan dock inte avgöras entydigt eftersom fakturan använder ursprungskoder med oförklarad asterisk.",
-    "human_explanation": "Avsändare, mottagare, fakturareferens och bruttovikt stämmer mot fakturan. Däremot anges ursprung i fakturan som \"DE*\" och \"CH*\" utan förklaring till asterisken, vilket gör det oklart om ursprungsuppgiften fullt ut motsvarar certifikatet. Ärendet behöver därför granskas manuellt."
+    "decision_summary": "Dokumentparet är giltigt parat via fakturanummer 4859319. Avsändare, mottagare, varubeskrivning och kvantitet kan verifieras. Ursprungslandet kan inte avgöras automatiskt eftersom fakturan innehåller den oförklarade ursprungskoden 'CH*'.",
+    "human_explanation": "Certifikatet hänvisar till faktura 4859319 och avsändare, mottagare, varor samt vikt stämmer mot fakturan. Ursprunget kan däremot inte godkännas automatiskt eftersom fakturan visar ursprungskoderna 'DE*', 'CH*' och 'DE*', där 'CH*' har ett oförklarat suffix. Ärendet behöver därför manuell granskning."
   },
   "_meta": {
-    "tested_at": "2026-06-06T09:16:06.620599+00:00",
-    "prompt_hash": "4690e976915d",
+    "tested_at": "2026-06-06T14:01:49.287190+00:00",
+    "prompt_hash": "752423deb8d7",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P0160_MISMATCH",

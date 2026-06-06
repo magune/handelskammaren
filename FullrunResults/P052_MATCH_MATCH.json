@@ -13,14 +13,14 @@
   },
   "documents": {
     "document_a": {
-      "label": "Certificate of Origin (structured JSON)",
+      "label": "CERTIFICATE OF ORIGIN (structured JSON)",
       "assumed_role": "certificate",
-      "document_type": "structured_json"
+      "document_type": "Certificate of Origin"
     },
     "document_b": {
-      "label": "Invoice PDF",
+      "label": "INVOICE ORIGINAL No. 921007391",
       "assumed_role": "invoice",
-      "document_type": "invoice"
+      "document_type": "Invoice"
     }
   },
   "rule_activation": {
@@ -34,11 +34,27 @@
     "activated_rules": [
       {
         "rule_id": "8.6",
-        "rule_name": "Parningsvalidering passerad via identifierbar consignor och consignee"
+        "rule_name": "Parningsvalidering passerad via consignor- och consignee-identifiering i fakturan"
+      },
+      {
+        "rule_id": "4.1.0",
+        "rule_name": "Consignor uttryckligen identifierad i fakturan"
       },
       {
         "rule_id": "4.2.2.1.3",
-        "rule_name": "Certifikatets mottagarnamn som strikt delmängd av fakturans namn"
+        "rule_name": "Certifikatets mottagarnamn som strikt delmängd av fakturans mottagarnamn"
+      },
+      {
+        "rule_id": "4.3.3",
+        "rule_name": "Kontrollerad textmatchning av varubeskrivning"
+      },
+      {
+        "rule_id": "4.4.3",
+        "rule_name": "Direkt identifiering av numerisk kvantitet i fakturan"
+      },
+      {
+        "rule_id": "4.5.1",
+        "rule_name": "Explicit ursprungsangivelse i fakturan"
       }
     ]
   },
@@ -46,12 +62,12 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.98,
+      "confidence": 0.99,
       "certificate_value": "ARA Timber AB | Vallgatan 27 | 411 16 | GOTHENBURG | SWEDEN | 556976-0035",
       "invoice_value": "ARA Timber AB\nVallgatan 27\n411 16 GÖTEBORG\nSweden\nOrg.No 556976-0035\nVAT No SE556976003501",
       "rules_applied": [
         {
-          "rule_id": "4.1.3.1",
+          "rule_id": "4.1.0",
           "outcome": "MATCH"
         },
         {
@@ -59,16 +75,16 @@
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.1.5",
+          "rule_id": "4.1.4",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor \"ARA Timber AB\" kan identifieras exakt i fakturan i sidfot/företagsblock. Landet verifieras uttryckligen genom \"Sweden\" och stöds även av svensk VAT-prefix \"SE\". Samma juridiska part kan därför styrkas mot fakturan."
+      "motivation": "Certifikatets consignor 'ARA Timber AB' återfinns uttryckligen i fakturans header/footer. Landet verifieras i fakturan genom adressen 'Sweden' och stöds även av VAT-prefixet 'SE' i 'SE556976003501'. Samma juridiska part och land kan därför identifieras utan tolkning enligt 4.1.0, 4.1.2.1 och 4.1.4."
     },
     "consignee": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.9,
+      "confidence": 0.91,
       "certificate_value": "Company Bouchra Taibah | For Trading (One Partner) | Abdullah Bin Wadiah | 7064 Building Number | Al Matar District 3772 | 42343 | Madinah | Saudi Arabia",
       "invoice_value": "Customer\nCompany Bouchra Taibah For Trading (One Partner)\nAbdullah Bin Wadiah 7064 Building Number\nAl Matar District 3772\n42343 Madinah\nSAUDI ARABIA",
       "rules_applied": [
@@ -83,13 +99,9 @@
         {
           "rule_id": "4.2.3",
           "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.2.4",
-          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets mottagarnamn \"Company Bouchra Taibah\" återfinns i fakturans kundblock som inledande del av \"Company Bouchra Taibah For Trading (One Partner)\". Detta är en tillåten strikt delmängd av fakturans namn och landet \"SAUDI ARABIA\" framgår uttryckligen i fakturan. Mottagaren kan därför verifieras."
+      "motivation": "Certifikatets mottagare kan identifieras i fakturans Customer-block. Företagsnamnet i certifikatet 'Company Bouchra Taibah' utgör en strikt delmängd i samma ordning av fakturans 'Company Bouchra Taibah For Trading (One Partner)', och de övriga adressuppgifterna samt landet 'SAUDI ARABIA' överensstämmer. Detta är tillåtet enligt 4.2.2.1.3 och ger MATCH."
     },
     "goods_description": {
       "applicable": true,
@@ -100,25 +112,21 @@
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "PRIORITY_2_APPLIED"
+          "outcome": "NOT_APPLICABLE"
         },
         {
           "rule_id": "4.3.3",
           "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.3.8",
-          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets varubeskrivning är \"REDWOOD\" och samma identitetsbärande huvudbeteckning framgår uttryckligen i fakturans varubeskrivning. Ingen semantisk tolkning eller undantagsregel behövs."
+      "motivation": "Certifikatet anger varubeskrivningen 'REDWOOD'. Samma ord förekommer uttryckligen i fakturans beskrivningsfält som varugrupp/huvudbeteckning. Ingen artikelnummerregel behövde tillämpas eftersom certifikatet inte anger något artikelnummer."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.98,
-      "certificate_value": "88,842 cbm",
-      "invoice_value": "21 packages / 88,842 cbm",
+      "certificate_value": "OriginRows[].Quantity: 88,842 cbm; OriginPackages: Lot 2B | 2x40´HC Containers | 21 packages | Gross weight: 50 380 kgs",
+      "invoice_value": "21 packages / 88,842 cbm\nGross weight: 50 380 kgs\nLot 2B\n2x40'HC Containers",
       "rules_applied": [
         {
           "rule_id": "4.4.2.2",
@@ -129,11 +137,11 @@
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.4.7",
+          "rule_id": "4.4.3.2",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets kvantitet \"88,842 cbm\" innehåller både numeriskt värde och giltig enhet. Samma numeriska värde och enhet återfinns uttryckligen i fakturan som \"21 packages / 88,842 cbm\" för samma försändning/vara. Ingen summering eller omräkning behövs."
+      "motivation": "Den primära kvantiteten i certifikatet är '88,842 cbm', vilket kan identifieras exakt i fakturan i texten '21 packages / 88,842 cbm'. Därutöver återfinns även 'Gross weight: 50 380 kgs', 'Lot 2B' och '2x40'HC Containers' i fakturan. Minst en certifikatkvantitet är verifierad direkt mot fakturan enligt 4.4.3, och inga motstridiga kvantiteter förekommer."
     },
     "origin": {
       "applicable": true,
@@ -147,31 +155,27 @@
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.5.2",
-          "outcome": "MATCH"
-        },
-        {
           "rule_id": "4.5.6",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets ursprungsland \"NORWAY\" kan identifieras uttryckligen i fakturan i ett dedikerat ursprungsfält: \"Country of origin Norway\". Ursprunget framgår därmed explicit och utan tolkning."
+      "motivation": "Certifikatets ursprungsland 'NORWAY' återfinns uttryckligen i fakturans dedikerade origin-fält som 'Country of origin Norway'. Ursprunget stöds även av texten 'MADE IN NORWAY' i fakturan. Därmed är ursprungslandet positivt verifierat enligt 4.5.1 och 4.5.6."
     }
   },
   "overall_assessment": {
     "comparison_result": "IDENTICAL",
     "workflow_recommendation": "AUTO_APPROVAL_ELIGIBLE",
     "auto_approval_eligible": true,
-    "confidence": 0.95,
+    "confidence": 0.97,
     "critical_failures": [],
     "manual_review_triggers": [],
     "manual_review_reason": "NOT_APPLICABLE",
-    "decision_summary": "Alla fem tillämpliga kontrollpunkter kan verifieras mot fakturan. Ingen avvikelse, motsägelse eller blockerande osäkerhet har identifierats.",
-    "human_explanation": "Alla uppgifter i certifikatet kan verifieras mot fakturan. Avsändare, mottagare, varubeskrivning, kvantitet och ursprungsland stämmer. Dokumentparet kan därför godkännas automatiskt."
+    "decision_summary": "Alla fem tillämpliga kontrollpunkter verifierades som MATCH. Certifikatets avsändare, mottagare, varubeskrivning, kvantitet och ursprungsland kan återfinnas i den bifogade fakturan enligt regelverket.",
+    "human_explanation": "Alla kontrollpunkter stämmer mellan certifikatet och fakturan. Avsändare, mottagare, varubeskrivning, mängden 88,842 cbm och ursprungslandet Norge återfinns i fakturan. Dokumentparet kan godkännas automatiskt."
   },
   "_meta": {
-    "tested_at": "2026-06-06T09:17:25.972988+00:00",
-    "prompt_hash": "4690e976915d",
+    "tested_at": "2026-06-06T13:54:17.708584+00:00",
+    "prompt_hash": "752423deb8d7",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P052_MATCH",

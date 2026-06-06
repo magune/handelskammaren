@@ -13,14 +13,14 @@
   },
   "documents": {
     "document_a": {
-      "label": "Certificate of Origin (structured JSON)",
+      "label": "Certificate of Origin JSON",
       "assumed_role": "certificate",
-      "document_type": "Certificate of Origin"
+      "document_type": "structured_certificate_of_origin_json"
     },
     "document_b": {
-      "label": "Attached PDF",
+      "label": "Invoice PDF",
       "assumed_role": "invoice",
-      "document_type": "Invoice"
+      "document_type": "invoice"
     }
   },
   "rule_activation": {
@@ -34,27 +34,19 @@
     "activated_rules": [
       {
         "rule_id": "2.2",
-        "rule_name": "LC-undantag ej aktiverat"
+        "rule_name": "LC-undantag prövat men ej aktiverat"
       },
       {
         "rule_id": "4.1.0",
-        "rule_name": "Consignor identifierad någonstans i fakturadokumentet"
+        "rule_name": "Koncernstruktur/explicit förekomst av consignor i fakturan"
       },
       {
-        "rule_id": "4.2.0.2",
-        "rule_name": "Consignee får identifieras i något mottagarfält"
-      },
-      {
-        "rule_id": "4.3.2",
-        "rule_name": "Prioritet 2 kontrollerad textmatchning"
+        "rule_id": "4.3.8.1",
+        "rule_name": "Metadata/kategori- och vikttexter i varubeskrivningsfältet är inte separata varuposter"
       },
       {
         "rule_id": "4.4.4.2",
-        "rule_name": "Normalisering av blandade decimal-/tusentalsseparatorer"
-      },
-      {
-        "rule_id": "4.5.4",
-        "rule_name": "ISO-landskod motsvarar landsnamn"
+        "rule_name": "Normalisering av blandade decimalseparatorer"
       }
     ]
   },
@@ -62,9 +54,9 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.93,
-      "certificate_value": "TETRA PAK INTERNATIONAL SA | AV. GENERAL GUISAN 70 | 1009 PULLY | SWITZERLAND",
-      "invoice_value": "Postal address: Tetra Pak International SA P.O. Box 446 CH - 1009 PULLY | VAT reg no: FR51431929470 | Tetra Pak International SA Av. Général-Guisan 70, CH-1009 Pully",
+      "confidence": 0.91,
+      "certificate_value": "TETRA PAK INTERNATIONAL SA | AV. GENERAL GUISAN 70 | PULLY | SWITZERLAND",
+      "invoice_value": "Postal address: Tetra Pak International SA P.O. Box 446 CH - 1009 PULLY / VAT reg no: FR51431929470 Tetra Pak International SA Av. Général-Guisan 70, CH-1009 Pully",
       "rules_applied": [
         {
           "rule_id": "4.1.0",
@@ -79,7 +71,7 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor 'TETRA PAK INTERNATIONAL SA' återfinns uttryckligen i fakturans adress-/identifieringsblock på sida 1 och 2. Landet verifieras via ISO-landskoden 'CH' i adressen 'CH-1009 PULLY', vilket motsvarar Switzerland. Därmed är consignor verifierad trots att fakturans From-fält anger en annan utställande enhet."
+      "motivation": "Certifikatets consignor \"TETRA PAK INTERNATIONAL SA\" återfinns uttryckligen i fakturans footer/postal/VAT-block på sida 1 och 2. Landet kan verifieras via ISO-landkoden \"CH\" i adressen \"CH-1009 Pully\", vilket motsvarar Switzerland. Att fakturans \"From\"-fält anger \"Tetra Pak Closures France SNC\" hindrar inte match enligt regeln om explicit förekomst av certifikatets consignor någonstans i fakturan."
     },
     "consignee": {
       "applicable": true,
@@ -101,18 +93,18 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets mottagare kan identifieras direkt i fakturans fält 'Consignee' på sida 1. Företagsnamn, adresskärna och land överensstämmer efter normalisering av versaler och interpunktion."
+      "motivation": "Certifikatets mottagare kan identifieras direkt i fakturans explicita consignee-block. Företagsnamnet matchar efter tillåten normalisering av versaler och bolagsform ((PVT) LTD ↔ (Pvt) Ltd), och landet Sri Lanka framgår uttryckligen i samma block."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.87,
       "certificate_value": "576 CARTONS PLASTIC CAPS | DreamCap26 Pro Blue P2945C PA001 | Net weight: 4,968 kgs | HS CODE:392350 | FREIGHT PREPAID",
-      "invoice_value": "Item 10 A100001410 DreamCap26 Pro Blue P2945C PA001 | Product description: DreamCap Pro 26 mm | Total Pallets Reels and Cartons: 24 Pallets 0 Reels 576 Cartons | Origin FR Tariff Code 39235090",
+      "invoice_value": "Item line: DreamCap26 Pro Blue P2945C PA001 / Product description: DreamCap Pro 26 mm / Tariff Code 39235090 / Total Pallets Reels and Cartons: 24 Pallets 0 Reels 576 Cartons",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "PRIORITY_2_APPLIED"
+          "outcome": "NO_EXPLICIT_CERTIFICATE_ARTICLE_NUMBER_USED_FOR_PRIMARY_MATCH"
         },
         {
           "rule_id": "4.3.3",
@@ -120,28 +112,24 @@
         },
         {
           "rule_id": "4.3.8.1",
-          "outcome": "SUPPLEMENTARY_TEXT_NOT_TREATED_AS_SEPARATE_GOODS"
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Den identitetsbärande huvudbeteckningen i certifikatet är 'DreamCap26 Pro Blue P2945C PA001', och denna återfinns exakt i fakturans varurad på sida 1. Övriga certifikatrader ('Net weight: 4,968 kgs', 'HS CODE:392350', 'FREIGHT PREPAID') är metadata/supplementtext och inte separata varuposter. Den inledande texten '576 CARTONS PLASTIC CAPS' behandlas som samlande förpacknings-/kategoritext, vilket stöds av fakturans '576 Cartons' och den matchande specifika produktraden."
+      "motivation": "Den identitetsbärande huvudbeteckningen i certifikatet är \"DreamCap26 Pro Blue P2945C PA001\", och denna text återfinns explicit i fakturans varurad. De övriga certifikatraderna \"Net weight: 4,968 kgs\", \"HS CODE:392350\" och \"FREIGHT PREPAID\" är metadata/kompletterande uppgifter och inte separata varuposter. Raden \"576 CARTONS PLASTIC CAPS\" stöds delvis av fakturans uppgift om \"576 Cartons\", men den avgörande produktidentifieringen sker genom den exakta DreamCap-raden."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.96,
-      "certificate_value": "6239,520 kgs gross",
-      "invoice_value": "Gross weight 6,239.520 KG",
+      "confidence": 0.97,
+      "certificate_value": "6239,520 kgs gross | 24 PALLETS",
+      "invoice_value": "Gross weight 6,239.520 KG | Total Pallets Reels and Cartons 24 Pallets 0 Reels 576 Cartons",
       "rules_applied": [
-        {
-          "rule_id": "4.4.2",
-          "outcome": "MATCH"
-        },
         {
           "rule_id": "4.4.2.1",
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.4.3",
+          "rule_id": "4.4.3.6",
           "outcome": "MATCH"
         },
         {
@@ -149,14 +137,14 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger ett uttryckligt viktvärde med enhet och kategori: '6239,520 kgs gross'. Fakturan anger 'Gross weight 6,239.520 KG' på sida 1. Efter tillåten normalisering av decimal-/tusentalsseparatorer är värdet numeriskt identiskt (6239.520 KG), och viktkategorin Gross/GW överensstämmer."
+      "motivation": "Certifikatets kvantitetsfält anger uttryckligen viktvärde, enhet och viktkategori: \"6239,520 kgs gross\". Fakturan anger \"Gross weight 6,239.520 KG\". Efter tillåten normalisering av decimal- och tusentalsseparatorer är värdet numeriskt identiskt. Paketuppgiften \"24 PALLETS\" stöds dessutom av fakturans uppgift \"24 Pallets\"."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.98,
+      "confidence": 0.99,
       "certificate_value": "FRANCE",
-      "invoice_value": "Country of origin of goods FR | Origin FR",
+      "invoice_value": "Country of origin of goods FR / Origin FR",
       "rules_applied": [
         {
           "rule_id": "4.5.1",
@@ -167,23 +155,23 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger ursprungslandet 'FRANCE'. Fakturan anger explicit ursprung i dedikerat ursprungsfält som 'Country of origin of goods FR' samt i varuraden 'Origin FR'. ISO-koden 'FR' är ekvivalent med France."
+      "motivation": "Certifikatet anger ursprungsland \"FRANCE\". Fakturan innehåller explicit ursprungsangivelse både i fältet \"Country of origin of goods FR\" och på varuraden som \"Origin FR\". ISO-koden FR är ekvivalent med France."
     }
   },
   "overall_assessment": {
     "comparison_result": "IDENTICAL",
     "workflow_recommendation": "AUTO_APPROVAL_ELIGIBLE",
     "auto_approval_eligible": true,
-    "confidence": 0.94,
+    "confidence": 0.93,
     "critical_failures": [],
     "manual_review_triggers": [],
     "manual_review_reason": "NOT_APPLICABLE",
-    "decision_summary": "Alla fem tillämpliga kontrollpunkter verifieras mot fakturan. Ingen MISMATCH eller MANUAL_REVIEW kvarstår efter tillåten normalisering.",
-    "human_explanation": "Alla uppgifter i certifikatet kan verifieras mot fakturan. Avsändare, mottagare, vara, vikt och ursprungsland stämmer. Dokumentparet kan därför godkännas automatiskt."
+    "decision_summary": "Alla fem tillämpliga kontrollpunkter verifierades som MATCH mot fakturan. Ingen MISMATCH eller MANUAL_REVIEW utlösts, och samtliga matchningar har confidence på minst 0.85.",
+    "human_explanation": "Alla uppgifter i certifikatet kan verifieras mot fakturan. Avsändare, mottagare, vara, kvantitet och ursprungsland stämmer efter tillåten normalisering. Dokumentparet kan därför godkännas automatiskt."
   },
   "_meta": {
-    "tested_at": "2026-06-06T09:17:25.967578+00:00",
-    "prompt_hash": "4690e976915d",
+    "tested_at": "2026-06-06T13:54:17.700950+00:00",
+    "prompt_hash": "752423deb8d7",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P037_MATCH",

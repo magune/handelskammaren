@@ -15,12 +15,12 @@
     "document_a": {
       "label": "Certificate of Origin (structured JSON)",
       "assumed_role": "certificate",
-      "document_type": "certificate_of_origin_structured_json"
+      "document_type": "structured_certificate_of_origin_json"
     },
     "document_b": {
-      "label": "Attached PDF",
+      "label": "Invoice PDF",
       "assumed_role": "invoice",
-      "document_type": "invoice_pdf_with_supporting_export_documents"
+      "document_type": "commercial_invoice_with_supporting_export_documents"
     }
   },
   "rule_activation": {
@@ -34,27 +34,15 @@
     "activated_rules": [
       {
         "rule_id": "8.6",
-        "rule_name": "Obligatorisk parningsvalidering"
-      },
-      {
-        "rule_id": "4.1.0",
-        "rule_name": "Consignor identifierad uttryckligen i fakturadokument"
+        "rule_name": "Parningsvalidering passerad via identifierbar consignor och consignee i fakturan"
       },
       {
         "rule_id": "4.2.0.2",
-        "rule_name": "Consignee får identifieras i valfritt mottagarfält"
+        "rule_name": "Consignee verifierad i relevant mottagarfält"
       },
       {
-        "rule_id": "4.3.3",
-        "rule_name": "Kontrollerad textmatchning av varubeskrivning"
-      },
-      {
-        "rule_id": "4.4.3",
-        "rule_name": "Förekomstkontroll av numerisk kvantitet"
-      },
-      {
-        "rule_id": "4.5.1",
-        "rule_name": "Ursprungsland ska framgå uttryckligen i fakturan"
+        "rule_id": "4.1.2.1",
+        "rule_name": "Consignor-land verifierat via adress och VAT-prefix"
       }
     ]
   },
@@ -62,46 +50,54 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.98,
-      "certificate_value": "SKF Sverige AB | Sweden",
-      "invoice_value": "Issued by:\nSKF Sverige AB\nvon Utfallsgatan 4\n415 50 Göteborg\nSweden\nVAT no: SE556240830101",
+      "confidence": 0.97,
+      "certificate_value": "SKF Sverige AB",
+      "invoice_value": "Issued by: SKF Sverige AB, von Utfallsgatan 4, 415 50 Göteborg, Sweden; VAT no: SE556240830101",
       "rules_applied": [
         {
-          "rule_id": "4.1.0",
-          "outcome": "MATCH"
+          "rule_id": "4.1.1",
+          "outcome": "invoice issuer identified"
         },
         {
           "rule_id": "4.1.2",
-          "outcome": "MATCH"
+          "outcome": "same legal entity identified"
+        },
+        {
+          "rule_id": "4.1.2.1",
+          "outcome": "country verified via address and VAT prefix"
         },
         {
           "rule_id": "4.1.5",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor \"SKF Sverige AB\" återfinns uttryckligen i fakturans issuer-block. Landet \"Sweden\" framgår explicit i samma block. Adresskillnaden påverkar inte bedömningen eftersom företagsnamn och land verifieras för samma juridiska part."
+      "motivation": "Certifikatets consignor \"SKF Sverige AB\" återfinns uttryckligen som fakturautställare på fakturans sidor 4-6. Landet \"Sweden\" framgår explicit i issuer-adressen och stöds även av VAT-prefixet \"SE\" i \"SE556240830101\". Adresskillnaden mellan certifikatet och fakturan påverkar inte bedömningen eftersom företagsnamn och land matchar."
     },
     "consignee": {
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.97,
-      "certificate_value": "SKF Vietnam CO Ltd | Viet Nam",
-      "invoice_value": "Bill to\nSKF Vietnam CO Ltd\nR2, F4 Crescent Plaza Bldg, 105 Ton Dat Tien Street, Tan My Ward\nHo Chi Minh 700000\nVietnam",
+      "certificate_value": "SKF Vietnam CO Ltd ",
+      "invoice_value": "Bill to: SKF Vietnam CO Ltd, R2, F4 Crescent Plaza Bldg, 105 Ton Dat Tien Street, Ho Chi Minh 700000, Vietnam; Sold to: SKF Vietnam CO Ltd, ... Vietnam",
       "rules_applied": [
         {
           "rule_id": "4.2.0.2",
-          "outcome": "MATCH"
+          "outcome": "identified in Bill to and Sold to fields"
+        },
+        {
+          "rule_id": "4.2.2",
+          "outcome": "same legal entity identified"
         },
         {
           "rule_id": "4.2.3",
-          "outcome": "MATCH"
+          "outcome": "country matches after normalization"
         },
         {
           "rule_id": "4.2.4",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignee \"SKF Vietnam CO Ltd\" kan identifieras i fakturans mottagarfält \"Bill to\". Landet anges som \"Vietnam\" i fakturan och motsvarar certifikatets \"Viet Nam\" efter tillåten landnormalisering. Avvikelse i detaljerad gatuadress påverkar inte bedömningen."
+      "motivation": "Certifikatets mottagare \"SKF Vietnam CO Ltd\" kan identifieras tydligt i fakturans mottagarfält \"Bill to\" och \"Sold to\" på sida 4. Landet anges som \"Vietnam\" i fakturan och motsvarar certifikatets \"Viet Nam\" efter tillåten normalisering. Skillnader i gatuadress påverkar inte bedömningen eftersom företagsnamn och land överensstämmer."
     },
     "goods_description": {
       "applicable": true,
@@ -112,78 +108,78 @@
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "MATCH"
+          "outcome": "no certificate article number requiring priority-1 match"
         },
         {
           "rule_id": "4.3.3",
-          "outcome": "MATCH"
+          "outcome": "controlled text match successful"
         },
         {
           "rule_id": "4.3.8",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Den identitetsbärande huvudbeteckningen i certifikatet, \"SPHERICAL ROLLER BRG\", återfinns exakt i fakturans varubeskrivning utan behov av semantisk tolkning."
+      "motivation": "Varubeskrivningen i certifikatet är exakt \"SPHERICAL ROLLER BRG\" och samma text återfinns uttryckligen i fakturans varurad på sidorna 4-6. Ingen semantisk tolkning eller särskild normalisering utöver versal/gemen krävs. Därför är varubeskrivningen verifierad med direkt textmatchning."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.96,
+      "confidence": 0.98,
       "certificate_value": "1 pcs",
-      "invoice_value": "Quantity 1",
+      "invoice_value": "Quantity 1; UoM PC",
       "rules_applied": [
         {
           "rule_id": "4.4.2",
-          "outcome": "MATCH"
+          "outcome": "numeric value and unit present in certificate"
         },
         {
           "rule_id": "4.4.3",
-          "outcome": "MATCH"
+          "outcome": "same numeric value identified in invoice for same goods"
         },
         {
           "rule_id": "4.4.7",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger numeriskt värde och enhet som \"1 pcs\". Fakturan anger kvantiteten \"1\" för samma vara \"SPHERICAL ROLLER BRG\". Ingen motstridig kvantitetsuppgift förekommer."
+      "motivation": "Certifikatet anger kvantiteten \"1 pcs\". Fakturan anger för samma vara kvantiteten \"1\" och på sida 6 även enheten \"PC\", vilket är ekvivalent med \"pcs\". Det numeriska värdet överensstämmer exakt och ingen motsägelse förekommer."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.98,
+      "confidence": 0.96,
       "certificate_value": "SWEDEN",
-      "invoice_value": "Country of origin\nSweden",
+      "invoice_value": "Country of origin Sweden",
       "rules_applied": [
         {
           "rule_id": "4.5.1",
-          "outcome": "MATCH"
+          "outcome": "explicit origin field identified in invoice"
         },
         {
           "rule_id": "4.5.4",
-          "outcome": "MATCH"
+          "outcome": "country normalization not materially needed"
         },
         {
           "rule_id": "4.5.6",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets ursprungsland \"SWEDEN\" framgår uttryckligen i fakturan i ett dedikerat origin-fält som \"Country of origin Sweden\". Ursprungsuppgiften kan därför verifieras direkt."
+      "motivation": "Certifikatet anger ursprungslandet \"SWEDEN\". Fakturan innehåller en explicit ursprungsangivelse \"Country of origin Sweden\" på sida 4, och sida 6 visar dessutom landskoden \"SE\" i origin-kolumnen. Ursprungslandet kan därför verifieras uttryckligen i fakturan."
     }
   },
   "overall_assessment": {
     "comparison_result": "IDENTICAL",
     "workflow_recommendation": "AUTO_APPROVAL_ELIGIBLE",
     "auto_approval_eligible": true,
-    "confidence": 0.98,
+    "confidence": 0.97,
     "critical_failures": [],
     "manual_review_triggers": [],
     "manual_review_reason": "NOT_APPLICABLE",
-    "decision_summary": "Samtliga tillämpliga kontrollpunkter kan verifieras entydigt mot fakturan: consignor, consignee, varubeskrivning, kvantitet och ursprungsland är matchande.",
-    "human_explanation": "Certifikatet och fakturan stämmer överens för avsändare, mottagare, varubeskrivning, kvantitet och ursprungsland. Varan \"SPHERICAL ROLLER BRG\", kvantiteten 1 pcs och ursprunget Sweden framgår uttryckligen i fakturan. Dokumentparet kan godkännas automatiskt."
+    "decision_summary": "LC-undantaget är inte tillämpligt. Dokumentparet kan paras via tydligt identifierbar consignor och consignee i fakturan, och samtliga tillämpliga kontrollpunkter — avsändare, mottagare, varubeskrivning, kvantitet och ursprungsland — verifieras som MATCH mot den läsbara textbaserade fakturan. Inga motsägelser eller blockerande osäkerheter identifierades.",
+    "human_explanation": "Alla relevanta uppgifter i certifikatet kan återfinnas i fakturan. Avsändaren är SKF Sverige AB i Sverige, mottagaren är SKF Vietnam CO Ltd i Vietnam, varan är SPHERICAL ROLLER BRG, kvantiteten är 1 pcs och ursprungslandet är Sweden. Dokumentparet kan därför godkännas automatiskt."
   },
   "_meta": {
-    "tested_at": "2026-06-06T09:13:51.017543+00:00",
-    "prompt_hash": "4690e976915d",
+    "tested_at": "2026-06-06T14:17:35.590892+00:00",
+    "prompt_hash": "752423deb8d7",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P099_MATCH",

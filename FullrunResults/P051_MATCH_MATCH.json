@@ -2,9 +2,9 @@
   "schema_version": "3.0",
   "metadata": {
     "verification_timestamp": "2026-06-06T00:00:00Z",
-    "document_pair_id": null,
+    "document_pair_id": "SEG-26D-443130__921007402",
     "certificate_issue_date": null,
-    "source_documents_received": 1
+    "source_documents_received": 2
   },
   "task": {
     "task_type": "customs_document_pair_verification",
@@ -13,14 +13,14 @@
   },
   "documents": {
     "document_a": {
-      "label": "Certificate of Origin (structured JSON)",
+      "label": "Certificate of Origin SEG-26D-443130",
       "assumed_role": "certificate",
-      "document_type": "certificate_of_origin"
+      "document_type": "structured_json_certificate_of_origin"
     },
     "document_b": {
-      "label": "Invoice PDF attachment",
+      "label": "Invoice Original No. 921007402",
       "assumed_role": "invoice",
-      "document_type": "invoice"
+      "document_type": "commercial_invoice_pdf"
     }
   },
   "rule_activation": {
@@ -34,15 +34,15 @@
     "activated_rules": [
       {
         "rule_id": "2.2",
-        "rule_name": "LC-undantag aktiverat via exakt sträng i OriginRows[].Description"
+        "rule_name": "LC-undantag aktiverat"
       },
       {
-        "rule_id": "2.2.1",
-        "rule_name": "Ursprungsland verifieras i explicit origin-fält i fakturan"
+        "rule_id": "4.5.1",
+        "rule_name": "Ursprungsland identifierat i explicit origin-fält i fakturan"
       },
       {
-        "rule_id": "4.5",
-        "rule_name": "Ursprungsland verifiering"
+        "rule_id": "4.5.6",
+        "rule_name": "Varje ursprungsland i certifikatet måste kunna identifieras uttryckligen i fakturan"
       }
     ]
   },
@@ -56,10 +56,10 @@
       "rules_applied": [
         {
           "rule_id": "2.2",
-          "outcome": "LC-undantag aktiverat; avsändare ska inte verifieras"
+          "outcome": "LC exception active; control point not verified"
         }
       ],
-      "motivation": "Kontrollpunkten är inte tillämplig eftersom certifikatets varubeskrivningsfält innehåller den uttryckliga LC-hänvisningen \"L/C NUMBER MEDIT/02/LC48/25\" i OriginRows[].Description. Vid aktivt LC-undantag verifieras endast ursprungsland."
+      "motivation": "Kontrollpunkten verifierades inte eftersom LC-undantaget aktiverades. Certifikatets OriginRows[].Description innehåller exakt texten \"L/C NUMBER MEDIT/02/LC48/25\", vilket är en separat LC-etikett med nummer och inte en del av ett vanligt referensnummer."
     },
     "consignee": {
       "applicable": false,
@@ -70,10 +70,10 @@
       "rules_applied": [
         {
           "rule_id": "2.2",
-          "outcome": "LC-undantag aktiverat; mottagare ska inte verifieras"
+          "outcome": "LC exception active; control point not verified"
         }
       ],
-      "motivation": "Kontrollpunkten är inte tillämplig eftersom certifikatets varubeskrivningsfält innehåller den uttryckliga LC-hänvisningen \"L/C NUMBER MEDIT/02/LC48/25\" i OriginRows[].Description. Vid aktivt LC-undantag verifieras endast ursprungsland."
+      "motivation": "Kontrollpunkten verifierades inte eftersom LC-undantaget aktiverades. Certifikatets OriginRows[].Description innehåller exakt texten \"L/C NUMBER MEDIT/02/LC48/25\", vilket utgör en uttrycklig LC-hänvisning i varubeskrivningsfältet."
     },
     "goods_description": {
       "applicable": false,
@@ -84,10 +84,10 @@
       "rules_applied": [
         {
           "rule_id": "2.2",
-          "outcome": "LC-undantag aktiverat; varubeskrivning ska inte verifieras"
+          "outcome": "LC exception active; control point not verified"
         }
       ],
-      "motivation": "Kontrollpunkten är inte tillämplig eftersom certifikatets varubeskrivningsfält innehåller den exakta separata banktermssträngen \"L/C NUMBER MEDIT/02/LC48/25\" i OriginRows[].Description. Strängen är en separat LC-etikett och inte en del av ett vanligt referensnummer, därför aktiveras LC-undantaget och övriga kontrollpunkter sätts till NOT_APPLICABLE."
+      "motivation": "Varubeskrivningen verifierades inte eftersom LC-undantaget har absolut företräde. LC-hänvisningen identifierades i certifikatets OriginRows[].Description som exakt \"L/C NUMBER MEDIT/02/LC48/25\"."
     },
     "quantity": {
       "applicable": false,
@@ -98,36 +98,32 @@
       "rules_applied": [
         {
           "rule_id": "2.2",
-          "outcome": "LC-undantag aktiverat; kvantitet ska inte verifieras"
+          "outcome": "LC exception active; control point not verified"
         }
       ],
-      "motivation": "Kontrollpunkten är inte tillämplig eftersom certifikatets varubeskrivningsfält innehåller den uttryckliga LC-hänvisningen \"L/C NUMBER MEDIT/02/LC48/25\" i OriginRows[].Description. Vid aktivt LC-undantag verifieras endast ursprungsland."
+      "motivation": "Kvantitet verifierades inte eftersom LC-undantaget aktiverades. Enligt LC-regeln ska endast ursprungsland verifieras när certifikatets varubeskrivningsfält innehåller en uttrycklig LC-hänvisning med nummer."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.98,
       "certificate_value": "Sweden and Norway",
-      "invoice_value": "Country of origin Sweden and Norway",
+      "invoice_value": "Country of origin\nSweden and Norway",
       "rules_applied": [
         {
           "rule_id": "2.2",
-          "outcome": "LC-undantag aktiverat; endast ursprungsland verifieras"
-        },
-        {
-          "rule_id": "2.2.1",
-          "outcome": "Ursprungsland identifierat i explicit origin-fält i fakturan"
+          "outcome": "LC exception active; only origin verified"
         },
         {
           "rule_id": "4.5.1",
-          "outcome": "Explicit origin-fält identifierat"
+          "outcome": "Explicit origin field found in invoice"
         },
         {
           "rule_id": "4.5.6",
-          "outcome": "Samtliga ursprungsländer i certifikatet kan uttryckligen identifieras i fakturan"
+          "outcome": "All certificate origin countries explicitly identified in invoice"
         }
       ],
-      "motivation": "Certifikatet anger ursprungsland \"Sweden and Norway\". Fakturan anger uttryckligen i ett dedikerat origin-fält \"Country of origin Sweden and Norway\" på sidan 1. Båda länderna återfinns explicit i fakturans ursprungsangivelse efter normalisering av versaler/gemener, vilket ger MATCH."
+      "motivation": "LC-undantaget aktiverades eftersom certifikatets OriginRows[].Description exakt innehåller \"L/C NUMBER MEDIT/02/LC48/25\"; strängen förekommer i OriginRows[].Description och utgör en separat LC-etikett, inte en del av ett vanligt referensnummer. Vid LC ska endast ursprungsland verifieras. Fakturan anger i ett explicit ursprungsfält på sidan 1: \"Country of origin\" följt av \"Sweden and Norway\", vilket uttryckligen verifierar båda ursprungsländerna i certifikatet utan behov av ytterligare tolkning."
     }
   },
   "overall_assessment": {
@@ -138,12 +134,12 @@
     "critical_failures": [],
     "manual_review_triggers": [],
     "manual_review_reason": "NOT_APPLICABLE",
-    "decision_summary": "LC-undantaget aktiverades eftersom certifikatet innehåller den exakta separata hänvisningen \"L/C NUMBER MEDIT/02/LC48/25\" i OriginRows[].Description. Därför verifierades endast ursprungsland. Fakturans explicita origin-fält \"Country of origin Sweden and Norway\" matchar certifikatets \"Sweden and Norway\", och samtliga övriga kontrollpunkter är korrekt markerade som NOT_APPLICABLE.",
-    "human_explanation": "Certifikatet innehåller en uttrycklig L/C-hänvisning med numret MEDIT/02/LC48/25 i varubeskrivningen, så endast ursprungslandet ska verifieras. Fakturan anger uttryckligen \"Country of origin Sweden and Norway\", vilket överensstämmer med certifikatets \"Sweden and Norway\". Dokumentparet kan därför godkännas automatiskt."
+    "decision_summary": "LC-undantaget enligt 2.2 aktiverades på grund av den exakta texten \"L/C NUMBER MEDIT/02/LC48/25\" i certifikatets OriginRows[].Description. Därför verifierades endast ursprungsland. Fakturans explicita origin-fält \"Country of origin: Sweden and Norway\" matchar certifikatets ursprungsangivelse \"Sweden and Norway\" fullt ut.",
+    "human_explanation": "Certifikatet innehåller en tydlig L/C-hänvisning, så endast ursprungslandet ska kontrolleras. Fakturan anger uttryckligen \"Country of origin: Sweden and Norway\", vilket stämmer med certifikatet. Dokumentparet kan därför godkännas automatiskt."
   },
   "_meta": {
-    "tested_at": "2026-06-06T09:17:25.972575+00:00",
-    "prompt_hash": "4690e976915d",
+    "tested_at": "2026-06-06T13:54:17.708090+00:00",
+    "prompt_hash": "752423deb8d7",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P051_MATCH",

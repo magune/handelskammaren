@@ -4,7 +4,7 @@
     "verification_timestamp": "2026-06-06T00:00:00Z",
     "document_pair_id": "SEG-26D-465224__61622342-1S",
     "certificate_issue_date": null,
-    "source_documents_received": 1
+    "source_documents_received": 2
   },
   "task": {
     "task_type": "customs_document_pair_verification",
@@ -13,7 +13,7 @@
   },
   "documents": {
     "document_a": {
-      "label": "Certificate of Origin JSON",
+      "label": "Certificate of Origin structured JSON",
       "assumed_role": "certificate",
       "document_type": "structured_json"
     },
@@ -33,28 +33,24 @@
     "eu_origin_normalization_active": true,
     "activated_rules": [
       {
-        "rule_id": "4.1.0",
-        "rule_name": "Consignor identified anywhere in invoice"
+        "rule_id": "8.5",
+        "rule_name": "Dokumentparning via uttrycklig fakturareferens"
       },
       {
-        "rule_id": "4.2.0.2",
-        "rule_name": "Consignee may be verified in any recipient field"
-      },
-      {
-        "rule_id": "4.4.3.6",
-        "rule_name": "Total weight in invoice may verify certificate weight"
+        "rule_id": "8.6",
+        "rule_name": "Obligatorisk parningsvalidering"
       },
       {
         "rule_id": "4.5.3",
-        "rule_name": "Mixed origins"
+        "rule_name": "Blandade ursprung"
       },
       {
         "rule_id": "4.5.4.1",
-        "rule_name": "EU origin normalization"
+        "rule_name": "EU-normalisering"
       },
       {
-        "rule_id": "4.5.4.2",
-        "rule_name": "EU member state interchangeable with EU"
+        "rule_id": "4.5.4",
+        "rule_name": "ISO-landkoder som landsnamn"
       }
     ]
   },
@@ -63,111 +59,127 @@
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.99,
-      "certificate_value": "AB Volvo Penta | Gropegårdsgatan 11 | SE-405 08 | Gothenburg | Sweden",
-      "invoice_value": "AB Volvo Penta\nGropegårdsgatan 11\n40508 Göteborg\nSweden",
+      "certificate_value": "AB Volvo Penta; Sweden",
+      "invoice_value": "AB Volvo Penta, Gropegårdsgatan 11, 40508 Göteborg, Sweden",
       "rules_applied": [
         {
-          "rule_id": "4.1.0",
-          "outcome": "MATCH"
+          "rule_id": "4.1.1",
+          "outcome": "issuer identified in invoice"
         },
         {
-          "rule_id": "4.1.2.1",
-          "outcome": "MATCH"
+          "rule_id": "4.1.2",
+          "outcome": "name and country verified"
+        },
+        {
+          "rule_id": "4.1.3.1",
+          "outcome": "same legal entity identified"
         },
         {
           "rule_id": "4.1.4",
-          "outcome": "MATCH"
+          "outcome": "country matched"
         }
       ],
-      "motivation": "Certifikatets consignor \"AB Volvo Penta\" återfinns uttryckligen i fakturan på flera sidor. Fakturan visar även adressen \"Gropegårdsgatan 11, 40508 Göteborg, Sweden\", vilket verifierar samma juridiska part och samma land."
+      "motivation": "Certifikatets avsändare 'AB Volvo Penta' kan identifieras uttryckligen i fakturan på flera sidor, bl.a. i sidhuvud/sidfot med adressen 'Gropegårdsgatan 11, 40508 Göteborg, Sweden'. Företagsnamn och land överensstämmer."
     },
     "consignee": {
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.99,
-      "certificate_value": "SANY MARINE HEAVY INDUSTRY CO., LTD | HAIGONGYI ROAD,GAOLANGANG ECONOMIC | DISTRICT ZHUHAI CITY,GUANGDONG | PROVINCE CHINA | China",
-      "invoice_value": "Consignee\nSANY MARINE HEAVY INDUSTRY CO., LTD\nHAIGONGYI ROAD,GAOLANGANG ECONOMIC DISTRICT\nZHUHAI CITY,GUANGDONG\nPROVINCE CHINA",
+      "certificate_value": "SANY MARINE HEAVY INDUSTRY CO., LTD; China",
+      "invoice_value": "Consignee: SANY MARINE HEAVY INDUSTRY CO., LTD, HAIGONGYI ROAD, GAOLANGANG ECONOMIC DISTRICT, ZHUHAI CITY, GUANGDONG, PROVINCE CHINA",
       "rules_applied": [
         {
           "rule_id": "4.2.0.2",
-          "outcome": "MATCH"
+          "outcome": "consignee identified in invoice consignee field"
         },
         {
           "rule_id": "4.2.2",
-          "outcome": "MATCH"
+          "outcome": "company name verified"
         },
         {
           "rule_id": "4.2.3",
-          "outcome": "MATCH"
+          "outcome": "country matched"
         }
       ],
-      "motivation": "Certifikatets mottagare återfinns exakt i fakturans fält \"Consignee\". Företagsnamn och land (China) överensstämmer."
+      "motivation": "Certifikatets mottagare återfinns uttryckligen i fakturans 'Consignee'-block på sida 1. Företagsnamn och land China överensstämmer."
     },
     "goods_description": {
       "applicable": true,
       "status": "MISMATCH",
       "confidence": 0.98,
       "certificate_value": "TAD880-84VE | See attached invoice: 61622342/1S | Details as per contract: SV251003-HG-881-CN4 | Industrial diesel engine",
-      "invoice_value": "Invoice No/Type 61622342/1S | DETAILS AS PER CONTRACT: SV251003-HG-881-CN4 | COMMODITY: ENGINE | TAD881VE Industrial diesel engine",
+      "invoice_value": "TAD881VE Industrial diesel engine | Invoice No/Type 61622342/1S | Customer PO SV251003-HG-881-CN4",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "MISMATCH"
+          "outcome": "certificate product identifier not found exactly in invoice"
         },
         {
           "rule_id": "4.3.3",
-          "outcome": "MISMATCH"
+          "outcome": "generic text 'Industrial diesel engine' found, but cannot override identifier mismatch"
         },
         {
           "rule_id": "4.3.5",
-          "outcome": "NOT_APPLICABLE_FORM_REQUIREMENTS_NOT_MET"
+          "outcome": "not applicable for MATCH because certificate invoice reference lacks invoice date"
+        },
+        {
+          "rule_id": "4.3.8",
+          "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Fakturareferensen \"61622342/1S\", kontraktsreferensen \"SV251003-HG-881-CN4\" och texten \"Industrial diesel engine\" kan identifieras i fakturan. Den uttryckliga produktidentifieraren i certifikatet är dock \"TAD880-84VE\", medan fakturan anger \"TAD881VE\". Detta är inte en tillåten normalisering eller en enstaka teckenavvikelse, och certifikatet saknar dessutom fakturadatum i varubeskrivningsreferensen för att kunna verifieras enbart via regeln om generell fakturahänvisning. Därför blir kontrollpunkten MISMATCH."
+      "motivation": "Certifikatet anger den specifika produktidentifieraren 'TAD880-84VE'. Fakturan anger istället 'TAD881VE Industrial diesel engine' på sida 2. Skillnaden överskrider regeln för enstaka teckenavvikelse och den exakta identifieraren i certifikatet kan inte återfinnas i fakturan. Att 'Industrial diesel engine', fakturanummer 61622342/1S och kontraktsreferensen SV251003-HG-881-CN4 återfinns räcker inte för att upphäva denna avvikelse."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.99,
-      "certificate_value": "GW 1168.00 KG | 5 THU",
-      "invoice_value": "Total Gross Weight 1168.00 KG | Gross Weight/Unit 1168.00KG | Qty of Transport Handling Unit 5 Transport Handling Unit(5Pallets)",
+      "certificate_value": "GW 1168.00 KG",
+      "invoice_value": "Total Gross Weight 1168.00 KG",
       "rules_applied": [
         {
           "rule_id": "4.4.2.1",
-          "outcome": "MATCH"
+          "outcome": "certificate weight category and unit explicitly stated"
+        },
+        {
+          "rule_id": "4.4.3",
+          "outcome": "numeric value identified in invoice"
         },
         {
           "rule_id": "4.4.3.6",
-          "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.4.3.2",
-          "outcome": "MATCH"
+          "outcome": "total gross weight matched"
         }
       ],
-      "motivation": "Certifikatet anger uttryckligen \"GW 1168.00 KG\". Fakturan anger samma totalvikt som \"Total Gross Weight 1168.00 KG\" och även \"Gross Weight/Unit 1168.00KG\". Dessutom återfinns kolliuppgiften som \"5 Transport Handling Unit(5Pallets)\", vilket stödjer \"5 THU\"."
+      "motivation": "Certifikatets kvantitet 'GW 1168.00 KG' innehåller både viktkategori, numeriskt värde och enhet. Fakturan anger uttryckligen 'Total Gross Weight 1168.00 KG' på sida 1, vilket verifierar uppgiften direkt."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.91,
+      "confidence": 0.9,
       "certificate_value": "European Community | The United States",
-      "invoice_value": "ORIGIN: FRANCE | Origin column includes FR, SE, LT, PL, DE, CZ, US, AT",
+      "invoice_value": "ORIGIN: FRANCE | Origin codes in line items include US",
       "rules_applied": [
         {
+          "rule_id": "4.5.1",
+          "outcome": "explicit origin statements identified in invoice"
+        },
+        {
           "rule_id": "4.5.3",
-          "outcome": "MATCH"
+          "outcome": "mixed origins shown per article in invoice"
         },
         {
           "rule_id": "4.5.4.1",
-          "outcome": "MATCH"
+          "outcome": "European Community verified through EU member states in invoice"
         },
         {
-          "rule_id": "4.5.4.2",
-          "outcome": "MATCH"
+          "rule_id": "4.5.4",
+          "outcome": "US code accepted as The United States"
+        },
+        {
+          "rule_id": "4.5.6",
+          "outcome": "all certificate origins verified"
         }
       ],
-      "motivation": "Certifikatet anger två ursprung: \"European Community\" och \"The United States\". Fakturan innehåller flera explicita ursprung i origin-kolumnen, bland annat EU-länderna FR, SE, LT, PL, DE, CZ och AT samt \"US\". Därmed kan både EU-samlingsbegreppet och USA verifieras uttryckligen i fakturan."
+      "motivation": "Certifikatet anger 'European Community' och 'The United States'. Fakturan anger uttryckligt ursprung 'FRANCE' på sida 1 samt flera EU-länders ursprungskoder per rad på sidorna 2-4, vilket verifierar EU-ursprung. Fakturan anger dessutom 'US' som ursprung för en artikelrad på sida 3, vilket verifierar 'The United States'."
     }
   },
   "overall_assessment": {
@@ -176,16 +188,16 @@
     "auto_approval_eligible": false,
     "confidence": 0.97,
     "critical_failures": [
-      "Varubeskrivningen kan inte verifieras fullt ut eftersom certifikatet anger \"TAD880-84VE\" medan fakturan anger \"TAD881VE\"."
+      "Varubeskrivning/produktidentifierare avviker: certifikatet anger 'TAD880-84VE' medan fakturan anger 'TAD881VE'."
     ],
     "manual_review_triggers": [],
     "manual_review_reason": "NOT_APPLICABLE",
-    "decision_summary": "Dokumentparningen är giltig och fakturanumret 61622342/1S matchar. Consignor, consignee, kvantitet och ursprungsland kan verifieras mot fakturan. Den övergripande bedömningen blir ändå NOT_IDENTICAL eftersom certifikatets produktidentifierare \"TAD880-84VE\" inte återfinns i fakturan, som i stället anger \"TAD881VE\".",
-    "human_explanation": "Certifikatet och fakturan stämmer för avsändare, mottagare, kvantitet och ursprung. Varubeskrivningen stämmer däremot inte fullt ut: certifikatet anger \"TAD880-84VE\" medan fakturan anger \"TAD881VE\". Därför kan dokumentparet inte bedömas som identiskt."
+    "decision_summary": "Dokumentparet är korrekt parat via fakturanummer 61622342/1S och consignor/consignee, och avsändare, mottagare, kvantitet samt ursprung kan verifieras. Den tillämpliga varubeskrivningen kan däremot inte verifieras eftersom certifikatets specifika produktidentifierare 'TAD880-84VE' inte återfinns i fakturan, som istället anger 'TAD881VE'. Minst en tillämplig kontrollpunkt är därför MISMATCH.",
+    "human_explanation": "Certifikatet anger varan/produktidentifieraren 'TAD880-84VE' medan fakturan anger 'TAD881VE Industrial diesel engine'. Avsändare, mottagare, kvantitet och ursprung kan verifieras, men varubeskrivningen stämmer inte överens. Ärendet kräver därför manuell handläggning."
   },
   "_meta": {
-    "tested_at": "2026-06-06T09:00:14.349509+00:00",
-    "prompt_hash": "4690e976915d",
+    "tested_at": "2026-06-06T14:05:41.310611+00:00",
+    "prompt_hash": "752423deb8d7",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P0011_MISMATCH",
