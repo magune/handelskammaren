@@ -1,8 +1,8 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-06-01T00:00:00Z",
-    "document_pair_id": "SEG-24D-033263_vs_F498604_F498605_F498606_F498607",
+    "verification_timestamp": "2026-06-06T00:00:00Z",
+    "document_pair_id": "SEG-24D-033263__invoice_pdf_multi_2024-04-02",
     "certificate_issue_date": null,
     "source_documents_received": 2
   },
@@ -15,12 +15,12 @@
     "document_a": {
       "label": "CERTIFICATE OF ORIGIN (structured JSON)",
       "assumed_role": "certificate",
-      "document_type": "structured_json_certificate_of_origin"
+      "document_type": "Certificate of Origin"
     },
     "document_b": {
-      "label": "Invoice PDF pages 1-4",
+      "label": "Attached invoice PDF",
       "assumed_role": "invoice",
-      "document_type": "invoice_pdf_with_multiple_separate_invoices"
+      "document_type": "Invoice PDF containing 4 separate invoices"
     }
   },
   "rule_activation": {
@@ -33,180 +33,149 @@
     "eu_origin_normalization_active": false,
     "activated_rules": [
       {
-        "rule_id": "4.3.2",
-        "rule_name": "Artikelnummer används som primär verifieringsmetod för varubeskrivning"
-      },
-      {
-        "rule_id": "4.3.7",
-        "rule_name": "Flera ursprung med explicit koppling per varurad i certifikatet"
+        "rule_id": "8.5.1",
+        "rule_name": "Flera fakturor från samma utställare utan entydig fakturareferens i certifikatet"
       },
       {
         "rule_id": "4.2.2.1.1",
         "rule_name": "Avkortning av certifikatets mottagarnamn"
       },
       {
-        "rule_id": "4.4.5.7",
-        "rule_name": "Flera numeriska kvantiteter utan enhet i certifikatet kan matchas radvis mot fakturan"
-      },
-      {
-        "rule_id": "8.5.1",
-        "rule_name": "Flera separata fakturor från samma utställare utan specifik fakturareferens i certifikatet"
-      },
-      {
-        "rule_id": "8.6",
-        "rule_name": "Obligatorisk parningsvalidering"
+        "rule_id": "4.5.3",
+        "rule_name": "Blandade ursprung"
       }
     ]
   },
   "control_points": {
     "consignor": {
       "applicable": true,
-      "status": "MATCH",
-      "confidence": 0.99,
-      "certificate_value": "AB Regin | Box 116 | SE-428 22 | KÅLLERED | Sweden | VAT SE556414545501",
-      "invoice_value": "AB Regin | Box 116 | SE-428 22 Kållered | Sweden | Reg. No. 556414-5455 | VAT No. SE556414545501",
+      "status": "MANUAL_REVIEW",
+      "confidence": 0.63,
+      "certificate_value": "AB Regin",
+      "invoice_value": "Pages 1-4 each show issuer/exporter details for AB Regin, Box 116, SE-428 22 Kållered, Sweden, VAT No. SE556414545501, across invoice nos. F 498604, F 498605, F 498606 and F 498607.",
       "rules_applied": [
         {
-          "rule_id": "4.1.1",
-          "outcome": "identifierad som fakturautställare i sidfot/sidhuvud"
-        },
-        {
-          "rule_id": "4.1.2",
-          "outcome": "företagsnamn och land verifierade"
+          "rule_id": "4.1.0",
+          "outcome": "MATCH_CANDIDATE_FOUND"
         },
         {
           "rule_id": "4.1.2.1",
-          "outcome": "land verifierat via adress och VAT-prefix SE"
+          "outcome": "LAND_VERIFIED"
         },
         {
-          "rule_id": "4.1.5",
-          "outcome": "MATCH"
+          "rule_id": "8.5.1",
+          "outcome": "MANUAL_REVIEW"
         }
       ],
-      "motivation": "Certifikatets consignor \"AB Regin\" återfinns uttryckligen i fakturornas företagsuppgifter och sidfot. Landet Sverige framgår i adressen \"SE-428 22 Kållered, Sweden\" och stöds dessutom av VAT-numret \"SE556414545501\". Samma juridiska part kan därför verifieras."
+      "motivation": "Certifikatets consignor \"AB Regin\" kan identifieras uttryckligen i fakturornas sidfot/utställarblock på samtliga fyra sidor, med Sverige verifierat via adress och VAT-nummer. PDF:en innehåller dock fyra separata fakturor från samma utställare och certifikatet anger inget fakturanummer som entydigt pekar ut avsedd faktura eller avsett fakturaset. Därför kan denna kontrollpunkt inte slutligt automatiseras trots att consignoruppgiften förekommer."
     },
     "consignee": {
       "applicable": true,
-      "status": "MATCH",
-      "confidence": 0.94,
-      "certificate_value": "Regin Controls Otomasyon Sanayi ve | Yesilce Mah. Aytekin Sok. No:2 | 4. Levent Eski Oto Sanayi | 34418 Kagithane / Istanbul | Turkey",
-      "invoice_value": "Regin Controls Otomasyon Sanayi ve Ticaret A.S. | Yesilce Mah. Aytekin Sok. No:2 | 4. Levent Eski Oto Sanayi | 34418 Kagithane / Istanbul | Turkey",
+      "status": "MANUAL_REVIEW",
+      "confidence": 0.64,
+      "certificate_value": "Regin Controls Otomasyon Sanayi ve",
+      "invoice_value": "Pages 1-4 show delivery/invoice address: Regin Controls Otomasyon Sanayi ve Ticaret A.S., Yesilce Mah. Aytekin Sok. No:2 / 4. Levent Eski Oto Sanayi / 34418 Kagithane / Istanbul / Turkey.",
       "rules_applied": [
         {
           "rule_id": "4.2.0.2",
-          "outcome": "mottagaren identifierad i delivery/invoice address"
+          "outcome": "MATCH_CANDIDATE_FOUND"
         },
         {
           "rule_id": "4.2.2.1.1",
-          "outcome": "certifikatets mottagarnamn är ett exakt prefix av fakturans fullständiga namn"
+          "outcome": "PREFIX_TRUNCATION_MATCH"
         },
         {
           "rule_id": "4.2.3",
-          "outcome": "land överensstämmer"
+          "outcome": "LAND_VERIFIED"
         },
         {
-          "rule_id": "4.2.4",
-          "outcome": "MATCH"
+          "rule_id": "8.5.1",
+          "outcome": "MANUAL_REVIEW"
         }
       ],
-      "motivation": "Certifikatets mottagarnamn är avkortat till \"Regin Controls Otomasyon Sanayi ve\", medan fakturan anger det fullständiga namnet \"Regin Controls Otomasyon Sanayi ve Ticaret A.S.\". Certifikatets text är ett exakt inledande prefix av fakturans mottagarnamn och landet Turkey överensstämmer. Därför är mottagaren verifierad."
+      "motivation": "Certifikatets mottagarnamn är avkortat och utgör ett exakt prefix till fakturornas mottagare \"Regin Controls Otomasyon Sanayi ve Ticaret A.S.\", med landet Turkey uttryckligen angivet på samtliga fyra sidor. Innehållsmässigt finns därför en stark mottagarmatch. Slutligt automatiskt beslut blockeras ändå av att PDF:en innehåller flera fakturor från samma utställare utan entydig fakturareferens i certifikatet."
     },
     "goods_description": {
       "applicable": true,
-      "status": "MATCH",
-      "confidence": 0.97,
+      "status": "MANUAL_REVIEW",
+      "confidence": 0.61,
       "certificate_value": "DR-90S, Well, CN | DTTH, Temperature/Humidity duct transmitter, SE | FT60R, Mech frost prot therm, IT | PDT75C, Differential pressure transmitter, SE | TG-IH3/PT1000-90, Immersion sensor with house, CN | TTC25, Electrical heating controller, SE | DTV500X-OEM, Differential pressure switch, IT | DTV300X-OEM, Differential pressure switch, IT | MTIC90R, Mechanical capillary thermostat, IT | DTV500X-OEM, Differential pressure switch, IT | DTV300X-OEM, Differential pressure switch, IT | RDAS4S-24S, Damper actuator w/ spring, KR | TTC25, Electrical heating controller, SE",
-      "invoice_value": "Page 1: DR-90S; DTTH; FT60R; PDT75C; TG-IH3/PT1000-90; TTC25; DTV500X-OEM; DTV300X-OEM | Page 2: MTIC90R; DTV500X-OEM; DTV300X-OEM | Page 3: RDAS4S-24S | Page 4: TTC25",
+      "invoice_value": "Page 1: DR-90S, DTTH, FT60R, PDT75C, TG-IH3/PT1000-90, TTC25, DTV500X-OEM, DTV300X-OEM. Page 2: MTIC90R, DTV500X-OEM, DTV300X-OEM. Page 3: RDAS4S-24S. Page 4: TTC25.",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "artikelnummer används som prioritet 1"
+          "outcome": "ARTICLE_NUMBERS_IDENTIFIABLE"
         },
         {
-          "rule_id": "4.3.2.1",
-          "outcome": "koderna i certifikatet är behandlade som artikelnummer, inte kvantiteter"
+          "rule_id": "4.3.3",
+          "outcome": "CONTROLLED_TEXT_MATCH_POSSIBLE"
         },
         {
-          "rule_id": "4.3.7",
-          "outcome": "vara–ursprungsland-koppling framgår per rad i certifikatet"
-        },
-        {
-          "rule_id": "4.3.8",
-          "outcome": "MATCH"
+          "rule_id": "8.5.1",
+          "outcome": "MANUAL_REVIEW"
         }
       ],
-      "motivation": "Samtliga artikelnummer som anges i certifikatet kan identifieras exakt i fakturorna: DR-90S, DTTH, FT60R, PDT75C, TG-IH3/PT1000-90, TTC25, DTV500X-OEM, DTV300X-OEM, MTIC90R och RDAS4S-24S. Certifikatet anger varorna separat och varje rad innehåller även landkod, vilket ger en entydig koppling mellan vara och ursprung. Varubeskrivningen kan därför verifieras via artikelnummer enligt prioritetsregel 1."
+      "motivation": "Certifikatets artikel-/varubenämningar kan lokaliseras i fakturornas produktrader över sidorna 1-4, inklusive de upprepade artiklarna DTV500X-OEM, DTV300X-OEM och TTC25. Innehållet ser ut att motsvara en sammanslagen uppsättning av fyra fakturor. Eftersom certifikatet inte innehåller någon entydig fakturareferens går det dock inte att automatiskt fastställa om just dessa fyra fakturor var de avsedda verifieringsdokumenten."
     },
     "quantity": {
       "applicable": true,
-      "status": "MATCH",
-      "confidence": 0.89,
+      "status": "MANUAL_REVIEW",
+      "confidence": 0.58,
       "certificate_value": "82 | 30 | 5 | 25 | 60 | 15 | 360 | 90 | 6 | 180 | 90 | 4 | 12",
-      "invoice_value": "Page 1 Qty: 82, 30, 5, 25, 60, 15, 360, 90 | Page 2 Qty: 6, 180, 90 | Page 3 Qty: 4 | Page 4 Qty: 12",
+      "invoice_value": "Page 1 quantities: 82, 30, 5, 25, 60, 15, 360, 90. Page 2 quantities: 6, 180, 90. Page 3 quantity: 4. Page 4 quantity: 12.",
       "rules_applied": [
         {
-          "rule_id": "4.4.1",
-          "outcome": "kvantitetsuppgifter lästa från OriginRows[].Quantity"
-        },
-        {
           "rule_id": "4.4.5.7",
-          "outcome": "flera numeriska värden utan uttrycklig enhet har matchats radvis mot fakturan via artikelnummer"
+          "outcome": "MULTIPLE_NUMERIC_ROW_QUANTITIES_CORRESPOND"
         },
         {
-          "rule_id": "4.4.6.0",
-          "outcome": "fakturans qty-kolumn accepterad trots att enhet inte skrivs på varje rad"
-        },
-        {
-          "rule_id": "4.4.6",
-          "outcome": "MATCH"
+          "rule_id": "8.5.1",
+          "outcome": "MANUAL_REVIEW"
         }
       ],
-      "motivation": "Certifikatet innehåller flera numeriska kvantitetsvärden utan explicit enhet, men värdena kan entydigt kopplas rad för rad till fakturornas Qty-kolumn via artikelnumren. Samtliga värden återfinns: 82, 30, 5, 25, 60, 15, 360, 90, 6, 180, 90, 4 och 12. Ingen fakturarad motsäger certifikatets kvantiteter."
+      "motivation": "De numeriska kvantiteterna i certifikatet kan radvis återfinnas i fakturornas Qty-kolumn över sidorna 1-4. Kvantitetsmönstret stödjer att certifikatet avser samma varuposter som de fyra fakturorna tillsammans. Trots detta kan kontrollpunkten inte slutligt automatiseras eftersom rätt faktura/fakturaset inte är entydigt utpekat i certifikatet."
     },
     "origin": {
       "applicable": true,
-      "status": "MATCH",
-      "confidence": 0.96,
+      "status": "MANUAL_REVIEW",
+      "confidence": 0.66,
       "certificate_value": "China, Sweden, Italy, Korea",
-      "invoice_value": "Page 1 line origins: China, Sweden, Italy, Sweden, China, Sweden, Italy, Italy | Page 2 line origins: Italy, Italy, Italy | Page 3 line origin: Korea | Page 4 line origin: Sweden",
+      "invoice_value": "Page 1 origin entries: China, Sweden, Italy, Sweden, China, Sweden, Italy, Italy. Page 2: Italy, Italy, Italy. Page 3: Korea. Page 4: Sweden.",
       "rules_applied": [
         {
           "rule_id": "4.5.1",
-          "outcome": "ursprung identifierat i explicita 'Country of origin'-fält på radnivå"
+          "outcome": "EXPLICIT_ORIGIN_FIELDS_FOUND"
         },
         {
           "rule_id": "4.5.3",
-          "outcome": "blandade ursprung är tydligt fördelade per artikel i fakturan"
+          "outcome": "MIXED_ORIGINS_ARTICLE_LINKAGE_PRESENT_IN_INVOICE"
         },
         {
-          "rule_id": "4.5.4",
-          "outcome": "normalisering av landsnamn/koder"
-        },
-        {
-          "rule_id": "4.5.5",
-          "outcome": "MATCH"
+          "rule_id": "8.5.1",
+          "outcome": "MANUAL_REVIEW"
         }
       ],
-      "motivation": "Samtliga ursprungsländer i certifikatet återfinns uttryckligen i fakturornas dedikerade radfält \"Country of origin\": China, Sweden, Italy och Korea. Fakturan innehåller inte något ytterligare ursprungsland utanför certifikatets lista i de relevanta radfälten. Ursprungsland är därför verifierat."
+      "motivation": "Samtliga ursprungsländer i certifikatet — China, Sweden, Italy och Korea — framgår uttryckligen i fakturornas per-rad-fält \"Country of origin\". Ursprungskopplingen per artikel är därmed läsbar i fakturorna. Slutligt automatiskt godkännande kan ändå inte ges eftersom certifikatet saknar entydig fakturareferens trots att PDF:en innehåller fyra separata fakturor från samma utställare."
     }
   },
   "overall_assessment": {
     "comparison_result": "MANUAL_REVIEW",
     "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
     "auto_approval_eligible": false,
-    "confidence": 0.78,
+    "confidence": 0.62,
     "critical_failures": [],
     "manual_review_triggers": [
-      "Faktura-PDF:en innehåller fyra separata fakturor från samma utställare (F498604, F498605, F498606, F498607).",
-      "Certifikatet innehåller ingen uttrycklig fakturareferens som entydigt anger vilken eller vilka av dessa fakturor som certifikatet avser.",
-      "Regel 8.5.1 kräver därför manuell granskning trots att sakuppgifterna i kontrollpunkterna kan verifieras mot det sammanlagda fakturaunderlaget."
+      "Invoice PDF contains four separate invoices from the same issuer AB Regin: F 498604, F 498605, F 498606 and F 498607.",
+      "Certificate JSON does not state any invoice number or explicit invoice-date reference that unambiguously identifies which invoice or invoice set should be paired.",
+      "Content across the four invoices appears to support the certificate, but rule-based document pairing remains ambiguous and therefore blocks auto-approval."
     ],
-    "decision_summary": "Samtliga fem kontrollpunkter kan materiellt verifieras mot de fyra bifogade fakturorna, men dokumentparningen är inte entydig eftersom certifikatet saknar fakturanummer och PDF:en innehåller flera separata fakturor från samma utställare. Enligt den obligatoriska parningsregeln ska ärendet därför skickas till manuell handläggning.",
-    "human_explanation": "Alla sakuppgifter i certifikatet kan återfinnas i de bifogade fakturorna. PDF:en innehåller dock fyra separata fakturor från samma utställare och certifikatet anger inget fakturanummer. Därför går det inte att automatiskt fastställa vilket eller vilka fakturadokument certifikatet avser, och ärendet måste granskas manuellt."
+    "manual_review_reason": "AMBIGUOUS_MULTIPLE_INVOICES",
+    "decision_summary": "Certifikatets uppgifter kan i stor utsträckning återfinnas i det bifogade underlaget, men underlaget består av fyra separata fakturor från samma utställare utan att certifikatet anger någon entydig fakturareferens. Enligt dokumentparningsregeln kräver detta manuell handläggning.",
+    "human_explanation": "Det bifogade PDF-underlaget innehåller fyra olika fakturor från samma avsändare, men certifikatet anger inget fakturanummer som tydligt visar vilken faktura eller vilket fakturaset som ska användas. Uppgifterna i certifikatet verkar finnas i underlaget, men dokumentkopplingen är inte tillräckligt entydig för automatisk godkännande."
   },
   "_meta": {
-    "tested_at": "2026-06-01T15:27:40.723183+00:00",
-    "prompt_hash": "d498a4785374",
+    "tested_at": "2026-06-06T09:16:06.632919+00:00",
+    "prompt_hash": "4690e976915d",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P0182_MISMATCH",

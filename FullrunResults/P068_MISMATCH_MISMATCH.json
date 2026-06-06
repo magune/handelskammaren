@@ -1,8 +1,8 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-06-01T00:00:00Z",
-    "document_pair_id": "SEG-26D-464243__9115014417",
+    "verification_timestamp": "2026-06-06T00:00:00Z",
+    "document_pair_id": "SEG-26D-464243",
     "certificate_issue_date": null,
     "source_documents_received": 2
   },
@@ -13,14 +13,14 @@
   },
   "documents": {
     "document_a": {
-      "label": "CERTIFICATE OF ORIGIN (structured JSON)",
+      "label": "Certificate of Origin (structured JSON)",
       "assumed_role": "certificate",
       "document_type": "structured_json"
     },
     "document_b": {
-      "label": "Attached PDF invoice",
+      "label": "Invoice PDF",
       "assumed_role": "invoice",
-      "document_type": "invoice_pdf"
+      "document_type": "invoice"
     }
   },
   "rule_activation": {
@@ -33,24 +33,24 @@
     "eu_origin_normalization_active": true,
     "activated_rules": [
       {
+        "rule_id": "2.2",
+        "rule_name": "LC-undantag prövat men ej aktiverat"
+      },
+      {
         "rule_id": "4.1.0",
-        "rule_name": "Koncernstruktur/sökning i hela fakturan för consignor"
+        "rule_name": "Consignor identifierad i fakturan utanför issuer-fältet"
       },
       {
         "rule_id": "4.2.0.2",
         "rule_name": "Consignee får identifieras i valfritt mottagarfält"
       },
       {
-        "rule_id": "4.5.3",
-        "rule_name": "Blandade ursprung i fakturan"
+        "rule_id": "4.3.3",
+        "rule_name": "Kontrollerad textmatchning av varubeskrivning"
       },
       {
         "rule_id": "4.5.4.1",
-        "rule_name": "EU-normalisering med begränsning när certifikatet namnger specifikt EU-land"
-      },
-      {
-        "rule_id": "4.5.4.2",
-        "rule_name": "EU-medlemsland ↔ EU-samlingsbegrepp"
+        "rule_name": "EU-normalisering med begränsning för uttryckligen namngivna EU-länder"
       }
     ]
   },
@@ -58,9 +58,9 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.97,
+      "confidence": 0.89,
       "certificate_value": "Borealis GmbH c/o Borealis AB | Sweden | SE502065098101",
-      "invoice_value": "Exporter:\nBorealis GmbH, Vienna VAT ID No.: SE502065098101\nc/o Borealis AB\nSE - 444 86 STENUNGSUND, SWEDEN",
+      "invoice_value": "Exporter: Borealis GmbH, Vienna VAT ID No.: SE502065098101 c/o Borealis AB SE - 444 86 STENUNGSUND, SWEDEN",
       "rules_applied": [
         {
           "rule_id": "4.1.0",
@@ -75,17 +75,21 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor 'Borealis GmbH c/o Borealis AB' återfinns uttryckligen i fakturans exporter-block på sida 2. Svenskt landstöd finns i samma block genom adressen 'SE - 444 86 STENUNGSUND, SWEDEN' och samma VAT-nummer 'SE502065098101'. Därmed kan certifikatets avsändare verifieras mot fakturan trots att fakturans utställare i sidhuvudet är Borealis GmbH i Wien."
+      "motivation": "Certifikatets consignor kan identifieras uttryckligen i fakturans exporter-block på sida 2 som 'Borealis GmbH ... c/o Borealis AB ... SWEDEN' med samma VAT-nummer SE502065098101. Land Sverige verifieras genom svensk adress och SE-prefix i VAT-numret."
     },
     "consignee": {
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.99,
-      "certificate_value": "Hascelik Kablo Sanayi Ticaret A.S. | Türkiye",
-      "invoice_value": "Customer Name / Mailing address\nHascelik Kablo Sanayi\nTicaret A.S.\nOrganize San. Bol. 18.Cad. N:20\n38070 MELIKGAZI KAYSERI\nTürkiye\n\nDelivery address\nHascelik Kablo Sanayi\nTicaret A.S.\nOrganize San. Bol. 18.Cad. N:20\n38070 Melikgazi Kayseri\nTürkiye",
+      "certificate_value": "Hascelik Kablo Sanayi Ticaret A.S. | ORGANIZE SAN. BOL. 18.CAD. NO:20 | 38070 MELIKGAZI KAYSERI | Türkiye",
+      "invoice_value": "Delivery address / Customer name/address: Hascelik Kablo Sanayi Ticaret A.S. Organize San. Bol. 18.Cad. N:20 38070 Melikgazi Kayseri Türkiye",
       "rules_applied": [
         {
           "rule_id": "4.2.0.2",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.2.2.1",
           "outcome": "MATCH"
         },
         {
@@ -97,18 +101,18 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets mottagare 'Hascelik Kablo Sanayi Ticaret A.S.' återfinns explicit i fakturans customer- och delivery address-block. Landet 'Türkiye' framgår också uttryckligen i fakturan. Skillnader i radbrytning och versaler påverkar inte matchningen."
+      "motivation": "Mottagaren i certifikatet återfinns explicit i fakturans Customer name/address och Delivery address. Företagsnamn och land överensstämmer efter normalisering av versaler/gemener och mindre layoutskillnader."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.98,
-      "certificate_value": "Visico LE4423 Borealis Octabin LD Polyethylene | Ambicat LE4476 Bag Catalyst masterbatch | Ambicat LE4472 Bag Catalyst masterbatch",
-      "invoice_value": "Visico LE4423 Borealis Octabin LD Polyethylene\nAmbicat LE4476 Bag Catalyst masterbatch\nAmbicat LE4472 Bag Catalyst masterbatch",
+      "confidence": 0.99,
+      "certificate_value": "Visico LE4423 Borealis Octabin LD Polyethylene; Ambicat LE4476 Bag Catalyst masterbatch; Ambicat LE4472 Bag Catalyst masterbatch",
+      "invoice_value": "Visico LE4423 Borealis Octabin LD Polyethylene; Ambicat LE4476 Bag Catalyst masterbatch; Ambicat LE4472 Bag Catalyst masterbatch",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "NOT_APPLICABLE"
+          "outcome": "Prioritet 1 ej tillämplig - inget artikelnummer i certifikatet"
         },
         {
           "rule_id": "4.3.3",
@@ -119,55 +123,51 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Samtliga tre varubeskrivningar i certifikatet kan identifieras ordagrant i fakturans artikelrader. Ingen artikelnummerregel behövde användas eftersom certifikatet inte anger särskilda artikelnummer som verifieringsgrund. Att fakturan dessutom innehåller en extra rad med 'Ambicat LE4476 Bag Catalyst masterbatch' 1.500,00 KG ändrar inte den ensidiga verifieringen."
+      "motivation": "Samtliga tre varubeskrivningar i certifikatet kan identifieras exakt i fakturan på sidorna 1–2. Endast obetydliga skillnader i inledande mellanslag förekommer."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.96,
-      "certificate_value": "net 10.750,00KG | net 6.225,00 kg | net 2.500,00 kg | 9 PAL (409 bag) | 10 OCT",
-      "invoice_value": "10.750,00 KG | 6.225,00 KG | 2.500,00 KG | Total number of packages 10 OCT 9 PAL (=409 BAG )",
+      "confidence": 0.98,
+      "certificate_value": "net 10.750,00KG; net 6.225,00 kg; net 2.500,00 kg; Packages: 9 PAL (409 bag); 10 OCT",
+      "invoice_value": "10.750,00 KG; 6.225,00 KG; 2.500,00 KG; Total number of packages: 10 OCT / 9 PAL (=409 BAG)",
       "rules_applied": [
         {
-          "rule_id": "4.4.2.2",
-          "outcome": "MATCH"
+          "rule_id": "4.4.2.1",
+          "outcome": "Formkrav uppfyllt - viktkategori Net framgår i certifikatet"
         },
         {
           "rule_id": "4.4.3",
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.4.3.1",
+          "rule_id": "4.4.3.2",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.4.7",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "De tre nettokvantiteterna i certifikatet återfinns explicit på motsvarande fakturarader: 10.750,00 KG, 6.225,00 KG och 2.500,00 KG. Paketuppgifterna '10 OCT' och '9 PAL (409 bag)' återfinns också i fakturans totalrad för packages som '10 OCT 9 PAL (=409 BAG)'. Den extra fakturaraden med 1.500,00 KG motsäger inte certifikatets angivna kvantiteter eftersom certifikatets egna kvantiteter fortfarande kan verifieras."
+      "motivation": "De tre numeriska nettovikterna i certifikatet återfinns på motsvarande varurader i fakturan: 10.750,00 KG, 6.225,00 KG och 2.500,00 KG. Förpackningsuppgifterna 10 OCT och 9 PAL (=409 BAG) återfinns också i totalblocket på sida 2."
     },
     "origin": {
       "applicable": true,
       "status": "MISMATCH",
       "confidence": 0.99,
       "certificate_value": "European Community; Sweden",
-      "invoice_value": "Country of origin per article: Sweden; Finland; Finland; Finland",
+      "invoice_value": "Country of origin per rad: Sweden; Finland; Finland",
       "rules_applied": [
-        {
-          "rule_id": "4.5.4.2",
-          "outcome": "PARTIAL_MATCH"
-        },
-        {
-          "rule_id": "4.5.3",
-          "outcome": "MIXED_ORIGINS_FOUND"
-        },
         {
           "rule_id": "4.5.4.1",
           "outcome": "MISMATCH"
         },
         {
-          "rule_id": "4.5.5",
+          "rule_id": "4.5.6",
           "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Certifikatet anger 'European Community; Sweden'. Fakturan visar uttryckliga ursprung på artikelnivå: första raden 'Sweden' och övriga rader 'Finland'. Sweden verifierar både den specifika landsangivelsen Sweden och EU-samlingsbegreppet, men eftersom certifikatet uttryckligen namnger Sweden får fakturan inte samtidigt innehålla ett annat EU-ursprung som inte finns namngivet i certifikatet. Finland finns uttryckligen i fakturan men inte i certifikatets ursprungsfält, vilket ger MISMATCH."
+      "motivation": "Certifikatet anger ursprung 'European Community; Sweden'. Fakturan anger Sverige för första varan men Finland för de två Ambicat-raderna. När certifikatet uttryckligen namnger Sverige vid sidan av EU-begreppet får fakturan inte innehålla ett annat EU-ursprungsland som inte uttryckligen anges i certifikatets ursprungsfält; Finland saknas därför i certifikatet och ger MISMATCH."
     }
   },
   "overall_assessment": {
@@ -176,15 +176,16 @@
     "auto_approval_eligible": false,
     "confidence": 0.98,
     "critical_failures": [
-      "Ursprungsland avviker: fakturan anger Finland som explicit origin på flera artiklar, men certifikatet anger endast 'European Community; Sweden'."
+      "Origin mismatch: invoice shows Finland as country of origin for two product lines, but the certificate origin field states only 'European Community; Sweden'."
     ],
     "manual_review_triggers": [],
-    "decision_summary": "Dokumentparet passerar avsändare, mottagare, varubeskrivning och kvantitet. Ursprungslandet faller däremot på att fakturan innehåller Finland som uttryckligt ursprung trots att certifikatet uttryckligen anger European Community; Sweden. Minst en tillämplig kontrollpunkt är därför MISMATCH, vilket kräver totalutfallet NOT_IDENTICAL.",
-    "human_explanation": "Certifikatet och fakturan stämmer för avsändare, mottagare, varor och kvantiteter. Ursprunget stämmer däremot inte fullt ut: certifikatet anger European Community; Sweden medan fakturan uttryckligen visar både Sweden och Finland som ursprung. Därför kan dokumentparet inte godkännas automatiskt."
+    "manual_review_reason": "NOT_APPLICABLE",
+    "decision_summary": "Consignor, consignee, goods description and quantity can be verified against the invoice. Origin cannot be verified because the invoice explicitly contains Finland as origin for two items while the certificate origin field lists only 'European Community; Sweden'.",
+    "human_explanation": "Certifikatet anger ursprung som 'European Community; Sweden', men fakturan anger Sverige för en vara och Finland för två varor. Finland finns inte uttryckligen i certifikatets ursprungsfält. Därför stämmer dokumenten inte överens och kräver manuell handläggning."
   },
   "_meta": {
-    "tested_at": "2026-06-01T15:28:10.716791+00:00",
-    "prompt_hash": "d498a4785374",
+    "tested_at": "2026-06-06T09:17:25.977681+00:00",
+    "prompt_hash": "4690e976915d",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P068_MISMATCH",

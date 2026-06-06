@@ -1,8 +1,8 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-06-01T00:00:00Z",
-    "document_pair_id": "SEG-24D-118957::invoice_set",
+    "verification_timestamp": "2026-06-06T00:00:00Z",
+    "document_pair_id": "SEG-24D-118957__invoice_set",
     "certificate_issue_date": null,
     "source_documents_received": 3
   },
@@ -15,10 +15,10 @@
     "document_a": {
       "label": "CERTIFICATE OF ORIGIN (structured JSON)",
       "assumed_role": "certificate",
-      "document_type": "structured_json_certificate_of_origin"
+      "document_type": "structured_certificate_json"
     },
     "document_b": {
-      "label": "Attached invoice PDFs (2 files)",
+      "label": "Attached invoice PDFs (2 invoices: FVSWSW24080040 and FVSWSW24080041)",
       "assumed_role": "invoice",
       "document_type": "invoice_pdf_set"
     }
@@ -29,32 +29,32 @@
     "general_goods_description_with_invoice_reference_active": false,
     "mixed_origins_rule_active": false,
     "to_order_rule_active": false,
-    "quantity_exception_applied": null,
+    "quantity_exception_applied": "3A",
     "eu_origin_normalization_active": false,
     "activated_rules": [
       {
-        "rule_id": "2.2",
-        "rule_name": "LC-undantag kontrollerat men ej aktiverat"
-      },
-      {
         "rule_id": "4.1.0",
-        "rule_name": "Consignor identifierad uttryckligen i fakturans footer"
+        "rule_name": "Consignor may match via explicit occurrence anywhere in invoice"
       },
       {
         "rule_id": "4.2.0.2",
-        "rule_name": "Consignee identifierad i delivery address"
+        "rule_name": "Consignee may match in any relevant receiver field"
       },
       {
         "rule_id": "4.3.4",
-        "rule_name": "Tillägg som inte påverkar produktidentitet"
+        "rule_name": "Additional non-identity-changing text in goods description is acceptable"
       },
       {
-        "rule_id": "4.4.2.2",
-        "rule_name": "Viktangivelse i certifikat kräver viktkategori"
+        "rule_id": "4.4.5.1",
+        "rule_name": "Summation across multiple invoices"
+      },
+      {
+        "rule_id": "8.5.1",
+        "rule_name": "Multiple invoices from same issuer without unique certificate reference triggers manual review"
       },
       {
         "rule_id": "4.5.1",
-        "rule_name": "Ursprungsland ska framgå uttryckligen i fakturan"
+        "rule_name": "Origin must appear explicitly in invoice"
       }
     ]
   },
@@ -62,124 +62,125 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.97,
-      "certificate_value": "Swedish Oat Fiber AB, Båtafjordsvägen 12, 432 63 BUA, SWEDEN",
-      "invoice_value": "Swedish Oat Fiber AB\nAddress: Båtafjordsvägen 12, 432 63 Bua Sweden - Corporate Identity No: 556509-0148\nVAT No: SE556509014801",
+      "confidence": 0.96,
+      "certificate_value": "Swedish Oat Fiber AB, Båtafjordsvägen 12, 432 63 BUA, SWEDEN, VAT 5565090148",
+      "invoice_value": "Invoice FVSWSW24080041 footer: \"Swedish Oat Fiber AB Address: Båtafjordsvägen 12, 432 63 Bua Sweden - Corporate Identity No: 556509-0148 VAT No: SE556509014801\"; Invoice FVSWSW24080040 footer: \"Swedish Oat Fiber AB Address: Båtafjordsvägen 12, 432 63 Bua Sweden - Corporate Identity No: 556509-0148 VAT No: SE556509014801\"",
       "rules_applied": [
         {
           "rule_id": "4.1.0",
-          "outcome": "Certifikatets consignor förekommer uttryckligen i fakturans footer"
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.2.1",
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.1.4",
-          "outcome": "Landet Sweden/SWEDEN överensstämmer"
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets avsändare \"Swedish Oat Fiber AB\" kan identifieras uttryckligen i fakturornas footer tillsammans med adress i Bua, Sweden. Landet överensstämmer, vilket uppfyller kravet för MATCH även om andra parter också förekommer i fakturornas layout."
+      "motivation": "Certifikatets consignor \"Swedish Oat Fiber AB\" återfinns uttryckligen i sidfoten på båda fakturorna tillsammans med svensk adress och svensk VAT-prefix/landangivelse. Detta uppfyller kravet på identifiering av samma juridiska part och land."
     },
     "consignee": {
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.98,
       "certificate_value": "Legosan (Malaysia) Sdn Bhd, Lot 6, Jalan 19/1, Petaling Jaya, 46300 Selangor, Malaysia",
-      "invoice_value": "Delivery address\nLegosan (Malaysia) Sdn Bhd\nLot 6, Jalan 19/1\nPetaling Jaya, Selangor 46300\nMALAYSIA",
+      "invoice_value": "Invoice FVSWSW24080041 delivery address: \"Legosan (Malaysia) Sdn Bhd, Lot 6, Jalan 19/1, Petaling Jaya, Selangor 46300, MALAYSIA\"; Invoice FVSWSW24080040 delivery address: \"Legosan (Malaysia) Sdn Bhd, Lot 6, Jalan 19/1, Petaling Jaya, Selangor 46300, MALAYSIA\"",
       "rules_applied": [
         {
           "rule_id": "4.2.0.2",
-          "outcome": "Consignee identifierad i mottagarfältet Delivery address"
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.2.3",
-          "outcome": "Landet Malaysia/MALAYSIA överensstämmer"
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Mottagaren i certifikatet återfinns uttryckligen i fakturornas fält \"Delivery address\" med samma företagsnamn och samma land. Skillnader i radbrytning och versaler påverkar inte matchningen."
+      "motivation": "Certifikatets mottagare kan identifieras exakt i fakturornas delivery address-fält, inklusive företagsnamn och land Malaysia. Skillnaden i radbrytning och adressformatering påverkar inte matchningen."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.92,
+      "confidence": 0.91,
       "certificate_value": "OatWell Bran BG22; OatWell Bran BG14",
-      "invoice_value": "OatWell® Bran BG22 - paper bag\nOatWell ® Bran BG14 - paper bag",
+      "invoice_value": "Invoice FVSWSW24080041: \"OatWell® Bran BG22 - paper bag\" and \"OatWell ® Bran BG14 - paper bag\"; Invoice FVSWSW24080040: \"OatWell® Bran BG22 - paper bag\" and \"OatWell ® Bran BG14 - paper bag\"",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "Inga artikelnummer i certifikatet, kontrollerad textmatchning använd"
+          "outcome": "No article-number-driven verification used"
         },
         {
           "rule_id": "4.3.3",
-          "outcome": "Identitetsbärande huvudbeteckningar identifierade i fakturan"
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.3.4",
-          "outcome": "Tillägget \"- paper bag\" behandlat som icke identitetsbärande"
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Båda certifikatets varubeskrivningar kan identifieras i fakturorna som \"OatWell® Bran BG22 - paper bag\" respektive \"OatWell ® Bran BG14 - paper bag\". Tillägget \"- paper bag\" ändrar inte produktidentiteten och hindrar därför inte matchning."
+      "motivation": "Certifikatets identitetsbärande huvudbeteckningar \"OatWell Bran BG22\" och \"OatWell Bran BG14\" återfinns i fakturorna. Tillägget \"- paper bag\" och varumärkessymbolen ändrar inte produktidentiteten."
     },
     "quantity": {
       "applicable": true,
-      "status": "MISMATCH",
-      "confidence": 0.99,
-      "certificate_value": "6480 kg; 15 192 kg",
-      "invoice_value": "Invoice FVSWSW24080040: BG22 3240.0000 Kg, BG14 7632.0000 Kg; Invoice FVSWSW24080041: BG22 3240.0000 Kg, BG14 7560.0000 Kg",
+      "status": "MANUAL_REVIEW",
+      "confidence": 0.62,
+      "certificate_value": "OatWell Bran BG22: 6480 kg; OatWell Bran BG14: 15 192 kg",
+      "invoice_value": "Invoice FVSWSW24080041: BG22 3240.0000 Kg, BG14 7560.0000 Kg; Invoice FVSWSW24080040: BG22 3240.0000 Kg, BG14 7632.0000 Kg",
       "rules_applied": [
         {
-          "rule_id": "4.4.2.2",
-          "outcome": "MISMATCH - certifikatets viktangivelser saknar viktkategori GW/NW"
+          "rule_id": "4.4.5.1",
+          "outcome": "Quantities equal the aggregate across both invoices"
         },
         {
-          "rule_id": "4.4.2.1",
-          "outcome": "Kvantitetsfältet i certifikatet är verifieringsgrundande"
-        },
-        {
-          "rule_id": "4.4.5.2",
-          "outcome": "Fakturorna ger numerisk summering 6480 kg för BG22 och 15192 kg för BG14, men detta kan inte upphäva formfelet i certifikatet"
+          "rule_id": "8.5.1",
+          "outcome": "MANUAL_REVIEW"
         }
       ],
-      "motivation": "Certifikatets kvantitetsfält anger vikter i kg men anger inte om vikten är gross eller net. Regelverket kräver att viktkategori framgår i själva kvantitetsuppgiften när viktenhet används. Även om de två fakturorna numeriskt summerar till 6480 kg för BG22 och 15192 kg för BG14 kvarstår formfelet i certifikatet, vilket leder till MISMATCH."
+      "motivation": "Kvantiteterna i certifikatet stämmer exakt om båda fakturorna räknas tillsammans: BG22 3240 + 3240 = 6480 kg och BG14 7560 + 7632 = 15 192 kg. Certifikatet anger dock inget fakturanummer eller annan entydig referens som bekräftar att just båda fakturorna ska användas, och två separata fakturor från samma utställare har bifogats. Därför kan kvantitetsverifieringen inte avslutas säkert utan manuell dokumentparning."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.98,
       "certificate_value": "SWEDEN",
-      "invoice_value": "Remarks : COUNTRY OF ORIGIN SWEDEN",
+      "invoice_value": "Invoice FVSWSW24080041 remarks: \"COUNTRY OF ORIGIN SWEDEN\"; Invoice FVSWSW24080040 remarks: \"COUNTRY OF ORIGIN SWEDEN\"",
       "rules_applied": [
         {
           "rule_id": "4.5.1",
-          "outcome": "Ursprungsland identifierat uttryckligen i fakturan"
+          "outcome": "MATCH"
         },
         {
-          "rule_id": "4.5.5",
-          "outcome": "Certifikatets ursprungsland kan verifieras direkt"
+          "rule_id": "4.5.6",
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger ursprungsland SWEDEN och fakturorna innehåller den uttryckliga ursprungsangivelsen \"COUNTRY OF ORIGIN SWEDEN\". Ursprungslandet kan därför verifieras direkt utan tolkning."
+      "motivation": "Ursprungslandet Sverige framgår uttryckligen i remarks-fältet på båda fakturorna som \"COUNTRY OF ORIGIN SWEDEN\". Positiv verifiering finns därför för certifikatets ursprungsangivelse."
     }
   },
   "overall_assessment": {
-    "comparison_result": "NOT_IDENTICAL",
+    "comparison_result": "MANUAL_REVIEW",
     "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
     "auto_approval_eligible": false,
-    "confidence": 0.95,
-    "critical_failures": [
-      "Kvantitetskontrollpunkten gav MISMATCH eftersom certifikatets viktangivelser saknar viktkategori (gross/net)."
-    ],
+    "confidence": 0.78,
+    "critical_failures": [],
     "manual_review_triggers": [
-      "Två fakturor från samma avsändare är bifogade utan uttrycklig fakturareferens i certifikatet, vilket försvagar dokumentparningen även om övriga uppgifter i huvudsak stämmer."
+      "Två separata fakturor från samma utställare har bifogats: FVSWSW24080040 och FVSWSW24080041.",
+      "Certifikatet innehåller ingen uttrycklig fakturareferens som entydigt anger om en eller båda fakturorna avses.",
+      "Kvantitetsmatchning uppnås endast när båda fakturorna summeras."
     ],
-    "decision_summary": "Avsändare, mottagare, varubeskrivning och ursprungsland kan verifieras mot de bifogade fakturorna. Kvantitetskontrollpunkten underkänns eftersom certifikatet anger vikter i kg utan att ange om de är gross eller net. Minst en tillämplig kontrollpunkt är därför MISMATCH och totalresultatet blir NOT_IDENTICAL.",
-    "human_explanation": "Avsändare, mottagare, varubeskrivning och ursprungsland stämmer mot de bifogade fakturorna. Certifikatet anger kvantiteterna som \"6480 kg\" och \"15 192 kg\" utan att ange om vikten är brutto eller netto, vilket krävs för viktuppgifter. Därför är dokumentparet inte identiskt och måste hanteras manuellt."
+    "manual_review_reason": "AMBIGUOUS_MULTIPLE_INVOICES",
+    "decision_summary": "Consignor, consignee, goods description and origin are verifiable against the attached invoices. Certificate quantities also match exactly, but only when invoice FVSWSW24080040 and invoice FVSWSW24080041 are aggregated together. Because the certificate does not identify the intended invoice or invoice set and both attached invoices are from the same issuer, the document pairing remains ambiguous and the case must be sent to manual review.",
+    "human_explanation": "Två fakturor från samma avsändare har bifogats och certifikatet anger inget fakturanummer som visar om en eller båda fakturorna ska användas. Uppgifterna om avsändare, mottagare, varor och ursprung ser i övrigt förenliga ut, och kvantiteterna stämmer om båda fakturorna räknas tillsammans. Ärendet behöver därför granskas manuellt för att bekräfta rätt dokumentparning."
   },
   "_meta": {
-    "tested_at": "2026-06-01T15:28:29.547294+00:00",
-    "prompt_hash": "d498a4785374",
+    "tested_at": "2026-06-06T09:13:51.031402+00:00",
+    "prompt_hash": "4690e976915d",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "SEG-24D-118957_MISMATCH",
     "expected": "NOT_IDENTICAL",
-    "actual": "NOT_IDENTICAL",
-    "status": "PASS"
+    "actual": "MANUAL_REVIEW",
+    "status": "REVIEW"
   }
 }

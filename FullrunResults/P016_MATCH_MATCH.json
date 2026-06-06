@@ -1,8 +1,8 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-06-01T00:00:00Z",
-    "document_pair_id": "SEG-26D-465299__INV-8392067138",
+    "verification_timestamp": null,
+    "document_pair_id": "SEG-26D-465299__8392067138",
     "certificate_issue_date": null,
     "source_documents_received": 1
   },
@@ -15,12 +15,12 @@
     "document_a": {
       "label": "Certificate of Origin (structured JSON)",
       "assumed_role": "certificate",
-      "document_type": "structured_json"
+      "document_type": "Certificate of Origin"
     },
     "document_b": {
       "label": "Invoice PDF",
       "assumed_role": "invoice",
-      "document_type": "invoice"
+      "document_type": "Invoice"
     }
   },
   "rule_activation": {
@@ -33,20 +33,24 @@
     "eu_origin_normalization_active": false,
     "activated_rules": [
       {
-        "rule_id": "8.6",
-        "rule_name": "Parningsvalidering passerad via consignor och consignee i fakturan"
+        "rule_id": "4.1.0",
+        "rule_name": "Consignor may be verified when company name appears anywhere in invoice documentation"
+      },
+      {
+        "rule_id": "4.2.0.2",
+        "rule_name": "Consignee may be verified in any relevant recipient field"
       },
       {
         "rule_id": "4.3.3.1",
-        "rule_name": "Enstaka teckenavvikelse i varubeskrivning"
+        "rule_name": "Single-character spelling/OCR deviation in goods description"
       },
       {
-        "rule_id": "4.4.4",
-        "rule_name": "Total vikt i faktura får användas"
+        "rule_id": "4.4.3.6",
+        "rule_name": "Total weight in invoice may verify shipment weight in certificate"
       },
       {
         "rule_id": "4.5.4",
-        "rule_name": "ISO-landskod motsvarar landsnamn"
+        "rule_name": "Origin country normalization including ISO country code equivalence"
       }
     ]
   },
@@ -55,9 +59,13 @@
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.99,
-      "certificate_value": "ERICSSON AB | TORSHAMNSGATAN 21-23 | 164 83 STOCKHOLM | Sweden | VAT 5560566258",
-      "invoice_value": "Ericsson AB | Mail: SE-164 83 STOCKHOLM Sweden | VAT no: SE556056625801 | Registration no: 556056-6258 | Office: Torshamnsgatan 21-23 Kista Stockholm",
+      "certificate_value": "ERICSSON AB | Sweden",
+      "invoice_value": "Ericsson AB\nMail: SE-164 83 STOCKHOLM\nSweden\nVAT no: SE556056625801\nRegistration no: 556056-6258",
       "rules_applied": [
+        {
+          "rule_id": "4.1.0",
+          "outcome": "MATCH"
+        },
         {
           "rule_id": "4.1.2",
           "outcome": "MATCH"
@@ -71,17 +79,25 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets avsändare ERICSSON AB kan identifieras direkt i fakturans utställaruppgifter på sida 1 och 2. Fakturan visar även Sverige via adress, VAT-prefix SE och svensk registreringsinformation. Samma juridiska part och samma land är därmed verifierade."
+      "motivation": "Certifikatet anger consignor \"ERICSSON AB\" i Sverige. Fakturan visar \"Ericsson AB\" i sidfot/issuer-information på båda sidorna, med explicit land \"Sweden\" samt svenska identifierare (SE-prefix i VAT och svensk adress i Stockholm). Företagsnamn och land kan därför verifieras entydigt."
     },
     "consignee": {
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.98,
-      "certificate_value": "ERICSSON INDIA PRIVATE LTD. | (FORMERLY ERICSSON INDIA GLOBAL | S/N 3RD & 4TH FLOOR BUILDING NO 7A | PHASE 3 DLF CYBER CITY SECTOR 25A | 122002 GURUGRAM GURUGRAM | INDIA",
-      "invoice_value": "Invoice address 502538 / Customer 502538: ERICSSON INDIA PRIVATE LTD. (FORMERLY ERICSSON INDIA GLOBAL S/N 3RD & 4TH FLOOR BUILDING NO 7A PHASE 3 DLF CYBER CITY SECTOR 25A 122002 GURUGRAM GURUGRAM India",
+      "certificate_value": "ERICSSON INDIA PRIVATE LTD. | INDIA",
+      "invoice_value": "Customer 502538 / Invoice address 502538:\nERICSSON INDIA PRIVATE LTD.\n(FORMERLY ERICSSON INDIA GLOBAL\n...\nIndia\nDelivery address 502538:\nERICSSON INDIA PRIVATE LIMITED\n...\nIndia",
       "rules_applied": [
         {
           "rule_id": "4.2.0.2",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.2.2",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.2.2.1",
           "outcome": "MATCH"
         },
         {
@@ -89,88 +105,89 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets mottagare återfinns uttryckligen i fakturans mottagarfält som både Invoice address och Customer på sida 1. Företagsnamn och adressrad med '(FORMERLY ERICSSON INDIA GLOBAL' överensstämmer, och landet är India/INDIA. Kontrollpunkten är därför entydigt verifierad."
+      "motivation": "Certifikatet anger mottagaren \"ERICSSON INDIA PRIVATE LTD.\" i India. Fakturan innehåller samma part i fälten \"Customer\" och \"Invoice address\" som \"ERICSSON INDIA PRIVATE LTD.\" med landet \"India\"; dessutom finns leveransadress till samma företag som \"ERICSSON INDIA PRIVATE LIMITED\". Mottagaren kan därför identifieras i relevant mottagarfält och landet överensstämmer."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.88,
+      "confidence": 0.87,
       "certificate_value": "TELEOM EQUIPMENT",
-      "invoice_value": "Information: Telecom equipment",
+      "invoice_value": "Information\nTelecom equipment",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "Prioritet 2 använd"
+          "outcome": "No article number in certificate; controlled text matching used"
         },
         {
           "rule_id": "4.3.3",
-          "outcome": "Huvudbeteckning identifierad"
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.3.3.1",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger 'TELEOM EQUIPMENT' och fakturan anger 'Telecom equipment' i informationsfältet på sida 1. Skillnaden är ett enstaka saknat tecken 'c' i certifikatet, medan resten av huvudbeteckningen överensstämmer. Detta fall omfattas av regeln för sannolikt stavfel/OCR-fel och ger MATCH."
+      "motivation": "Certifikatet anger varubeskrivningen \"TELEOM EQUIPMENT\". Fakturan anger i informationsfältet \"Telecom equipment\". Skillnaden är en enstaka saknad bokstav (\"c\") i certifikatet, vilket är förenligt med regeln för sannolikt stav- eller OCR-fel; övrig ordsekvens är identisk och ingen alternativ liknande varubeteckning skapar oklarhet."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.91,
+      "confidence": 0.97,
       "certificate_value": "1507 KG GW",
-      "invoice_value": "Total gross weight Kg 1,507.000",
+      "invoice_value": "Total gross weight Kg\n1,507.000",
       "rules_applied": [
         {
-          "rule_id": "4.4.2.2",
-          "outcome": "Formkrav uppfyllt"
-        },
-        {
-          "rule_id": "4.4.4",
+          "rule_id": "4.4.2.1",
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.4.3.4",
+          "rule_id": "4.4.3",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.4.3.6",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.4.4.2",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger vikt med numeriskt värde, enhet och viktkategori: 1507 KG GW. Fakturan anger total gross weight som 1,507.000 Kg på sida 1. Efter tillåten numerisk normalisering av formatet avser båda uppgifterna 1507 kg gross weight, vilket verifierar kvantiteten."
+      "motivation": "Certifikatet anger kvantiteten/vikten \"1507 KG GW\", vilket uppfyller formkravet med numeriskt värde, enhet och viktkategori. Fakturan anger \"Total gross weight Kg 1,507.000\". Efter tillåten numerisk normalisering och decimaltrunkering motsvarar fakturans värde 1507 kg gross, vilket verifierar certifikatets kvantitetsuppgift."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.95,
+      "confidence": 0.96,
       "certificate_value": "Czech Republic",
-      "invoice_value": "Line item COO: CZ",
+      "invoice_value": "Line Item ... COO ...\n000100 CZ ...",
       "rules_applied": [
         {
           "rule_id": "4.5.1",
-          "outcome": "Ursprung identifierat i fakturan"
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.5.4",
-          "outcome": "ISO-kod normaliserad"
-        },
-        {
-          "rule_id": "4.5.5",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Fakturan visar en explicit ursprungsangivelse via kolumnen 'COO' på artikelraden på sida 1, där värdet är 'CZ'. ISO-koden CZ motsvarar Czech Republic. Certifikatets ursprungsland kan därför uttryckligen identifieras i fakturan."
+      "motivation": "Certifikatet anger ursprungsland \"Czech Republic\". Fakturan visar en explicit ursprungsangivelse i kolumnen \"COO\" med värdet \"CZ\" på varuraden. ISO-koden \"CZ\" är ekvivalent med Czech Republic, så ursprungslandet är verifierat."
     }
   },
   "overall_assessment": {
     "comparison_result": "IDENTICAL",
     "workflow_recommendation": "AUTO_APPROVAL_ELIGIBLE",
     "auto_approval_eligible": true,
-    "confidence": 0.92,
+    "confidence": 0.95,
     "critical_failures": [],
     "manual_review_triggers": [],
-    "decision_summary": "Samtliga tillämpliga kontrollpunkter är verifierade mot fakturan. Dokumentparningen är giltig via matchande consignor och consignee. Ingen kontrollpunkt gav MISMATCH eller MANUAL_REVIEW och samtliga MATCH-utfall har confidence minst 0.85.",
-    "human_explanation": "Alla kontrollpunkter i certifikatet kan verifieras mot fakturan. Varubeskrivningen i certifikatet har en uppenbar enstaka stavningsavvikelse ('TELEOM EQUIPMENT') men motsvarar fakturans 'Telecom equipment'. Dokumentparet kan därför godkännas automatiskt."
+    "manual_review_reason": "NOT_APPLICABLE",
+    "decision_summary": "Fakturan är läsbar och kan paras med certifikatet via både consignor och consignee. Samtliga tillämpliga kontrollpunkter—avsändare, mottagare, varubeskrivning, kvantitet och ursprungsland—kan verifieras enligt regelverket. Ingen tillämplig kontrollpunkt gav MISMATCH eller MANUAL_REVIEW, och samtliga MATCH-utfall ligger på minst 0.85 i confidence.",
+    "human_explanation": "Alla tillämpliga uppgifter i certifikatet kan verifieras mot fakturan. Avsändare, mottagare, varubeskrivning, vikt och ursprungsland stämmer efter tillåten normalisering. Dokumentparet kan därför godkännas automatiskt."
   },
   "_meta": {
-    "tested_at": "2026-06-01T15:27:40.716353+00:00",
-    "prompt_hash": "d498a4785374",
+    "tested_at": "2026-06-06T09:16:06.626019+00:00",
+    "prompt_hash": "4690e976915d",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P016_MATCH",

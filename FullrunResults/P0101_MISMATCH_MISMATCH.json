@@ -1,8 +1,8 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-06-01T00:00:00Z",
-    "document_pair_id": "SEG-26D-453055__P0101_MISMATCH_invoice.pdf",
+    "verification_timestamp": "2026-06-06T00:00:00Z",
+    "document_pair_id": "SEG-26D-453055::P0101_MISMATCH_invoice.pdf",
     "certificate_issue_date": null,
     "source_documents_received": 2
   },
@@ -13,9 +13,9 @@
   },
   "documents": {
     "document_a": {
-      "label": "CERTIFICATE OF ORIGIN structured JSON",
+      "label": "Certificate of Origin (structured JSON)",
       "assumed_role": "certificate",
-      "document_type": "certificate_of_origin_structured_json"
+      "document_type": "structured_certificate_of_origin_json"
     },
     "document_b": {
       "label": "P0101_MISMATCH_invoice.pdf",
@@ -34,11 +34,15 @@
     "activated_rules": [
       {
         "rule_id": "8.1.3",
-        "rule_name": "Skannad faktura: utebliven lokaliserbar uppgift utan tydlig motsägelse ger MANUAL_REVIEW"
+        "rule_name": "Scanned invoice: not found does not equal absent"
       },
       {
-        "rule_id": "4.4.2.2",
-        "rule_name": "Viktangivelse i certifikatets kvantitetsfält måste innehålla viktkategori"
+        "rule_id": "4.3.3",
+        "rule_name": "Controlled text match for goods description"
+      },
+      {
+        "rule_id": "4.4.2.1",
+        "rule_name": "Weight quantity must state weight category in certificate quantity field"
       }
     ]
   },
@@ -46,135 +50,124 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.99,
-      "certificate_value": "FORPAC INTERNATIONAL AB, KUNGSPORTEN 4E, SE-427 50 BILLDAL, SWEDEN",
-      "invoice_value": "Seller: Forpac International AB, Kungsporten 4E, 427 50 Billdal, Sweden",
+      "confidence": 0.98,
+      "certificate_value": "FORPAC INTERNATIONAL AB | SWEDEN",
+      "invoice_value": "Seller Forpac International AB, Kungsporten 4E, 427 50 Billdal, Sweden",
       "rules_applied": [
         {
+          "rule_id": "8.6",
+          "outcome": "pairing_valid_via_consignor"
+        },
+        {
           "rule_id": "4.1.2",
-          "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.1.3.1",
-          "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.1.4",
-          "outcome": "MATCH"
+          "outcome": "name_and_country_identified"
         },
         {
           "rule_id": "4.1.5",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor 'FORPAC INTERNATIONAL AB' kan identifieras direkt i fakturans säljarblock som 'Forpac International AB'. Landet 'SWEDEN' framgår också uttryckligen i samma block. Skillnader i versaler/gemener och postnummerformat är tillåten normalisering."
+      "motivation": "Certifikatets consignor 'FORPAC INTERNATIONAL AB' i Sverige återfinns uttryckligen i fakturans seller-block på sidan 1 som 'Forpac International AB ... Sweden'. Företagsnamn, adresskärna och land överensstämmer tydligt."
     },
     "consignee": {
       "applicable": true,
       "status": "MANUAL_REVIEW",
-      "confidence": 0.42,
-      "certificate_value": "SARL IBARAR EMBALLAGE, Algeria",
+      "confidence": 0.46,
+      "certificate_value": "SARL IBARAR EMBALLAGE | Algeria",
       "invoice_value": null,
       "rules_applied": [
         {
-          "rule_id": "8.1.1",
-          "outcome": "FIELD_NOT_READABLY_IDENTIFIED"
+          "rule_id": "4.2.0.2",
+          "outcome": "consignee_not_identified_in_visible_invoice_fields"
         },
         {
           "rule_id": "8.1.3",
-          "outcome": "MANUAL_REVIEW"
+          "outcome": "MANUAL_REVIEW_on_scanned_invoice_without_readable_contradictory_consignee"
         }
       ],
-      "motivation": "Den bifogade fakturan är skannad/bildbaserad och ingen läsbar buyer/consignee/ship-to/delivery-adress för 'SARL IBARAR EMBALLAGE' kan lokaliseras på den tillgängliga sidan. Ingen annan tydligt läsbar, motstridig mottagare framgår heller. Enligt skanningsregeln får utebliven lokaliserbar mottagare därför inte klassas som MISMATCH utan ska skickas till manuell granskning."
+      "motivation": "Den tillgängliga fakturan är skannad/bildbaserad och ingen läsbar buyer/ship-to/consignee-part för 'SARL IBARAR EMBALLAGE' kan identifieras på den synliga sidan. Eftersom dokumentet är skannat och ingen annan tydligt motstridig mottagare kan läsas fram ska denna kontrollpunkt sättas till MANUAL_REVIEW, inte MISMATCH."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.9,
       "certificate_value": "TESTLINER & FLUTING",
-      "invoice_value": "Description: 'Testliner , 90gsm - non collé' and 'Fluting 90gsm'",
+      "invoice_value": "Testliner , 90gsm - non collé; Fluting 90gsm",
       "rules_applied": [
         {
-          "rule_id": "4.3.1",
-          "outcome": "MATCH"
+          "rule_id": "4.3.2",
+          "outcome": "priority_2_controlled_text_match_used"
         },
         {
           "rule_id": "4.3.3",
-          "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.3.4",
-          "outcome": "MATCH"
+          "outcome": "main_goods_terms_identified"
         },
         {
           "rule_id": "4.3.8",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger varorna 'TESTLINER & FLUTING'. I fakturans varutabell förekommer flera rader med 'Testliner' och flera rader med 'Fluting'. Tilläggen '90gsm' och 'non collé' är ytterligare specifikationer i fakturan och hindrar inte att certifikatets identitetsbärande huvudbeteckningar kan identifieras."
+      "motivation": "Certifikatets två identitetsbärande huvudbeteckningar 'TESTLINER' och 'FLUTING' återfinns uttryckligen i fakturans varurader på sidan 1. De extra tilläggen '90gsm - non collé' och '90gsm' förändrar inte att de certifierade varuslagen kan identifieras."
     },
     "quantity": {
       "applicable": true,
       "status": "MISMATCH",
-      "confidence": 0.98,
+      "confidence": 0.97,
       "certificate_value": "208,874 MT",
       "invoice_value": "Total qty. 80 Reel 208,874 MT",
       "rules_applied": [
         {
           "rule_id": "4.4.2.1",
-          "outcome": "QUANTITY_FIELD_IS_GOVERNING"
+          "outcome": "weight_category_missing_in_certificate_quantity"
         },
         {
-          "rule_id": "4.4.2.2",
-          "outcome": "MISMATCH"
+          "rule_id": "4.4.3.5.1",
+          "outcome": "package_count_cannot_override_explicit_weight_in_quantity_field"
         },
         {
-          "rule_id": "4.4.6",
+          "rule_id": "4.4.7",
           "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Certifikatets verifieringsgrundande kvantitetsfält är '208,874 MT'. Eftersom detta är en viktangivelse måste kvantitetsfältet också innehålla viktkategori såsom GW eller NW. Certifikatet anger endast '208,874 MT' utan viktkategori, vilket enligt formkravet ger MISMATCH även om samma numeriska värde kan ses i fakturan."
+      "motivation": "Certifikatets verifieringsgrundande kvantitetsfält anger '208,874 MT' men saknar obligatorisk viktkategori som Gross/GW eller Net/NW. Fakturan visar visserligen samma numeriska totalvikt '208,874 MT' och även '80 Reel', men den uttryckliga viktuppgiften i certifikatets kvantitetsfält måste enligt regelverket själv innehålla viktkategori; paketuppgiften '80 REELS' kan inte rädda denna formbrist."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.93,
+      "confidence": 0.94,
       "certificate_value": "FRANCE",
       "invoice_value": "Nous certifions que les marchandises faisant l'objet de cette livraison sont d'origine français",
       "rules_applied": [
         {
           "rule_id": "4.5.1",
-          "outcome": "MATCH"
+          "outcome": "explicit_origin_statement_found"
         },
         {
-          "rule_id": "4.5.4",
-          "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.5.5",
+          "rule_id": "4.5.6",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger ursprungsland 'FRANCE'. Fakturan innehåller en uttrycklig ursprungsformulering på franska som anger att varorna är av franskt ursprung. Detta är en explicit origin-uppgift och verifierar certifikatets ursprungsland efter normalisering av språkform."
+      "motivation": "Fakturan innehåller en uttrycklig ursprungsangivelse på franska om att varorna är av franskt ursprung. Detta verifierar certifikatets ursprungsland 'FRANCE'."
     }
   },
   "overall_assessment": {
     "comparison_result": "NOT_IDENTICAL",
     "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
     "auto_approval_eligible": false,
-    "confidence": 0.88,
+    "confidence": 0.84,
     "critical_failures": [
-      "Kvantitetsfältet i certifikatet anger '208,874 MT' utan obligatorisk viktkategori (GW/NW)."
+      "Kvantitetsfältet i certifikatet anger vikt som '208,874 MT' utan obligatorisk viktkategori (Gross/GW eller Net/NW)."
     ],
     "manual_review_triggers": [
-      "Mottagaren kunde inte verifieras säkert eftersom den skannade fakturasidan inte visar någon läsbar consignee/buyer/ship-to-part."
+      "Mottagaren kan inte verifieras säkert från den skannade fakturan eftersom ingen läsbar consignee/ship-to-part framgår på den tillgängliga sidan."
     ],
-    "decision_summary": "Dokumentparet kan inte bedömas som identiskt. Avsändare, varubeskrivning och ursprungsland kan verifieras mot fakturan, men kvantitetskontrollpunkten ger MISMATCH eftersom certifikatets vikt saknar obligatorisk viktkategori. Mottagaren kan inte verifieras säkert från den skannade fakturasidan och kräver manuell granskning.",
-    "human_explanation": "Certifikatet anger kvantiteten som '208,874 MT' men utan att ange om vikten är brutto eller netto, vilket krävs för att uppgiften ska kunna godkännas. Avsändare, varor och ursprungsland stämmer mot fakturan. Mottagaren går inte att verifiera säkert från den skannade fakturasidan och behöver därför granskas manuellt."
+    "manual_review_reason": "NOT_APPLICABLE",
+    "decision_summary": "Dokumentparet är inte identiskt. Avsändare, varubeskrivning och ursprungsland kan verifieras mot fakturan, men kvantitetskontrollpunkten faller eftersom certifikatets viktangivelse saknar obligatorisk GW/NW-kategori.",
+    "human_explanation": "Certifikatet anger mängden som '208,874 MT' utan att ange om vikten är brutto eller netto, vilket krävs för viktuppgifter. Avsändare, varubeskrivning och franskt ursprung kan verifieras mot fakturan, men mottagaren kan inte läsas fram säkert från den skannade fakturan."
   },
   "_meta": {
-    "tested_at": "2026-06-01T15:27:17.449597+00:00",
-    "prompt_hash": "d498a4785374",
+    "tested_at": "2026-06-06T09:00:14.355010+00:00",
+    "prompt_hash": "4690e976915d",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P0101_MISMATCH",

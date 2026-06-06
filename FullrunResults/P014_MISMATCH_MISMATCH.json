@@ -1,10 +1,10 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-06-01T00:00:00Z",
-    "document_pair_id": null,
+    "verification_timestamp": "2026-06-06T00:00:00Z",
+    "document_pair_id": "SEG-26D-463815__9209879237",
     "certificate_issue_date": null,
-    "source_documents_received": 2
+    "source_documents_received": 1
   },
   "task": {
     "task_type": "customs_document_pair_verification",
@@ -13,12 +13,12 @@
   },
   "documents": {
     "document_a": {
-      "label": "Certificate of Origin (structured JSON)",
+      "label": "CERTIFICATE OF ORIGIN (structured JSON)",
       "assumed_role": "certificate",
-      "document_type": "certificate_of_origin_structured_json"
+      "document_type": "structured_json_certificate_of_origin"
     },
     "document_b": {
-      "label": "Customs Invoice PDF",
+      "label": "CUSTOMS INVOICE PDF",
       "assumed_role": "invoice",
       "document_type": "customs_invoice_pdf"
     }
@@ -33,6 +33,10 @@
     "eu_origin_normalization_active": false,
     "activated_rules": [
       {
+        "rule_id": "8.5",
+        "rule_name": "Fakturareferens i certifikatet styr dokumentparning"
+      },
+      {
         "rule_id": "8.6",
         "rule_name": "Obligatorisk parningsvalidering"
       },
@@ -41,11 +45,7 @@
         "rule_name": "Generell varubeskrivning med fakturareferens"
       },
       {
-        "rule_id": "4.5.3",
-        "rule_name": "Blandade ursprung"
-      },
-      {
-        "rule_id": "4.5.6",
+        "rule_id": "4.5.5",
         "rule_name": "Fullständighet vid generell varubeskrivning"
       }
     ]
@@ -56,7 +56,7 @@
       "status": "MATCH",
       "confidence": 0.98,
       "certificate_value": "ERICSSON AB | SWEDEN",
-      "invoice_value": "Ericsson AB; VAT no : SE556056625801; SE-164 83 STOCKHOLM; Stockholm,Sweden",
+      "invoice_value": "Ericsson AB ... VAT no : SE556056625801 ... SE-164 83 STOCKHOLM ... Stockholm,Sweden",
       "rules_applied": [
         {
           "rule_id": "4.1.0",
@@ -71,13 +71,13 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets avsändare 'ERICSSON AB' återfinns uttryckligen i fakturan på samtliga sidor i footer/identifieringsblock som 'Ericsson AB'. Landet verifieras genom explicit adress 'Stockholm,Sweden' samt VAT-prefix 'SE'. Samma juridiska part och land kan därför verifieras."
+      "motivation": "Certifikatets consignor \"ERICSSON AB\" kan identifieras uttryckligen i fakturans footer på samtliga sidor som \"Ericsson AB\". Landet verifieras av explicit svensk adress (Stockholm, Sweden) samt VAT-prefix/IBAN med SE. Samma juridiska part och land kan därmed verifieras."
     },
     "consignee": {
       "applicable": true,
       "status": "MISMATCH",
       "confidence": 0.99,
-      "certificate_value": "COMMERCIAL INTERNATIONAL BANK | Egypt",
+      "certificate_value": "COMMERCIAL INTERNATIONAL BANK – CAIRO | Egypt",
       "invoice_value": "Ship to: ETISALAT MISR SAE ... EGYPT | Bill to: ETISALAT MISR SAE ... EGYPT | Sold to: ETISALAT MISR SAE ... EGYPT",
       "rules_applied": [
         {
@@ -85,17 +85,21 @@
           "outcome": "MISMATCH"
         },
         {
+          "rule_id": "4.1.3.1",
+          "outcome": "MISMATCH"
+        },
+        {
           "rule_id": "4.2.4",
           "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Certifikatet anger mottagaren som 'COMMERCIAL INTERNATIONAL BANK' i Egypten. Fakturans samtliga relevanta mottagarfält (Ship to, Bill to, Sold to) anger i stället 'ETISALAT MISR SAE' i Egypten, och 'COMMERCIAL INTERNATIONAL BANK' kan inte identifieras i något mottagarfält i fakturan. Detta är en verifierad avvikelse och därmed MISMATCH."
+      "motivation": "Certifikatets mottagare \"COMMERCIAL INTERNATIONAL BANK\" kan inte identifieras i något mottagarfält i fakturan. I stället anger fakturan konsekvent \"ETISALAT MISR SAE\" som Ship-To, Bill-To och Sold-To. Landet Egypten överensstämmer, men företagsnamnet avser en annan juridisk part, vilket ger MISMATCH."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.93,
-      "certificate_value": "CUSTOMS INVOICE NO: 9209879237, DATED: 2026-02-16 | TOTAL ",
+      "confidence": 0.97,
+      "certificate_value": "CUSTOMS INVOICE NO: 9209879237, DATED: 2026-02-16",
       "invoice_value": "Invoice No. 9209879237 | Invoice Date 2026-02-16",
       "rules_applied": [
         {
@@ -103,53 +107,45 @@
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.3.5.1",
-          "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.3.8.1",
+          "rule_id": "8.5.1.1",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet använder en generell varubeskrivning genom uttrycklig fakturareferens: 'CUSTOMS INVOICE NO: 9209879237, DATED: 2026-02-16'. Fakturan har exakt samma fakturanummer och datum. Därmed är varubeskrivningen verifierad via regeln för generell varubeskrivning med fakturareferens; den separata texten 'TOTAL' behandlas inte som en egen vara."
+      "motivation": "Certifikatets varubeskrivning är en generell fakturahänvisning med både fakturanummer och fakturadatum. Fakturan bär exakt nummer 9209879237 och datum 2026-02-16. Formkraven för generell varubeskrivning med fakturareferens är därmed uppfyllda."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.94,
-      "certificate_value": "1632,3 KGS GROSS | 27 PIECES TELECOM EQUIPMENT",
-      "invoice_value": "Total gross weight 1.632,340 KG | Number of packages 27",
+      "certificate_value": "1632,3 KGS GROSS",
+      "invoice_value": "Total gross weight 1.632,340 KG",
       "rules_applied": [
         {
-          "rule_id": "4.4.2.2",
+          "rule_id": "4.4.2.1",
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.4.3",
+          "rule_id": "4.4.3.2.1",
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.4.3.4",
+          "rule_id": "4.4.3.6",
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.4.6",
+          "rule_id": "4.4.4.2",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets verifieringsgrundande kvantitet är '1632,3 KGS GROSS', vilket innehåller numeriskt värde, enhet och viktkategori. Fakturan anger 'Total gross weight 1.632,340 KG'; efter normalisering av tusentals-/decimalseparatorer blir detta 1632.340 KG, vilket matchar certifikatets 1632,3 KG genom tillåten trunkering till certifikatets precision. Fakturan anger även 'Number of packages 27', vilket överensstämmer med certifikatets '27 PIECES TELECOM EQUIPMENT'."
+      "motivation": "Den verifieringsgrundande kvantiteten i certifikatets kvantitetsfält är \"1632,3 KGS GROSS\". Fakturan anger total bruttovikt som \"1.632,340 KG\". Efter normalisering av blandade decimal-/tusentalsseparatorer motsvarar fakturavärdet 1632.340 kg gross; trunkerat till certifikatets precision blir detta 1632.3 kg, vilket verifierar certifikatets uppgift."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.9,
+      "confidence": 0.89,
       "certificate_value": "CZ, VN, IE, PL, CN, MY, EE, MK, CR",
-      "invoice_value": "CoO-koder på fakturarader: CZ, CN, VN, IE, PL, MY, EE, MK samt 'CR, CN' för en rad med blandat ursprung",
+      "invoice_value": "CoO codes across invoice line items: CZ, CN, VN, IE, PL, MY, EE, MK and \"* CR, CN\"",
       "rules_applied": [
-        {
-          "rule_id": "4.5.1",
-          "outcome": "MATCH"
-        },
         {
           "rule_id": "4.5.3",
           "outcome": "MATCH"
@@ -167,7 +163,7 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger ursprungsländerna CZ, VN, IE, PL, CN, MY, EE, MK och CR. Fakturans CoO-kolumn på sidorna 1–2 innehåller uttryckligen dessa ISO-landskoder, inklusive 'CR, CN' för en artikelrad. Alla ursprungsländer i certifikatet kan därför identifieras explicit i fakturan, och ingen extra ursprungskod utanför certifikatets lista har identifierats."
+      "motivation": "Fakturan anger ursprung per rad i CoO-kolumnen. De länder som anges i certifikatet kan återfinnas explicit i fakturan: CZ, VN, IE, PL, CN, MY, EE och MK på ordinarie rader samt CR i noteringen \"* CR, CN\" för artikel 002000. Inga ytterligare ursprung utanför certifikatets lista identifierades i fakturans CoO-uppgifter."
     }
   },
   "overall_assessment": {
@@ -176,15 +172,16 @@
     "auto_approval_eligible": false,
     "confidence": 0.97,
     "critical_failures": [
-      "Consignee mismatch: certifikatet anger 'COMMERCIAL INTERNATIONAL BANK' medan fakturan anger 'ETISALAT MISR SAE' i Ship to/Bill to/Sold to."
+      "Consignee mismatch: certifikatet anger COMMERCIAL INTERNATIONAL BANK – CAIRO medan fakturan anger ETISALAT MISR SAE i samtliga relevanta mottagarfält."
     ],
     "manual_review_triggers": [],
-    "decision_summary": "Dokumentparet är korrekt parat via fakturanummer 9209879237 och fakturadatum 2026-02-16. Avsändare, varubeskrivning, kvantitet och ursprung kan verifieras mot fakturan. Mottagaren i certifikatet kan däremot inte verifieras eftersom fakturan anger en annan mottagare.",
-    "human_explanation": "Certifikatet hänvisar korrekt till tullfaktura 9209879237 daterad 2026-02-16, och avsändare, kvantitet samt ursprungsländer kan verifieras mot fakturan. Däremot anger certifikatet mottagaren som COMMERCIAL INTERNATIONAL BANK i Egypten, medan fakturan anger ETISALAT MISR SAE som Ship to, Bill to och Sold to. Dokumenten är därför inte identiska och kräver manuell handläggning."
+    "manual_review_reason": "NOT_APPLICABLE",
+    "decision_summary": "Dokumentparet är inte identiskt. Avsändare, fakturareferens i varubeskrivningen, kvantitet och ursprungsländer kan verifieras mot fakturan, men mottagaren i certifikatet kan inte verifieras och motsägs uttryckligen av fakturans Ship-To/Bill-To/Sold-To-uppgifter.",
+    "human_explanation": "Certifikatet anger mottagaren som COMMERCIAL INTERNATIONAL BANK – CAIRO, men fakturan anger ETISALAT MISR SAE som mottagare i Ship to, Bill to och Sold to. Avsändare, fakturareferens, bruttovikt och ursprungsländer stämmer mot fakturan. Dokumentparet är därför inte identiskt och kräver manuell handläggning."
   },
   "_meta": {
-    "tested_at": "2026-06-01T15:27:17.475546+00:00",
-    "prompt_hash": "d498a4785374",
+    "tested_at": "2026-06-06T09:00:14.383940+00:00",
+    "prompt_hash": "4690e976915d",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P014_MISMATCH",

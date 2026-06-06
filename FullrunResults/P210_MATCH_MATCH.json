@@ -1,10 +1,10 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-06-01T00:00:00Z",
+    "verification_timestamp": null,
     "document_pair_id": "SEG-25D-422010__CSI-2694",
     "certificate_issue_date": null,
-    "source_documents_received": 2
+    "source_documents_received": 1
   },
   "task": {
     "task_type": "customs_document_pair_verification",
@@ -13,9 +13,9 @@
   },
   "documents": {
     "document_a": {
-      "label": "CERTIFICATE OF ORIGIN structured JSON",
+      "label": "Certificate of Origin (structured JSON)",
       "assumed_role": "certificate",
-      "document_type": "certificate_of_origin_json"
+      "document_type": "certificate_of_origin"
     },
     "document_b": {
       "label": "Invoice PDF",
@@ -33,20 +33,16 @@
     "eu_origin_normalization_active": true,
     "activated_rules": [
       {
-        "rule_id": "8.6",
-        "rule_name": "Obligatorisk parningsvalidering"
+        "rule_id": "4.3.8.1",
+        "rule_name": "Kategoritext/fortsättningsrader i varubeskrivning behandlas inte som separata varuposter"
       },
       {
-        "rule_id": "4.3.7",
-        "rule_name": "Koppling vara–ursprungsland vid flera ursprung"
+        "rule_id": "4.4.2.1",
+        "rule_name": "Viktkategori och viktvärde får förekomma i separata poster inom kvantitetsfältet"
       },
       {
-        "rule_id": "4.5.3",
-        "rule_name": "Blandade ursprung"
-      },
-      {
-        "rule_id": "4.5.4.2.1",
-        "rule_name": "Generellt EU-ursprungsuttalande täcker EU [land]"
+        "rule_id": "4.5.4.2",
+        "rule_name": "EU-medlemsland och EU-ursprungsangivelse får verifiera varandra"
       }
     ]
   },
@@ -54,127 +50,157 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.94,
+      "confidence": 0.99,
       "certificate_value": "Osstell AB",
-      "invoice_value": "Osstell AB",
+      "invoice_value": "Osstell AB; VAT No. SE556612493801",
       "rules_applied": [
         {
-          "rule_id": "4.1.0",
-          "outcome": "MATCH"
+          "rule_id": "4.1.1",
+          "outcome": "Issuer identified in invoice header as Osstell AB"
         },
         {
           "rule_id": "4.1.2.1",
-          "outcome": "MATCH"
+          "outcome": "Country Sweden verified indirectly via VAT prefix SE"
         },
         {
-          "rule_id": "4.1.4",
+          "rule_id": "4.1.3.1",
+          "outcome": "Same legal entity name identified"
+        },
+        {
+          "rule_id": "4.1.5",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor 'Osstell AB' återfinns uttryckligen i fakturans sidhuvud på samtliga sidor. Sverige styrks genom fakturans svenska VAT-prefix 'SE556612493801' och IBAN-prefix 'SE'."
+      "motivation": "Certifikatet anger consignor 'Osstell AB' i Sverige. Fakturan är utställd av 'Osstell AB' i sidhuvudet på samtliga sidor, och svenskt land styrks av VAT-numret 'SE556612493801' i footer. Företagsnamn och land kan därför verifieras som samma juridiska part."
     },
     "consignee": {
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.99,
       "certificate_value": "Prime Medical Supplies Est.",
-      "invoice_value": "Prime Medical Supplies Est.",
+      "invoice_value": "Invoice address / Delivery address: Prime Medical Supplies Est., STORE # 05 - BLOCK A, ICAD - 1, M-41 - 2H1, MUSAFFAH, Abu Dhabi, United Arab Emirates",
       "rules_applied": [
         {
           "rule_id": "4.2.0.2",
-          "outcome": "MATCH"
+          "outcome": "Consignee found in relevant recipient fields"
         },
         {
           "rule_id": "4.2.3",
-          "outcome": "MATCH"
+          "outcome": "Country United Arab Emirates matched explicitly"
         },
         {
           "rule_id": "4.2.4",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets mottagare 'Prime Medical Supplies Est.' återfinns exakt i både 'Invoice address' och 'Delivery address' på fakturan, med land 'United Arab Emirates'."
+      "motivation": "Certifikatet anger mottagaren 'Prime Medical Supplies Est.' i United Arab Emirates. Samma företagsnamn återfinns både under 'Invoice address' och 'Delivery address' i fakturan, med landet uttryckligen angivet som 'United Arab Emirates'. Företagsnamn och land matchar entydigt."
     },
     "goods_description": {
       "applicable": true,
-      "status": "MISMATCH",
-      "confidence": 0.92,
+      "status": "MATCH",
+      "confidence": 0.9,
       "certificate_value": "Dental Equipment and Accessories | Electronic measurement device | for help determining implant stability | Beacon instruments | SmartPeg accessories",
-      "invoice_value": "Osstell Beacon/IDx/ ISQ - Electronic measurement device for help determining implant stability. Smartpegs: Accessories - Pin made out of aluminium, used for measuring implant stability. Item rows include Osstell Beacon+ and multiple SmartPeg Type lines.",
+      "invoice_value": "Osstell Beacon/IDx/ ISQ - Electronic measurement device for help determining implant stability. Smartpegs: Accessories - Pin made out of aluminium, used for measuring implant stability. Line items include 'Osstell Beacon+' and multiple 'SmartPeg Type ...' rows.",
       "rules_applied": [
         {
           "rule_id": "4.3.3",
-          "outcome": "PARTIAL_MATCH"
+          "outcome": "Controlled text match for 'Electronic measurement device' and continuation text"
+        },
+        {
+          "rule_id": "4.3.3.1",
+          "outcome": "Minor one-character/plural variation accepted for 'SmartPeg' vs 'Smartpegs'"
+        },
+        {
+          "rule_id": "4.3.4",
+          "outcome": "Non-identity-bearing additions around Beacon/SmartPeg text did not change product identity"
         },
         {
           "rule_id": "4.3.8.1",
-          "outcome": "APPLIED"
+          "outcome": "General heading/continuation text treated as complementary, not separate goods"
         },
         {
-          "rule_id": "4.3.7",
-          "outcome": "MISMATCH"
+          "rule_id": "4.3.8",
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Fakturans text verifierar varorna 'Electronic measurement device ... implant stability', 'Beacon' och 'SmartPeg'. Men certifikatet anger två ursprungsländer ('EU - Sweden' och 'EU - Germany') samtidigt som varorna anges separat, utan att koppla respektive ursprung till respektive vara och utan uttrycklig fakturahänvisning i varubeskrivningsfältet. Därför är kontrollpunkten MISMATCH enligt regeln för flera ursprung."
+      "motivation": "Raden 'Electronic measurement device' och fortsättningen 'for help determining implant stability' återfinns ordagrant i fakturans deklaration på sida 4. 'Beacon instruments' stöds av fakturans uttryckliga Beacon-identifiering ('Osstell Beacon+' och 'Osstell Beacon/IDx/ISQ'), och 'SmartPeg accessories' stöds av 'Smartpegs: Accessories' samt flera SmartPeg-rader. Inledningen 'Dental Equipment and Accessories' fungerar här som samlande kategoritext och inte som en separat vara."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.91,
+      "confidence": 0.96,
       "certificate_value": "Gross weight | =  8,7 kg | 6 units | 62 boxes | 1 Kolli",
-      "invoice_value": "1 08022260 Osstell Beacon+ SE 6,00 ea; 1 Package: Gross Weight: 8,7 kg",
+      "invoice_value": "Gross Weight: 8,7 kg; 1 Package; item 1 quantity 6,00 ea",
       "rules_applied": [
         {
-          "rule_id": "4.4.3.1",
-          "outcome": "MATCH"
+          "rule_id": "4.4.2.1",
+          "outcome": "Gross weight category and value accepted as separate quantity-field posts"
         },
         {
           "rule_id": "4.4.3.2",
+          "outcome": "At least one certificate quantity must be verified"
+        },
+        {
+          "rule_id": "4.4.3.6",
+          "outcome": "Total gross weight verified against invoice total weight"
+        },
+        {
+          "rule_id": "4.4.3.5",
+          "outcome": "Shipment quantity '1 Kolli' corroborated by '1 Package'"
+        },
+        {
+          "rule_id": "4.4.7",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Minst en kvantitetsuppgift i certifikatet kan verifieras mot fakturan. Certifikatets '6 units' återfinns som '6,00 ea' för Osstell Beacon+ och certifikatets '1 Kolli' motsvaras av fakturans '1 Package'. Därmed är kvantitetskontrollpunkten MATCH."
+      "motivation": "Certifikatet innehåller flera kvantitetsuppgifter. 'Gross weight' och '= 8,7 kg' förekommer som separata poster i kvantitetsfältet och kan därför läsas som 'Gross weight = 8,7 kg'; fakturan anger uttryckligen 'Gross Weight: 8,7 kg' på sida 4. Därutöver stöds även försändelsekvantiteten av '1 Kolli' i certifikatet mot '1 Package' i fakturan, och Beacon-raden visar 6,00 ea mot certifikatets 6 units. Minst en kvantitetsuppgift är därmed verifierad utan motsägelse."
     },
     "origin": {
       "applicable": true,
-      "status": "MISMATCH",
-      "confidence": 0.9,
+      "status": "MATCH",
+      "confidence": 0.95,
       "certificate_value": "EU - Sweden | EU - Germany",
-      "invoice_value": "Origin column shows SE for Osstell Beacon+ and DE for SmartPeg rows; page 4 states 'these products are of EU preferential origin.'",
+      "invoice_value": "Origin column shows SE for Beacon/Further charging and DE for SmartPeg rows; page 4 states 'these products are of EU preferential origin.'",
       "rules_applied": [
         {
-          "rule_id": "4.5.4.2.1",
-          "outcome": "PARTIAL_MATCH"
+          "rule_id": "4.5.1",
+          "outcome": "Explicit origin information identified in invoice"
         },
         {
-          "rule_id": "4.5.3",
-          "outcome": "MISMATCH"
+          "rule_id": "4.5.4",
+          "outcome": "ISO country codes SE and DE normalized to Sweden and Germany"
+        },
+        {
+          "rule_id": "4.5.4.2",
+          "outcome": "EU statement accepted together with explicit EU-member-country origins"
+        },
+        {
+          "rule_id": "4.5.6",
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Fakturan visar uttryckligen både SE och DE i origin-kolumnen och innehåller även ett generellt EU-ursprungsuttalande. Men eftersom certifikatet har flera ursprungsländer och inte anger vilket ursprung som hör till vilken vara, samt inte hänvisar uttryckligen till fakturan i varubeskrivningen, kan blandade ursprung inte verifieras entydigt."
+      "motivation": "Certifikatet anger ursprung 'EU - Sweden' och 'EU - Germany'. Fakturans origin-kolumn visar uttryckligen 'SE' för Beacon-raden och 'DE' för SmartPeg-raderna, vilket normaliseras till Sweden respektive Germany. Fakturan innehåller dessutom ett explicit EU-ursprungsuttalande på sida 4. Båda angivna ursprungsländerna kan därför verifieras."
     }
   },
   "overall_assessment": {
-    "comparison_result": "NOT_IDENTICAL",
-    "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
-    "auto_approval_eligible": false,
+    "comparison_result": "IDENTICAL",
+    "workflow_recommendation": "AUTO_APPROVAL_ELIGIBLE",
+    "auto_approval_eligible": true,
     "confidence": 0.94,
-    "critical_failures": [
-      "Varubeskrivning: certifikatet innehåller flera ursprung utan vara–ursprungskoppling.",
-      "Ursprungsland: blandade ursprung kan inte verifieras entydigt mot fakturan."
-    ],
+    "critical_failures": [],
     "manual_review_triggers": [],
-    "decision_summary": "Consignor, consignee och minst en kvantitetsuppgift kan verifieras mot fakturan. Dokumentparet är dock NOT_IDENTICAL eftersom certifikatet anger flera ursprungsländer utan att koppla dem till respektive vara och utan uttrycklig fakturahänvisning i varubeskrivningen.",
-    "human_explanation": "Avsändare, mottagare och kvantiteter kan verifieras mot fakturan. Certifikatet anger två ursprungsländer, EU–Sweden och EU–Germany, men visar inte vilken vara som hör till vilket ursprung och hänvisar inte uttryckligen till fakturan i varubeskrivningen. Därför kan varubeskrivning och ursprungsuppgifter inte verifieras fullt ut."
+    "manual_review_reason": "NOT_APPLICABLE",
+    "decision_summary": "All applicable control points were verified as MATCH against the invoice. No LC exception applied, no pairing conflict was identified, and no readable contradictory data was found.",
+    "human_explanation": "Alla tillämpliga uppgifter i certifikatet kan verifieras mot fakturan. Avsändare, mottagare, varor, kvantitet och ursprung stämmer överens. Dokumentparet är därför lämpligt för automatisk hantering."
   },
   "_meta": {
-    "tested_at": "2026-06-01T15:28:29.542745+00:00",
-    "prompt_hash": "d498a4785374",
+    "tested_at": "2026-06-06T09:13:51.025809+00:00",
+    "prompt_hash": "4690e976915d",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P210_MATCH",
     "expected": "IDENTICAL",
-    "actual": "NOT_IDENTICAL",
-    "status": "FAIL"
+    "actual": "IDENTICAL",
+    "status": "PASS"
   }
 }

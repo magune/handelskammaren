@@ -1,8 +1,8 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-06-01T00:00:00Z",
-    "document_pair_id": "SEG-26D-463450__INV-4015658",
+    "verification_timestamp": "2026-06-06T00:00:00Z",
+    "document_pair_id": "SEG-26D-463450__4015658",
     "certificate_issue_date": null,
     "source_documents_received": 2
   },
@@ -13,14 +13,14 @@
   },
   "documents": {
     "document_a": {
-      "label": "CERTIFICATE OF ORIGIN (structured JSON)",
+      "label": "Certificate of Origin (structured JSON)",
       "assumed_role": "certificate",
-      "document_type": "structured_json"
+      "document_type": "certificate_of_origin"
     },
     "document_b": {
-      "label": "Invoice Original No. 4015658",
+      "label": "Invoice PDF",
       "assumed_role": "invoice",
-      "document_type": "invoice_pdf"
+      "document_type": "invoice"
     }
   },
   "rule_activation": {
@@ -34,19 +34,7 @@
     "activated_rules": [
       {
         "rule_id": "8.6",
-        "rule_name": "Obligatorisk parningsvalidering"
-      },
-      {
-        "rule_id": "4.3.3",
-        "rule_name": "Kontrollerad textmatchning för varubeskrivning"
-      },
-      {
-        "rule_id": "4.4.3",
-        "rule_name": "Verifiering av kvantitet mot faktura"
-      },
-      {
-        "rule_id": "4.5.1",
-        "rule_name": "Explicit ursprungsangivelse i faktura"
+        "rule_name": "Parningsvalidering passerad via consignee-matchning"
       }
     ]
   },
@@ -54,100 +42,124 @@
     "consignor": {
       "applicable": true,
       "status": "MISMATCH",
-      "confidence": 0.98,
-      "certificate_value": "ARA Timber AB | Vallgatan 27 | 411 16, Gothenburg | Sweden | VAT 556976003501",
-      "invoice_value": "Nordic Pine AB | Vallgatan 27 | 411 16 Göteborg | Sweden | VAT No SE559250191901",
+      "confidence": 0.99,
+      "certificate_value": "ARA Timber AB",
+      "invoice_value": "Nordic Pine AB, Vallgatan 27, 411 16 Göteborg, Sweden; VAT No SE559250191901",
       "rules_applied": [
         {
           "rule_id": "4.1.0",
-          "outcome": "NO_MATCH"
+          "outcome": "Certifikatets consignor kunde inte identifieras någonstans i fakturan."
         },
         {
           "rule_id": "4.1.3.1",
-          "outcome": "MISMATCH"
+          "outcome": "Fakturautställarens juridiska namn är ett annat än certifikatets consignor."
         },
         {
           "rule_id": "4.1.3.4.1",
-          "outcome": "REJECTED"
+          "outcome": "Inte tillämplig som räddningsregel eftersom ARA Timber AB inte förekommer i fakturan; gemensam adress räcker inte."
         },
         {
-          "rule_id": "4.1.4",
-          "outcome": "LAND_MATCH_ONLY"
+          "rule_id": "4.1.5",
+          "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Certifikatet anger consignor som \"ARA Timber AB\". Fakturan anger utställaren som \"Nordic Pine AB\" och den exakta certifikatsnamnsträngen kan inte identifieras någonstans i fakturan efter tillåten normalisering. Gemensam adress (Vallgatan 27, Sweden) räcker inte när certifikatets bolagsnamn inte förekommer i fakturan, och fakturans VAT-nummer avser dessutom en annan entitet. Därför är samma juridiska part inte verifierad."
+      "motivation": "Certifikatet anger consignor som \"ARA Timber AB\" i Sverige. Fakturan visar utställaren \"Nordic Pine AB\" i Sverige på samma adress, men namnet \"ARA Timber AB\" förekommer inte uttryckligen någonstans i fakturan. Delad adress utan namnmatch verifierar inte samma juridiska part, därför blir resultatet MISMATCH."
     },
     "consignee": {
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.99,
-      "certificate_value": "K.U. Trading Co. | Siddiq Wahab Road, Timber Market | 75660 | Karachi | Pakistan",
-      "invoice_value": "Customer: K.U. Trading Co. | Siddiq Wahab Road, Timber Market | 75660 Karachi | PAKISTAN",
+      "certificate_value": "K.U. Trading Co., Pakistan",
+      "invoice_value": "Customer: K.U. Trading Co., Siddiq Wahab Road, Timber Market, 75660 Karachi, PAKISTAN",
       "rules_applied": [
         {
           "rule_id": "4.2.0.2",
-          "outcome": "MATCH"
+          "outcome": "Mottagaren identifierades i fakturans Customer-fält."
+        },
+        {
+          "rule_id": "4.2.2",
+          "outcome": "Företagsnamnet kan identifieras i fakturan."
         },
         {
           "rule_id": "4.2.3",
+          "outcome": "Landet Pakistan överensstämmer."
+        },
+        {
+          "rule_id": "4.2.4",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Mottagaren i certifikatet kan identifieras direkt i fakturans kundfält som \"K.U. Trading Co.\" med adressen Siddiq Wahab Road, Timber Market, 75660 Karachi, Pakistan. Företagsnamn och land överensstämmer utan otillåten tolkning."
+      "motivation": "Certifikatets mottagare \"K.U. Trading Co.\" återfinns uttryckligen i fakturans mottagarfält som \"Customer: K.U. Trading Co.\" med adress i Karachi, Pakistan. Företagsnamn och land överensstämmer."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.99,
+      "confidence": 0.97,
       "certificate_value": "WHITEWOOD",
       "invoice_value": "Description: WW - KD / WHITEWOOD",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "PRIORITY_2_TEXT_MATCH"
+          "outcome": "Ingen artikelnummerväg användes; kontroll gick vidare till kontrollerad textmatchning."
         },
         {
           "rule_id": "4.3.3",
+          "outcome": "Den identitetsbärande huvudbeteckningen WHITEWOOD identifierades exakt i fakturan."
+        },
+        {
+          "rule_id": "4.3.8",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets varubeskrivning är \"WHITEWOOD\". Fakturan innehåller samma identitetsbärande huvudbeteckning \"WHITEWOOD\" i beskrivningsfältet. Tillägget \"WW - KD\" i fakturan motsäger inte certifikatets uppgift."
+      "motivation": "Certifikatets varubeskrivning är \"WHITEWOOD\". Fakturan innehåller exakt samma produktbeteckning i beskrivningsfältet. Ingen otillåten tolkning behövs."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.97,
       "certificate_value": "206,20 cbm",
-      "invoice_value": "76 packages/206,20 cbm",
+      "invoice_value": "Quantity Unit: 206,200 CBM; description line: 76 packages/206,20 cbm; Gross weight:113 400 kgs; Lot 1; 5x40´HC Containers",
       "rules_applied": [
         {
-          "rule_id": "4.4.2",
-          "outcome": "FORM_OK"
+          "rule_id": "4.4.3",
+          "outcome": "Certifikatets numeriska kvantitet kunde identifieras i fakturan."
         },
         {
-          "rule_id": "4.4.3",
+          "rule_id": "4.4.3.2",
+          "outcome": "Flera kvantitetsuppgifter förekommer; minst en verifierad kvantitet räcker och ingen motsägelse finns."
+        },
+        {
+          "rule_id": "4.4.4.2",
+          "outcome": "Formatskillnad med decimalprecision normaliserades utan att ändra numeriskt värde."
+        },
+        {
+          "rule_id": "4.4.7",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger kvantiteten som \"206,20 cbm\". Fakturan innehåller exakt samma numeriska värde och enhet i texten \"76 packages/206,20 cbm\". Kvantiteten kan därför verifieras direkt utan undantag eller beräkning."
+      "motivation": "Certifikatet anger \"206,20 cbm\". Fakturan visar samma kvantitet både som \"206,200 CBM\" i kvantitetskolumnen och som \"76 packages/206,20 cbm\" i beskrivningen. Skillnaden är endast formatering/extra decimalnolla och ingen motstridig kvantitet förekommer."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.99,
       "certificate_value": "SWEDEN",
-      "invoice_value": "Country of origin: Sweden",
+      "invoice_value": "Country of origin: Sweden; Shipping Marks: MADE IN SWEDEN",
       "rules_applied": [
         {
           "rule_id": "4.5.1",
-          "outcome": "EXPLICIT_ORIGIN_FOUND"
+          "outcome": "Ursprungslandet identifierades i ett explicit origin-fält i fakturan."
         },
         {
           "rule_id": "4.5.4",
-          "outcome": "NORMALIZED_MATCH"
+          "outcome": "Normalisering av versaler/gemener tillämpades."
+        },
+        {
+          "rule_id": "4.5.6",
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger ursprungsland \"SWEDEN\". Fakturan innehåller en explicit ursprungsangivelse i ett dedikerat fält: \"Country of origin: Sweden\". Uppgiften är därmed verifierad."
+      "motivation": "Certifikatet anger ursprungsland \"SWEDEN\". Fakturan anger uttryckligen \"Country of origin Sweden\" och innehåller även texten \"MADE IN SWEDEN\". Ursprungslandet är därför verifierat."
     }
   },
   "overall_assessment": {
@@ -156,15 +168,16 @@
     "auto_approval_eligible": false,
     "confidence": 0.97,
     "critical_failures": [
-      "Consignor mismatch: certifikatet anger ARA Timber AB medan fakturan anger Nordic Pine AB, och ARA Timber AB kan inte identifieras i fakturan."
+      "Consignor mismatch: certifikatet anger ARA Timber AB medan fakturan är utställd av Nordic Pine AB och ARA Timber AB inte förekommer i fakturan."
     ],
     "manual_review_triggers": [],
-    "decision_summary": "Dokumentparet passerar parningsvalideringen via identifierad consignee, men är inte identiskt eftersom consignor i certifikatet inte kan verifieras mot fakturan. Övriga kontrollpunkter (consignee, varubeskrivning, kvantitet och ursprungsland) matchar.",
-    "human_explanation": "Certifikatet anger avsändaren som ARA Timber AB medan fakturan är utställd av Nordic Pine AB, och ARA Timber AB förekommer inte i fakturan. Mottagare, varubeskrivning, kvantitet och ursprungsland kan verifieras. Dokumenten är därför inte identiska och kräver manuell handläggning."
+    "manual_review_reason": "NOT_APPLICABLE",
+    "decision_summary": "Dokumentparet passerar parningsvalidering via consignee-matchning, och mottagare, varubeskrivning, kvantitet samt ursprungsland kan verifieras mot fakturan. Avsändaren kan däremot inte verifieras eftersom certifikatets consignor \"ARA Timber AB\" inte återfinns i fakturan, som i stället är utställd av \"Nordic Pine AB\". Minst en tillämplig kontrollpunkt är därför MISMATCH, vilket medför comparison_result = NOT_IDENTICAL.",
+    "human_explanation": "Certifikatet anger avsändaren som ARA Timber AB, men fakturan är utställd av Nordic Pine AB och namnet ARA Timber AB förekommer inte i fakturan. Mottagare, varubeskrivning, kvantitet och ursprungsland stämmer, men avsändaren kan därför inte verifieras. Ärendet kräver manuell handläggning."
   },
   "_meta": {
-    "tested_at": "2026-06-01T15:28:10.711123+00:00",
-    "prompt_hash": "d498a4785374",
+    "tested_at": "2026-06-06T09:17:25.972250+00:00",
+    "prompt_hash": "4690e976915d",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P050_MISMATCH",

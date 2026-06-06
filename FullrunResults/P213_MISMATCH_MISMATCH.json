@@ -1,10 +1,10 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-06-01",
-    "document_pair_id": "SEG-25D-409850__241502586",
+    "verification_timestamp": "2026-06-06T00:00:00Z",
+    "document_pair_id": "SEG-25D-409850::P213_MISMATCH_invoice.pdf",
     "certificate_issue_date": null,
-    "source_documents_received": 1
+    "source_documents_received": 2
   },
   "task": {
     "task_type": "customs_document_pair_verification",
@@ -15,12 +15,12 @@
     "document_a": {
       "label": "CERTIFICATE OF ORIGIN (structured JSON)",
       "assumed_role": "certificate",
-      "document_type": "structured_json"
+      "document_type": "structured_json_certificate_of_origin"
     },
     "document_b": {
       "label": "P213_MISMATCH_invoice.pdf",
       "assumed_role": "invoice",
-      "document_type": "invoice_pdf_scanned_image"
+      "document_type": "invoice_pdf_image_based"
     }
   },
   "rule_activation": {
@@ -33,24 +33,36 @@
     "eu_origin_normalization_active": false,
     "activated_rules": [
       {
+        "rule_id": "8.1",
+        "rule_name": "Fakturan är bildbaserad/skannad och kräver fältvis läsbarhetsbedömning"
+      },
+      {
         "rule_id": "8.6",
-        "rule_name": "Obligatorisk parningsvalidering"
+        "rule_name": "Parningsvalidering passerad via consignor och consignee i fakturan"
       },
       {
         "rule_id": "4.1.0",
-        "rule_name": "Consignor kan verifieras någonstans i fakturan"
+        "rule_name": "Consignor får verifieras om företagsnamnet uttryckligen förekommer någonstans i fakturan"
       },
       {
-        "rule_id": "4.2.2.1.3",
-        "rule_name": "Certifikatets mottagarnamn som strikt delmängd av fakturans namn"
+        "rule_id": "4.2.0.2",
+        "rule_name": "Consignee får verifieras i något relevant mottagarfält"
       },
       {
-        "rule_id": "4.3.3",
-        "rule_name": "Kontrollerad textmatchning av varubeskrivning"
+        "rule_id": "4.3.2",
+        "rule_name": "Varubeskrivning verifieras via kontrollerad textmatchning"
+      },
+      {
+        "rule_id": "4.4.3.1",
+        "rule_name": "Avsaknad av verifierbar kvantitet utan positiv motsägelse på skannad faktura leder inte direkt till mismatch"
       },
       {
         "rule_id": "8.1.3",
-        "rule_name": "Skannad faktura: hittas inte är inte samma sak som saknas"
+        "rule_name": "På skannad faktura ger ej återfunnen uppgift utan motstridigt värde MANUAL_REVIEW"
+      },
+      {
+        "rule_id": "4.5.1",
+        "rule_name": "Ursprungsland ska framgå uttryckligen i fakturan"
       }
     ]
   },
@@ -59,33 +71,33 @@
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.93,
-      "certificate_value": "4Intelligence AB",
-      "invoice_value": "4intelligence AB\nMarieholmsgatan 10B\n41502 GÖTEBORG\nSweden",
+      "certificate_value": "4Intelligence AB, Marieholmsgatan 10 B, 41502 Göteborg, Sweden",
+      "invoice_value": "4Intelligence AB, Marieholmsgatan 10B, 41502 GÖTEBORG, Sweden",
       "rules_applied": [
         {
           "rule_id": "4.1.0",
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.1.2",
+          "rule_id": "4.1.4",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor \"4Intelligence AB\" kan identifieras uttryckligen i fakturans footer som \"4intelligence AB\". Skillnaden i versalisering är tillåten normalisering och landet Sverige framgår i samma block."
+      "motivation": "Certifikatets consignor '4Intelligence AB' återfinns uttryckligen i fakturans footer/adressblock tillsammans med svensk adress och land 'Sweden'. Detta är tillräckligt enligt koncern-/förekomstregeln även om annan entitet också förekommer i fakturahuvudet."
     },
     "consignee": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.9,
-      "certificate_value": "DIEP NAM HUNG TECHNOLOGY",
-      "invoice_value": "DIEP NAM HUNG TECHNOLOGY JOINT STOCK COMPANY\nFloor 16, Daeha building, No.360 Kim Ma\nNgoc Khanh Ward, Ba Dinh District\nHanoi\nViet Nam",
+      "confidence": 0.96,
+      "certificate_value": "DIEP NAM HUNG TECHNOLOGY / JOINT STOCK COMPANY, Hanoi, Vietnam",
+      "invoice_value": "Delivery address: DIEP NAM HUNG TECHNOLOGY JOINT STOCK COMPANY, Floor 16, Daeha building, No.360 Kim Ma, Ngoc Khanh Ward, Ba Dinh District, Hanoi, Viet Nam",
       "rules_applied": [
         {
           "rule_id": "4.2.0.2",
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.2.2.1.3",
+          "rule_id": "4.2.2.1",
           "outcome": "MATCH"
         },
         {
@@ -93,52 +105,60 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets mottagare återfinns i fakturans delivery address. Certifikatets företagsnamn är en strikt delmängd av fakturans \"DIEP NAM HUNG TECHNOLOGY JOINT STOCK COMPANY\", och landet Vietnam/Viet Nam överensstämmer."
+      "motivation": "Certifikatets mottagare kan identifieras i fakturans 'Delivery address'-block. Företagsnamnet matchar efter tillåten normalisering och landet framgår uttryckligen som 'Viet Nam' vilket motsvarar 'Vietnam'."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.96,
+      "confidence": 0.95,
       "certificate_value": "1 pcs LOW NOISE DRILL",
-      "invoice_value": "INT-LN002\nLOW NOISE DRILL\nManufacturing year: 2025, 100% Brand-new\nMade in Sweden",
+      "invoice_value": "INT-LN002  LOW NOISE DRILL",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "PRIORITY_2_TEXT_MATCH_USED"
+          "outcome": "Prioritet 2 tillämpad"
         },
         {
           "rule_id": "4.3.3",
           "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.3.4",
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Den identitetsbärande huvudbeteckningen \"LOW NOISE DRILL\" kan identifieras exakt i fakturans varurad. Tillägget \"1 pcs\" i certifikatet ändrar inte produktidentiteten."
+      "motivation": "Den identitetsbärande huvudbeteckningen 'LOW NOISE DRILL' kan identifieras exakt i fakturans varurad. Tillägget '1 pcs' i certifikatet är inte en del av produktidentiteten och ändrar inte varumatchningen."
     },
     "quantity": {
       "applicable": true,
       "status": "MANUAL_REVIEW",
-      "confidence": 0.46,
+      "confidence": 0.62,
       "certificate_value": "17 kilo gross W",
-      "invoice_value": "Amount 1",
+      "invoice_value": "Item row shows quantity '1' for INT-LN002, but no explicit weight value is readable on the invoice.",
       "rules_applied": [
         {
-          "rule_id": "4.4.2.2",
-          "outcome": "CERTIFICATE_WEIGHT_ENTRY_IDENTIFIED"
+          "rule_id": "4.4.2.1",
+          "outcome": "Certifikatet innehåller viktkategori och viktvärde"
         },
         {
-          "rule_id": "8.1.1",
-          "outcome": "RELEVANT_INVOICE_TEXT_READABLE"
+          "rule_id": "4.4.3.5.1",
+          "outcome": "Kvantitetsfältets viktvärde måste verifieras"
+        },
+        {
+          "rule_id": "4.4.3.1",
+          "outcome": "Ingen uttrycklig motstridig vikt identifierad"
         },
         {
           "rule_id": "8.1.3",
           "outcome": "MANUAL_REVIEW"
         }
       ],
-      "motivation": "Certifikatet anger en viktkvantitet \"17 kilo gross W\". I den skannade fakturan kan en artikelkvantitet \"Amount 1\" läsas, men ingen tydlig grossvikt på 17 kilo kan identifieras och ingen positivt motstridig grossvikt framgår heller. Eftersom fakturan är bildbaserad och certifikatets viktuppgift inte kan lokaliseras utan att fakturan samtidigt visar en motstridig vikt, ska kontrollpunkten hanteras manuellt."
+      "motivation": "Certifikatet anger den verifieringsgrundande kvantiteten som vikt: '17 kilo gross W'. I den bildbaserade fakturan kan varuraden läsas och visar endast antal '1', men ingen uttrycklig vikt som bekräftar eller motsäger 17 kg gross. På skannad faktura får frånvaro av återfunnen uppgift utan positiv motsägelse inte klassas som mismatch; därför krävs manuell granskning."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.98,
+      "confidence": 0.97,
       "certificate_value": "Sweden",
       "invoice_value": "Made in Sweden",
       "rules_applied": [
@@ -147,28 +167,30 @@
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.5.5",
+          "rule_id": "4.5.6",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets ursprungsland \"Sweden\" framgår uttryckligen i fakturan som \"Made in Sweden\"."
+      "motivation": "Ursprungslandet framgår uttryckligen i fakturans varubeskrivningsdel som 'Made in Sweden'. Detta verifierar certifikatets ursprungsangivelse 'Sweden' direkt utan ytterligare tolkning."
     }
   },
   "overall_assessment": {
     "comparison_result": "MANUAL_REVIEW",
     "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
     "auto_approval_eligible": false,
-    "confidence": 0.78,
+    "confidence": 0.79,
     "critical_failures": [],
     "manual_review_triggers": [
-      "Certifikatets kvantitet \"17 kilo gross W\" kan inte verifieras mot någon tydligt läsbar viktuppgift i den skannade fakturan."
+      "Fakturan är bildbaserad/skannad och ingen explicit vikt motsvarande certifikatets '17 kilo gross W' kan verifieras säkert.",
+      "Ingen läsbar uppgift i fakturan motsäger vikten, därför kan kvantitet inte underkännas automatiskt men inte heller godkännas automatiskt."
     ],
-    "decision_summary": "Avsändare, mottagare, varubeskrivning och ursprungsland kan verifieras mot fakturan. Kvantitetskontrollen kan däremot inte avgöras säkert eftersom certifikatet anger 17 kilo brutto medan fakturan endast visar artikelantal 1 och ingen tydligt läsbar viktuppgift.",
-    "human_explanation": "Avsändare, mottagare, varubeskrivning och ursprungsland kan verifieras mot fakturan. Certifikatet anger dock kvantiteten som \"17 kilo gross W\", men någon tydlig viktuppgift kan inte identifieras i den skannade fakturan. Därför krävs manuell granskning."
+    "manual_review_reason": "IDENTIFIER_NOT_VERIFIABLE",
+    "decision_summary": "Consignor, consignee, goods description and origin are verified against the invoice. The quantity control point cannot be conclusively verified because the certificate states a gross weight of 17 kilo while the readable invoice content shows only item quantity 1 and no explicit weight. As the invoice is image-based and no contradictory weight is visible, the case must be routed to manual review.",
+    "human_explanation": "Avsändare, mottagare, vara och ursprungsland kan verifieras mot fakturan. Certifikatet anger dock kvantiteten som '17 kilo gross W', medan någon uttrycklig vikt inte säkert kan verifieras i den bildbaserade fakturan. Ärendet behöver därför granskas manuellt."
   },
   "_meta": {
-    "tested_at": "2026-06-01T15:28:29.544668+00:00",
-    "prompt_hash": "d498a4785374",
+    "tested_at": "2026-06-06T09:13:51.027709+00:00",
+    "prompt_hash": "4690e976915d",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P213_MISMATCH",

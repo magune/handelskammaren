@@ -1,10 +1,10 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": null,
-    "document_pair_id": "SEG-26D-465794::2026031455",
+    "verification_timestamp": "2026-06-06T00:00:00Z",
+    "document_pair_id": "SEG-26D-465794__INV-2026031455",
     "certificate_issue_date": null,
-    "source_documents_received": 2
+    "source_documents_received": 1
   },
   "task": {
     "task_type": "customs_document_pair_verification",
@@ -13,14 +13,14 @@
   },
   "documents": {
     "document_a": {
-      "label": "CERTIFICATE OF ORIGIN (structured JSON)",
+      "label": "Certificate of Origin (structured JSON)",
       "assumed_role": "certificate",
-      "document_type": "structured_json_certificate"
+      "document_type": "structured_json"
     },
     "document_b": {
       "label": "Invoice PDF",
       "assumed_role": "invoice",
-      "document_type": "invoice_pdf"
+      "document_type": "commercial_invoice_pdf"
     }
   },
   "rule_activation": {
@@ -33,28 +33,24 @@
     "eu_origin_normalization_active": true,
     "activated_rules": [
       {
-        "rule_id": "8.6",
-        "rule_name": "Parningsvalidering passerad via consignor och consignee i fakturan"
+        "rule_id": "4.5.4.1",
+        "rule_name": "EU-normalisering aktiverad"
       },
       {
-        "rule_id": "4.1.0",
-        "rule_name": "Consignor identifierad någonstans i fakturan"
-      },
-      {
-        "rule_id": "4.2.0.2",
-        "rule_name": "Consignee får identifieras i valfritt mottagarfält"
+        "rule_id": "4.5.4.2",
+        "rule_name": "EU-medlemsland ↔ EU utbytbart"
       },
       {
         "rule_id": "4.3.3.2",
         "rule_name": "Certifikatets huvudbeteckning som ordsekvens i fakturan"
       },
       {
-        "rule_id": "4.4.3.1",
-        "rule_name": "Minst en kvantitetsuppgift verifierad"
+        "rule_id": "4.3.8.1",
+        "rule_name": "Kategori- och vikttexter i varubeskrivningsfältet är inte separata varor"
       },
       {
-        "rule_id": "4.5.4.1",
-        "rule_name": "EU-normalisering av ursprungsland"
+        "rule_id": "4.1.0",
+        "rule_name": "Consignor identifierad någonstans i fakturan"
       }
     ]
   },
@@ -62,9 +58,9 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.98,
+      "confidence": 0.96,
       "certificate_value": "Elmo Sweden AB",
-      "invoice_value": "POSTADRESS/POSTAL ADRESS: Elmo Sweden AB ... SWEDEN / VAT.NO: SE556821587401 / ORG.NO: 556821-5874",
+      "invoice_value": "POSTADRESS/POSTAL ADRESS:\nElmo Sweden AB\nSE-512 81 SVENLJUNGA\nSWEDEN\n...\nVAT.NO:\nSE556821587401",
       "rules_applied": [
         {
           "rule_id": "4.1.0",
@@ -75,18 +71,18 @@
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.1.4",
+          "rule_id": "4.1.5",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor \"Elmo Sweden AB\" återfinns uttryckligen i fakturans footer på sida 1 och 2 tillsammans med land \"SWEDEN\" samt organisations-/VAT-uppgifter. Detta uppfyller kravet på att consignor får identifieras någonstans i fakturan och landet överensstämmer."
+      "motivation": "Certifikatets consignor 'Elmo Sweden AB' återfinns uttryckligen i fakturans footer på sida 1 och 2. Landet Sverige framgår explicit som 'SWEDEN' och stöds även av VAT-prefix 'SE' i 'SE556821587401'."
     },
     "consignee": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.98,
+      "confidence": 0.97,
       "certificate_value": "Brusarosco de Mexico S.A de C.Vv",
-      "invoice_value": "Ship-to: Brusarosco de Mexico S.A. de C.Vv (18007237), Avenida Industrial #168, 37564 - Leon GTO, Mexico",
+      "invoice_value": "Ship-to\nBrusarosco de Mexico S.A. de C.Vv ( 18007237 )\nAvenida Industrial #168\n37564 - Leon GTO, Mexico",
       "rules_applied": [
         {
           "rule_id": "4.2.0.2",
@@ -101,18 +97,18 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets mottagare kan identifieras i fakturans Ship-to-fält. Företagsnamnet överensstämmer efter tillåten normalisering av interpunktion och landet är uttryckligen \"Mexico\" i både certifikat och faktura."
+      "motivation": "Certifikatets mottagare kan identifieras i fakturans Ship-to-fält. Skillnaden 'S.A de' vs 'S.A. de' är tillåten punktnormalisering, och landet Mexico framgår explicit i samma block."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.9,
+      "confidence": 0.89,
       "certificate_value": "Provence Jet Black",
       "invoice_value": "PROVENCE 600R JET BLACK I - 99203",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "Artikelnummer ej använt"
+          "outcome": "PRIORITY_2_TEXT_MATCH_USED"
         },
         {
           "rule_id": "4.3.3.2",
@@ -121,35 +117,47 @@
         {
           "rule_id": "4.3.4",
           "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.3.8.1",
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets varubeskrivning \"Provence Jet Black\" kan identifieras i fakturan som ordsekvensen \"PROVENCE ... JET BLACK\" i produktbeskrivningen \"PROVENCE 600R JET BLACK I - 99203\". De tillagda elementen \"600R\" och \"I - 99203\" fungerar som modell-/specifikationsuppgifter och ändrar inte den identifierbara huvudbeteckningen enligt tillåten regel."
+      "motivation": "Certifikatet anger varan 'Provence Jet Black'. Fakturan anger 'PROVENCE 600R JET BLACK I - 99203'; orden 'PROVENCE', 'JET', 'BLACK' förekommer i samma ordning med mellanliggande modellkod och extra suffix som inte behöver behandlas som annan produkt enligt tillåten regelstyrd textmatchning. Raderna 'Gross Weight' och 'Net Weight' i certifikatet behandlas som metadata/kvantitetsrader, inte som separata varor."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.99,
-      "certificate_value": "1397,61 M2",
-      "invoice_value": "Total M2: 1397,61 M2",
+      "confidence": 0.97,
+      "certificate_value": "1397,61 M2 | 1266 kgs | 1126 kgs",
+      "invoice_value": "Total M2: 1397,61 M2 | Gross weight 1266 kgs | Net weight 1126 kgs",
       "rules_applied": [
+        {
+          "rule_id": "4.4.2.1",
+          "outcome": "MATCH"
+        },
         {
           "rule_id": "4.4.3",
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.4.3.1",
+          "rule_id": "4.4.3.2",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Minst en kvantitetsuppgift i certifikatet ska verifieras. Den uttryckliga kvantiteten \"1397,61 M2\" i certifikatet återfinns exakt i fakturan som \"Total M2: 1397,61 M2\", vilket uppfyller kvantitetskontrollpunkten."
+      "motivation": "Samtliga kvantitetsuppgifter i certifikatet återfinns explicit i fakturan: '1397,61 M2', 'Gross weight 1266 kgs' och 'Net weight 1126 kgs'. För viktposterna framgår viktkategori på samma certifikatrad via Combined-fältet ('Gross Weight 1266 kgs' respektive 'Net Weight 1126 kgs'), vilket uppfyller formkravet."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.97,
+      "confidence": 0.96,
       "certificate_value": "EUROPEAN UNION | Sweden",
-      "invoice_value": "Swedish Origin / GOODS OF EUROPEAN COMMUNITY ORIGIN",
+      "invoice_value": "Swedish Origin | GOODS OF EUROPEAN COMMUNITY ORIGIN",
       "rules_applied": [
+        {
+          "rule_id": "4.5.1",
+          "outcome": "MATCH"
+        },
         {
           "rule_id": "4.5.4.1",
           "outcome": "MATCH"
@@ -159,26 +167,27 @@
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.5.5",
+          "rule_id": "4.5.6",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger ursprung \"EUROPEAN UNION\" och \"Sweden\". Fakturan anger uttryckligen både \"Swedish Origin\" och \"GOODS OF EUROPEAN COMMUNITY ORIGIN\", vilket verifierar både det specifika landet Sverige och EU-samlingsbegreppet."
+      "motivation": "Fakturan anger ursprung uttryckligen som 'Swedish Origin' och 'GOODS OF EUROPEAN COMMUNITY ORIGIN'. Detta verifierar både det specifika landet 'Sweden' och samlingsbegreppet 'EUROPEAN UNION'."
     }
   },
   "overall_assessment": {
     "comparison_result": "IDENTICAL",
     "workflow_recommendation": "AUTO_APPROVAL_ELIGIBLE",
     "auto_approval_eligible": true,
-    "confidence": 0.96,
+    "confidence": 0.95,
     "critical_failures": [],
     "manual_review_triggers": [],
-    "decision_summary": "Samtliga tillämpliga kontrollpunkter kan verifieras mot fakturan: consignor, consignee, varubeskrivning, kvantitet och ursprungsland.",
-    "human_explanation": "Avsändare, mottagare, varubeskrivning, kvantitet och ursprungsland i certifikatet kan återfinnas i fakturan. Certifikatet anger Elmo Sweden AB, Brusarosco de Mexico S.A de C.Vv, Provence Jet Black, 1397,61 M2 samt ursprung European Union/Sweden, och motsvarande uppgifter finns i fakturan. Dokumentparet kan därför godkännas automatiskt."
+    "manual_review_reason": "NOT_APPLICABLE",
+    "decision_summary": "Alla tillämpliga kontrollpunkter har verifierats som MATCH mot fakturan. Ingen LC-regel, ingen läsbarhetsblockerare och ingen motsägelse identifierades.",
+    "human_explanation": "Certifikatet stämmer mot fakturan för avsändare, mottagare, varubeskrivning, mängd och ursprungsland. Dokumentparet kan därför godkännas automatiskt."
   },
   "_meta": {
-    "tested_at": "2026-06-01T15:27:17.461352+00:00",
-    "prompt_hash": "d498a4785374",
+    "tested_at": "2026-06-06T09:00:14.366004+00:00",
+    "prompt_hash": "4690e976915d",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P0122_MATCH",

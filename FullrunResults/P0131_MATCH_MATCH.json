@@ -1,8 +1,8 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-06-01T00:00:00Z",
-    "document_pair_id": "SEG-26D-466305__INV-11428",
+    "verification_timestamp": "2026-06-06T00:00:00Z",
+    "document_pair_id": "SEG-26D-466305__11428",
     "certificate_issue_date": null,
     "source_documents_received": 2
   },
@@ -15,12 +15,12 @@
     "document_a": {
       "label": "Certificate of Origin (structured JSON)",
       "assumed_role": "certificate",
-      "document_type": "structured_json"
+      "document_type": "structured_json_certificate"
     },
     "document_b": {
-      "label": "Commercial Invoice No. 11428",
+      "label": "Commercial Invoice - Original No. 11428",
       "assumed_role": "invoice",
-      "document_type": "commercial_invoice_pdf_text_based"
+      "document_type": "commercial_invoice_pdf"
     }
   },
   "rule_activation": {
@@ -33,16 +33,16 @@
     "eu_origin_normalization_active": false,
     "activated_rules": [
       {
-        "rule_id": "4.2.2.1.1",
-        "rule_name": "Avkortning av certifikatets mottagarnamn"
+        "rule_id": "8.6",
+        "rule_name": "Obligatorisk parningsvalidering passerad"
       },
       {
-        "rule_id": "4.3.8.1",
-        "rule_name": "Kategoritext och viktangivelser i varubeskrivningsfältet är inte separata varor"
+        "rule_id": "4.4.2.1",
+        "rule_name": "Viktkategori på samma rad via Combined-fältet"
       },
       {
-        "rule_id": "4.4.5.7",
-        "rule_name": "Styckantal utan uttrycklig enhet i kvantitetsfältet"
+        "rule_id": "4.4.3.2",
+        "rule_name": "Minst en kvantitetsuppgift räcker när övriga inte motsägs"
       }
     ]
   },
@@ -51,9 +51,13 @@
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.99,
-      "certificate_value": "GLOBAL FOREST PRODUCTS SWEDEN AB",
-      "invoice_value": "GLOBAL FOREST PRODUCTS SWEDEN AB\nSTORA BADHUSGATAN 18-20\n411 21 GOTEBORG, SWEDEN\nVAT NO. SE559374366801",
+      "certificate_value": "GLOBAL FOREST PRODUCTS SWEDEN AB   | STORA BADHUSGATAN 18-20 | 411 21 | GOTHENBURG | SWEDEN | VAT NO. SE559374366801",
+      "invoice_value": "GLOBAL FOREST PRODUCTS SWEDEN AB | STORA BADHUSGATAN 18-20 | 411 21 GOTEBORG, SWEDEN | VAT NO. SE559374366801",
       "rules_applied": [
+        {
+          "rule_id": "4.1.0",
+          "outcome": "MATCH"
+        },
         {
           "rule_id": "4.1.2",
           "outcome": "MATCH"
@@ -63,29 +67,25 @@
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.1.3.1",
-          "outcome": "MATCH"
-        },
-        {
           "rule_id": "4.1.4",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor 'GLOBAL FOREST PRODUCTS SWEDEN AB' återfinns uttryckligen som fakturautställare i fakturans sidfot/adressblock. Landet verifieras explicit genom 'SWEDEN' i adressen och stöds även av VAT-prefixet 'SE'."
+      "motivation": "Certifikatets consignor 'GLOBAL FOREST PRODUCTS SWEDEN AB' återfinns uttryckligen i fakturans sidfot/säljarblock på sidan 1. Landet 'SWEDEN' framgår explicit i adressen och stöds även av VAT-prefix 'SE'. Skillnaden 'GOTHENBURG' i certifikatet jämfört med 'GOTEBORG' i fakturan påverkar inte bedömningen eftersom företagsnamn och land verifieras entydigt."
     },
     "consignee": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.93,
-      "certificate_value": "SHANDONG PUBLISHING FOREIGN TRADE ",
-      "invoice_value": "BUYER\nSHANDONG PUBLISHING FOREIGN TRADE COMPANY LIMITED 69 JIEFANGDONG ROAD,JINAN,SHANDONG, CHINA",
+      "confidence": 0.98,
+      "certificate_value": "SHANDONG PUBLISHING FOREIGN TRADE  | COMPANY LIMITED | 69 JIEFANGDONG ROAD, JINAN | SHANDONG | China",
+      "invoice_value": "BUYER: SHANDONG PUBLISHING FOREIGN TRADE COMPANY LIMITED 69 JIEFANGDONG ROAD, JINAN, SHANDONG, CHINA",
       "rules_applied": [
         {
           "rule_id": "4.2.0.2",
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.2.2.1.1",
+          "rule_id": "4.2.2",
           "outcome": "MATCH"
         },
         {
@@ -93,15 +93,19 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Mottagaren identifieras i fakturans BUYER-fält. Certifikatets 'SHANDONG PUBLISHING FOREIGN TRADE ' är en exakt inledande del av fakturans fullständiga namn 'SHANDONG PUBLISHING FOREIGN TRADE COMPANY LIMITED', och landet China/CHINA överensstämmer."
+      "motivation": "Certifikatets consignee kan identifieras i fakturans BUYER-fält. Företagsnamnet motsvarar 'SHANDONG PUBLISHING FOREIGN TRADE COMPANY LIMITED' och landet 'CHINA' framgår explicit i samma block. Certifikatets namn är uppdelat mellan DeliveryCompany och DeliveryAddress1, men den samlade mottagaruppgiften återfinns entydigt i fakturan."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.98,
-      "certificate_value": "SODRA BLUE Z SOFTWOOD KRAFT PULP | NO. OF BALES | NO. OF UNITS | GROSS WEIGHT | NET/ AIRDRY WEIGHT",
+      "certificate_value": "SODRA BLUE Z SOFTWOOD KRAFT PULP",
       "invoice_value": "COMMODITY: SODRA BLUE Z SOFTWOOD KRAFT PULP",
       "rules_applied": [
+        {
+          "rule_id": "4.3.2",
+          "outcome": "MATCH"
+        },
         {
           "rule_id": "4.3.3",
           "outcome": "MATCH"
@@ -111,34 +115,34 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Den identitetsbärande huvudbeteckningen 'SODRA BLUE Z SOFTWOOD KRAFT PULP' återfinns exakt i fakturans varubeskrivning. Övriga certifikat-rader ('NO. OF BALES', 'NO. OF UNITS', 'GROSS WEIGHT', 'NET/ AIRDRY WEIGHT') är kvantitets-/viktrubriker och behandlas inte som separata varor."
+      "motivation": "Den identitetsbärande huvudbeteckningen 'SODRA BLUE Z SOFTWOOD KRAFT PULP' återfinns exakt i fakturans varubeskrivning, med endast tillägget 'COMMODITY:' som inte ändrar produktidentiteten. Övriga certifikatrader såsom 'NO. OF BALES', 'NO. OF UNITS', 'GROSS WEIGHT' och 'NET/ AIRDRY WEIGHT' behandlas som kvantitets-/metadatauppgifter och inte som separata varor."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.95,
       "certificate_value": "208 | 26 | 52.650 TON | 52 ADMT",
-      "invoice_value": "NO. OF BALES: 208\nNO. OF UNITS: 26\nGROSS WEIGHT: 52.650 TON\nNET/ AIRDRY WEIGHT: 52 ADMT",
+      "invoice_value": "NO. OF BALES: 208 | NO. OF UNITS: 26 | GROSS WEIGHT: 52.650 TON | NET/ AIRDRY WEIGHT: 52 ADMT",
       "rules_applied": [
         {
-          "rule_id": "4.4.3.1",
+          "rule_id": "4.4.2.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.4.3.2",
           "outcome": "MATCH"
         },
         {
           "rule_id": "4.4.5.7",
           "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.4.4",
-          "outcome": "MATCH"
         }
       ],
-      "motivation": "Samtliga numeriska kvantitetsuppgifter i certifikatet kan identifieras uttryckligen i fakturan: 208 bales, 26 units, gross weight 52.650 ton och net/airdry weight 52 ADMT. De två enhetslösa stycktalen i certifikatet verifieras mot fakturans motsvarande radvärden med enhet."
+      "motivation": "Certifikatet innehåller flera kvantitetsuppgifter. Minst en verifierbar uppgift räcker enligt regelverket, och 'NET/ AIRDRY WEIGHT 52 ADMT' återfinns explicit i fakturan som 'NET/ AIRDRY WEIGHT: 52 ADMT'. Därutöver återfinns även 'NO. OF BALES: 208', 'NO. OF UNITS: 26' och 'GROSS WEIGHT: 52.650 TON' i fakturan. Ingen kvantitetsuppgift i fakturan motsäger certifikatet."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.99,
+      "confidence": 1.0,
       "certificate_value": "SWEDEN",
       "invoice_value": "COUNTRY OF ORIGIN: SWEDEN",
       "rules_applied": [
@@ -147,26 +151,27 @@
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.5.5",
+          "rule_id": "4.5.6",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Ursprungslandet anges uttryckligen i fakturan som 'COUNTRY OF ORIGIN: SWEDEN', vilket exakt motsvarar certifikatets 'SWEDEN'."
+      "motivation": "Certifikatet anger ursprungsland 'SWEDEN'. Fakturan innehåller en explicit ursprungsangivelse i dedikerat origin-fält: 'COUNTRY OF ORIGIN: SWEDEN'. Positiv verifiering är därmed uppfylld utan normalisering utöver versaler/gemener."
     }
   },
   "overall_assessment": {
     "comparison_result": "IDENTICAL",
     "workflow_recommendation": "AUTO_APPROVAL_ELIGIBLE",
     "auto_approval_eligible": true,
-    "confidence": 0.97,
+    "confidence": 0.98,
     "critical_failures": [],
     "manual_review_triggers": [],
-    "decision_summary": "Alla tillämpliga kontrollpunkter i certifikatet kan verifieras entydigt mot fakturan. Ingen motsägelse eller läsbarhetsrisk påverkar bedömningen.",
-    "human_explanation": "Alla kontrollerade uppgifter i certifikatet återfinns i fakturan: avsändare, mottagare, varubeskrivning, kvantiteter och ursprungsland. Dokumentparet kan därför godkännas automatiskt."
+    "manual_review_reason": "NOT_APPLICABLE",
+    "decision_summary": "Alla tillämpliga kontrollpunkter kan verifieras entydigt mot fakturan. LC-undantaget är inte tillämpligt eftersom ingen LC-hänvisning med nummer finns i certifikatets OriginRows[].Description. Dokumentparet passerar även parningsvalideringen genom att både consignor och consignee kan identifieras i fakturan.",
+    "human_explanation": "Alla uppgifter i certifikatet som ska kontrolleras återfinns i fakturan. Avsändare, mottagare, varubeskrivning, kvantitet och ursprungsland stämmer överens. Dokumentparet kan därför godkännas automatiskt."
   },
   "_meta": {
-    "tested_at": "2026-06-01T15:27:17.465942+00:00",
-    "prompt_hash": "d498a4785374",
+    "tested_at": "2026-06-06T09:00:14.373017+00:00",
+    "prompt_hash": "4690e976915d",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P0131_MATCH",

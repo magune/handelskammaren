@@ -1,8 +1,8 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-06-01T00:00:00Z",
-    "document_pair_id": "SEG-26D-448659__INV-2269800421",
+    "verification_timestamp": "2026-06-06T00:00:00Z",
+    "document_pair_id": "SEG-26D-448659__2269800421",
     "certificate_issue_date": null,
     "source_documents_received": 1
   },
@@ -13,14 +13,14 @@
   },
   "documents": {
     "document_a": {
-      "label": "certificate_structured_json",
+      "label": "Certificate of Origin (structured JSON)",
       "assumed_role": "certificate",
       "document_type": "structured_json"
     },
     "document_b": {
-      "label": "attached_invoice_pdf",
+      "label": "Invoice PDF",
       "assumed_role": "invoice",
-      "document_type": "invoice_pdf"
+      "document_type": "invoice"
     }
   },
   "rule_activation": {
@@ -34,19 +34,19 @@
     "activated_rules": [
       {
         "rule_id": "8.6",
-        "rule_name": "Obligatorisk parningsvalidering passerad via consignor och consignee i fakturan"
+        "rule_name": "Parningsvalidering passerad via consignor och consignee i fakturan"
       },
       {
         "rule_id": "4.1.0",
-        "rule_name": "Consignor identifierad någonstans i fakturan"
+        "rule_name": "Consignor identifierad uttryckligen i fakturan"
       },
       {
         "rule_id": "4.2.0.2",
-        "rule_name": "Consignee identifierad i relevant mottagarfält i fakturan"
+        "rule_name": "Consignee identifierad i mottagarfält/delivery address"
       },
       {
         "rule_id": "4.5.1",
-        "rule_name": "Ursprungsland identifierat i explicit origin-text i fakturan"
+        "rule_name": "Explicit ursprungsangivelse i fakturan"
       }
     ]
   },
@@ -55,56 +55,56 @@
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.97,
-      "certificate_value": "Calderys Nordic AB",
-      "invoice_value": "Calderys Nordic AB, Sweden Address: Box 216, SE-263 23 Höganäs ... VAT No. SE556012980001",
+      "certificate_value": "Calderys Nordic AB | Sweden",
+      "invoice_value": "Calderys Nordic AB, Sweden | Address: Box 216, SE-263 23 Höganäs | VAT No. SE556012980001",
       "rules_applied": [
         {
           "rule_id": "4.1.0",
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.1.2.1",
+          "rule_id": "4.1.2",
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.1.5",
+          "rule_id": "4.1.4",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor 'Calderys Nordic AB' återfinns uttryckligen i fakturans sidhuvud/sidfot på båda sidor. Landet Sverige verifieras både explicit genom texten 'Calderys Nordic AB, Sweden' och indirekt genom VAT-prefix SE i 'SE556012980001'. Adresskillnaden mellan certifikat och faktura påverkar inte bedömningen."
+      "motivation": "Certifikatets consignor 'Calderys Nordic AB' kan identifieras uttryckligen i fakturans sidhuvud och footer. Landet 'Sweden' framgår explicit i fakturan. Adresskillnaden mellan certifikat och faktura påverkar inte bedömningen eftersom företagsnamn och land matchar."
     },
     "consignee": {
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.98,
-      "certificate_value": "CALDERYS INDIA REFRACTORIES LIMITED",
-      "invoice_value": "Delivery address Company CALDERYS INDIA REFRACTORIES LIMITED (FORMERLY ACE CALDERYS LIMITED) ... INDIA",
+      "certificate_value": "CALDERYS INDIA REFRACTORIES LIMITED | India",
+      "invoice_value": "Company / Delivery address: CALDERYS INDIA REFRACTORIES LIMITED (FORMERLY ACE CALDERYS LIMITED) ... INDIA",
       "rules_applied": [
         {
           "rule_id": "4.2.0.2",
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.2.3",
+          "rule_id": "4.2.2",
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.2.4",
+          "rule_id": "4.2.3",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignee-namn återfinns exakt i fakturans Delivery address-block. Landet India/INDIA överensstämmer efter normalisering. Tillägget '(FORMERLY ACE CALDERYS LIMITED)' i fakturan motsäger inte certifikatets uppgift."
+      "motivation": "Certifikatets mottagare kan identifieras uttryckligen i fakturans Company- och Delivery address-block. Företagsnamnet överensstämmer och landet 'India' framgår explicit. Skillnader i detaljformat för adressen medför inte avvikelse."
     },
     "goods_description": {
       "applicable": true,
       "status": "MISMATCH",
-      "confidence": 0.95,
+      "confidence": 0.97,
       "certificate_value": "Svenska Mix 5 A60 0,6",
       "invoice_value": "30 1003642 SILICA MIX 5 A 0,6",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "PRIORITY_1_NOT_APPLICABLE"
+          "outcome": "Ej tillämplig - inget artikelnummer anges i certifikatet"
         },
         {
           "rule_id": "4.3.3",
@@ -115,33 +115,29 @@
           "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Certifikatet innehåller inget artikelnummer som kan användas enligt prioritet 1. Vid kontrollerad textmatchning kan den identitetsbärande huvudbeteckningen i certifikatet 'Svenska Mix 5 A60 0,6' inte identifieras exakt i fakturan; närmaste rad är 'SILICA MIX 5 A 0,6', vilket kräver otillåten semantisk omtolkning och hantering av flera textskillnader. Därför är varubeskrivningen inte verifierad."
+      "motivation": "Certifikatets varubeskrivning kan inte verifieras genom kontrollerad textmatchning mot fakturan. Den identitetsbärande texten skiljer sig genom 'Svenska' i certifikatet mot 'SILICA' i fakturan, och certifikatet anger även 'A60' medan fakturan anger 'A'. Detta kräver otillåten tolkning och kan därför inte godtas som matchning."
     },
     "quantity": {
       "applicable": true,
-      "status": "MANUAL_REVIEW",
-      "confidence": 0.66,
+      "status": "MISMATCH",
+      "confidence": 0.92,
       "certificate_value": "NW 100,800 kg",
-      "invoice_value": "10 ... 75,600 TO; 20 ... 25,200 TO; 30 ... 50,400 TO",
+      "invoice_value": "30 1003642 SILICA MIX 5 A 0,6 50,400 TO",
       "rules_applied": [
         {
-          "rule_id": "4.4.2.2",
-          "outcome": "CERTIFICATE_FORM_OK"
+          "rule_id": "4.4.2.1",
+          "outcome": "Formkrav uppfyllt - NW och kg anges uttryckligen"
         },
         {
-          "rule_id": "4.4.3",
-          "outcome": "NO_DIRECT_MATCH"
+          "rule_id": "4.4.3.1",
+          "outcome": "MISMATCH"
         },
         {
-          "rule_id": "4.4.3.0b",
-          "outcome": "MANUAL_REVIEW"
-        },
-        {
-          "rule_id": "4.4.5.1",
-          "outcome": "NO_EXCEPTION_APPLIED"
+          "rule_id": "4.4.5.6",
+          "outcome": "Undantag prövade utan verifiering"
         }
       ],
-      "motivation": "Certifikatets kvantitet är en nettovikt: 'NW 100,800 kg'. Fakturan visar radkvantiteter i 'TO' men ingen explicit NW-uppgift med samma värde, och eftersom varubeskrivningen inte kunde verifieras entydigt går det inte säkert att koppla certifikatets nettovikt till rätt fakturarad eller tillåten summering. Därför krävs manuell granskning i stället för automatisk mismatch på denna kontrollpunkt."
+      "motivation": "Certifikatet anger nettovikt 100,800 kg. För den enda fakturarad som motsvarar produktnamnets kärna 'MIX 5 ... 0,6' anges kvantiteten 50,400 TO, vilket inte överensstämmer med certifikatets värde. Ingen tillåten normalisering eller något undantag ger verifiering av 100,800 kg för samma vara, därför är kontrollpunkten mismatch."
     },
     "origin": {
       "applicable": true,
@@ -155,30 +151,30 @@
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.5.5",
+          "rule_id": "4.5.6",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Fakturan innehåller en explicit ursprungsangivelse: 'MADE IN SWEDEN'. Detta verifierar certifikatets ursprungsland 'Sweden' direkt utan ytterligare tolkning."
+      "motivation": "Certifikatets ursprungsland 'Sweden' återfinns uttryckligen i fakturan som 'MADE IN SWEDEN'. Ursprungsuppgiften är därför verifierad utan tolkning."
     }
   },
   "overall_assessment": {
     "comparison_result": "NOT_IDENTICAL",
     "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
     "auto_approval_eligible": false,
-    "confidence": 0.93,
+    "confidence": 0.96,
     "critical_failures": [
-      "Varubeskrivningen i certifikatet kan inte verifieras mot fakturan."
+      "Varubeskrivningen i certifikatet kan inte verifieras mot fakturans varubeskrivning.",
+      "Kvantiteten i certifikatet motsvaras inte av fakturans kvantitet för den relevanta varan."
     ],
-    "manual_review_triggers": [
-      "Kvantiteten 'NW 100,800 kg' kan inte entydigt kopplas till en motsvarande NW-uppgift i fakturan."
-    ],
-    "decision_summary": "Dokumentparet är inte identiskt. Avsändare, mottagare och ursprungsland kan verifieras mot fakturan, men varubeskrivningen i certifikatet kan inte verifieras utan otillåten tolkning. Kvantitetskontrollen kräver dessutom manuell granskning.",
-    "human_explanation": "Certifikatet anger varan som 'Svenska Mix 5 A60 0,6' medan fakturan visar 'SILICA MIX 5 A 0,6'. Varubeskrivningen kan därför inte verifieras utan tolkning. Avsändare, mottagare och ursprung kan däremot identifieras i fakturan."
+    "manual_review_triggers": [],
+    "manual_review_reason": "NOT_APPLICABLE",
+    "decision_summary": "Dokumentparet passerar parningsvalideringen via matchande consignor och consignee, och ursprungslandet kan verifieras uttryckligen i fakturan. Däremot kan varubeskrivningen 'Svenska Mix 5 A60 0,6' inte verifieras mot fakturans 'SILICA MIX 5 A 0,6' utan otillåten tolkning, och kvantiteten 'NW 100,800 kg' stöds inte av fakturans kvantitet för motsvarande vara. Minst en tillämplig kontrollpunkt ger därför MISMATCH och totalresultatet måste vara NOT_IDENTICAL.",
+    "human_explanation": "Certifikatet anger varan som 'Svenska Mix 5 A60 0,6' medan fakturan visar 'SILICA MIX 5 A 0,6'. Certifikatet anger också nettovikten 100,800 kg, men fakturan visar 50,400 TO för den relevanta raden. Avsändare, mottagare och ursprungsland stämmer, men dokumenten är inte identiska."
   },
   "_meta": {
-    "tested_at": "2026-06-01T15:27:17.464596+00:00",
-    "prompt_hash": "d498a4785374",
+    "tested_at": "2026-06-06T09:00:14.370215+00:00",
+    "prompt_hash": "4690e976915d",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P0129_MISMATCH",

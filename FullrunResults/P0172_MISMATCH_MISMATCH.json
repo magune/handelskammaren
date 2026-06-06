@@ -13,14 +13,14 @@
   },
   "documents": {
     "document_a": {
-      "label": "Certificate of Origin (structured JSON)",
+      "label": "CERTIFICATE OF ORIGIN (structured JSON)",
       "assumed_role": "certificate",
       "document_type": "structured_json"
     },
     "document_b": {
       "label": "Invoice PDF",
       "assumed_role": "invoice",
-      "document_type": "invoice"
+      "document_type": "pdf_invoice"
     }
   },
   "rule_activation": {
@@ -35,6 +35,18 @@
       {
         "rule_id": "4.3.5",
         "rule_name": "Generell varubeskrivning med fakturareferens"
+      },
+      {
+        "rule_id": "4.2.0.2",
+        "rule_name": "Consignee kan verifieras i valfritt relevant mottagarfält"
+      },
+      {
+        "rule_id": "4.1.2.1",
+        "rule_name": "Landverifiering via adress och VAT-prefix"
+      },
+      {
+        "rule_id": "4.4.3.2",
+        "rule_name": "Minst en kvantitetsuppgift ska verifieras"
       }
     ]
   },
@@ -43,37 +55,41 @@
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.99,
-      "certificate_value": "BraunAbility Europe AB",
-      "invoice_value": "BraunAbility Europe AB\nÅkerivägen 7\n44361 STENKULLEN\nSWEDEN\nVAT reg. no.: SE556422901001",
+      "certificate_value": "BraunAbility Europe AB, Sweden",
+      "invoice_value": "BraunAbility Europe AB, Åkerivägen 7, 44361 STENKULLEN, SWEDEN; VAT reg. no.: SE556422901001",
       "rules_applied": [
         {
-          "rule_id": "4.1.0",
+          "rule_id": "4.1.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.2",
           "outcome": "MATCH"
         },
         {
           "rule_id": "4.1.2.1",
           "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.1.5",
-          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor 'BraunAbility Europe AB' återfinns uttryckligen i fakturans footer och företagsuppgifter på samtliga sidor. Landet Sverige verifieras av adressen '44361 STENKULLEN SWEDEN' samt VAT-prefix 'SE'."
+      "motivation": "Certifikatet anger BraunAbility Europe AB i Sverige. Fakturan visar samma företagsnamn i sidhuvud/footer och samma svenska adress- och VAT-uppgifter, inklusive VAT-prefix SE och landet SWEDEN. Samma juridiska part och land kan därför identifieras entydigt."
     },
     "consignee": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.91,
-      "certificate_value": "Temsa Skoda Sabanci Ulasim Araclari",
-      "invoice_value": "Temsa Skoda Sabanci Ulasim Araclari A.Ş.\nSarıhamzalı Mahallesi\nTurhan Cemal Beriker Bulvarı No:563/A\nSeyhan\n01110 Adana\nTÜRKIYE",
+      "confidence": 0.92,
+      "certificate_value": "Temsa Skoda Sabanci Ulasim Araclari, Türkiye",
+      "invoice_value": "Temsa Skoda Sabanci Ulasim Araclari A.Ş., TÜRKIYE (Delivery address / Invoice address)",
       "rules_applied": [
         {
           "rule_id": "4.2.0.2",
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.2.2.1.3",
+          "rule_id": "4.2.2.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.3.6",
           "outcome": "MATCH"
         },
         {
@@ -81,87 +97,91 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets mottagarnamn kan identifieras i fakturans Delivery address och Invoice address. Certifikatets namn är en strikt delmängd av fakturans 'Temsa Skoda Sabanci Ulasim Araclari A.Ş.' där det extra ledet är ett affärsformstillägg, och landet Türkiye/TÜRKIYE överensstämmer."
+      "motivation": "Mottagaren i certifikatet kan identifieras i fakturans Delivery address och Invoice address. Skillnaden består i att fakturan innehåller den juridiska bolagsformen A.Ş., medan certifikatet anger kärnnamnet utan bolagsform. Landet TÜRKIYE/Türkiye överensstämmer efter normalisering."
     },
     "goods_description": {
       "applicable": true,
-      "status": "MATCH",
-      "confidence": 0.87,
+      "status": "MISMATCH",
+      "confidence": 0.91,
       "certificate_value": "Disability Aids Contry of origin ,UNITED KINGDOM | SEE INVOICE 185678 dated 2026-03-02",
-      "invoice_value": "Invoice - 185678 | Invoice date 2026-03-02 | Pos. 10 RT25 Grey Rail Insert 25M RT25",
+      "invoice_value": "Invoice - 185678; Invoice date 2026-03-02; Name: Grey Rail Insert 25M RT25",
       "rules_applied": [
         {
           "rule_id": "4.3.5",
-          "outcome": "MATCH"
-        },
-        {
-          "rule_id": "8.5.1.1",
-          "outcome": "MATCH"
-        }
-      ],
-      "motivation": "Certifikatet innehåller en generell varubeskrivning tillsammans med en uttrycklig fakturahänvisning: 'SEE INVOICE 185678 dated 2026-03-02'. Fakturans nummer 185678 och datum 2026-03-02 överensstämmer exakt, och fakturan innehåller en faktisk varuspecifikation för den refererade försändningen. Därmed verifieras varubeskrivningen enligt regeln för generell varubeskrivning med fakturareferens."
-    },
-    "quantity": {
-      "applicable": true,
-      "status": "MISMATCH",
-      "confidence": 0.9,
-      "certificate_value": "OriginRows[].Quantity: '1 pallets 120KG G' + 'GW'; OriginPackages[].Package: '1 Pallet 1120 KG'",
-      "invoice_value": "Total Gross Weight: 120 KG | Total Net Weight: 110 KG | Total No of Pallets: 1",
-      "rules_applied": [
-        {
-          "rule_id": "4.4.3.1",
-          "outcome": "MISMATCH"
-        },
-        {
-          "rule_id": "4.4.4",
-          "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.4.6",
-          "outcome": "MISMATCH"
-        }
-      ],
-      "motivation": "Fakturan verifierar '1 pallet' och '120 KG' för försändningen, men certifikatet innehåller även den uttryckliga paket-/kvantitetsuppgiften '1 Pallet 1120 KG'. Detta motsägs av fakturans tydliga totalvikt '120 KG'. Eftersom en explicit kvantitetsuppgift i certifikatet motsägs av fakturan ska kontrollpunkten klassificeras som MISMATCH."
-    },
-    "origin": {
-      "applicable": true,
-      "status": "MISMATCH",
-      "confidence": 0.89,
-      "certificate_value": "United kingdom",
-      "invoice_value": "Country of origin: United Kingdom | The exporter of the products covered by this document declares that ... these products are of EU preferential origin.",
-      "rules_applied": [
-        {
-          "rule_id": "4.5.5",
           "outcome": "PARTIAL_MATCH"
         },
         {
-          "rule_id": "4.5.6",
+          "rule_id": "4.3.5.3",
           "outcome": "MISMATCH"
         },
         {
-          "rule_id": "4.5.4.2",
-          "outcome": "NOT_APPLICABLE"
+          "rule_id": "4.3.8",
+          "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Certifikatets ursprungsland 'United kingdom' återfinns uttryckligen i fakturan som 'Country of origin: United Kingdom'. Samma faktura innehåller dock också en separat uttrycklig ursprungsuppgift på sida 3: 'these products are of EU preferential origin'. Eftersom certifikatet, via generell fakturahänvisning, omfattar hela den refererade fakturan men endast anger United Kingdom, är ursprungsangivelsen inte fullständig eller konsistent mot fakturan."
+      "motivation": "Certifikatet innehåller en uttrycklig hänvisning till faktura 185678 daterad 2026-03-02, och denna referens matchar fakturan. Däremot kan den angivna varubeskrivningen 'Disability Aids' inte identifieras i fakturans varubeskrivning 'Grey Rail Insert 25M RT25' utan otillåten semantisk tolkning. Fakturareferensen ensam räcker därför inte för att verifiera varubeskrivningen."
+    },
+    "quantity": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.86,
+      "certificate_value": "1 pallets 120KG G | GW | 1 Pallet 1120 KG",
+      "invoice_value": "Total Gross Weight: 120 KG; Total No of Pallets: 1",
+      "rules_applied": [
+        {
+          "rule_id": "4.4.2.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.4.3.2",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.4.3.5",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.4.3.6",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatet innehåller en verifierbar grossvikt om 120 KG samt en försändelsekvantitet om 1 pallet. Fakturan anger uttryckligen 'Total Gross Weight: 120 KG' och 'Total No of Pallets: 1', vilket verifierar minst en och i praktiken två av certifikatets kvantitetsuppgifter. Ingen läsbar kvantitetsuppgift i fakturan motsäger dessa verifierade värden."
+    },
+    "origin": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.95,
+      "certificate_value": "United kingdom",
+      "invoice_value": "Country of origin: United Kingdom",
+      "rules_applied": [
+        {
+          "rule_id": "4.5.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.5.6",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatet anger ursprungsland United Kingdom. Fakturan anger uttryckligen 'Country of origin: United Kingdom' på varuraden och även på sammanställningssidan. Ursprungslandet kan därför identifieras explicit i fakturan."
     }
   },
   "overall_assessment": {
     "comparison_result": "NOT_IDENTICAL",
     "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
     "auto_approval_eligible": false,
-    "confidence": 0.92,
+    "confidence": 0.91,
     "critical_failures": [
-      "Kvantitet: certifikatet innehåller '1 Pallet 1120 KG' medan fakturan anger 'Total Gross Weight: 120 KG'.",
-      "Ursprung: certifikatet anger endast 'United kingdom' men fakturan innehåller både 'Country of origin: United Kingdom' och en separat uppgift om 'EU preferential origin'."
+      "Varubeskrivningen i certifikatet ('Disability Aids') kan inte verifieras mot fakturans varubeskrivning ('Grey Rail Insert 25M RT25') trots att fakturanummer och datum matchar."
     ],
     "manual_review_triggers": [],
-    "decision_summary": "Dokumentparet har korrekt fakturareferens och både avsändare och mottagare kan verifieras. Varubeskrivningen kan verifieras via generell fakturahänvisning. Minst två tillämpliga kontrollpunkter ger dock MISMATCH: kvantitet och ursprungsland.",
-    "human_explanation": "Certifikatet hänvisar korrekt till faktura 185678 och både avsändare och mottagare kan identifieras. Däremot innehåller certifikatet kvantitetsuppgifter som inte stämmer mot fakturan, bland annat '1 Pallet 1120 KG' jämfört med fakturans 'Total Gross Weight: 120 KG'. Fakturan innehåller dessutom både 'Country of origin: United Kingdom' och en uttrycklig uppgift om 'EU preferential origin', medan certifikatet bara anger United Kingdom."
+    "manual_review_reason": "NOT_APPLICABLE",
+    "decision_summary": "Dokumentparet är inte identiskt. Avsändare, mottagare, kvantitet och ursprungsland kan verifieras mot fakturan, men varubeskrivningen kan inte styrkas enligt regelverket.",
+    "human_explanation": "Certifikatet hänvisar korrekt till faktura 185678 daterad 2026-03-02, och avsändare, mottagare, kvantitet och ursprungsland kan verifieras mot fakturan. Däremot anger certifikatet varubeskrivningen 'Disability Aids', medan fakturan beskriver varan som 'Grey Rail Insert 25M RT25' utan att en tydlig produktkoppling framgår. Därför kan dokumentparet inte godkännas automatiskt."
   },
   "_meta": {
-    "tested_at": "2026-06-01T15:27:40.717983+00:00",
-    "prompt_hash": "d498a4785374",
+    "tested_at": "2026-06-06T09:16:06.628432+00:00",
+    "prompt_hash": "4690e976915d",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P0172_MISMATCH",

@@ -1,8 +1,8 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-06-01T00:00:00Z",
-    "document_pair_id": "SEG-23D-855559__INV_10098",
+    "verification_timestamp": null,
+    "document_pair_id": "SEG-23D-855559__INV-10098",
     "certificate_issue_date": null,
     "source_documents_received": 2
   },
@@ -15,12 +15,12 @@
     "document_a": {
       "label": "CERTIFICATE OF ORIGIN (structured JSON)",
       "assumed_role": "certificate",
-      "document_type": "structured_json"
+      "document_type": "certificate_of_origin_structured_json"
     },
     "document_b": {
-      "label": "Invoice PDF, No. 10098, 15 Jun 2023",
+      "label": "Invoice PDF",
       "assumed_role": "invoice",
-      "document_type": "invoice_pdf"
+      "document_type": "commercial_invoice"
     }
   },
   "rule_activation": {
@@ -33,12 +33,16 @@
     "eu_origin_normalization_active": true,
     "activated_rules": [
       {
-        "rule_id": "8.6",
-        "rule_name": "Parningsvalidering passerad via consignor- och consignee-träff i fakturan"
+        "rule_id": "2.2",
+        "rule_name": "LC-undantag prövat men ej aktiverat"
       },
       {
-        "rule_id": "4.5.4.1.1",
-        "rule_name": "EU + specifikt EU-land i certifikatet verifieras av det specifika landet i fakturan"
+        "rule_id": "8.6",
+        "rule_name": "Parningsvalidering passerad via consignor och consignee"
+      },
+      {
+        "rule_id": "4.5.4.1",
+        "rule_name": "EU-normalisering för ursprungsland"
       }
     ]
   },
@@ -47,48 +51,56 @@
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.99,
-      "certificate_value": "SOIC Trade and Logistics AB",
-      "invoice_value": "SOIC Trade and Logistics AB\nTorgny Segerstedtsgatan 80\nGothenburg 40522 Sweden",
+      "certificate_value": "SOIC Trade and Logistics AB, Sweden",
+      "invoice_value": "SOIC Trade and Logistics AB, Torgny Segerstedtsgatan 80, Gothenburg 40522 Sweden",
       "rules_applied": [
+        {
+          "rule_id": "4.1.0",
+          "outcome": "MATCH"
+        },
         {
           "rule_id": "4.1.2",
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.1.5",
+          "rule_id": "4.1.4",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor \"SOIC Trade and Logistics AB\" återfinns exakt i fakturans sidhuvud på sida 1 och 2. Landet Sverige framgår uttryckligen i fakturaadressen (\"Sweden\"). Skillnader i övriga adressdetaljer i certifikatet påverkar inte bedömningen när företagsnamn och land kan verifieras."
+      "motivation": "Certifikatets consignor 'SOIC Trade and Logistics AB' återfinns uttryckligen som fakturautställare i fakturans sidhuvud på sida 1 och 2. Landet Sweden framgår uttryckligen i adressblocket. Samma juridiska part och samma land kan verifieras utan tolkning."
     },
     "consignee": {
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.99,
-      "certificate_value": "Astro Carton Honduras S.A. de C.V.",
-      "invoice_value": "CONSIGNEE\nAstro Carton Honduras S.A. de C.V.\nProlongación 27 Calle, Contiguo a Zona Libre\nAstro Honduras, Co. Felipe Zelaya\nSan Pedro Sula 21101\nHonduras",
+      "certificate_value": "Astro Carton Honduras S.A. de C.V., Honduras",
+      "invoice_value": "CONSIGNEE / INVOICE TO: Astro Carton Honduras S.A. de C.V., San Pedro Sula 21101, Honduras",
       "rules_applied": [
         {
           "rule_id": "4.2.0.2",
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.2.4",
+          "rule_id": "4.2.2",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.2.3",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets mottagare \"Astro Carton Honduras S.A. de C.V.\" återfinns exakt i fakturans fält \"CONSIGNEE\" på sida 1. Landet Honduras framgår uttryckligen i samma mottagarblock. Detta uppfyller kravet på identifiering i ett relevant mottagarfält."
+      "motivation": "Certifikatets mottagare 'Astro Carton Honduras S.A. de C.V.' återfinns uttryckligen i fakturans fält 'CONSIGNEE' och även i 'INVOICE TO' på sida 1. Landet Honduras framgår uttryckligen. Företagsnamn och land överensstämmer."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.88,
-      "certificate_value": "TESTLINER  HS CODE 4805 25 | ROLLS",
-      "invoice_value": "Line descriptions: \"Testliner 2\" (all article rows) and notes: \"HTS: 4805 25\"; total packaging shown as \"30 ROLLS\"",
+      "confidence": 0.89,
+      "certificate_value": "TESTLINER HS CODE 4805 25",
+      "invoice_value": "Line items: 'Testliner 2' (samtliga rader) och NOTES: 'HTS: 4805 25'",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "Prioritet 2 använd"
+          "outcome": "Artikelnummer ej tillämpligt"
         },
         {
           "rule_id": "4.3.3",
@@ -99,47 +111,51 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets varubeskrivning innehåller den identitetsbärande texten \"TESTLINER\" samt HS-koden \"4805 25\". I fakturan på sida 1 framgår varan som \"Testliner 2\" på samtliga rader och notfältet anger \"HTS: 4805 25\". Kärnbeteckningen \"TESTLINER\" och exakt HS-kod kan därmed identifieras i fakturan; ytterligare specifikationer i fakturan (\"2\", BW/RW-detaljer och radindelning) motsäger inte certifikatets uppgift."
+      "motivation": "Certifikatets identitetsbärande huvudbeteckning 'TESTLINER' kan identifieras i fakturans varurader som 'Testliner 2' på sida 1, och HS-koden '4805 25' återfinns dessutom uttryckligen i fakturans notfält. Den tillagda siffran '2' i fakturan utgör här ett tillägg efter den gemensamma huvudbeteckningen och ingen annan motstridig produkt med liknande beteckning förekommer i fakturan."
     },
     "quantity": {
       "applicable": true,
       "status": "MISMATCH",
       "confidence": 0.99,
-      "certificate_value": "52.992 MT | 30",
-      "invoice_value": "Total quantity in invoice: \"55.348 MT\" and total packages: \"30 ROLLS\"",
+      "certificate_value": "52.992 MT; 30",
+      "invoice_value": "Total quantity: 55.348 MT and 30 ROLLS",
       "rules_applied": [
         {
-          "rule_id": "4.4.2.2",
+          "rule_id": "4.4.2.1",
           "outcome": "MISMATCH"
         },
         {
-          "rule_id": "4.4.3.1",
+          "rule_id": "4.4.3.2",
           "outcome": "MISMATCH"
         },
         {
-          "rule_id": "4.4.6",
+          "rule_id": "4.4.7",
           "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Certifikatet anger först \"52.992 MT\", men denna vikt saknar obligatorisk viktkategori (GW/NW) i kvantitetsuppgiften och kan dessutom inte verifieras mot fakturans tydliga total \"55.348 MT\" på sida 1. Certifikatet anger även en separat kvantitet \"30\", men denna uppgift saknar uttrycklig enhet i själva kvantitetsfältet. Fakturan visar \"30 ROLLS\", men certifikatets \"30\" uppfyller inte formkravet på numeriskt värde plus enhet i samma kvantitetsuppgift. Kontrollpunkten ger därför MISMATCH."
+      "motivation": "Certifikatets viktkvantitet '52.992 MT' saknar obligatorisk viktkategori (GW/NW), vilket i sig medför MISMATCH. Fakturan anger dessutom uttryckligen en annan totalvikt, '55.348 MT', vilket är en positiv motsägelse mot certifikatets viktvärde. Certifikatets andra kvantitet '30' motsvaras av '30 ROLLS' i fakturan, men detta kan inte upphäva den uttryckliga avvikelsen i viktuppgiften."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.93,
+      "confidence": 0.94,
       "certificate_value": "EU GERMANY",
       "invoice_value": "COUNTRY OF ORIGIN. GERMANY",
       "rules_applied": [
         {
-          "rule_id": "4.5.4.1.1",
+          "rule_id": "4.5.1",
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.5.5",
+          "rule_id": "4.5.4.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.5.4.1.1",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger ursprung \"EU GERMANY\", vilket innehåller ett specifikt EU-land. Fakturan anger uttryckligen \"COUNTRY OF ORIGIN. GERMANY\" i notfältet på sida 1. Det specifika landet Germany kan därmed verifieras direkt, och EU-komponenten accepteras genom regeln för EU + specifikt EU-land."
+      "motivation": "Fakturan anger uttryckligen 'COUNTRY OF ORIGIN. GERMANY' i notfältet på sida 1. Certifikatets ursprungsangivelse innehåller Germany samt EU-begreppet. Germany verifieras direkt i fakturan och EU-delen accepteras genom EU-normaliseringsregeln."
     }
   },
   "overall_assessment": {
@@ -148,16 +164,16 @@
     "auto_approval_eligible": false,
     "confidence": 0.98,
     "critical_failures": [
-      "Kvantitetskontrollpunkten gav MISMATCH: certifikatet anger 52.992 MT medan fakturan anger 55.348 MT.",
-      "Den separata certifikatskvantiteten \"30\" saknar uttrycklig enhet i kvantitetsuppgiften."
+      "Kvantitetskontrollpunkten är MISMATCH: certifikatet anger '52.992 MT' utan GW/NW och fakturan anger uttryckligen '55.348 MT'."
     ],
     "manual_review_triggers": [],
-    "decision_summary": "Dokumentparet kan paras via både consignor och consignee, och avsändare, mottagare, varubeskrivning samt ursprungsland kan verifieras mot fakturan. Kvantitetskontrollpunkten faller dock ut i MISMATCH eftersom certifikatets viktuppgift inte överensstämmer med fakturans totalvikt och den andra kvantitetsuppgiften saknar uttrycklig enhet. Minst en tillämplig kontrollpunkt har därmed status MISMATCH, vilket ger totalresultatet NOT_IDENTICAL.",
-    "human_explanation": "Avsändare, mottagare, varubeskrivning och ursprungsland kan verifieras mot fakturan. Kvantiteten stämmer däremot inte: certifikatet anger 52.992 MT medan fakturan anger totalt 55.348 MT. Certifikatet innehåller dessutom en separat kvantitet \"30\" utan uttrycklig enhet."
+    "manual_review_reason": "NOT_APPLICABLE",
+    "decision_summary": "Dokumentparet är giltigt parat via matchande consignor och consignee. Avsändare, mottagare, varubeskrivning och ursprungsland kan verifieras mot fakturan. Kvantiteten kan inte verifieras eftersom certifikatets viktuppgift saknar obligatorisk viktkategori och dessutom motsägs av fakturans totalvikt.",
+    "human_explanation": "Avsändare, mottagare, varubeskrivning och ursprungsland kan verifieras mot fakturan. Certifikatet anger dock kvantiteten som 52.992 MT utan bruttovikt/nettovikt, medan fakturan uttryckligen anger totalt 55.348 MT. Därför är dokumenten inte identiska och kräver manuell handläggning."
   },
   "_meta": {
-    "tested_at": "2026-06-01T15:28:10.719928+00:00",
-    "prompt_hash": "d498a4785374",
+    "tested_at": "2026-06-06T09:17:25.979989+00:00",
+    "prompt_hash": "4690e976915d",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P076_MISMATCH",

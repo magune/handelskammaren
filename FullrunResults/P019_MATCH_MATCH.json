@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-06-01T00:00:00Z",
+    "verification_timestamp": "2026-06-06T00:00:00Z",
     "document_pair_id": "SEG-26D-464508__46189409",
     "certificate_issue_date": null,
     "source_documents_received": 2
@@ -13,14 +13,14 @@
   },
   "documents": {
     "document_a": {
-      "label": "Certificate of Origin (structured JSON)",
+      "label": "CERTIFICATE OF ORIGIN (structured JSON)",
       "assumed_role": "certificate",
       "document_type": "structured_json"
     },
     "document_b": {
       "label": "Commercial Invoice PDF",
       "assumed_role": "invoice",
-      "document_type": "commercial_invoice"
+      "document_type": "commercial_invoice_pdf"
     }
   },
   "rule_activation": {
@@ -33,20 +33,12 @@
     "eu_origin_normalization_active": false,
     "activated_rules": [
       {
-        "rule_id": "8.6",
-        "rule_name": "Obligatorisk parningsvalidering"
-      },
-      {
-        "rule_id": "4.1.0",
-        "rule_name": "Koncernstruktur / consignor identifierad någonstans i fakturan"
+        "rule_id": "4.6",
+        "rule_name": "Landnormalisering Kina/Hongkong använd för consignee-land"
       },
       {
         "rule_id": "4.2.0.2",
-        "rule_name": "Consignee kan identifieras i något mottagarfält"
-      },
-      {
-        "rule_id": "4.6",
-        "rule_name": "Landnormalisering Kina/Hongkong"
+        "rule_name": "Consignee verifierad i relevant mottagarfält (SOLD TO)"
       }
     ]
   },
@@ -54,8 +46,8 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.98,
-      "certificate_value": "EKMAN AND CO AB | POLHEMSPLATSEN 5, | P.O. BOX 230, | SE-401 23 | GOTHENBURG, | SWEDEN | VAT: SE556020459501",
+      "confidence": 0.96,
+      "certificate_value": "EKMAN AND CO AB | POLHEMSPLATSEN 5, | P.O. BOX 230, | SE-401 23 | GOTHENBURG, | SWEDEN | SE556020459501",
       "invoice_value": "Ekman & Co AB, Polhemsplatsen 5, PO Box 230, SE-401 23 Gothenburg, Sweden, VAT NO: SE556020459501",
       "rules_applied": [
         {
@@ -67,20 +59,16 @@
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4",
-          "outcome": "MATCH"
-        },
-        {
           "rule_id": "4.1.5",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor 'EKMAN AND CO AB' kan identifieras uttryckligen i fakturans sidhuvud och signaturrad som 'Ekman & Co AB'. Tillåten normalisering av '&' och 'AND' ger samma företagsnamn. Landet Sverige verifieras direkt i adressen och stöds även av VAT-numret 'SE556020459501', som är identiskt i båda dokumenten."
+      "motivation": "Certifikatets consignor 'EKMAN AND CO AB' återfinns uttryckligen i fakturans sidhuvud som 'Ekman & Co AB'. Landet Sverige framgår explicit i adressen och styrks även av VAT-prefixet SE i 'SE556020459501'. Normalisering av '&' och 'AND' ger samma juridiska part."
     },
     "consignee": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.94,
+      "confidence": 0.91,
       "certificate_value": "TANGSHAN SANYOU GROUP HONGKONG | INTERNATIONAL TRADE CO., LIMITED | FLAT/RM 3701, 37/F, TOWER ONE LIPPO | CENTER, 89 QUEENSWAY, HK | China",
       "invoice_value": "SOLD TO: TANGSHAN SANYOU GROUP / HONGKONG / INTERNATIONAL TRADE CO., LIMITED / FLAT/RM 3701,37/F,TOWER ONE / LIPPO / CENTER,89 QUEENSWAY, HK",
       "rules_applied": [
@@ -89,7 +77,7 @@
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.2.1.1",
+          "rule_id": "4.2.2.1",
           "outcome": "MATCH"
         },
         {
@@ -99,13 +87,9 @@
         {
           "rule_id": "4.6",
           "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.2.4",
-          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets mottagare återfinns i fakturans 'SOLD TO'-block med samma namn uppdelat över flera rader: 'TANGSHAN SANYOU GROUP', 'HONGKONG', 'INTERNATIONAL TRADE CO., LIMITED'. Adressraderna 'FLAT/RM 3701... TOWER ONE... CENTER,89 QUEENSWAY, HK' stöder samma mottagare. Certifikatets land 'China' accepteras mot fakturans 'HONGKONG/HK' enligt landnormaliseringen Kina/Hongkong."
+      "motivation": "Certifikatets mottagare kan identifieras i fakturans SOLD TO-block med samma företagsnamn och samma fortsatta bolagsrad 'INTERNATIONAL TRADE CO., LIMITED'. Certifikatets mottagarland är 'China' medan fakturan visar 'HONGKONG'/'HK'; dessa är ekvivalenta för landverifiering enligt landnormaliseringsregeln för Kina/Hongkong."
     },
     "goods_description": {
       "applicable": true,
@@ -116,7 +100,7 @@
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "ARTICLE_NUMBER_NOT_USED"
+          "outcome": "Prioritet 2 använd"
         },
         {
           "rule_id": "4.3.3",
@@ -127,21 +111,17 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets varubeskrivning återfinns exakt i fakturans beskrivningsfält utan behov av semantisk tolkning. Ingen artikelnummerregel behövde användas eftersom beskrivningen själv kan verifieras direkt genom kontrollerad textmatchning."
+      "motivation": "Varubeskrivningen i certifikatet återfinns ordagrant i fakturans descriptionsfält. Ingen semantisk tolkning, artikelnummerstolkning eller generell fakturareferensregel behövde användas."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.99,
-      "certificate_value": "GW 617 632 KGS",
-      "invoice_value": "Gross Weight: 617 632 Kgs",
+      "confidence": 0.98,
+      "certificate_value": "GW 617 632 KGS | 384 UNITS",
+      "invoice_value": "Gross Weight: 617 632 Kgs | 384 Units",
       "rules_applied": [
         {
           "rule_id": "4.4.2.1",
-          "outcome": "PRIMARY_QUANTITY_SELECTED"
-        },
-        {
-          "rule_id": "4.4.2.2",
           "outcome": "MATCH"
         },
         {
@@ -149,19 +129,15 @@
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.4.4",
+          "rule_id": "4.4.3.2",
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.4.3.1",
-          "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.4.6",
+          "rule_id": "4.4.7",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Den verifieringsgrundande kvantiteten i certifikatets kvantitetsfält är 'GW 617 632 KGS'. Fakturan anger uttryckligen 'Gross Weight: 617 632 Kgs', vilket matchar exakt i numeriskt värde, viktenhet och viktkategori. Certifikatets paketuppgift '384 UNITS' motsägs inte heller, och fakturan visar även '384 Units'."
+      "motivation": "Certifikatets kvantitetsfält anger uttryckligen 'GW 617 632 KGS', vilket motsvaras exakt av fakturans 'Gross Weight: 617 632 Kgs'. Därutöver återfinns även paketuppgiften '384 UNITS' som '384 Units' i fakturan. Minst en kvantitetsuppgift måste verifieras; här verifieras både gross weight och units."
     },
     "origin": {
       "applicable": true,
@@ -175,30 +151,27 @@
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.5.2",
-          "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.5.5",
+          "rule_id": "4.5.6",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets ursprungsland 'PORTUGAL' framgår uttryckligen i fakturan i ett dedikerat ursprungsfält: 'COUNTRY OF ORIGIN: PORTUGAL'. Ursprunget bekräftas även i den avslutande deklarationen att varorna är av Portugal origin."
+      "motivation": "Ursprungslandet PORTUGAL framgår uttryckligen i fakturan både i ett dedikerat origin-fält och i den avslutande ursprungsförsäkran. Positiv verifiering är därmed uppfylld."
     }
   },
   "overall_assessment": {
     "comparison_result": "IDENTICAL",
     "workflow_recommendation": "AUTO_APPROVAL_ELIGIBLE",
     "auto_approval_eligible": true,
-    "confidence": 0.98,
+    "confidence": 0.96,
     "critical_failures": [],
     "manual_review_triggers": [],
-    "decision_summary": "Alla fem tillämpliga kontrollpunkter är verifierade som MATCH mot den bifogade fakturan. Ingen LC-regel är aktiv och inga tekniska läsbarhetsproblem påverkar verifieringen.",
-    "human_explanation": "Alla uppgifter i certifikatet kan verifieras mot fakturan. Avsändare, mottagare, varubeskrivning, vikt och ursprungsland stämmer överens. Dokumentparet kan därför godkännas automatiskt."
+    "manual_review_reason": "NOT_APPLICABLE",
+    "decision_summary": "Alla tillämpliga kontrollpunkter kan verifieras entydigt mot fakturan. Ingen MISMATCH eller MANUAL_REVIEW kvarstår efter tillåten normalisering.",
+    "human_explanation": "Certifikatets avsändare, mottagare, varubeskrivning, kvantitet och ursprungsland kan återfinnas i fakturan. Mottagarlandet anges som Hongkong/HK i fakturan och motsvarar Kina enligt tillåten landnormalisering. Dokumentparet kan därför godkännas automatiskt."
   },
   "_meta": {
-    "tested_at": "2026-06-01T15:27:40.729534+00:00",
-    "prompt_hash": "d498a4785374",
+    "tested_at": "2026-06-06T09:16:06.638831+00:00",
+    "prompt_hash": "4690e976915d",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P019_MATCH",

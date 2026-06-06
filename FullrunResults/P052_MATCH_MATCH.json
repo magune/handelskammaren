@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-06-01T00:00:00Z",
+    "verification_timestamp": "2026-06-06T00:00:00Z",
     "document_pair_id": "SEG-26D-442744__921007391",
     "certificate_issue_date": null,
     "source_documents_received": 2
@@ -13,14 +13,14 @@
   },
   "documents": {
     "document_a": {
-      "label": "Certificate of Origin structured JSON",
+      "label": "Certificate of Origin (structured JSON)",
       "assumed_role": "certificate",
       "document_type": "structured_json"
     },
     "document_b": {
       "label": "Invoice PDF",
       "assumed_role": "invoice",
-      "document_type": "invoice_pdf"
+      "document_type": "invoice"
     }
   },
   "rule_activation": {
@@ -31,22 +31,27 @@
     "to_order_rule_active": false,
     "quantity_exception_applied": null,
     "eu_origin_normalization_active": false,
-    "activated_rules": []
+    "activated_rules": [
+      {
+        "rule_id": "8.6",
+        "rule_name": "Parningsvalidering passerad via identifierbar consignor och consignee"
+      },
+      {
+        "rule_id": "4.2.2.1.3",
+        "rule_name": "Certifikatets mottagarnamn som strikt delmängd av fakturans namn"
+      }
+    ]
   },
   "control_points": {
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.99,
-      "certificate_value": "ARA Timber AB | Country: SWEDEN",
-      "invoice_value": "ARA Timber AB ... Vallgatan 27, 411 16 GÖTEBORG, Sweden ... VAT No SE556976003501",
+      "confidence": 0.98,
+      "certificate_value": "ARA Timber AB | Vallgatan 27 | 411 16 | GOTHENBURG | SWEDEN | 556976-0035",
+      "invoice_value": "ARA Timber AB\nVallgatan 27\n411 16 GÖTEBORG\nSweden\nOrg.No 556976-0035\nVAT No SE556976003501",
       "rules_applied": [
         {
-          "rule_id": "4.1.0",
-          "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.1.2",
+          "rule_id": "4.1.3.1",
           "outcome": "MATCH"
         },
         {
@@ -58,21 +63,21 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor \"ARA Timber AB\" återfinns uttryckligen i fakturan på sida 1 i sidhuvud/sidfot. Fakturan visar även svensk adress (\"Vallgatan 27\", \"411 16 GÖTEBORG\", \"Sweden\") och svensk VAT-indikator \"SE556976003501\". Samma juridiska part och land kan därför verifieras entydigt."
+      "motivation": "Certifikatets consignor \"ARA Timber AB\" kan identifieras exakt i fakturan i sidfot/företagsblock. Landet verifieras uttryckligen genom \"Sweden\" och stöds även av svensk VAT-prefix \"SE\". Samma juridiska part kan därför styrkas mot fakturan."
     },
     "consignee": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.97,
+      "confidence": 0.9,
       "certificate_value": "Company Bouchra Taibah | For Trading (One Partner) | Abdullah Bin Wadiah | 7064 Building Number | Al Matar District 3772 | 42343 | Madinah | Saudi Arabia",
-      "invoice_value": "Customer: Company Bouchra Taibah For Trading (One Partner), Abdullah Bin Wadiah 7064 Building Number, Al Matar District 3772, 42343 Madinah, SAUDI ARABIA",
+      "invoice_value": "Customer\nCompany Bouchra Taibah For Trading (One Partner)\nAbdullah Bin Wadiah 7064 Building Number\nAl Matar District 3772\n42343 Madinah\nSAUDI ARABIA",
       "rules_applied": [
         {
           "rule_id": "4.2.0.2",
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.2.2",
+          "rule_id": "4.2.2.1.3",
           "outcome": "MATCH"
         },
         {
@@ -84,18 +89,18 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Mottagaren i certifikatet kan identifieras i fakturans Customer-block på sida 1. Namnet och adresskomponenterna överensstämmer, och landet \"Saudi Arabia\" motsvarar \"SAUDI ARABIA\". Certifikatets uppgift kan därmed verifieras i ett relevant mottagarfält i fakturan."
+      "motivation": "Certifikatets mottagarnamn \"Company Bouchra Taibah\" återfinns i fakturans kundblock som inledande del av \"Company Bouchra Taibah For Trading (One Partner)\". Detta är en tillåten strikt delmängd av fakturans namn och landet \"SAUDI ARABIA\" framgår uttryckligen i fakturan. Mottagaren kan därför verifieras."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.99,
       "certificate_value": "REDWOOD",
-      "invoice_value": "Description: REDWOOD",
+      "invoice_value": "REDWOOD",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "Priority 2 applied"
+          "outcome": "PRIORITY_2_APPLIED"
         },
         {
           "rule_id": "4.3.3",
@@ -106,7 +111,7 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets varubeskrivning \"REDWOOD\" återfinns exakt i fakturans beskrivningsfält på sida 1. Ingen artikelnummerregel eller generell fakturahänvisningsregel behöver användas. Den identitetsbärande huvudbeteckningen kan verifieras utan tolkning."
+      "motivation": "Certifikatets varubeskrivning är \"REDWOOD\" och samma identitetsbärande huvudbeteckning framgår uttryckligen i fakturans varubeskrivning. Ingen semantisk tolkning eller undantagsregel behövs."
     },
     "quantity": {
       "applicable": true,
@@ -116,11 +121,7 @@
       "invoice_value": "21 packages / 88,842 cbm",
       "rules_applied": [
         {
-          "rule_id": "4.4.1",
-          "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.4.2",
+          "rule_id": "4.4.2.2",
           "outcome": "MATCH"
         },
         {
@@ -128,44 +129,49 @@
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.4.6",
+          "rule_id": "4.4.7",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets kvantitet \"88,842 cbm\" innehåller både numeriskt värde och enhet. Samma numeriska värde och samma volymenhet återfinns uttryckligen i fakturan på sida 1 som \"21 packages / 88,842 cbm\". Därmed är kvantitetsuppgiften verifierad genom direkt förekomstkontroll utan behov av undantag 3A-3E."
+      "motivation": "Certifikatets kvantitet \"88,842 cbm\" innehåller både numeriskt värde och giltig enhet. Samma numeriska värde och enhet återfinns uttryckligen i fakturan som \"21 packages / 88,842 cbm\" för samma försändning/vara. Ingen summering eller omräkning behövs."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.99,
       "certificate_value": "NORWAY",
-      "invoice_value": "Country of origin: Norway",
+      "invoice_value": "Country of origin\nNorway",
       "rules_applied": [
         {
           "rule_id": "4.5.1",
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.5.5",
+          "rule_id": "4.5.2",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.5.6",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets ursprungsland \"NORWAY\" återfinns uttryckligen i fakturan på sida 1 i ett dedikerat ursprungsfält: \"Country of origin Norway\". Fakturan innehåller även texten \"MADE IN NORWAY\", vilket är konsistent men inte nödvändigt för slutsatsen. Ursprungslandet är därför verifierat."
+      "motivation": "Certifikatets ursprungsland \"NORWAY\" kan identifieras uttryckligen i fakturan i ett dedikerat ursprungsfält: \"Country of origin Norway\". Ursprunget framgår därmed explicit och utan tolkning."
     }
   },
   "overall_assessment": {
     "comparison_result": "IDENTICAL",
     "workflow_recommendation": "AUTO_APPROVAL_ELIGIBLE",
     "auto_approval_eligible": true,
-    "confidence": 0.98,
+    "confidence": 0.95,
     "critical_failures": [],
     "manual_review_triggers": [],
-    "decision_summary": "Samtliga tillämpliga kontrollpunkter kan verifieras entydigt mot fakturan. Ingen MISMATCH eller MANUAL_REVIEW-trigger föreligger.",
-    "human_explanation": "Alla tillämpliga kontrollpunkter stämmer mellan certifikatet och fakturan. Avsändare ARA Timber AB, mottagare Company Bouchra Taibah For Trading (One Partner), varan REDWOOD, mängden 88,842 cbm och ursprungslandet NORWAY kan verifieras i fakturan. Dokumentparet kan godkännas automatiskt."
+    "manual_review_reason": "NOT_APPLICABLE",
+    "decision_summary": "Alla fem tillämpliga kontrollpunkter kan verifieras mot fakturan. Ingen avvikelse, motsägelse eller blockerande osäkerhet har identifierats.",
+    "human_explanation": "Alla uppgifter i certifikatet kan verifieras mot fakturan. Avsändare, mottagare, varubeskrivning, kvantitet och ursprungsland stämmer. Dokumentparet kan därför godkännas automatiskt."
   },
   "_meta": {
-    "tested_at": "2026-06-01T15:28:10.711710+00:00",
-    "prompt_hash": "d498a4785374",
+    "tested_at": "2026-06-06T09:17:25.972988+00:00",
+    "prompt_hash": "4690e976915d",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P052_MATCH",

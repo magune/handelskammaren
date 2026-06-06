@@ -2,7 +2,7 @@
   "schema_version": "3.0",
   "metadata": {
     "verification_timestamp": null,
-    "document_pair_id": "SEG-25D-232203__INT-24-04612",
+    "document_pair_id": null,
     "certificate_issue_date": null,
     "source_documents_received": 2
   },
@@ -15,7 +15,7 @@
     "document_a": {
       "label": "Certificate of Origin (structured JSON)",
       "assumed_role": "certificate",
-      "document_type": "structured_json"
+      "document_type": "certificate_of_origin_structured_json"
     },
     "document_b": {
       "label": "Invoice PDF",
@@ -34,19 +34,19 @@
     "activated_rules": [
       {
         "rule_id": "8.6",
-        "rule_name": "Obligatorisk parningsvalidering passerad via consignor och consignee"
-      },
-      {
-        "rule_id": "4.1.0",
-        "rule_name": "Consignor identifierad uttryckligen i fakturan"
+        "rule_name": "Obligatorisk parningsvalidering"
       },
       {
         "rule_id": "4.2.0.2",
-        "rule_name": "Consignee identifierad i Ship-To-fält"
+        "rule_name": "Consignee kan verifieras i valfritt mottagarfält"
       },
       {
-        "rule_id": "4.4.6.0",
-        "rule_name": "Numeriskt värde i fakturan verifierar kvantitet trots att enhetsbeteckning saknas i fakturaraden"
+        "rule_id": "4.3.4",
+        "rule_name": "Tillägg som inte påverkar produktidentitet"
+      },
+      {
+        "rule_id": "4.4.3.3",
+        "rule_name": "Avsaknad av enhetsbeteckning i faktura kan accepteras"
       }
     ]
   },
@@ -55,11 +55,15 @@
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.99,
-      "certificate_value": "4Intelligence AB, Marieholmsgatan 10 B, 41502 Gothenburg, Sweden",
-      "invoice_value": "4Intelligence AB\nMarieholmgatan 10 B\n41502 Gothenburg\nSweden\nVAT no: SE559172351401",
+      "certificate_value": "4Intelligence AB | Marieholmsgatan 10 B | 41502 | Gothenburg | Sweden | 559172-3514",
+      "invoice_value": "4Intelligence AB, Marieholmgatan 10 B, 41502 Gothenburg, Sweden, Reg.nr: 559172-3514, VAT no: SE559172351401",
       "rules_applied": [
         {
           "rule_id": "4.1.0",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.2",
           "outcome": "MATCH"
         },
         {
@@ -71,14 +75,14 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor '4Intelligence AB' återfinns uttryckligen i fakturans sidhuvud och footer. Landet 'Sweden' framgår explicit i adressblocket och stöds även av VAT-prefix 'SE'. Samma juridiska part och land kan därför verifieras entydigt."
+      "motivation": "Certifikatets consignor '4Intelligence AB' återfinns uttryckligen som fakturautställare på sidan 1. Landet verifieras explicit genom adressen 'Sweden' och stöds även av VAT-prefix 'SE'."
     },
     "consignee": {
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.98,
-      "certificate_value": "GOLDEN DRAGON IMPORT-EXPORT TECHNOLOGY COMPANY LIMITED, No. 14A, Lane 169, Quang Tien Street, Residential Group 2, Dai Mo Ward, Nam Tu Liem District, Hà Nội, Viet Nam",
-      "invoice_value": "SHIP TO\nGOLDEN DRAGON IMPORT-EXPORT TECHNOLOGY COMPANY LIMITED\nNo. 14A, Lane 169, Quang Tien Street\nResidential Group 2, Dai Mo Ward\nNam Tu Liem District, Hanoi\nVIETNAM",
+      "certificate_value": "GOLDEN DRAGON IMPORT-EXPORT | TECHNOLOGY COMPANY LIMITED | No. 14A, Lane 169 | Quang Tien Street | Residential Group 2, Dai Mo Ward | Nam Tu Liem District | Hà Nội | Viet Nam",
+      "invoice_value": "SHIP TO GOLDEN DRAGON IMPORT-EXPORT TECHNOLOGY COMPANY LIMITED, No. 14A, Lane 169, Quang Tien Street, Residential Group 2, Dai Mo Ward, Nam Tu Liem District, Hanoi, VIETNAM",
       "rules_applied": [
         {
           "rule_id": "4.2.0.2",
@@ -89,42 +93,46 @@
           "outcome": "MATCH"
         },
         {
+          "rule_id": "4.2.2",
+          "outcome": "MATCH"
+        },
+        {
           "rule_id": "4.2.3",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets mottagare kan identifieras exakt i fakturans Ship-To-fält. Företagsnamnet överensstämmer och landet 'Viet Nam' motsvarar 'VIETNAM' efter tillåten landnormalisering."
+      "motivation": "Certifikatets mottagare kan identifieras i fakturans 'SHIP TO'-fält. Företagsnamnet framgår fullt ut i fakturan och landet 'Viet Nam/VIETNAM' överensstämmer efter tillåten normalisering."
     },
     "goods_description": {
       "applicable": true,
-      "status": "MISMATCH",
-      "confidence": 0.96,
-      "certificate_value": "Secret Video Recorder, serial no: 986519 | Manufacturer: 4Intelligence AB | Year of manufacture: 2025",
-      "invoice_value": "VIDEO RECORDER\nModel: INT-V005-A-MAXIMUM\nIncluding accessories according to contract no 1212-IN-SEC/2024\nManufacturer: 4Intelligence AB\nOrigin: Sweden\nSerial no: 986519\nHS code: 8919810090 - Y901",
+      "status": "MATCH",
+      "confidence": 0.87,
+      "certificate_value": "Secret Video Recorder, serial no: 986519",
+      "invoice_value": "VIDEO RECORDER; Model: INT-V005-A-MAXIMUM; Manufacturer: 4Intelligence AB; Origin: Sweden; Serial no: 986519",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "NOT_APPLICABLE"
+          "outcome": "PRIORITY_2_TEXT_MATCH_USED"
         },
         {
           "rule_id": "4.3.3",
-          "outcome": "PARTIAL_VERIFICATION_ONLY"
+          "outcome": "MATCH"
         },
         {
-          "rule_id": "2.1",
-          "outcome": "CERTIFICATE_INFORMATION_MUST_BE_FOUND_IN_INVOICE"
+          "rule_id": "4.3.4",
+          "outcome": "MATCH"
         },
         {
-          "rule_id": "4.3.8",
-          "outcome": "MISMATCH"
+          "rule_id": "4.3.8.1",
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Fakturan innehåller 'VIDEO RECORDER', 'Manufacturer: 4Intelligence AB' och 'Serial no: 986519', men den innehåller inte certifikatets uttryckliga uppgift 'Year of manufacture: 2025'. Eftersom certifikatets angivna varubeskrivningsuppgifter inte fullt ut kan återfinnas i fakturan kan kontrollpunkten inte verifieras som MATCH."
+      "motivation": "Den identitetsbärande huvudbeteckningen 'Video Recorder' kan identifieras exakt i fakturan, och serienumret '986519' återfinns också uttryckligen i fakturaraden. Certifikatets övriga rader 'Manufacturer: 4Intelligence AB' och 'Year of manufacture: 2025' behandlas som metadata till varan och inte som separata varuposter."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.88,
+      "confidence": 0.93,
       "certificate_value": "01 Set",
       "invoice_value": "QTY 1",
       "rules_applied": [
@@ -137,15 +145,11 @@
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.4.3.1",
-          "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.4.6.0",
+          "rule_id": "4.4.3.3",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger den uttryckliga kvantiteten '01 Set'. Fakturan anger den numeriska mängden '1' i QTY-kolumnen för den aktuella varan. Det numeriska värdet överensstämmer och ingen motstridig alternativ kvantitet förekommer i fakturan; därför är kvantiteten verifierad trots att enheten inte skrivs ut i fakturaraden."
+      "motivation": "Certifikatet anger numeriskt värde och enhet i '01 Set'. Fakturan anger numeriskt värde '1' för samma artikelrad; även om separat enhetsbeteckning saknas i fakturans kvantitetskolumn är det entydigt att uppgiften avser samma vara och ingen motsägelse förekommer."
     },
     "origin": {
       "applicable": true,
@@ -159,33 +163,36 @@
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.5.5",
+          "rule_id": "4.5.4",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.5.6",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets ursprungsland 'Sweden' återfinns uttryckligen i fakturan som 'Origin: Sweden'. Uppgiften är explicit angiven i ett dedikerat origin-fält och kan verifieras utan tolkning."
+      "motivation": "Certifikatets ursprungsland 'Sweden' återfinns uttryckligen i fakturans varurad som 'Origin: Sweden'."
     }
   },
   "overall_assessment": {
-    "comparison_result": "NOT_IDENTICAL",
-    "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
-    "auto_approval_eligible": false,
-    "confidence": 0.96,
-    "critical_failures": [
-      "Varubeskrivningen är inte fullt verifierbar eftersom certifikatet innehåller uppgiften 'Year of manufacture: 2025' som saknas i fakturan."
-    ],
+    "comparison_result": "IDENTICAL",
+    "workflow_recommendation": "AUTO_APPROVAL_ELIGIBLE",
+    "auto_approval_eligible": true,
+    "confidence": 0.95,
+    "critical_failures": [],
     "manual_review_triggers": [],
-    "decision_summary": "Dokumentparet passerar parningskontrollen och avsändare, mottagare, kvantitet samt ursprungsland kan verifieras mot fakturan. Kontrollpunkten för varubeskrivning ger dock MISMATCH eftersom certifikatet innehåller en uttrycklig varuuppgift som inte återfinns i fakturan. Minst en tillämplig kontrollpunkt är därmed MISMATCH, vilket ger totalresultatet NOT_IDENTICAL.",
-    "human_explanation": "Avsändare, mottagare, kvantitet och ursprungsland kan verifieras mot fakturan. Varubeskrivningen stämmer däremot inte fullt ut eftersom certifikatet innehåller uppgiften 'Year of manufacture: 2025', men denna uppgift finns inte i fakturan. Dokumentparet kan därför inte godkännas automatiskt."
+    "manual_review_reason": "NOT_APPLICABLE",
+    "decision_summary": "Alla tillämpliga kontrollpunkter kan verifieras mot fakturan. Dokumentparningen är giltig via matchande consignor och matchande consignee i Ship To-fältet. Ingen tillämplig kontrollpunkt gav MISMATCH eller MANUAL_REVIEW.",
+    "human_explanation": "Avsändare, mottagare, vara, kvantitet och ursprungsland kan verifieras mot fakturan. Certifikatets mottagare återfinns i fakturans Ship To-fält och varan kan identifieras som video recorder med serienummer 986519. Dokumentparet kan därför godkännas automatiskt."
   },
   "_meta": {
-    "tested_at": "2026-06-01T15:28:29.544004+00:00",
-    "prompt_hash": "d498a4785374",
+    "tested_at": "2026-06-06T09:13:51.027080+00:00",
+    "prompt_hash": "4690e976915d",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P212_MATCH",
     "expected": "IDENTICAL",
-    "actual": "NOT_IDENTICAL",
-    "status": "FAIL"
+    "actual": "IDENTICAL",
+    "status": "PASS"
   }
 }

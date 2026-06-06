@@ -1,8 +1,8 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-06-01T00:00:00Z",
-    "document_pair_id": "SEG-26D-462916__INV-2269800789",
+    "verification_timestamp": "2026-06-06T00:00:00Z",
+    "document_pair_id": "SEG-26D-462916__2269800789",
     "certificate_issue_date": null,
     "source_documents_received": 2
   },
@@ -15,10 +15,10 @@
     "document_a": {
       "label": "CERTIFICATE OF ORIGIN (structured JSON)",
       "assumed_role": "certificate",
-      "document_type": "structured_json_certificate"
+      "document_type": "structured_certificate_json"
     },
     "document_b": {
-      "label": "Invoice PDF",
+      "label": "Attached PDF invoice",
       "assumed_role": "invoice",
       "document_type": "invoice_pdf"
     }
@@ -34,27 +34,27 @@
     "activated_rules": [
       {
         "rule_id": "4.1.0",
-        "rule_name": "Consignor may be verified if company name appears explicitly anywhere in invoice"
+        "rule_name": "Consignor found explicitly in invoice text"
       },
       {
         "rule_id": "4.2.0.2",
-        "rule_name": "Consignee may match any relevant recipient field in invoice"
+        "rule_name": "Consignee identified in invoice recipient fields"
+      },
+      {
+        "rule_id": "4.3.3",
+        "rule_name": "Controlled text match for goods description"
       },
       {
         "rule_id": "4.4.5.3",
-        "rule_name": "Unit conversion MT/TO to KG permitted"
+        "rule_name": "Unit conversion MT/TO to KG"
       },
       {
         "rule_id": "4.4.5.3.1",
-        "rule_name": "Decimal-comma normalization for MT quantity when interpretation is unambiguous"
+        "rule_name": "Decimal notation normalization for MT conversion"
       },
       {
         "rule_id": "4.5.4.1.1",
-        "rule_name": "EU plus named EU country in certificate may be verified by named country in invoice"
-      },
-      {
-        "rule_id": "4.5.4.2",
-        "rule_name": "EU and specific EU member state are interchangeable for origin verification"
+        "rule_name": "EU plus named EU country verified by named EU country in invoice"
       }
     ]
   },
@@ -62,8 +62,8 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.97,
-      "certificate_value": "Calderys Nordic AB",
+      "confidence": 0.98,
+      "certificate_value": "Calderys Nordic AB | Sweden",
       "invoice_value": "Calderys Nordic AB, Sweden",
       "rules_applied": [
         {
@@ -71,22 +71,22 @@
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.1.4",
-          "outcome": "MATCH"
+          "rule_id": "4.1.2.1",
+          "outcome": "Country verified from explicit country text and SE VAT prefix"
         },
         {
           "rule_id": "4.1.5",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor 'Calderys Nordic AB' återfinns uttryckligen i fakturan i sidhuvud/footer och på sida 2 som 'Best regards Calderys Nordic AB'. Landet framgår explicit som 'Sweden'. Skillnaden i adress mellan certifikatet och fakturan medför inte avvikelse eftersom företagsnamn och land kan verifieras."
+      "motivation": "Certifikatets consignor 'Calderys Nordic AB' återfinns uttryckligen i fakturan på sida 1 och 2 som 'Calderys Nordic AB, Sweden'. Landet Sweden framgår explicit och stöds även av VAT-prefix 'SE'. Adresskillnaden Åmål/Höganäs medför inte avvikelse enligt reglerna eftersom företagsnamn och land är verifierade."
     },
     "consignee": {
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.99,
-      "certificate_value": "Calderys India Refractories Limited",
-      "invoice_value": "Calderys India Refractories Limited",
+      "certificate_value": "Calderys India Refractories Limited | India",
+      "invoice_value": "Calderys India Refractories Limited | INDIA",
       "rules_applied": [
         {
           "rule_id": "4.2.0.2",
@@ -94,103 +94,104 @@
         },
         {
           "rule_id": "4.2.3",
-          "outcome": "MATCH"
+          "outcome": "Country match"
         },
         {
           "rule_id": "4.2.4",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets mottagare 'Calderys India Refractories Limited' återfinns exakt i fakturans Company- och Delivery address-block. Landet 'INDIA' framgår explicit. Mottagaren kan därför verifieras entydigt."
+      "motivation": "Certifikatets mottagare 'Calderys India Refractories Limited' återfinns uttryckligen i fakturans 'Company'-block och även i 'Delivery address'-blocket på sida 1. Landet India framgår explicit som 'INDIA'."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.91,
+      "confidence": 0.88,
       "certificate_value": "Svenska Mix 7 A60 0,8 ",
       "invoice_value": "SVENSKA™ MIX 7 A60 0.8",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "Priority 2 used; no article number in certificate"
+          "outcome": "Prioritet 1 ej tillämplig - inget artikelnummer anges i certifikatet"
         },
         {
           "rule_id": "4.3.3",
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.3.4",
-          "outcome": "MATCH"
+          "rule_id": "4",
+          "outcome": "Normalisering av versaler/gemener, extra tecken och punktnotation använd"
         }
       ],
-      "motivation": "Den identitetsbärande huvudbeteckningen 'Svenska Mix 7 A60 0,8' kan identifieras i fakturan som 'SVENSKA™ MIX 7 A60 0.8'. Skillnaderna avser versaler, varumärkessymbol och decimaltecken komma/punkt och ändrar inte produktidentiteten enligt tillåten normalisering."
+      "motivation": "Certifikatets varubeskrivning 'Svenska Mix 7 A60 0,8' motsvarar fakturaraden 'SVENSKA™ MIX 7 A60 0.8' på sida 1. Skillnaderna består av versaler/gemener, varumärkessymbol och decimaltecken komma/punkt; den identitetsbärande huvudbeteckningen är i övrigt samma ordsekvens."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.88,
+      "confidence": 0.87,
       "certificate_value": "NW 25,200 kg",
-      "invoice_value": "25,200 TO",
+      "invoice_value": "Quantity 25,200 TO",
       "rules_applied": [
         {
-          "rule_id": "4.4.2.2",
-          "outcome": "MATCH"
+          "rule_id": "4.4.2.1",
+          "outcome": "Formkrav uppfyllt - viktkategori NW och enhet kg anges i certifikatet"
         },
         {
-          "rule_id": "4.4.3",
-          "outcome": "MATCH"
+          "rule_id": "4.4.5.1",
+          "outcome": "Ej tillämplig - endast en faktura"
         },
         {
           "rule_id": "4.4.5.3",
-          "outcome": "MATCH"
+          "outcome": "MATCH via MT/KG-konvertering"
         },
         {
           "rule_id": "4.4.5.3.1",
+          "outcome": "Invoice '25,200 TO' tolkad som 25.200 MT, inte 25 200 MT"
+        },
+        {
+          "rule_id": "4.4.7",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger 'NW 25,200 kg'. Fakturan anger för samma vara kvantiteten '25,200 TO'. I fakturans kontext är 'TO' entydigt metric ton; 25,200 TO tolkas som 25.200 MT och motsvarar 25 200 KG efter tillåten MT↔KG-omräkning. Därmed kan certifikatets kvantitet verifieras mot fakturan."
+      "motivation": "Certifikatet anger 'NW 25,200 kg'. Fakturan anger för samma vara 'Quantity 25,200 TO' på sida 1. Enligt enhetsregeln för MT↔KG och decimalnormalisering tolkas '25,200 TO' som 25.200 metric ton; detta motsvarar exakt 25 200 kg. Ingen motstridig kvantitetsuppgift förekommer i fakturan."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.95,
+      "confidence": 0.92,
       "certificate_value": "EU Sweden",
       "invoice_value": "MADE IN SWEDEN",
       "rules_applied": [
         {
           "rule_id": "4.5.1",
-          "outcome": "MATCH"
+          "outcome": "Explicit origin statement found"
         },
         {
           "rule_id": "4.5.4.1.1",
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.5.4.2",
-          "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.5.5",
+          "rule_id": "4.5.6",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Fakturan anger uttryckligen ursprung som 'MADE IN SWEDEN'. Detta verifierar den specifika landsangivelsen 'Sweden' i certifikatet och verifierar även 'EU' eftersom Sverige är ett EU-medlemsland."
+      "motivation": "Fakturan innehåller en explicit ursprungsangivelse 'MADE IN SWEDEN' på sida 1. Detta verifierar 'Sweden' direkt och verifierar samtidigt EU-komponenten i certifikatets 'EU Sweden' eftersom Sverige är ett EU-medlemsland."
     }
   },
   "overall_assessment": {
     "comparison_result": "IDENTICAL",
     "workflow_recommendation": "AUTO_APPROVAL_ELIGIBLE",
     "auto_approval_eligible": true,
-    "confidence": 0.94,
+    "confidence": 0.93,
     "critical_failures": [],
     "manual_review_triggers": [],
-    "decision_summary": "Alla tillämpliga kontrollpunkter är verifierade som MATCH. Ingen LC-regel är aktiv. Fakturan är textbaserad och läsbar, och ingen kontrollpunkt understiger confidence-golvet för automatisk godkännande.",
-    "human_explanation": "Alla uppgifter i certifikatet kan verifieras mot fakturan. Avsändare, mottagare, vara, kvantitet och ursprung stämmer, inklusive att 25,200 kg motsvarar 25,200 TO efter tillåten omräkning. Dokumentparet kan därför godkännas automatiskt."
+    "manual_review_reason": "NOT_APPLICABLE",
+    "decision_summary": "Alla fem tillämpliga kontrollpunkter verifierades som MATCH. Ingen LC-hänvisning finns i certifikatet. Dokumentparningen är giltig eftersom både consignor och consignee återfinns i fakturan, och kvantiteten kunde verifieras genom tillåten MT↔KG-konvertering.",
+    "human_explanation": "Alla uppgifter i certifikatet kan verifieras mot fakturan. Avsändare och mottagare stämmer, varan motsvarar fakturaraden, och kvantitet samt ursprung kan verifieras mot '25,200 TO' respektive 'MADE IN SWEDEN'. Dokumentparet kan godkännas automatiskt."
   },
   "_meta": {
-    "tested_at": "2026-06-01T15:27:17.463472+00:00",
-    "prompt_hash": "d498a4785374",
+    "tested_at": "2026-06-06T09:00:14.367694+00:00",
+    "prompt_hash": "4690e976915d",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P0127_MATCH",

@@ -1,8 +1,8 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-06-01T00:00:00Z",
-    "document_pair_id": "SEG-25D-390399::invoice_pdf_1",
+    "verification_timestamp": null,
+    "document_pair_id": "SEG-25D-390399__INV-000099",
     "certificate_issue_date": null,
     "source_documents_received": 2
   },
@@ -13,14 +13,14 @@
   },
   "documents": {
     "document_a": {
-      "label": "Certificate of Origin (structured JSON)",
+      "label": "CERTIFICATE OF ORIGIN (structured JSON)",
       "assumed_role": "certificate",
-      "document_type": "structured_json"
+      "document_type": "Certificate of Origin"
     },
     "document_b": {
-      "label": "Attached invoice PDF",
+      "label": "Attached PDF invoice",
       "assumed_role": "invoice",
-      "document_type": "commercial_invoice_pdf"
+      "document_type": "Commercial Invoice PDF"
     }
   },
   "rule_activation": {
@@ -33,16 +33,8 @@
     "eu_origin_normalization_active": false,
     "activated_rules": [
       {
-        "rule_id": "2.2",
-        "rule_name": "LC-undantag prövat men ej aktiverat"
-      },
-      {
-        "rule_id": "8.6",
-        "rule_name": "Obligatorisk parningsvalidering passerad via consignor-match"
-      },
-      {
         "rule_id": "4.4.5.3",
-        "rule_name": "MT↔KG-omräkning använd vid kvantitetsjämförelse"
+        "rule_name": "Enhetsomräkning MT ↔ KG prövad för kvantitetsjämförelse"
       }
     ]
   },
@@ -50,106 +42,94 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.99,
+      "confidence": 0.98,
       "certificate_value": "mfiber AB, Drottninggatan 21, SE-411 14 Gothenburg, Sweden, VAT 5568639636",
-      "invoice_value": "mFiber AB, Drottninggatan 21, SE-411 14 Gothenburg, Sweden, Org no: 5568639636, VAT no: SE556863963601",
+      "invoice_value": "mFiber AB, Drottninggatan 21, SE-411 14 Gothenburg, Sweden; VAT no: SE556863963601",
       "rules_applied": [
         {
-          "rule_id": "8.6",
-          "outcome": "PASS - dokumentparning giltig via consignor identifierad i fakturan"
+          "rule_id": "4.1.0",
+          "outcome": "MATCH"
         },
         {
-          "rule_id": "4.1.0",
-          "outcome": "MATCH - consignor-namnet återfinns uttryckligen i fakturans header/footer"
+          "rule_id": "4.1.2",
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.1.2.1",
-          "outcome": "MATCH - land verifierat via adressblock och svensk VAT/IBAN-prefix"
-        },
-        {
-          "rule_id": "4.1.5",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor \"mfiber AB\" kan identifieras direkt i fakturan som \"mFiber AB\" på sida 1 och 2. Adressen \"Drottninggatan 21, SE-411 14 Gothenburg, Sweden\" återfinns också i fakturan, och landet Sverige styrks ytterligare av VAT-prefix \"SE\" och IBAN-prefix \"SE\". Skillnaden i versalisering (mfiber/mFiber) är tillåten normalisering."
+      "motivation": "Certifikatets consignor \"mfiber AB\" återfinns uttryckligen i fakturan som \"mFiber AB\" i sidhuvud och företagsblock. Landet Sverige verifieras explicit i adressen och indirekt genom VAT-prefixet \"SE\" i fakturan. Skillnaden i versalisering är tillåten normalisering."
     },
     "consignee": {
       "applicable": true,
       "status": "MISMATCH",
       "confidence": 0.99,
-      "certificate_value": "CENTURY GATE CO. LTD, P.O. BOX 14368, C R NO. 1010277465, RIYADH 7097, Saudi Arabia",
-      "invoice_value": "Bill To / Notify: Paper Vantage Point Pvt Ltd, Thane West, 400607 Maharashtra, India; Ship To / Consignee: Paper Vantage Point Pvt Ltd, Thane West, 400607 Maharashtra, India",
+      "certificate_value": "CENTURY GATE CO. LTD, P.O. BOX 14368, RIYADH 7097, Saudi Arabia",
+      "invoice_value": "Ship To / Consignee: Paper Vantage Point Pvt Ltd, 403, 4th Floor, Orion Business Park, Thane West, 400607 Maharashtra, India; Bill To / Notify: Paper Vantage Point Pvt Ltd, ... India",
       "rules_applied": [
         {
           "rule_id": "4.2.0.2",
-          "outcome": "FAIL - certifikatets mottagare kan inte identifieras i något mottagarfält i fakturan"
+          "outcome": "MISMATCH"
         },
         {
           "rule_id": "4.2.3",
-          "outcome": "FAIL - land Saudi Arabia överensstämmer inte med India"
+          "outcome": "MISMATCH"
         },
         {
           "rule_id": "4.2.4",
           "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Fakturan anger både Bill To / Notify och Ship To / Consignee som \"Paper Vantage Point Pvt Ltd\" i Indien. Certifikatets mottagare är \"CENTURY GATE CO. LTD\" i Saudiarabien. Detta är en tydlig positiv motsägelse i både företagsnamn och land, inte bara avsaknad av information."
+      "motivation": "Certifikatets mottagare \"CENTURY GATE CO. LTD\" kan inte identifieras i något mottagarfält i fakturan. Fakturan anger i både \"Bill To / Notify\" och \"Ship To / Consignee\" en annan juridisk part, \"Paper Vantage Point Pvt Ltd\", i India, vilket direkt motsäger certifikatets uppgift om mottagare i Saudi Arabia."
     },
     "goods_description": {
       "applicable": true,
       "status": "MISMATCH",
-      "confidence": 0.97,
+      "confidence": 0.98,
       "certificate_value": "293 reels of MG Bleached Kraft",
-      "invoice_value": "Kraft Liner Board / HS Code: 4804 41 00 (två rader)",
+      "invoice_value": "Kraft Liner Board; HS Code: 4804 41 00 (7 Reels, 15.2660 MT) and Kraft Liner Board; HS Code: 4804 41 00 (4 Reels, 9.4200 MT)",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "Artikelnummer saknas i certifikatet - vidare till kontrollerad textmatchning"
+          "outcome": "Prioritet 2 tillämpad"
         },
         {
           "rule_id": "4.3.3",
-          "outcome": "FAIL - identitetsbärande huvudbeteckning kan inte identifieras i fakturan"
+          "outcome": "MISMATCH"
         },
         {
           "rule_id": "4.3.8",
           "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Certifikatet anger varan som \"293 reels of MG Bleached Kraft\". Fakturan anger varorna som \"Kraft Liner Board\" på två artikelrader. Det finns ingen exakt eller regelmässigt tillåten textmatchning mellan \"MG Bleached Kraft\" och \"Kraft Liner Board\", och ingen fakturareferensbaserad generell varubeskrivning i certifikatet som kan ersätta produktmatchningen."
+      "motivation": "Certifikatets identitetsbärande huvudbeteckning är \"MG Bleached Kraft\". Fakturan anger varan som \"Kraft Liner Board\" på två rader. Den certifierade varubeskrivningen kan inte identifieras exakt i fakturan genom tillåten normalisering, och skillnaden kräver otillåten semantisk tolkning."
     },
     "quantity": {
       "applicable": true,
       "status": "MISMATCH",
       "confidence": 0.99,
       "certificate_value": "GW/NW: 150695 kg",
-      "invoice_value": "Total MT: 24.6860; radkvantiteter 15.2660 MT och 9.4200 MT",
+      "invoice_value": "Total MT: 24.6860; line quantities: 15.2660 MT and 9.4200 MT",
       "rules_applied": [
         {
-          "rule_id": "4.4.2.2",
-          "outcome": "Formkrav uppfyllt - viktkategori och enhet framgår i certifikatets kvantitetsfält"
+          "rule_id": "4.4.2.1",
+          "outcome": "Formkrav uppfyllt"
         },
         {
-          "rule_id": "4.4.3",
-          "outcome": "FAIL - certifikatets numeriska värde kan inte identifieras i fakturan"
-        },
-        {
-          "rule_id": "4.4.5.1",
-          "outcome": "Undantag prövade sekventiellt"
+          "rule_id": "4.4.3.6",
+          "outcome": "MISMATCH"
         },
         {
           "rule_id": "4.4.5.3",
-          "outcome": "Prövat - 24.6860 MT = 24686 kg, vilket inte matchar 150695 kg"
+          "outcome": "Omräkning prövad"
         },
         {
-          "rule_id": "4.4.3.1",
-          "outcome": "Uttrycklig motsägelse - fakturan anger annan totalvikt än certifikatet"
-        },
-        {
-          "rule_id": "4.4.6",
+          "rule_id": "4.4.7",
           "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Certifikatet anger kvantiteten som \"GW/NW: 150695 kg\". Fakturan anger total kvantitet \"Total MT: 24.6860\" och radkvantiteterna 15.2660 MT samt 9.4200 MT. Efter tillåten MT→KG-omräkning motsvarar fakturans total 24 686 kg, vilket tydligt avviker från 150 695 kg. Detta är en uttrycklig numerisk motsägelse."
+      "motivation": "Certifikatet anger viktkvantiteten \"GW/NW: 150695 kg\". Fakturan anger total vikt/kvantitet som \"Total MT: 24.6860\", vilket efter tillåten omräkning enligt MT↔KG motsvarar 24 686 kg. Det numeriska värdet i fakturan motsäger därför certifikatets 150 695 kg."
     },
     "origin": {
       "applicable": true,
@@ -160,18 +140,14 @@
       "rules_applied": [
         {
           "rule_id": "4.5.1",
-          "outcome": "Explicit originfält identifierat i fakturan"
+          "outcome": "Explicit originfält identifierat"
         },
         {
-          "rule_id": "4.5.4",
-          "outcome": "Normalisering prövad men inget ekvivalent landsnamn"
-        },
-        {
-          "rule_id": "4.5.5",
+          "rule_id": "4.5.6",
           "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Certifikatet anger ursprungsland \"India\". Fakturan anger uttryckligen \"Country of Origin: Portugal\". Ursprungslandet kan därför inte verifieras och fakturan motsäger certifikatet direkt."
+      "motivation": "Certifikatets ursprungsland är \"India\". Fakturan innehåller ett explicit ursprungsfält med värdet \"Portugal\". Ursprungslandet i certifikatet kan därför inte verifieras mot fakturan och motsägs uttryckligen av fakturan."
     }
   },
   "overall_assessment": {
@@ -181,17 +157,18 @@
     "confidence": 0.99,
     "critical_failures": [
       "Consignee mismatch: certifikatet anger CENTURY GATE CO. LTD, Saudi Arabia medan fakturan anger Paper Vantage Point Pvt Ltd, India.",
-      "Goods description mismatch: \"293 reels of MG Bleached Kraft\" kan inte verifieras mot \"Kraft Liner Board\".",
-      "Quantity mismatch: certifikat 150695 kg vs faktura 24.6860 MT (= 24686 kg).",
-      "Origin mismatch: certifikat India vs faktura Portugal."
+      "Goods description mismatch: certifikatet anger MG Bleached Kraft medan fakturan anger Kraft Liner Board.",
+      "Quantity mismatch: certifikatet anger 150695 kg medan fakturan anger total 24.6860 MT (= 24686 kg).",
+      "Origin mismatch: certifikatet anger India medan fakturan anger Portugal."
     ],
     "manual_review_triggers": [],
-    "decision_summary": "Dokumentparet passerar parningsvalidering eftersom consignor mFiber AB kan identifieras tydligt i fakturan. Däremot föreligger flera uttryckliga avvikelser i mottagare, varubeskrivning, kvantitet och ursprungsland. Minst en tillämplig kontrollpunkt är MISMATCH, vilket medför totalresultatet NOT_IDENTICAL.",
-    "human_explanation": "Certifikatet och fakturan stämmer inte överens. Certifikatet anger mottagaren som CENTURY GATE CO. LTD i Saudiarabien, varan som MG Bleached Kraft, kvantiteten 150695 kg och ursprung India, medan fakturan anger Paper Vantage Point Pvt Ltd i Indien, Kraft Liner Board, total 24.6860 MT och ursprung Portugal. Ärendet måste därför hanteras manuellt."
+    "manual_review_reason": "NOT_APPLICABLE",
+    "decision_summary": "Dokumentparet är inte identiskt. Endast consignor kan verifieras mot fakturan; mottagare, varubeskrivning, kvantitet och ursprungsland motsägs av fakturans uttryckliga uppgifter.",
+    "human_explanation": "Dokumenten stämmer inte överens. Certifikatet anger mottagaren CENTURY GATE CO. LTD i Saudiarabien, varan MG Bleached Kraft, 150695 kg och ursprung India, medan fakturan anger Paper Vantage Point Pvt Ltd i Indien, varan Kraft Liner Board, total 24.6860 MT och ursprung Portugal. Ärendet måste därför hanteras manuellt."
   },
   "_meta": {
-    "tested_at": "2026-06-01T15:27:17.460119+00:00",
-    "prompt_hash": "d498a4785374",
+    "tested_at": "2026-06-06T09:00:14.364312+00:00",
+    "prompt_hash": "4690e976915d",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P0116_MISMATCH",

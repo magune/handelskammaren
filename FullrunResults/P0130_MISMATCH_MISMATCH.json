@@ -1,10 +1,10 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-06-01T00:00:00Z",
+    "verification_timestamp": null,
     "document_pair_id": "SEG-26D-462916__P0130_MISMATCH_invoice.pdf",
     "certificate_issue_date": null,
-    "source_documents_received": 2
+    "source_documents_received": 1
   },
   "task": {
     "task_type": "customs_document_pair_verification",
@@ -15,12 +15,12 @@
     "document_a": {
       "label": "CERTIFICATE OF ORIGIN (structured JSON)",
       "assumed_role": "certificate",
-      "document_type": "certificate_of_origin_structured_json"
+      "document_type": "structured_json_certificate_of_origin"
     },
     "document_b": {
       "label": "P0130_MISMATCH_invoice.pdf",
       "assumed_role": "invoice",
-      "document_type": "proforma_invoice_pdf"
+      "document_type": "proforma_invoice_pdf_scanned"
     }
   },
   "rule_activation": {
@@ -33,12 +33,16 @@
     "eu_origin_normalization_active": true,
     "activated_rules": [
       {
-        "rule_id": "8.1.2",
-        "rule_name": "Proforma invoice kan användas som verifieringsunderlag"
+        "rule_id": "8.1.1",
+        "rule_name": "Skannad faktura men relevanta fält är läsbara per kontrollpunkt"
       },
       {
         "rule_id": "4.5.4.1.1",
-        "rule_name": "EU + specifikt EU-land i certifikat kan verifieras av enbart det specifika landet i fakturan"
+        "rule_name": "EU + specifikt EU-land verifieras av det specifika EU-landet i fakturan"
+      },
+      {
+        "rule_id": "4.5.4.2",
+        "rule_name": "EU-medlemsland och EU-samlingsbegrepp är utbytbara vid ursprungsverifiering"
       }
     ]
   },
@@ -46,9 +50,9 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.92,
-      "certificate_value": "Calderys Nordic AB | Forshammarsgatan 2 | 66232 Åmål | Sweden | VAT 5560129800",
-      "invoice_value": "Calderys Nordic AB, Sweden | EU VAT no. SE556012980001",
+      "confidence": 0.96,
+      "certificate_value": "Calderys Nordic AB | Sweden",
+      "invoice_value": "Calderys Nordic AB, Sweden; EU VAT no. SE556012980001",
       "rules_applied": [
         {
           "rule_id": "4.1.0",
@@ -59,14 +63,14 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor 'Calderys Nordic AB' återfinns uttryckligen i fakturans sidfot på sida 1 som 'Calderys Nordic AB, Sweden'. Landet Sverige stöds även av VAT-prefixet 'SE' i 'SE556012980001'. Fakturan är skannad, men just consignor-texten är läsbar och kan därför verifieras."
+      "motivation": "Certifikatets consignor 'Calderys Nordic AB' kan identifieras uttryckligen i fakturans footer på sidan 1 som 'Calderys Nordic AB, Sweden'. Landet verifieras dessutom av den explicita landtexten 'Sweden' och VAT-prefixet 'SE'."
     },
     "consignee": {
       "applicable": true,
       "status": "MISMATCH",
-      "confidence": 0.97,
-      "certificate_value": "Calderys India Refractories Limited | Fidvi Tower, 6th floor | Opposite Saraf Chambers | Mount Road | 440001 Sadar Nagpur | India",
-      "invoice_value": "Delivery address: HAZNEDAR DURER REFRAKTER MALZEMELERI SAN. VE TIC. A.S, Büyükcavuslu mah. Cerkezköy cad. NO: 585, TR-34594 SILIVRI ISTANBUL | Invoice address: Same as Delivery address",
+      "confidence": 0.99,
+      "certificate_value": "Calderys India Refractories Limited | India",
+      "invoice_value": "Delivery address: HAZNEDAR DURER REFRAKTER MALZEMELERI SAN. VE TIC. A.S, Büyükcavuslu mah. Cerkezköy cad. NO: 585, TR-34594 SILIVRI ISTANBUL; Invoice address: Same as Delivery address",
       "rules_applied": [
         {
           "rule_id": "4.2.0.2",
@@ -77,48 +81,56 @@
           "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Certifikatets mottagare är 'Calderys India Refractories Limited' i Indien. Fakturans mottagarfält på sida 1 visar i stället 'HAZNEDAR DURER REFRAKTER MALZEMELERI SAN. VE TIC. A.S' i Turkiet, och fakturaadressen anges som samma adress. Detta är en positiv motsägelse i både företagsnamn och land, inte enbart frånvaro av uppgift."
+      "motivation": "Fakturan visar en tydligt läsbar mottagare/leveransadress i Turkiet: 'HAZNEDAR DURER REFRAKTER MALZEMELERI SAN. VE TIC. A.S ... TR-34594 SILIVRI ISTANBUL'. Certifikatets mottagare 'Calderys India Refractories Limited' i India kan inte identifieras i något mottagarfält, och fakturan anger i stället en annan part i ett annat land."
     },
     "goods_description": {
       "applicable": true,
       "status": "MISMATCH",
-      "confidence": 0.96,
-      "certificate_value": "Svenska Mix 7 A60 0,8",
-      "invoice_value": "Item no 1011513 | SILICA PATCH HQ 26 UC",
+      "confidence": 0.98,
+      "certificate_value": "Svenska Mix 7 A60 0,8 ",
+      "invoice_value": "SILICA PATCH HQ 26 UC",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "Priority 2 applied"
+          "outcome": "NOT_APPLICABLE_NO_ARTICLE_NUMBER_IN_CERTIFICATE"
         },
         {
           "rule_id": "4.3.3",
           "outcome": "MISMATCH"
+        },
+        {
+          "rule_id": "4.3.5",
+          "outcome": "NOT_APPLICABLE_NO_INVOICE_REFERENCE_IN_CERTIFICATE"
         }
       ],
-      "motivation": "Certifikatets varubeskrivning 'Svenska Mix 7 A60 0,8' kan inte identifieras i fakturans läsbara varubeskrivning 'SILICA PATCH HQ 26 UC' på sida 1. Det finns inget artikelnummer i certifikatet som kan användas enligt prioritet 1, och de två texterna delar inte någon identitetsbärande huvudbeteckning. Därför föreligger en direkt avvikelse."
+      "motivation": "Certifikatets varubeskrivning är 'Svenska Mix 7 A60 0,8' medan fakturans varurad anger 'SILICA PATCH HQ 26 UC'. Den identitetsbärande huvudbeteckningen i certifikatet kan inte identifieras i fakturan, och certifikatet innehåller inte heller någon generell fakturahänvisning med fakturanummer och fakturadatum som skulle aktivera undantaget för generell varubeskrivning."
     },
     "quantity": {
       "applicable": true,
       "status": "MISMATCH",
-      "confidence": 0.97,
+      "confidence": 0.98,
       "certificate_value": "NW 25,200 kg",
       "invoice_value": "NET WEIGHT 550 KGS",
       "rules_applied": [
         {
-          "rule_id": "4.4.2.2",
-          "outcome": "Formkrav uppfyllda i certifikatet"
+          "rule_id": "4.4.2.1",
+          "outcome": "FORM_VALID"
         },
         {
-          "rule_id": "4.4.3.1",
+          "rule_id": "4.4.4.1",
+          "outcome": "NORMALIZATION_CONSIDERED"
+        },
+        {
+          "rule_id": "4.4.3.2",
           "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Certifikatet anger uttryckligen nettovikt 'NW 25,200 kg'. Fakturan visar uttryckligen 'NET WEIGHT 550 KGS' på sida 1. Detta är en positiv motsägelse för samma kvantitetstyp (net weight), och värdena överensstämmer inte inom någon tillåten tolerans."
+      "motivation": "Certifikatet anger uttryckligen nettovikt 'NW 25,200 kg'. Fakturan anger uttryckligen 'NET WEIGHT 550 KGS'. Det är samma kvantitetstyp (net weight), men det numeriska värdet överensstämmer inte och utgör därför en uttrycklig motsägelse."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.91,
+      "confidence": 0.9,
       "certificate_value": "EU Sweden",
       "invoice_value": "Country of Origin: Sweden",
       "rules_applied": [
@@ -127,32 +139,31 @@
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.5.5",
+          "rule_id": "4.5.4.2",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger 'EU Sweden'. Fakturan anger uttryckligen 'Country of Origin: Sweden' på sida 1. Det specifika landet Sweden verifierar både den namngivna landsdelen och EU-komponenten enligt EU-normaliseringsregeln."
+      "motivation": "Fakturan anger uttryckligen 'Country of Origin: Sweden'. Detta verifierar den specifika komponenten 'Sweden' direkt, och eftersom Sverige är ett EU-medlemsland verifieras även EU-delen av certifikatets ursprungsangivelse."
     }
   },
   "overall_assessment": {
     "comparison_result": "NOT_IDENTICAL",
     "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
     "auto_approval_eligible": false,
-    "confidence": 0.97,
+    "confidence": 0.98,
     "critical_failures": [
-      "Consignee mismatch: certifikatet anger Calderys India Refractories Limited i India medan fakturan anger Haznedar Durer Refrakter i Turkey.",
-      "Goods description mismatch: 'Svenska Mix 7 A60 0,8' återfinns inte i fakturan, som i stället anger 'SILICA PATCH HQ 26 UC'.",
-      "Quantity mismatch: certifikatet anger NW 25,200 kg medan fakturan anger NET WEIGHT 550 KGS."
+      "Consignee mismatch: certifikatet anger 'Calderys India Refractories Limited' i India medan fakturan anger 'HAZNEDAR DURER REFRAKTER MALZEMELERI SAN. VE TIC. A.S' i Turkiet.",
+      "Goods description mismatch: certifikatet anger 'Svenska Mix 7 A60 0,8' medan fakturan anger 'SILICA PATCH HQ 26 UC'.",
+      "Quantity mismatch: certifikatet anger 'NW 25,200 kg' medan fakturan anger 'NET WEIGHT 550 KGS'."
     ],
-    "manual_review_triggers": [
-      "Fakturan är skannad/bildbaserad och OCR-text saknades, men de avgörande fälten kunde ändå läsas visuellt på sida 1."
-    ],
-    "decision_summary": "Dokumentparet passerar parningsvalideringen via consignor, men tre tillämpliga kontrollpunkter ger MISMATCH: mottagare, varubeskrivning och kvantitet. Ursprungslandet kan verifieras, men minst en MISMATCH medför att totalresultatet måste vara NOT_IDENTICAL.",
-    "human_explanation": "Certifikatet anger mottagaren som Calderys India Refractories Limited i Indien, men fakturan visar leverans- och fakturaadress till Haznedar Durer Refrakter i Turkiet. Varubeskrivningen skiljer sig också: certifikatet anger 'Svenska Mix 7 A60 0,8' medan fakturan anger 'SILICA PATCH HQ 26 UC', och nettovikten 25,200 kg i certifikatet motsvaras inte av fakturans 550 KGS. Därför kan dokumentparet inte godkännas automatiskt."
+    "manual_review_triggers": [],
+    "manual_review_reason": "NOT_APPLICABLE",
+    "decision_summary": "Den bifogade proformafakturan är skannad men de relevanta fälten är läsbara. Consignor och ursprungsland kan verifieras mot fakturan, men mottagare, varubeskrivning och kvantitet motsägs uttryckligen av fakturans uppgifter. Minst en tillämplig kontrollpunkt har därför status MISMATCH, vilket ger totalresultatet NOT_IDENTICAL.",
+    "human_explanation": "Certifikatet anger mottagaren som Calderys India Refractories Limited i India, men fakturan visar leveransadress till HAZNEDAR DURER REFRAKTER MALZEMELERI SAN. VE TIC. A.S i Turkiet. Varubeskrivningen och nettovikten stämmer inte heller: certifikatet anger 'Svenska Mix 7 A60 0,8' och 25,200 kg NW, medan fakturan anger 'SILICA PATCH HQ 26 UC' och 550 KGS net. Avsändare och ursprungsland Sverige kan identifieras, men dokumenten är därför inte identiska."
   },
   "_meta": {
-    "tested_at": "2026-06-01T15:27:17.465637+00:00",
-    "prompt_hash": "d498a4785374",
+    "tested_at": "2026-06-06T09:00:14.371778+00:00",
+    "prompt_hash": "4690e976915d",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P0130_MISMATCH",

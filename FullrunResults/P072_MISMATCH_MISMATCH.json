@@ -1,10 +1,10 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-06-01T00:00:00Z",
-    "document_pair_id": null,
+    "verification_timestamp": null,
+    "document_pair_id": "SEG-26D-465919__INV_11752",
     "certificate_issue_date": null,
-    "source_documents_received": 2
+    "source_documents_received": 1
   },
   "task": {
     "task_type": "customs_document_pair_verification",
@@ -15,12 +15,12 @@
     "document_a": {
       "label": "Certificate of Origin (structured JSON)",
       "assumed_role": "certificate",
-      "document_type": "certificate_of_origin_structured_json"
+      "document_type": "structured_json_certificate_of_origin"
     },
     "document_b": {
-      "label": "Invoice PDF",
+      "label": "Attached invoice PDF",
       "assumed_role": "invoice",
-      "document_type": "invoice_pdf_text_based"
+      "document_type": "invoice_pdf"
     }
   },
   "rule_activation": {
@@ -33,12 +33,24 @@
     "eu_origin_normalization_active": true,
     "activated_rules": [
       {
+        "rule_id": "8.5",
+        "rule_name": "Document pairing via explicit invoice reference"
+      },
+      {
+        "rule_id": "8.6",
+        "rule_name": "Mandatory document pairing validation passed"
+      },
+      {
         "rule_id": "4.3.5",
-        "rule_name": "Generell varubeskrivning med fakturareferens"
+        "rule_name": "General goods description with invoice reference"
+      },
+      {
+        "rule_id": "4.3.8.1",
+        "rule_name": "Weight text in goods field treated as metadata, not separate goods"
       },
       {
         "rule_id": "4.5.4.1.1",
-        "rule_name": "EU-begrepp kombinerat med specifikt EU-land verifieras av det specifika landet i fakturan"
+        "rule_name": "EU plus named EU country verified by the named EU country in invoice"
       }
     ]
   },
@@ -51,11 +63,15 @@
       "invoice_value": "SOIC Global Trading AB\nForsta Langgatan 28B\nGothenburg 41327 Sweden",
       "rules_applied": [
         {
+          "rule_id": "4.1.0",
+          "outcome": "MATCH"
+        },
+        {
           "rule_id": "4.1.2",
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.1.2.1",
+          "rule_id": "4.1.4",
           "outcome": "MATCH"
         },
         {
@@ -63,7 +79,7 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets avsändare \"SOIC Global Trading AB\" återfinns uttryckligen i fakturans sidhuvud på båda sidorna. Landet \"Sweden\" framgår uttryckligen i avsändaradressen och stöds även av IBAN-prefixet \"SE\". Samma juridiska part och land kan därför verifieras direkt mot fakturan."
+      "motivation": "Certifikatet anger consignor som \"SOIC Global Trading AB\" i Sverige. Fakturan visar exakt samma företagsnamn i sidhuvudet på sida 1 och 2 samt adressen \"Forsta Langgatan 28B, Gothenburg 41327 Sweden\". Företagsnamn och land kan därför verifieras entydigt mot fakturan."
     },
     "consignee": {
       "applicable": true,
@@ -85,14 +101,14 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets mottagare \"Wimro Packaging Industries\" återfinns uttryckligen i fakturans fält \"CONSIGNEE\" och även i \"INVOICE TO\". Landet \"Sri Lanka\" överensstämmer exakt. Mottagaren kan därför verifieras entydigt."
+      "motivation": "Certifikatet anger mottagaren \"Wimro Packaging Industries\" i Sri Lanka. Fakturan visar samma part under både \"CONSIGNEE\" och \"INVOICE TO\" på sida 1 med adressen \"Hirikuluwa, Muddaragama, Sri Lanka\". Mottagarnamn och land överensstämmer därför entydigt."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.93,
+      "confidence": 0.96,
       "certificate_value": "TESTLINER PAPER FSC | MEDIUM PAPER FSC | For description of goods see invoice 11752 dated 27/02/2026 | NETWEIGHT 49.915 MT",
-      "invoice_value": "NO. 11752 | 27/02/2026 | TEST LINER PAPER - FSC HS CODE 48052400 | MEDIUM PAPER - FSC HS CODE 48051900",
+      "invoice_value": "INVOICE NO. 11752 dated 27/02/2026; line items \"Testliner - FSC\" and \"Medium Paper - FSC\"; page 2 text \"TEST LINER PAPER - FSC HS CODE 48052400\" and \"MEDIUM PAPER - FSC HS CODE 48051900\"",
       "rules_applied": [
         {
           "rule_id": "4.3.5",
@@ -103,37 +119,41 @@
           "outcome": "MATCH"
         },
         {
+          "rule_id": "4.3.5.3",
+          "outcome": "MATCH"
+        },
+        {
           "rule_id": "4.3.8.1",
-          "outcome": "NON_GOODS_TEXT_IGNORED"
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet innehåller en uttrycklig fakturahänvisning: \"For description of goods see invoice 11752 dated 27/02/2026\". Fakturans nummer och datum överensstämmer exakt med \"NO. 11752\" och \"27/02/2026\", och fakturans innehåll är förenligt med certifikatets varubeskrivningar \"TESTLINER PAPER FSC\" och \"MEDIUM PAPER FSC\". Texten \"NETWEIGHT 49.915 MT\" behandlas som kvantitetsrelaterad tilläggstext och inte som en separat vara."
+      "motivation": "Certifikatet innehåller en uttrycklig hänvisning till faktura 11752 daterad 27/02/2026 i varubeskrivningsfältet. Fakturan bär exakt nummer 11752 och datum 27/02/2026, och fakturans varuinnehåll är förenligt med certifikatets angivna varor genom posterna \"Testliner - FSC\" och \"Medium Paper - FSC\". Texten \"NETWEIGHT 49.915 MT\" behandlas som metadata om vikt och inte som en separat vara."
     },
     "quantity": {
       "applicable": true,
       "status": "MISMATCH",
       "confidence": 0.98,
-      "certificate_value": "22.946 MT | 26.969 MT",
-      "invoice_value": "4.152 MT 5 ROLLS Testliner - FSC | 3.418 MT 4 ROLLS Testliner - FSC | 3.688 MT 4 ROLLS Testliner - FSC | 4.050 MT 4 ROLLS Testliner - FSC | 3.378 MT 3 ROLLS Testliner - FSC | 4.260 MT 4 ROLLS Testliner - FSC | 4.074 MT 5 ROLLS Medium Paper - FSC | 3.379 MT 4 ROLLS Medium Paper - FSC | 3.928 MT 4 ROLLS Medium Paper - FSC | 2.994 MT 3 ROLLS Medium Paper - FSC | 5.706 MT 6 ROLLS Medium Paper - FSC | 6.888 MT 7 ROLLS Medium Paper - FSC | 49.915 MT 53 ROLLS",
+      "certificate_value": "22.946 MT | 26.969 MT | NETWEIGHT 49.915 MT",
+      "invoice_value": "Testliner rows total 22.946 MT; Medium Paper rows total 26.969 MT; invoice total 49.915 MT",
       "rules_applied": [
         {
           "rule_id": "4.4.1",
-          "outcome": "QUANTITY_FIELD_ONLY"
+          "outcome": "APPLIED"
+        },
+        {
+          "rule_id": "4.4.2",
+          "outcome": "APPLIED"
         },
         {
           "rule_id": "4.4.2.1",
-          "outcome": "QUANTITY_FIELD_IS_VERIFICATION_BASIS"
-        },
-        {
-          "rule_id": "4.4.2.2",
           "outcome": "MISMATCH"
         },
         {
-          "rule_id": "4.4.6",
+          "rule_id": "4.4.7",
           "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Certifikatets verifieringsgrundande kvantitetsfält anger vikter som \"22.946 MT\" och \"26.969 MT\" men saknar obligatorisk viktkategori såsom GW, NW, Gross eller Net i själva kvantitetsfältet. En separat beskrivningsrad \"NETWEIGHT 49.915 MT\" får enligt reglerna inte användas för att uppfylla formkravet för de två kvantitetsfälten. Även om fakturans rader numeriskt kan summeras till 22.946 MT respektive 26.969 MT, ska kontrollpunkten ändå klassificeras som MISMATCH eftersom certifikatets viktangivelser saknar required GW/NW-kategori i kvantitetsfältet."
+      "motivation": "Fakturan innehåller numeriska viktvärden som motsvarar certifikatets varugrupper: Testliner summerar till 22.946 MT och Medium Paper till 26.969 MT, med total 49.915 MT. Certifikatets kvantitetsfält anger dock vikter i MT utan att ange om vikten avser gross eller net i själva kvantitetsuppgiften. Raden \"NETWEIGHT 49.915 MT\" ligger i beskrivningsfältet med Quantity=null och uppfyller därför inte formkravet att viktkategori ska framgå som del av kvantitetsuppgiften; kontrollpunkten ska därför klassificeras som MISMATCH."
     },
     "origin": {
       "applicable": true,
@@ -151,28 +171,33 @@
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.5.5",
+          "rule_id": "4.5.4.2",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.5.6",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger ursprung \"EU GERMANY\". Fakturan anger uttryckligen \"COUNTRY OF ORIGIN: GERMANY\" på sida 2. Det specifika EU-landet Germany kan identifieras explicit i fakturan och verifierar därmed ursprungsuppgiften."
+      "motivation": "Certifikatet anger ursprung \"EU GERMANY\". Fakturan anger uttryckligen \"COUNTRY OF ORIGIN: GERMANY\" på sida 2. Germany verifierar det specifika landet, och eftersom Germany är en EU-medlemsstat verifieras även EU-delen av certifikatets ursprungsangivelse."
     }
   },
   "overall_assessment": {
     "comparison_result": "NOT_IDENTICAL",
     "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
     "auto_approval_eligible": false,
-    "confidence": 0.97,
+    "confidence": 0.95,
     "critical_failures": [
-      "Kvantitetskontrollpunkten är MISMATCH eftersom certifikatets viktangivelser 22.946 MT och 26.969 MT saknar obligatorisk GW/NW- eller Gross/Net-kategori i kvantitetsfältet."
+      "Kvantitetsfältet i certifikatet anger vikt i MT utan att specificera om vikten är brutto eller netto i själva kvantitetsuppgiften."
     ],
     "manual_review_triggers": [],
-    "decision_summary": "Avsändare, mottagare, varubeskrivning och ursprungsland kan verifieras mot fakturan. Kvantitet kan däremot inte godkännas eftersom certifikatets kvantitetsfält använder viktenheten MT utan obligatorisk viktkategori i samma fält. Minst en tillämplig kontrollpunkt är därför MISMATCH och totalresultatet ska vara NOT_IDENTICAL.",
-    "human_explanation": "Avsändare, mottagare, varubeskrivning och ursprungsland stämmer mot fakturan. Certifikatet anger dock kvantiteterna 22.946 MT och 26.969 MT utan att ange om de avser netto- eller bruttovikt i själva kvantitetsfältet. Därför kan dokumentparet inte godkännas automatiskt."
+    "manual_review_reason": "NOT_APPLICABLE",
+    "decision_summary": "Dokumentparningen är giltig genom exakt matchande fakturanummer 11752 och datum 27/02/2026 samt matchande consignor och consignee. Avsändare, mottagare, varubeskrivning och ursprungsland kan verifieras mot fakturan. Kvantitetskontrollpunkten ger dock MISMATCH eftersom certifikatets viktuppgifter i kvantitetsfältet saknar obligatorisk viktkategori (gross/net), vilket medför totalresultatet NOT_IDENTICAL.",
+    "human_explanation": "Avsändare, mottagare, varubeskrivning och ursprungsland stämmer mot fakturan. Certifikatet anger kvantiteterna 22.946 MT och 26.969 MT utan att visa om vikten avser brutto eller netto i kvantitetsfältet. Därför kan dokumentparet inte godkännas automatiskt."
   },
   "_meta": {
-    "tested_at": "2026-06-01T15:28:10.717402+00:00",
-    "prompt_hash": "d498a4785374",
+    "tested_at": "2026-06-06T09:17:25.978372+00:00",
+    "prompt_hash": "4690e976915d",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P072_MISMATCH",

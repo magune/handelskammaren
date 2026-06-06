@@ -1,10 +1,10 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-06-01",
+    "verification_timestamp": "2026-06-06T00:00:00Z",
     "document_pair_id": "SEG-26D-465679__invoice_183200",
     "certificate_issue_date": null,
-    "source_documents_received": 2
+    "source_documents_received": 1
   },
   "task": {
     "task_type": "customs_document_pair_verification",
@@ -15,12 +15,12 @@
     "document_a": {
       "label": "CERTIFICATE OF ORIGIN (structured JSON)",
       "assumed_role": "certificate",
-      "document_type": "Certificate of Origin"
+      "document_type": "certificate_of_origin_json"
     },
     "document_b": {
       "label": "Attached PDF",
       "assumed_role": "invoice",
-      "document_type": "Invoice"
+      "document_type": "invoice"
     }
   },
   "rule_activation": {
@@ -39,6 +39,10 @@
       {
         "rule_id": "8.5.2.1",
         "rule_name": "Helt avvikande fakturanummer"
+      },
+      {
+        "rule_id": "8.6",
+        "rule_name": "Obligatorisk parningsvalidering"
       }
     ]
   },
@@ -46,9 +50,9 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.98,
-      "certificate_value": "BraunAbility Europe AB | Åkerivägen7 | 44361 | Stenkullen | Sweden | VAT SE556422901001",
-      "invoice_value": "BraunAbility Europe AB, Åkerivägen 7, 44361 STENKULLEN, SWEDEN, VAT reg. no.: SE556422901001",
+      "confidence": 0.99,
+      "certificate_value": "BraunAbility Europe AB | Åkerivägen7 | 44361 | Stenkullen | Sweden | SE556422901001",
+      "invoice_value": "BraunAbility Europe AB | Åkerivägen 7 | 44361 STENKULLEN | SWEDEN | VAT reg. no.: SE556422901001",
       "rules_applied": [
         {
           "rule_id": "4.1.0",
@@ -63,7 +67,7 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor 'BraunAbility Europe AB' återfinns uttryckligen i fakturans sidfot på flera sidor. Landet Sverige verifieras av adressen 'SWEDEN' och VAT-prefixet 'SE' i 'SE556422901001'."
+      "motivation": "Certifikatets consignor 'BraunAbility Europe AB' återfinns uttryckligen i fakturan i sidhuvud/sidfot och med svensk adress samt VAT-nummer 'SE556422901001'. Företagsnamn och land kan verifieras som samma juridiska part."
     },
     "consignee": {
       "applicable": true,
@@ -85,14 +89,14 @@
           "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Certifikatets mottagare 'Temsa Skoda Sabanci Ulasim Araclari' i Türkiye kan inte identifieras i något mottagarfält i fakturan. Fakturan anger i stället 'Manafeth Mobility Solutions Medical Equipment Trading LLC' i Förenade Arabemiraten som delivery/invoice address."
+      "motivation": "Certifikatets consignee 'Temsa Skoda Sabanci Ulasim Araclari' kan inte identifieras i något mottagarfält i fakturan. Fakturan anger i stället mottagaren 'Manafeth Mobility Solutions Medical Equipment Trading LLC' i Förenade Arabemiraten, vilket motsäger både företagsnamn och land."
     },
     "goods_description": {
       "applicable": true,
       "status": "MISMATCH",
       "confidence": 0.99,
-      "certificate_value": "Disability Aids Contry of origin ,UNITED KINGDOM || SEE INVOICE 185678 dated 2026-03-02",
-      "invoice_value": "Invoice - 183200 | Invoice date 2025-11-21 | E-Series EU Large Folding Right pump",
+      "certificate_value": "Disability Aids Contry of origin ,UNITED KINGDOM | SEE INVOICE 185678 dated 2026-03-02",
+      "invoice_value": "Invoice - 183200 | Invoice date 2025-11-21 | Pos. 10 E1500F-RI E-Series EU Large Folding Right pump",
       "rules_applied": [
         {
           "rule_id": "4.3.5",
@@ -107,47 +111,47 @@
           "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Certifikatet innehåller en uttrycklig fakturahänvisning: 'SEE INVOICE 185678 dated 2026-03-02'. Den bifogade fakturan är 'Invoice - 183200' daterad '2025-11-21'. Fakturanumret och datumet är helt avvikande, vilket gör att varubeskrivningen inte kan verifieras enligt regeln för generell varubeskrivning med fakturareferens."
+      "motivation": "Certifikatet innehåller en uttrycklig generell hänvisning till 'SEE INVOICE 185678 dated 2026-03-02'. Den bifogade fakturan är 'Invoice - 183200' daterad '2025-11-21'. Fakturanumret och fakturadatumet avviker helt från certifikatets hänvisning, vilket enligt reglerna medför MISMATCH utan vidare godkännande."
     },
     "quantity": {
       "applicable": true,
       "status": "MISMATCH",
       "confidence": 0.97,
-      "certificate_value": "OriginRows[].Quantity: '1 pallets 120KG G' + 'GW' | OriginPackages[].Package: '1 Pallet 1120 KG'",
-      "invoice_value": "Quantity 40,00 pcs | Total Net Weight: 6080 KG | Total Gross Weight:6640 KG | Total No of Parcels: 20",
+      "certificate_value": "OriginRows.Quantity: '1 pallets 120KG G' + 'GW' | OriginPackages.Package: ' 1 Pallet 1120 KG'",
+      "invoice_value": "Quantity: 40,00 pcs | Total Gross Weight:6640 KG | Total Net Weight: 6080 KG | Total No of Parcels: 20",
       "rules_applied": [
-        {
-          "rule_id": "4.4.2.2",
-          "outcome": "MISMATCH"
-        },
         {
           "rule_id": "4.4.3.1",
           "outcome": "MISMATCH"
         },
         {
-          "rule_id": "4.4.6.1",
+          "rule_id": "4.4.3.2",
+          "outcome": "MISMATCH"
+        },
+        {
+          "rule_id": "4.4.7",
           "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Certifikatets kvantitetsuppgifter kan inte verifieras mot fakturan. Certifikatet anger bland annat '1 pallets 120KG G' och '1 Pallet 1120 KG', medan fakturan uttryckligen anger 'Total Gross Weight:6640 KG' och 'Total No of Parcels: 20'. Uppgifterna motsäger varandra och viktkategorin i '120KG G' uppfyller inte heller formkravet för godkänd viktkategori."
+      "motivation": "Ingen av certifikatets kvantitetsuppgifter kan verifieras mot fakturan. Fakturan anger uttryckligen 'Total Gross Weight:6640 KG' och 'Total No of Parcels: 20', vilket motsäger certifikatets uppgifter om 120 KG/1120 KG och 1 pallet."
     },
     "origin": {
       "applicable": true,
       "status": "MISMATCH",
       "confidence": 0.99,
       "certificate_value": "United kingdom",
-      "invoice_value": "Country of origin: Italy | Country of origin:ITALY | these products are of EU preferential origin",
+      "invoice_value": "Country of origin: Italy | these products are of EU preferential origin",
       "rules_applied": [
         {
           "rule_id": "4.5.1",
           "outcome": "MISMATCH"
         },
         {
-          "rule_id": "4.5.5",
+          "rule_id": "4.5.6",
           "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Certifikatet anger ursprungsland 'United kingdom'. Fakturan anger uttryckligen 'Country of origin: Italy' på sida 1 och 3 samt ett separat uttalande om 'EU preferential origin' på sida 4. 'United kingdom' kan inte identifieras som explicit ursprungsangivelse i fakturan."
+      "motivation": "Certifikatet anger ursprungsland 'United kingdom'. Fakturan anger uttryckligen 'Country of origin: Italy' och dessutom ett separat uttalande om 'EU preferential origin'. 'United kingdom' kan därför inte verifieras i fakturan och motsägs av fakturans ursprungsuppgifter."
     }
   },
   "overall_assessment": {
@@ -157,17 +161,18 @@
     "confidence": 0.99,
     "critical_failures": [
       "Certifikatet hänvisar till faktura 185678 daterad 2026-03-02, men bifogad faktura är 183200 daterad 2025-11-21.",
-      "Consignee i certifikatet kan inte identifieras i fakturan; fakturan visar en annan mottagare i annat land.",
-      "Kvantitetsuppgifter i certifikatet motsägs av fakturans uttryckliga uppgifter om vikt och antal kolli.",
-      "Ursprungslandet United Kingdom kan inte verifieras; fakturan anger Italy."
+      "Certifikatets mottagare i Türkiye återfinns inte i fakturan, som anger en annan mottagare i Förenade Arabemiraten.",
+      "Certifikatets ursprungsland United Kingdom motsägs av fakturans uttryckliga origin-uppgift Italy.",
+      "Certifikatets kvantitetsuppgifter motsägs av fakturans grossvikt och antal kolli."
     ],
     "manual_review_triggers": [],
-    "decision_summary": "Dokumentparet är inte identiskt. Certifikatets uttryckliga fakturareferens avser faktura 185678 daterad 2026-03-02, medan den bifogade fakturan är 183200 daterad 2025-11-21. Även consignee, kvantitet och ursprungsland avviker från fakturan. Endast consignor kan verifieras.",
-    "human_explanation": "Certifikatet hänvisar till faktura 185678 daterad 2026-03-02, men den bifogade fakturan är 183200 daterad 2025-11-21. Mottagare, kvantitet och ursprungsland stämmer inte heller överens med fakturan. Ärendet kräver manuell handläggning."
+    "manual_review_reason": "NOT_APPLICABLE",
+    "decision_summary": "Dokumentparet är inte identiskt. Flera tillämpliga kontrollpunkter ger MISMATCH, särskilt fakturareferens, mottagare, kvantitet och ursprungsland.",
+    "human_explanation": "Certifikatet hänvisar till faktura 185678 daterad 2026-03-02, men den bifogade fakturan är nummer 183200 daterad 2025-11-21. Certifikatet anger dessutom en annan mottagare, annan kvantitet och ursprung i United Kingdom medan fakturan visar mottagare i Förenade Arabemiraten, andra mängduppgifter och ursprung i Italy. Dokumenten kan därför inte godkännas som identiska."
   },
   "_meta": {
-    "tested_at": "2026-06-01T15:27:40.718489+00:00",
-    "prompt_hash": "d498a4785374",
+    "tested_at": "2026-06-06T09:16:06.628870+00:00",
+    "prompt_hash": "4690e976915d",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P0173_MISMATCH",

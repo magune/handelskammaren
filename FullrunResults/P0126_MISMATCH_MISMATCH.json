@@ -1,10 +1,10 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-06-01T00:00:00Z",
-    "document_pair_id": "SEG-23D-945145__INV-2023036245",
+    "verification_timestamp": "2026-06-06T00:00:00Z",
+    "document_pair_id": "SEG-23D-945145__2023036245",
     "certificate_issue_date": null,
-    "source_documents_received": 1
+    "source_documents_received": 2
   },
   "task": {
     "task_type": "customs_document_pair_verification",
@@ -13,14 +13,14 @@
   },
   "documents": {
     "document_a": {
-      "label": "Certificate of Origin (structured JSON)",
+      "label": "CERTIFICATE OF ORIGIN (structured JSON)",
       "assumed_role": "certificate",
-      "document_type": "structured_json"
+      "document_type": "certificate_of_origin_structured_json"
     },
     "document_b": {
-      "label": "Invoice PDF - Invoice No. 2023036245",
+      "label": "Invoice PDF",
       "assumed_role": "invoice",
-      "document_type": "invoice_pdf"
+      "document_type": "invoice"
     }
   },
   "rule_activation": {
@@ -34,7 +34,7 @@
     "activated_rules": [
       {
         "rule_id": "8.6",
-        "rule_name": "Parningsvalidering passerad via identifierad consignor i fakturan"
+        "rule_name": "Parningsvalidering passerad via identifierbar consignor i fakturan"
       },
       {
         "rule_id": "4.1.0",
@@ -42,7 +42,7 @@
       },
       {
         "rule_id": "4.5.4.2",
-        "rule_name": "EU-medlemsland normalisering"
+        "rule_name": "EU-medlemsland i fakturan verifierar EU-ursprung i certifikatet"
       }
     ]
   },
@@ -50,31 +50,27 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.97,
-      "certificate_value": "Company: Elmo Sweden AB; Address1: Kyrkogatan 18; ZipCode: 51250; City: Svenljunga; Country: null; CompanyVatNumber: 556821-5874",
-      "invoice_value": "POSTADRESS/POSTAL ADRESS: Elmo Sweden AB\nSE-512 81 SVENLJUNGA\nSWEDEN\n...\nORG.NO: 556821-5874\nVAT.NO: SE556821587401",
+      "confidence": 0.95,
+      "certificate_value": "Elmo Sweden AB",
+      "invoice_value": "POSTADRESS/POSTAL ADRESS: Elmo Sweden AB SE-512 81 SVENLJUNGA SWEDEN",
       "rules_applied": [
-        {
-          "rule_id": "8.6",
-          "outcome": "PASSED"
-        },
         {
           "rule_id": "4.1.0",
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.1.2",
+          "rule_id": "8.6",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor \"Elmo Sweden AB\" kan identifieras uttryckligen i fakturans footer/adressblock tillsammans med organisationsnummer och VAT-uppgifter. Certifikatets land är inte angivet (null) och skapar därför ingen landkonflikt. Kontrollpunkten kan verifieras som MATCH."
+      "motivation": "Certifikatets consignor \"Elmo Sweden AB\" återfinns uttryckligen i fakturans footer på sida 1. Certifikatets landfält för consignor är null och behandlas därför som ej angivet; den uttryckligen angivna företagsuppgiften kan verifieras mot fakturan."
     },
     "consignee": {
       "applicable": true,
       "status": "MISMATCH",
       "confidence": 0.99,
-      "certificate_value": "DeliveryCompany: Al Muhalhel General Trading; DeliveryAddress1: & Contracting Co; DeliveryAddress2: Al Ardhiya Ind. Area. Block: 1; DeliveryAddress3: Building: 81; DeliveryPostalAddress: 15257; DeliveryCountry: KUWAIT",
-      "invoice_value": "Payer / Ship-to: Boretius Objekt Nähservice für Dekorationen GmbH, Südring 4, DE 76473 - Iffezheim, Germany",
+      "certificate_value": "Al Muhalhel General Trading | & Contracting Co | KUWAIT",
+      "invoice_value": "Ship-to: Boretius Objekt Nähservice für Dekorationen GmbH, Südring 4, DE 76473 - Iffezheim, Germany",
       "rules_applied": [
         {
           "rule_id": "4.2.0.2",
@@ -83,102 +79,83 @@
         {
           "rule_id": "4.2.3",
           "outcome": "MISMATCH"
-        },
-        {
-          "rule_id": "4.2.4",
-          "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Certifikatets mottagare \"Al Muhalhel General Trading & Contracting Co\" i Kuwait kan inte identifieras i något mottagarfält i fakturan. Fakturan anger i stället \"Boretius Objekt Nähservice für Dekorationen GmbH\" i Tyskland som både payer och ship-to. Detta är en direkt avvikelse i både företagsnamn och land, därför MISMATCH."
+      "motivation": "Certifikatets mottagare \"Al Muhalhel General Trading & Contracting Co\" kan inte identifieras i något mottagarfält i fakturan. Fakturan visar i stället mottagaren/ship-to som \"Boretius Objekt Nähservice für Dekorationen GmbH\" i Germany, vilket direkt avviker från certifikatets Kuwait-mottagare."
     },
     "goods_description": {
       "applicable": true,
       "status": "MISMATCH",
-      "confidence": 0.97,
+      "confidence": 0.99,
       "certificate_value": "Elmobaltique 97001 Basket Weave I",
-      "invoice_value": "Product/Description: ELMOSOFT 97038 I; supplementary goods text: Upholstery Leather",
+      "invoice_value": "ELMOSOFT 97038 I / Upholstery Leather",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "PRIORITY_ASSESSED"
+          "outcome": "NO_ARTICLE_NUMBER_PRIORITY_APPLIED"
         },
         {
           "rule_id": "4.3.3",
           "outcome": "MISMATCH"
-        },
-        {
-          "rule_id": "4.3.8",
-          "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Certifikatets varubeskrivning \"Elmobaltique 97001 Basket Weave I\" kan inte identifieras i fakturan utan otillåten tolkning. Fakturan anger i stället \"ELMOSOFT 97038 I\" och \"Upholstery Leather\". Den identitetsbärande texten och den numeriska produktidentifieraren skiljer sig, därför MISMATCH."
+      "motivation": "Certifikatets varubeskrivning \"Elmobaltique 97001 Basket Weave I\" kan inte identifieras i fakturan. Fakturan beskriver i stället varan som \"ELMOSOFT 97038 I\" och \"Upholstery Leather\", vilket är en annan identitetsbärande beteckning."
     },
     "quantity": {
       "applicable": true,
       "status": "MISMATCH",
-      "confidence": 0.98,
-      "certificate_value": "OriginRows[].Quantity: 288,610 M2; OriginPackages[].Package: 5 Pkgs",
-      "invoice_value": "Q-ty: 4,850 M2; goods text: 1 Pkg; Weight 4 kgs",
+      "confidence": 0.99,
+      "certificate_value": "288,610 M2 | 5 Pkgs",
+      "invoice_value": "Q-ty 4,850 M2 | 1 Pkg",
       "rules_applied": [
         {
-          "rule_id": "4.4.2.1",
-          "outcome": "QUANTITY_FIELD_IS_VERIFICATION_BASIS"
-        },
-        {
-          "rule_id": "4.4.3.0b",
-          "outcome": "EXPLICIT_CONTRADICTION"
+          "rule_id": "4.4.2",
+          "outcome": "FORM_REQUIREMENT_MET"
         },
         {
           "rule_id": "4.4.3.1",
           "outcome": "MISMATCH"
         },
         {
-          "rule_id": "4.4.6",
+          "rule_id": "4.4.3.2",
           "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Certifikatets verifieringsgrundande kvantitet är \"288,610 M2\" och denna kan inte återfinnas i fakturan, som i stället anger \"4,850 M2\". Certifikatets paketantal är dessutom \"5 Pkgs\" medan fakturan anger \"1 Pkg\". Oavsett decimal-/tusentalsnormalisering är värdena inte samma, och fakturan motsäger certifikatet uttryckligen, därför MISMATCH."
+      "motivation": "Certifikatet anger 288,610 M2 samt 5 Pkgs. Fakturan anger 4,850 M2 för varuraden och dessutom 1 Pkg, vilket uttryckligen motsäger certifikatets kvantitetsuppgifter."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.9,
+      "confidence": 0.91,
       "certificate_value": "EUROPEAN UNION",
       "invoice_value": "Swedish Origin",
       "rules_applied": [
         {
-          "rule_id": "4.5.1",
-          "outcome": "EXPLICIT_ORIGIN_FOUND"
-        },
-        {
           "rule_id": "4.5.4.2",
-          "outcome": "MATCH"
-        },
-        {
-          "rule_id": "4.5.5",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Fakturan innehåller en uttrycklig ursprungsangivelse: \"Swedish Origin\". Sverige är ett EU-medlemsland, vilket verifierar certifikatets ursprungsangivelse \"EUROPEAN UNION\" enligt EU-medlemslandsnormaliseringen. Kontrollpunkten är därför MATCH."
+      "motivation": "Certifikatet anger ursprung \"EUROPEAN UNION\". Fakturan anger \"Swedish Origin\" på sida 1, och Sweden är ett EU-medlemsland, vilket verifierar certifikatets EU-ursprung enligt tillåten EU-normalisering."
     }
   },
   "overall_assessment": {
     "comparison_result": "NOT_IDENTICAL",
     "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
     "auto_approval_eligible": false,
-    "confidence": 0.96,
+    "confidence": 0.98,
     "critical_failures": [
-      "Consignee mismatch: certifikatet anger Al Muhalhel General Trading & Contracting Co, Kuwait, medan fakturan anger Boretius Objekt Nähservice für Dekorationen GmbH, Germany.",
-      "Goods description mismatch: certifikatet anger Elmobaltique 97001 Basket Weave I, medan fakturan anger ELMOSOFT 97038 I / Upholstery Leather.",
-      "Quantity mismatch: certifikatet anger 288,610 M2 och 5 Pkgs, medan fakturan anger 4,850 M2 och 1 Pkg."
+      "Consignee i certifikatet kan inte identifieras i fakturan; fakturan visar en annan mottagare i Tyskland.",
+      "Varubeskrivningen i certifikatet kan inte verifieras mot fakturans varubeskrivning.",
+      "Kvantiteten i certifikatet motsägs uttryckligen av fakturans kvantitetsuppgifter."
     ],
     "manual_review_triggers": [],
-    "decision_summary": "Dokumentparet kunde paras via consignor \"Elmo Sweden AB\" i fakturan, men mottagare, varubeskrivning och kvantitet avviker uttryckligen från certifikatet. Ursprungslandet kan verifieras eftersom fakturan anger Sverige som ursprung och certifikatet anger Europeiska unionen. Minst en tillämplig kontrollpunkt gav MISMATCH, därför är totalresultatet NOT_IDENTICAL.",
-    "human_explanation": "Certifikatet anger mottagaren som Al Muhalhel General Trading & Contracting Co i Kuwait, medan fakturan är ställd till Boretius Objekt Nähservice für Dekorationen GmbH i Tyskland. Varubeskrivningen och kvantiteten stämmer inte heller: certifikatet anger Elmobaltique 97001 Basket Weave I och 288,610 M2/5 Pkgs, medan fakturan anger ELMOSOFT 97038 I och 4,850 M2/1 Pkg. Ursprungslandet kan däremot verifieras eftersom fakturan anger Swedish Origin, vilket ligger inom EU."
+    "manual_review_reason": "NOT_APPLICABLE",
+    "decision_summary": "Dokumentparningen är giltig eftersom consignor \"Elmo Sweden AB\" kan identifieras i fakturan. Ursprung kan verifieras via \"Swedish Origin\" mot certifikatets \"EUROPEAN UNION\", men consignee, varubeskrivning och kvantitet ger tydliga avvikelser. Minst en tillämplig kontrollpunkt har status MISMATCH, därför är totalresultatet NOT_IDENTICAL.",
+    "human_explanation": "Certifikatet anger mottagaren som Al Muhalhel General Trading & Contracting Co i Kuwait, men fakturan är ställd till Boretius Objekt Nähservice für Dekorationen GmbH i Tyskland. Certifikatet beskriver varan som Elmobaltique 97001 Basket Weave I med 288,610 M2 och 5 kollin, medan fakturan visar ELMOSOFT 97038 I med 4,850 M2 och 1 kolli. Ursprung stämmer däremot eftersom fakturan anger svenskt ursprung, vilket ligger inom EU."
   },
   "_meta": {
-    "tested_at": "2026-06-01T15:27:17.462709+00:00",
-    "prompt_hash": "d498a4785374",
+    "tested_at": "2026-06-06T09:00:14.367337+00:00",
+    "prompt_hash": "4690e976915d",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P0126_MISMATCH",

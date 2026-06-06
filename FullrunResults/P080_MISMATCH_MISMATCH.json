@@ -1,10 +1,10 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-06-01T00:00:00Z",
-    "document_pair_id": "SEG-25D-361242",
+    "verification_timestamp": "2026-06-06T00:00:00Z",
+    "document_pair_id": "SEG-25D-361242__362944565",
     "certificate_issue_date": null,
-    "source_documents_received": 1
+    "source_documents_received": 2
   },
   "task": {
     "task_type": "customs_document_pair_verification",
@@ -13,12 +13,12 @@
   },
   "documents": {
     "document_a": {
-      "label": "Certificate of Origin (structured JSON)",
+      "label": "Certificate of Origin structured JSON",
       "assumed_role": "certificate",
       "document_type": "structured_json"
     },
     "document_b": {
-      "label": "Invoice PDF",
+      "label": "Commercial Invoice PDF",
       "assumed_role": "invoice",
       "document_type": "commercial_invoice"
     }
@@ -34,15 +34,15 @@
     "activated_rules": [
       {
         "rule_id": "8.6",
-        "rule_name": "Parningsvalidering passerad via identifierbar consignor i fakturan"
+        "rule_name": "Parningsvalidering passerad via consignor-identifikation i fakturan"
       },
       {
-        "rule_id": "4.5.4.1",
-        "rule_name": "EU-normalisering"
+        "rule_id": "4.5.4.1.1",
+        "rule_name": "EU + specifikt EU-land kan verifieras av enbart det specifika EU-landet i fakturan"
       },
       {
         "rule_id": "4.5.4.2",
-        "rule_name": "EU-medlemsland som verifierar EU-ursprung"
+        "rule_name": "EU-samlingsbegrepp och EU-medlemsland är utbytbara vid ursprungsverifiering"
       }
     ]
   },
@@ -51,130 +51,151 @@
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.98,
-      "certificate_value": "Rosemount Tank Radar AB | Box 150 | 43523 Molnlycke | Sweden | VAT 55604-35124",
-      "invoice_value": "Rosemount Tank Radar AB, Box 150, 435 33 MÖLNLYCKE, SWEDEN | Ship From: Rosemount Tank Radar AB, Layoutvägen 1, 435 33 MÖLNLYCKE, SWEDEN | VAT No: SE556043512401",
+      "certificate_value": "Rosemount Tank Radar AB | Sweden",
+      "invoice_value": "Rosemount Tank Radar AB\nLayoutvägen 1\n435 33 MÖLNLYCKE\nSWEDEN",
       "rules_applied": [
         {
           "rule_id": "4.1.1",
-          "outcome": "issuer identified in invoice"
+          "outcome": "MATCH"
         },
         {
-          "rule_id": "4.1.2.1",
-          "outcome": "country verified via address and VAT prefix SE"
+          "rule_id": "4.1.2",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.4",
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.1.5",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor \"Rosemount Tank Radar AB\" återfinns uttryckligen i fakturans utställar-/Ship From-del. Landet Sverige framgår explicit i adressen och stöds även av VAT-prefix SE. Samma juridiska part kan därför verifieras mot fakturan."
+      "motivation": "Certifikatets consignor 'Rosemount Tank Radar AB' återfinns explicit i fakturans utställar-/Ship From-del. Landet Sweden framgår också uttryckligen i fakturans adressblock, så samma juridiska part och land kan verifieras direkt."
     },
     "consignee": {
       "applicable": true,
       "status": "MISMATCH",
       "confidence": 0.99,
-      "certificate_value": "BEIJING ROSEMOUNT FAR EAST | 1st Floor Building No 1 | South of Shengfang Road | Qian Gao Mi Dian Economic | Develompent ZO Da Xing District | 102600 Beijing | China",
-      "invoice_value": "Sold To / Invoice To / Ship To: EMERSON FZE, S20137 STREET S219, PO BOX 17034, JEBEL ALI FREE ZONE SOUTH ZONE 2, DUBAI, UNITED ARAB EMIRATES",
+      "certificate_value": "BEIJING ROSEMOUNT FAR EAST | China",
+      "invoice_value": "Sold To / Invoice To / Ship To:\nEMERSON FZE\nS20137 STREET S219\nPO BOX 17034\nJEBEL ALI FREE ZONE SOUTH ZONE 2 / SOUTH ZONE 2, DUBAI\nJEBEL ALI FREE ZONE\nUNITED ARAB EMIRATES",
       "rules_applied": [
         {
           "rule_id": "4.2.0.2",
-          "outcome": "certificate consignee not found in any invoice recipient field"
+          "outcome": "MISMATCH"
+        },
+        {
+          "rule_id": "4.2.1",
+          "outcome": "MISMATCH"
+        },
+        {
+          "rule_id": "4.2.2",
+          "outcome": "MISMATCH"
         },
         {
           "rule_id": "4.2.3",
-          "outcome": "country mismatch China vs United Arab Emirates"
+          "outcome": "MISMATCH"
         },
         {
           "rule_id": "4.2.4",
           "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Certifikatets mottagare \"BEIJING ROSEMOUNT FAR EAST\" i Kina kan inte identifieras i något mottagarfält i fakturan. Fakturan anger i stället konsekvent \"EMERSON FZE\" i Förenade Arabemiraten som Sold To, Invoice To och Ship To. Detta är en direkt avvikelse i både företagsnamn och land."
+      "motivation": "Certifikatets mottagare 'BEIJING ROSEMOUNT FAR EAST' i China kan inte identifieras i något mottagarfält i fakturan. Fakturan anger i stället genomgående 'EMERSON FZE' i United Arab Emirates som Sold To, Invoice To och Ship To, vilket är en direkt motsägelse."
     },
     "goods_description": {
       "applicable": true,
       "status": "MISMATCH",
-      "confidence": 0.99,
-      "certificate_value": "5900S, Radar Level Gauge COO: SE; 2410S, Tank Hub COO: SE; 2240S, Multi-input Temperature Transmitter COO: SE; 5900C, Radar Level Gauge COO:SE",
-      "invoice_value": "R-3408*70834951 Radar Level Transmitter",
+      "confidence": 0.97,
+      "certificate_value": "5900S, Radar Level Gauge COO: SE | 2410S, Tank Hub COO: SE | 2240S, Multi-input Temperature Transmitter COO: SE | 5900C, Radar Level Gauge COO:SE",
+      "invoice_value": "R-3408*70834951\nRadar Level Transmitter\nExport HTS/HS: 90261029",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "primary exact identifier/text matching attempted"
+          "outcome": "MISMATCH"
         },
         {
           "rule_id": "4.3.3",
-          "outcome": "identity-bearing descriptions not found in invoice"
+          "outcome": "MISMATCH"
         },
         {
           "rule_id": "4.3.8",
           "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Certifikatet anger fyra specifika varor/modellbeteckningar: 5900S, 2410S, 2240S och 5900C med tillhörande beskrivningar. Fakturan innehåller endast en artikelrad med \"R-3408*70834951 Radar Level Transmitter\". De certifierade modellbeteckningarna och varubeskrivningarna kan inte återfinnas i fakturan utan otillåten tolkning."
+      "motivation": "Certifikatet listar fyra specifika produkter/modeller: 5900S Radar Level Gauge, 2410S Tank Hub, 2240S Multi-input Temperature Transmitter och 5900C Radar Level Gauge. Fakturan innehåller endast en varurad 'R-3408*70834951 Radar Level Transmitter' och de certifierade modellbeteckningarna kan inte identifieras explicit i fakturan."
     },
     "quantity": {
       "applicable": true,
       "status": "MISMATCH",
-      "confidence": 0.98,
-      "certificate_value": "4 PCS; 7 PCS; 1 PCS; 3 PCS | Shipment no: 364333885 | Customer PO: 4256024042 | SO: 46503842 | Gross Weight: 206 KG | Net Weight: 155,61 KG | Volume: 1,14 M3 | 2 packages",
-      "invoice_value": "Qty Shipped: 2 EA | Packages: 2 Ctn | Gross WT: 11.30 KG / 24.91 LB | Net WT: 4.60 KG / 10.14 LB",
+      "confidence": 0.99,
+      "certificate_value": "OriginRows quantities: 4 PCS | 7 PCS | 1 PCS | 3 PCS ; OriginPackages: Gross Weight: 206 KG | Net Weight: 155,61 KG | 2 packages | Volume: 1,14 M3",
+      "invoice_value": "Qty Shipped: 2 EA\nPacking Summary\nPackages: 2 Ctn\nGross WT: 11.30 KG / 24.91 LB\nNet WT: 4.60 KG / 10.14 LB",
       "rules_applied": [
         {
-          "rule_id": "4.4.3.1",
-          "outcome": "explicit contradictory quantities detected"
+          "rule_id": "4.4.3.2",
+          "outcome": "MISMATCH"
         },
         {
-          "rule_id": "4.4.4",
-          "outcome": "total gross/net weight in invoice contradicts certificate weights"
+          "rule_id": "4.4.3.5",
+          "outcome": "PARTIAL_MATCH_NOT_DECISIVE"
         },
         {
-          "rule_id": "4.4.6",
+          "rule_id": "4.4.7",
           "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Även om certifikatet innehåller \"2 packages\" och fakturan anger \"2 Ctn\", innehåller båda dokumenten också uttryckliga viktuppgifter som motsäger varandra: certifikatet anger Gross Weight 206 KG och Net Weight 155,61 KG medan fakturan anger Gross WT 11.30 KG och Net WT 4.60 KG. Fakturan anger dessutom endast 2 EA, medan certifikatet listar 4 PCS, 7 PCS, 1 PCS och 3 PCS för sina varor. Den explicita motsägelsen medför MISMATCH."
+      "motivation": "Certifikatet innehåller flera kvantitetsuppgifter, bland annat 4 PCS, 7 PCS, 1 PCS, 3 PCS, Gross Weight 206 KG, Net Weight 155,61 KG och 2 packages. Fakturan anger 2 EA, 2 Ctn, Gross WT 11.30 KG och Net WT 4.60 KG; även om '2 packages' kan motsvaras av '2 Ctn' finns uttryckliga viktmotsägelser mellan certifikat och faktura, vilket enligt reglerna ger MISMATCH."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.9,
-      "certificate_value": "EUROPEAN UNION; Sweden",
-      "invoice_value": "Country of Origin: SWEDEN",
+      "confidence": 0.89,
+      "certificate_value": "EUROPEAN UNION | Sweden",
+      "invoice_value": "Country of Origin\nSWEDEN\nSWEDEN",
       "rules_applied": [
         {
-          "rule_id": "4.5.4.1",
-          "outcome": "EU in certificate verified by EU member state in invoice"
+          "rule_id": "4.5.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.5.4",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.5.4.1.1",
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.5.4.2",
-          "outcome": "Sweden as specific EU member state verifies EU/Sweden combination"
+          "outcome": "MATCH"
         },
         {
-          "rule_id": "4.5.5",
+          "rule_id": "4.5.6",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Fakturan anger uttryckligen \"Country of Origin: SWEDEN\". Detta verifierar certifikatets \"Sweden\" direkt. Eftersom Sverige är ett EU-medlemsland verifierar samma uppgift även certifikatets \"EUROPEAN UNION\" enligt EU-normaliseringsreglerna."
+      "motivation": "Certifikatet anger 'EUROPEAN UNION' och 'Sweden'. Fakturan anger explicit 'Country of Origin: SWEDEN'; Sweden verifierar Sweden direkt och verifierar samtidigt EU-samlingsbegreppet eftersom Sweden är en EU-medlemsstat."
     }
   },
   "overall_assessment": {
     "comparison_result": "NOT_IDENTICAL",
     "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
     "auto_approval_eligible": false,
-    "confidence": 0.98,
+    "confidence": 0.97,
     "critical_failures": [
-      "Consignee mismatch: certificate names BEIJING ROSEMOUNT FAR EAST / China, invoice names EMERSON FZE / United Arab Emirates.",
-      "Goods description mismatch: certificate lists 5900S, 2410S, 2240S, 5900C; invoice shows only R-3408*70834951 Radar Level Transmitter.",
-      "Quantity mismatch: certificate weights 206 KG gross and 155,61 KG net contradict invoice weights 11.30 KG gross and 4.60 KG net."
+      "Consignee mismatch: certifikatet anger BEIJING ROSEMOUNT FAR EAST / China medan fakturan anger EMERSON FZE / United Arab Emirates.",
+      "Goods description mismatch: certifikatets modeller 5900S, 2410S, 2240S och 5900C återfinns inte i fakturan.",
+      "Quantity mismatch: certifikatets gross/net weight 206 KG / 155,61 KG motsägs av fakturans 11.30 KG / 4.60 KG."
     ],
     "manual_review_triggers": [],
-    "decision_summary": "Dokumentparningen är giltig eftersom consignor kan identifieras i fakturan, men flera tillämpliga kontrollpunkter ger MISMATCH. Avsändare och ursprungsland kan verifieras, men mottagare, varubeskrivning och kvantitet motsäger fakturan. Övergripande resultat blir därför NOT_IDENTICAL.",
-    "human_explanation": "Certifikatet anger mottagaren som BEIJING ROSEMOUNT FAR EAST i Kina, medan fakturan anger EMERSON FZE i Förenade Arabemiraten. Certifikatets varor och kvantiteter återfinns inte i fakturan, som i stället avser en annan artikel med andra viktuppgifter. Därför kan dokumentparet inte godkännas automatiskt."
+    "manual_review_reason": "NOT_APPLICABLE",
+    "decision_summary": "Dokumentparet är inte identiskt. Avsändare och ursprungsland kan verifieras, men mottagare, varubeskrivning och kvantitetsuppgifter motsäger fakturan.",
+    "human_explanation": "Certifikatet anger mottagaren som BEIJING ROSEMOUNT FAR EAST i Kina, men fakturan visar EMERSON FZE i Förenade Arabemiraten som Sold To, Invoice To och Ship To. Certifikatet listar produkterna 5900S, 2410S, 2240S och 5900C med kvantiteter 4, 7, 1 och 3 PCS, medan fakturan avser en Radar Level Transmitter med 2 EA och helt andra viktuppgifter. Ursprungslandet Sverige kan verifieras, men flera andra kontrollpunkter stämmer inte."
   },
   "_meta": {
-    "tested_at": "2026-06-01T15:28:10.721212+00:00",
-    "prompt_hash": "d498a4785374",
+    "tested_at": "2026-06-06T09:17:25.981430+00:00",
+    "prompt_hash": "4690e976915d",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P080_MISMATCH",

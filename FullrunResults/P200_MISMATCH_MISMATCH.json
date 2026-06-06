@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-06-01T00:00:00Z",
+    "verification_timestamp": "2026-06-06T00:00:00Z",
     "document_pair_id": "SEG-26D-443247__94371693",
     "certificate_issue_date": null,
     "source_documents_received": 2
@@ -15,12 +15,12 @@
     "document_a": {
       "label": "Certificate of Origin (structured JSON)",
       "assumed_role": "certificate",
-      "document_type": "structured_json"
+      "document_type": "Certificate of Origin"
     },
     "document_b": {
       "label": "Invoice PDF",
       "assumed_role": "invoice",
-      "document_type": "invoice_pdf"
+      "document_type": "Invoice"
     }
   },
   "rule_activation": {
@@ -33,28 +33,12 @@
     "eu_origin_normalization_active": true,
     "activated_rules": [
       {
-        "rule_id": "2.2",
-        "rule_name": "LC-undantag prövat men inte aktiverat"
-      },
-      {
         "rule_id": "8.6",
-        "rule_name": "Obligatorisk parningsvalidering passerad"
-      },
-      {
-        "rule_id": "4.1.0",
-        "rule_name": "Consignor identifierad någonstans i fakturan"
-      },
-      {
-        "rule_id": "4.2.0.2",
-        "rule_name": "Consignee får identifieras i valfritt mottagarfält"
-      },
-      {
-        "rule_id": "4.3.2",
-        "rule_name": "Varubeskrivning verifierad via kontrollerad textmatchning"
+        "rule_name": "Parningsvalidering passerad via consignor/consignee"
       },
       {
         "rule_id": "4.5.4.2",
-        "rule_name": "EU-medlemsland godtas mot EU-angivelse"
+        "rule_name": "EU-medlemsland ↔ EU-normalisering"
       }
     ]
   },
@@ -63,8 +47,8 @@
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.99,
-      "certificate_value": "Gunnar Dafgård AB | Sjökvarnsvägen 30 | SE531 82 | KÄLLBY | Sverige | VAT SE556080571401",
-      "invoice_value": "Postal address Gunnar Dafgård AB, SE-531 82 Källby, SWEDEN | VAT registration no SE556080571401 | branding Dafgårds",
+      "certificate_value": "Gunnar Dafgård AB, Sjökvarnsvägen 30, SE531 82 KÄLLBY, Sverige, VAT SE556080571401",
+      "invoice_value": "Gunnar Dafgård AB, SE-531 82 Källby, SWEDEN, VAT registration no SE556080571401",
       "rules_applied": [
         {
           "rule_id": "4.1.0",
@@ -79,18 +63,18 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets consignor 'Gunnar Dafgård AB' återfinns uttryckligen i fakturans footer/postadressblock tillsammans med exakt VAT-nummer 'SE556080571401'. Landet verifieras genom 'SWEDEN' och SE-prefix i VAT/IBAN. Samma juridiska part kan därmed identifieras entydigt i fakturan."
+      "motivation": "Certifikatets consignor 'Gunnar Dafgård AB' återfinns uttryckligen i fakturans footer/postal address på sida 1 tillsammans med landet 'SWEDEN' och VAT-numret 'SE556080571401'. Företagsnamn och land kan därför verifieras som samma juridiska part."
     },
     "consignee": {
       "applicable": true,
       "status": "MISMATCH",
-      "confidence": 0.93,
-      "certificate_value": "JAMES CRISP LTD | UNILEVER ASIA PRIVATE LTD | 202 PARNELL READ PARNELL | 1052 AUCKLAND | New Zealand",
-      "invoice_value": "JAMES CRISP LTD | UNILEVER ASIA PRIVATE LTD | 202 PARNELL READ PARNELL | SE-1052 AUCKLAND",
+      "confidence": 0.97,
+      "certificate_value": "JAMES CRISP LTD, UNILEVER ASIA PRIVATE LTD, 202 PARNELL READ PARNELL, 1052 AUCKLAND, New Zealand",
+      "invoice_value": "JAMES CRISP LTD / UNILEVER ASIA PRIVATE LTD / 202 PARNELL READ PARNELL / SE-1052 AUCKLAND",
       "rules_applied": [
         {
           "rule_id": "4.2.0.2",
-          "outcome": "MATCH"
+          "outcome": "PARTIAL_MATCH_NAME_ONLY"
         },
         {
           "rule_id": "4.2.3",
@@ -101,18 +85,18 @@
           "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Mottagarnamnet 'JAMES CRISP LTD' kan identifieras i ett separat adressblock i fakturan, vilket är tillräckligt för namnidentifiering. Certifikatets mottagarland är dock 'New Zealand', medan fakturablocket inte uttryckligen anger 'New Zealand' eller 'NZ' för denna part. Landkravet för consignee kan därför inte verifieras på den textbaserade fakturan, vilket ger MISMATCH."
+      "motivation": "Mottagarnamnet 'JAMES CRISP LTD' kan identifieras i fakturan, men mottagarlandet 'New Zealand' framgår inte uttryckligen i samma mottagarblock. 'Auckland' är enligt reglerna inte tillräckligt för att verifiera land, och fakturan visar inte heller någon annan explicit landuppgift för denna mottagare. Därför blir kontrollpunkten MISMATCH."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.87,
-      "certificate_value": "LAC Whopper SG || Batch code L60081HN04, L60091HN04 || BBD 03.04.2027, 04.04.2027",
-      "invoice_value": "20 4692 LAC Whopper SG 840 KAR 9.240,000 KG || 30 4692 LAC Whopper SG 540 KAR 5.940,000 KG",
+      "confidence": 0.96,
+      "certificate_value": "LAC Whopper SG",
+      "invoice_value": "LAC Whopper SG 840 KAR; LAC Whopper SG 540 KAR",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "Priority 2"
+          "outcome": "ARTICLE_NUMBER_NOT_USED"
         },
         {
           "rule_id": "4.3.3",
@@ -121,38 +105,42 @@
         {
           "rule_id": "4.3.4",
           "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.3.8.1",
+          "outcome": "METADATA_ROWS_NOT_TREATED_AS_SEPARATE_GOODS"
         }
       ],
-      "motivation": "Den identitetsbärande huvudbeteckningen i certifikatet är 'LAC Whopper SG' och denna text återfinns exakt i två fakturarader. Batchkod- och BBD-raderna ändrar inte den verifierade produktidentiteten i detta dokumentpar. Varubeskrivningen kan därför verifieras genom kontrollerad textmatchning av huvudbeteckningen."
+      "motivation": "Den identitetsbärande huvudbeteckningen 'LAC Whopper SG' förekommer uttryckligen i båda fakturaraderna på sida 1. Certifikatets övriga rader om batch code och BBD behandlas som metadata och inte som separata varor. Varubeskrivningen kan därför verifieras."
     },
     "quantity": {
       "applicable": true,
       "status": "MISMATCH",
-      "confidence": 0.98,
-      "certificate_value": "OriginRows.Quantity: 1380ct || Gr weight: 15600,9 || Net weight: 15180 || OriginPackages.Package: 4692",
-      "invoice_value": "Lev kvant 840 KAR + 540 KAR || Nettovikt 15.180,000 KG",
+      "confidence": 0.99,
+      "certificate_value": "1380ct | Gr weight: 15600,9 | Net weight: 15180 | Package: 4692",
+      "invoice_value": "Nettovikt 15.180,000 KG; radkvantiteter 840 KAR och 540 KAR",
       "rules_applied": [
-        {
-          "rule_id": "4.4.2.2b",
-          "outcome": "MISMATCH"
-        },
         {
           "rule_id": "4.4.2.2",
           "outcome": "MISMATCH"
         },
         {
-          "rule_id": "4.4.6",
+          "rule_id": "4.4.2.1",
+          "outcome": "MISMATCH"
+        },
+        {
+          "rule_id": "4.4.3.6",
           "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Certifikatets kvantitetsfält innehåller '1380ct'. Enheten 'ct' är uttryckligen ogiltig som kvantitetsenhet enligt regelverket och medför därför MISMATCH för hela kvantitetskontrollpunkten. Därtill saknar certifikatets viktuppgifter 'Gr weight: 15600,9' och 'Net weight: 15180' uttrycklig viktenhet i kvantitetsfältet, vilket också bryter mot formkraven."
+      "motivation": "Certifikatets kvantitetsfält innehåller ogiltig eller ofullständig kvantitetsangivelse. '1380ct' innehåller en ogiltig enhet enligt regelverket, och viktposterna 'Gr weight: 15600,9' samt 'Net weight: 15180' saknar uttrycklig viktenhet i certifikatet. Eftersom ogiltig enhet eller saknad viktenhet i kvantitetsfältet medför MISMATCH kan kontrollpunkten inte godkännas."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.92,
-      "certificate_value": "European Union ",
-      "invoice_value": "Country of Origin: SE",
+      "confidence": 0.94,
+      "certificate_value": "European Union",
+      "invoice_value": "/ Country of Origin: SE",
       "rules_applied": [
         {
           "rule_id": "4.5.1",
@@ -167,26 +155,26 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger ursprung 'European Union'. Fakturan anger uttryckligen 'Country of Origin: SE', där 'SE' är ISO-kod för Sverige, ett EU-medlemsland. EU-angivelsen i certifikatet är därför verifierad mot fakturans explicita ursprungsfält."
+      "motivation": "Fakturan innehåller en explicit ursprungsangivelse '/ Country of Origin: SE'. 'SE' är ISO-kod för Sverige, som är ett EU-medlemsland, och verifierar därför certifikatets ursprung 'European Union' enligt EU-normaliseringsregeln."
     }
   },
   "overall_assessment": {
     "comparison_result": "NOT_IDENTICAL",
     "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
     "auto_approval_eligible": false,
-    "confidence": 0.95,
+    "confidence": 0.98,
     "critical_failures": [
-      "Consignee-landet 'New Zealand' kan inte verifieras uttryckligen i fakturan.",
-      "Kvantitetsfältet innehåller ogiltig enhet 'ct'.",
-      "Viktuppgifterna i certifikatet saknar uttrycklig viktenhet i kvantitetsfältet."
+      "Certifikatets mottagarland New Zealand kan inte identifieras uttryckligen i fakturan för JAMES CRISP LTD.",
+      "Certifikatets kvantitetsfält innehåller ogiltig/ofullständig kvantitetsangivelse: '1380ct', 'Gr weight: 15600,9' och 'Net weight: 15180'."
     ],
     "manual_review_triggers": [],
-    "decision_summary": "Dokumentparet är inte identiskt. Consignor, varubeskrivning och ursprungsland kan verifieras, men consignee-landet kan inte styrkas i fakturan och kvantitetsfältet bryter mot formkraven.",
-    "human_explanation": "Avsändare, varubeskrivning och ursprung kan verifieras mot fakturan. Mottagaren JAMES CRISP LTD finns i fakturan men landet New Zealand framgår inte uttryckligen där. Kvantitetsuppgifterna i certifikatet innehåller ogiltig enhet ('1380ct') och viktangivelser utan uttrycklig enhet, därför kan dokumentparet inte godkännas."
+    "manual_review_reason": "NOT_APPLICABLE",
+    "decision_summary": "Consignor, varubeskrivning och ursprungsland verifieras mot fakturan. Consignee faller på att mottagarlandet inte framgår uttryckligen i fakturan, och kvantitetsfältet i certifikatet uppfyller inte formkraven. Minst en tillämplig kontrollpunkt är MISMATCH, därför är totalresultatet NOT_IDENTICAL.",
+    "human_explanation": "Certifikatet anger mottagarlandet som New Zealand, men fakturan visar inte detta land uttryckligen för JAMES CRISP LTD. Certifikatets kvantitetsfält innehåller dessutom ogiltig eller ofullständig kvantitetsangivelse, bland annat '1380ct' samt vikt utan uttrycklig viktenhet. Därför är dokumenten inte identiska."
   },
   "_meta": {
-    "tested_at": "2026-06-01T15:28:29.534585+00:00",
-    "prompt_hash": "d498a4785374",
+    "tested_at": "2026-06-06T09:13:51.018882+00:00",
+    "prompt_hash": "4690e976915d",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P200_MISMATCH",

@@ -1,10 +1,10 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-06-01T00:00:00Z",
-    "document_pair_id": null,
+    "verification_timestamp": "2026-06-06T00:00:00Z",
+    "document_pair_id": "SEG-25D-423075__INV_0009148083",
     "certificate_issue_date": null,
-    "source_documents_received": 1
+    "source_documents_received": 2
   },
   "task": {
     "task_type": "customs_document_pair_verification",
@@ -13,14 +13,14 @@
   },
   "documents": {
     "document_a": {
-      "label": "CERTIFICATE OF ORIGIN (structured JSON)",
+      "label": "Certificate of Origin structured JSON",
       "assumed_role": "certificate",
-      "document_type": "structured_json"
+      "document_type": "certificate_of_origin_json"
     },
     "document_b": {
-      "label": "Attached invoice PDF",
+      "label": "Invoice PDF",
       "assumed_role": "invoice",
-      "document_type": "invoice_pdf"
+      "document_type": "invoice"
     }
   },
   "rule_activation": {
@@ -34,7 +34,7 @@
     "activated_rules": [
       {
         "rule_id": "8.6",
-        "rule_name": "Obligatorisk parningsvalidering genomförd"
+        "rule_name": "Parningsvalidering passerad via consignor och consignee"
       }
     ]
   },
@@ -44,25 +44,29 @@
       "status": "MATCH",
       "confidence": 0.99,
       "certificate_value": "SKF Sverige AB | Sweden",
-      "invoice_value": "Issued by: SKF Sverige AB, von Utfallsgatan 4, 415 50 Göteborg, Sweden (page 1; repeated on pages 2-13)",
+      "invoice_value": "Issued by: SKF Sverige AB, von Utfallsgatan 4, 415 50 Göteborg, Sweden; VAT no: SE556240830101",
       "rules_applied": [
         {
-          "rule_id": "4.1.2",
+          "rule_id": "4.1.0",
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.1.4",
+          "rule_id": "4.1.2.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.5",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets avsändare 'SKF Sverige AB' i Sverige kan identifieras direkt i fakturans issuer-block på sida 1, med samma företagsnamn och land. Landet verifieras även av adressen och VAT-uppgiften i fakturan."
+      "motivation": "Certifikatets consignor 'SKF Sverige AB' återfinns uttryckligen i fakturans issuer-block på sida 1 och i footer på samtliga sidor. Landet 'Sweden' framgår uttryckligen i fakturan och stöds även av VAT-prefix 'SE'. Skillnad i gatadress (certifikat: Kvibergs Broväg 8; faktura: von Utfallsgatan 4) påverkar inte bedömningen eftersom företagsnamn och land är verifierade."
     },
     "consignee": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.97,
+      "confidence": 0.98,
       "certificate_value": "SKF Asia Pacific Pte. Ltd | Malaysia",
-      "invoice_value": "Bill to / Sold to / Ship to: SKF Asia Pacific Pte. Ltd., c/o Schenker Logistics (M) S/B), No D-08, Jalan Tanjung A/4, 81560 Tanjung Pelepas, Pelabuhan, Malaysia (page 1)",
+      "invoice_value": "Bill to / Sold to / Ship to: SKF Asia Pacific Pte. Ltd. c/o Schenker Logistics (M) S/B), No D-08, Jalan Tanjung A/4, 81560 Tanjung Pelepas, Pelabuhan, Malaysia",
       "rules_applied": [
         {
           "rule_id": "4.2.0.2",
@@ -77,82 +81,91 @@
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets mottagare 'SKF Asia Pacific Pte. Ltd' återfinns uttryckligen i flera mottagarfält i fakturan, inklusive Bill to, Sold to och Ship to på sida 1. Landet Malaysia överensstämmer; skillnader i övriga adressrader medför inte avvikelse enligt reglerna."
+      "motivation": "Certifikatets mottagare 'SKF Asia Pacific Pte. Ltd' kan identifieras exakt i fakturans Bill to-, Sold to- och Ship to-block på sida 1. Landet 'Malaysia' framgår uttryckligen i samma mottagarblock. Skillnader i ytterligare adressdetaljer i certifikatet påverkar inte bedömningen eftersom samma juridiska part och land är verifierade."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.98,
-      "certificate_value": "DEEP GROOVE BALL BRG OD > 30 MM | SPHERICAL ROLLER BRG",
-      "invoice_value": "DEEP GROOVE BALL BRG OD > 30 MM; SPHERICAL ROLLER BRG (page 1 summary; repeated in line-item tables on pages 3-12)",
+      "certificate_value": "DEEP GROOVE BALL BRG OD > 30 MM\nSPHERICAL ROLLER BRG",
+      "invoice_value": "Country of origin / Quantity / Net kg summary on page 1: 'DEEP GROOVE BALL BRG OD > 30 MM' and 'SPHERICAL ROLLER BRG'; same descriptions also repeated in line-item tables on pages 3-12",
       "rules_applied": [
         {
-          "rule_id": "4.3.1.1",
-          "outcome": "MATCH"
+          "rule_id": "4.3.2",
+          "outcome": "not_applicable_no_article_number"
         },
         {
           "rule_id": "4.3.3",
           "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.3.1.1",
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Båda varubeskrivningarna i certifikatet kan identifieras exakt i fakturan. Att fakturan dessutom innehåller ytterligare varan 'SELF-ALIGNING BALL BRG OD > 30 MM' påverkar inte bedömningen eftersom verifieringen är ensidig."
+      "motivation": "Båda varubeskrivningarna i certifikatet återfinns explicit i fakturan: 'DEEP GROOVE BALL BRG OD > 30 MM' och 'SPHERICAL ROLLER BRG'. Fakturan innehåller även ytterligare varan 'SELF-ALIGNING BALL BRG OD > 30 MM', men detta påverkar inte utfallet eftersom verifieringen är ensidig och certifikatets egna varor kan identifieras tydligt."
     },
     "quantity": {
       "applicable": true,
       "status": "MISMATCH",
       "confidence": 0.99,
-      "certificate_value": "DEEP GROOVE BALL BRG OD > 30 MM: 635 pcs | SPHERICAL ROLLER BRG: 545 pcs | Packages: 71 COLLIE",
-      "invoice_value": "Page 1 summary: DEEP GROOVE BALL BRG OD > 30 MM = 625; SPHERICAL ROLLER BRG = 545; page 13: Number of packages = 71",
+      "certificate_value": "DEEP GROOVE BALL BRG OD > 30 MM — 635 pcs; SPHERICAL ROLLER BRG — 545 pcs; OriginPackages: 71 COLLIE",
+      "invoice_value": "Page 1 summary: DEEP GROOVE BALL BRG OD > 30 MM — 625; SELF-ALIGNING BALL BRG OD > 30 MM — 10; SPHERICAL ROLLER BRG — 545; Page 13: Number of packages: 71",
       "rules_applied": [
         {
-          "rule_id": "4.4.3.1",
+          "rule_id": "4.4.3.2",
           "outcome": "MISMATCH"
         },
         {
-          "rule_id": "4.4.5.5.2",
+          "rule_id": "4.4.5.2.2",
+          "outcome": "MISMATCH"
+        },
+        {
+          "rule_id": "4.4.7",
           "outcome": "MISMATCH"
         }
       ],
-      "motivation": "Certifikatet anger 635 pcs för 'DEEP GROOVE BALL BRG OD > 30 MM', medan fakturans sammanfattning på sida 1 uttryckligen anger 625 för samma vara. 'SPHERICAL ROLLER BRG' 545 pcs och antal kolli 71 kan verifieras, men den uttryckliga motsägelsen 635 vs 625 för samma produkttyp medför MISMATCH och får inte neutraliseras av att andra kvantiteter matchar."
+      "motivation": "Certifikatets kvantitet för 'SPHERICAL ROLLER BRG' (545 pcs) matchar fakturan, och antalet kolli 71 stöds av 'Number of packages: 71' på sida 13. Men certifikatet anger 'DEEP GROOVE BALL BRG OD > 30 MM' som 635 pcs, medan fakturan uttryckligen anger 625 för samma vara på sida 1. De återstående 10 i fakturan avser en annan produkttyp, 'SELF-ALIGNING BALL BRG OD > 30 MM', och får därför inte summeras med DEEP GROOVE BALL BRG. Det föreligger därmed en uttrycklig kvantitetsmotsägelse och kontrollpunkten ska vara MISMATCH."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.98,
+      "confidence": 0.99,
       "certificate_value": "SWEDEN",
-      "invoice_value": "Country of origin: Sweden (page 1); line-level origin column shows SE for the goods (pages 3-12); page 13 certifies origin corresponds to the stated origin above",
+      "invoice_value": "Page 1 summary under 'Country of origin': Sweden; pages 3-12 line-origin code 'SE'; page 13 statement that origin corresponds to that stipulated above",
       "rules_applied": [
         {
           "rule_id": "4.5.1",
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.5.2",
+          "rule_id": "4.5.4",
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.5.4",
+          "rule_id": "4.5.6",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets ursprungsland 'SWEDEN' framgår uttryckligen i fakturan i ett dedikerat origin-fält på sida 1. Fakturans radnivåer visar dessutom 'SE' som ursprungskod för varorna, vilket är förenligt med Sverige."
+      "motivation": "Certifikatets ursprungsland 'SWEDEN' återfinns explicit i fakturans originfält på sida 1 ('Country of origin Sweden'). Dessutom anges 'SE' per artikelrad på sidorna 3-12, vilket är ekvivalent ISO-landkod för Sweden."
     }
   },
   "overall_assessment": {
     "comparison_result": "NOT_IDENTICAL",
     "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
     "auto_approval_eligible": false,
-    "confidence": 0.97,
+    "confidence": 0.98,
     "critical_failures": [
-      "Kvantiteten för 'DEEP GROOVE BALL BRG OD > 30 MM' motsäger fakturan: certifikatet anger 635 pcs medan fakturan anger 625."
+      "Kvantitet för 'DEEP GROOVE BALL BRG OD > 30 MM' motsäger fakturan: certifikat 635 pcs, faktura 625."
     ],
     "manual_review_triggers": [],
-    "decision_summary": "Dokumentparet kan inte bedömas som identiskt eftersom kvantitetskontrollpunkten innehåller en explicit avvikelse för en av de certifierade varorna. Övriga tillämpliga kontrollpunkter kan verifieras mot fakturan.",
-    "human_explanation": "Avsändare, mottagare, varubeskrivning och ursprungsland kan verifieras mot fakturan. Kvantiteten för 'DEEP GROOVE BALL BRG OD > 30 MM' stämmer däremot inte: certifikatet anger 635 pcs medan fakturan anger 625 pcs. Därför kan dokumentparet inte godkännas automatiskt."
+    "manual_review_reason": "NOT_APPLICABLE",
+    "decision_summary": "Dokumentparningen är giltig och consignor, consignee, varubeskrivning samt ursprungsland kan verifieras mot fakturan. Den totala bedömningen är dock NOT_IDENTICAL eftersom certifikatets kvantitet för DEEP GROOVE BALL BRG OD > 30 MM (635 pcs) uttryckligen motsägs av fakturan (625 pcs), och de extra 10 pcs i fakturan avser en annan varutyp som inte får summeras in.",
+    "human_explanation": "Certifikatet och fakturan stämmer för avsändare, mottagare, varubeskrivning och ursprungsland. Kvantiteten för 'DEEP GROOVE BALL BRG OD > 30 MM' avviker: certifikatet anger 635 pcs medan fakturan anger 625 pcs för samma vara. Därför kan dokumentparet inte godkännas automatiskt."
   },
   "_meta": {
-    "tested_at": "2026-06-01T15:28:29.527652+00:00",
-    "prompt_hash": "d498a4785374",
+    "tested_at": "2026-06-06T09:13:51.016748+00:00",
+    "prompt_hash": "4690e976915d",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P097_MISMATCH",

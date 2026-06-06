@@ -1,8 +1,8 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-06-01T00:00:00Z",
-    "document_pair_id": null,
+    "verification_timestamp": "2026-06-06T00:00:00Z",
+    "document_pair_id": "SEG-25D-374856__9310094119",
     "certificate_issue_date": null,
     "source_documents_received": 1
   },
@@ -15,12 +15,12 @@
     "document_a": {
       "label": "Certificate of Origin (structured JSON)",
       "assumed_role": "certificate",
-      "document_type": "structured_json"
+      "document_type": "certificate_of_origin_structured_json"
     },
     "document_b": {
-      "label": "Invoice PDF",
+      "label": "Attached PDF",
       "assumed_role": "invoice",
-      "document_type": "invoice_pdf_with_supporting_export_document"
+      "document_type": "invoice_pdf_with_supporting_export_documents"
     }
   },
   "rule_activation": {
@@ -34,19 +34,27 @@
     "activated_rules": [
       {
         "rule_id": "8.6",
-        "rule_name": "Parningsvalidering godkänd via identifierbar consignor och consignee i fakturan"
+        "rule_name": "Obligatorisk parningsvalidering"
       },
       {
-        "rule_id": "4.3.2",
-        "rule_name": "Varubeskrivning verifierad via kontrollerad textmatchning utan artikelnummerprioritet"
+        "rule_id": "4.1.0",
+        "rule_name": "Consignor identifierad uttryckligen i fakturadokument"
+      },
+      {
+        "rule_id": "4.2.0.2",
+        "rule_name": "Consignee får identifieras i valfritt mottagarfält"
+      },
+      {
+        "rule_id": "4.3.3",
+        "rule_name": "Kontrollerad textmatchning av varubeskrivning"
       },
       {
         "rule_id": "4.4.3",
-        "rule_name": "Kvantitet verifierad via direkt förekomstkontroll"
+        "rule_name": "Förekomstkontroll av numerisk kvantitet"
       },
       {
-        "rule_id": "4.5.5",
-        "rule_name": "Ursprungsland verifierat via explicit origin-fält i fakturan"
+        "rule_id": "4.5.1",
+        "rule_name": "Ursprungsland ska framgå uttryckligen i fakturan"
       }
     ]
   },
@@ -54,127 +62,128 @@
     "consignor": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.97,
-      "certificate_value": "SKF Sverige AB",
-      "invoice_value": "Issued by:\nSKF Sverige AB\nvon Utfallsgatan 4\n415 50 Göteborg\nSweden",
+      "confidence": 0.98,
+      "certificate_value": "SKF Sverige AB | Sweden",
+      "invoice_value": "Issued by:\nSKF Sverige AB\nvon Utfallsgatan 4\n415 50 Göteborg\nSweden\nVAT no: SE556240830101",
       "rules_applied": [
         {
-          "rule_id": "4.1.2",
-          "outcome": "Företagsnamn och land identifierade i fakturan"
+          "rule_id": "4.1.0",
+          "outcome": "MATCH"
         },
         {
-          "rule_id": "4.1.4",
-          "outcome": "Landet Sweden överensstämmer"
+          "rule_id": "4.1.2",
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.1.5",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger consignor som \"SKF Sverige AB\" i Sverige. Fakturan anger uttryckligen \"Issued by: SKF Sverige AB ... Sweden\". Företagsnamnet matchar direkt och landet överensstämmer; skillnaden i gatuadress påverkar inte bedömningen."
+      "motivation": "Certifikatets consignor \"SKF Sverige AB\" återfinns uttryckligen i fakturans issuer-block. Landet \"Sweden\" framgår explicit i samma block. Adresskillnaden påverkar inte bedömningen eftersom företagsnamn och land verifieras för samma juridiska part."
     },
     "consignee": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.96,
-      "certificate_value": "SKF Vietnam CO Ltd ",
+      "confidence": 0.97,
+      "certificate_value": "SKF Vietnam CO Ltd | Viet Nam",
       "invoice_value": "Bill to\nSKF Vietnam CO Ltd\nR2, F4 Crescent Plaza Bldg, 105 Ton Dat Tien Street, Tan My Ward\nHo Chi Minh 700000\nVietnam",
       "rules_applied": [
         {
           "rule_id": "4.2.0.2",
-          "outcome": "Mottagaren identifierad i relevant mottagarfält"
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.2.3",
-          "outcome": "Landet Vietnam överensstämmer efter normalisering"
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.2.4",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger mottagare \"SKF Vietnam CO Ltd\" i Viet Nam. Fakturan visar samma juridiska namn i Bill to/Sold to och landet anges som Vietnam. Mindre adressskillnader påverkar inte bedömningen."
+      "motivation": "Certifikatets consignee \"SKF Vietnam CO Ltd\" kan identifieras i fakturans mottagarfält \"Bill to\". Landet anges som \"Vietnam\" i fakturan och motsvarar certifikatets \"Viet Nam\" efter tillåten landnormalisering. Avvikelse i detaljerad gatuadress påverkar inte bedömningen."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.98,
+      "confidence": 0.99,
       "certificate_value": "SPHERICAL ROLLER BRG",
       "invoice_value": "SPHERICAL ROLLER BRG",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "Ingen artikelnummerstyrd kontroll från certifikatet; textmatchning tillämpad"
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.3.3",
-          "outcome": "Identitetsbärande huvudbeteckning identifierad exakt i fakturan"
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.3.8",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets varubeskrivning är \"SPHERICAL ROLLER BRG\". Samma ordalydelse förekommer i fakturans varurad. Ingen semantisk tolkning eller specialregel behövdes."
+      "motivation": "Den identitetsbärande huvudbeteckningen i certifikatet, \"SPHERICAL ROLLER BRG\", återfinns exakt i fakturans varubeskrivning utan behov av semantisk tolkning."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.95,
+      "confidence": 0.96,
       "certificate_value": "1 pcs",
-      "invoice_value": "Quantity 1 ... UoM PC",
+      "invoice_value": "Quantity 1",
       "rules_applied": [
         {
-          "rule_id": "4.4.1",
-          "outcome": "Kvantitetsfältet i certifikatet användes som verifieringsgrund"
-        },
-        {
           "rule_id": "4.4.2",
-          "outcome": "Numeriskt värde och enhet finns i certifikatet"
+          "outcome": "MATCH"
         },
         {
           "rule_id": "4.4.3",
-          "outcome": "Numeriskt värde 1 identifierat i fakturan för samma vara"
+          "outcome": "MATCH"
         },
         {
-          "rule_id": "4.4.6",
+          "rule_id": "4.4.7",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger kvantiteten \"1 pcs\". Fakturan anger för samma vara kvantitet \"1\" och enhet \"PC\", vilket är en ekvivalent styckenhet. Uppgiften kan därför verifieras direkt mot fakturan."
+      "motivation": "Certifikatet anger numeriskt värde och enhet som \"1 pcs\". Fakturan anger kvantiteten \"1\" för samma vara \"SPHERICAL ROLLER BRG\". Ingen motstridig kvantitetsuppgift förekommer."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.97,
+      "confidence": 0.98,
       "certificate_value": "SWEDEN",
       "invoice_value": "Country of origin\nSweden",
       "rules_applied": [
         {
           "rule_id": "4.5.1",
-          "outcome": "Explicit origin-fält identifierat i fakturan"
+          "outcome": "MATCH"
         },
         {
-          "rule_id": "4.5.5",
-          "outcome": "SWEDEN kan uttryckligen identifieras i fakturan som Sweden; MATCH"
+          "rule_id": "4.5.4",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.5.6",
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger ursprungsland \"SWEDEN\". Fakturan innehåller ett explicit fält \"Country of origin\" med värdet \"Sweden\". Ursprungslandet är därför positivt verifierat."
+      "motivation": "Certifikatets ursprungsland \"SWEDEN\" framgår uttryckligen i fakturan i ett dedikerat origin-fält som \"Country of origin Sweden\". Ursprungsuppgiften kan därför verifieras direkt."
     }
   },
   "overall_assessment": {
     "comparison_result": "IDENTICAL",
     "workflow_recommendation": "AUTO_APPROVAL_ELIGIBLE",
     "auto_approval_eligible": true,
-    "confidence": 0.96,
+    "confidence": 0.98,
     "critical_failures": [],
     "manual_review_triggers": [],
-    "decision_summary": "Samtliga tillämpliga kontrollpunkter kan verifieras direkt mot fakturan: consignor, consignee, varubeskrivning, kvantitet och ursprungsland. Ingen MISMATCH eller MANUAL_REVIEW-trigger identifierades, och kontrollpunkterna uppnår tillräcklig säkerhet för automatiskt godkännande.",
-    "human_explanation": "Alla uppgifter i certifikatet kan återfinnas i fakturan. Avsändare, mottagare, varubeskrivning, kvantitet och ursprungsland stämmer överens. Dokumentparet kan därför godkännas automatiskt."
+    "manual_review_reason": "NOT_APPLICABLE",
+    "decision_summary": "Samtliga tillämpliga kontrollpunkter kan verifieras entydigt mot fakturan: consignor, consignee, varubeskrivning, kvantitet och ursprungsland är matchande.",
+    "human_explanation": "Certifikatet och fakturan stämmer överens för avsändare, mottagare, varubeskrivning, kvantitet och ursprungsland. Varan \"SPHERICAL ROLLER BRG\", kvantiteten 1 pcs och ursprunget Sweden framgår uttryckligen i fakturan. Dokumentparet kan godkännas automatiskt."
   },
   "_meta": {
-    "tested_at": "2026-06-01T15:28:29.532010+00:00",
-    "prompt_hash": "d498a4785374",
+    "tested_at": "2026-06-06T09:13:51.017543+00:00",
+    "prompt_hash": "4690e976915d",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P099_MATCH",

@@ -1,10 +1,10 @@
 {
   "schema_version": "3.0",
   "metadata": {
-    "verification_timestamp": "2026-06-01T00:00:00Z",
-    "document_pair_id": null,
+    "verification_timestamp": "2026-06-06T00:00:00Z",
+    "document_pair_id": "SEG-26D-451562__INV-46188985",
     "certificate_issue_date": null,
-    "source_documents_received": 1
+    "source_documents_received": 2
   },
   "task": {
     "task_type": "customs_document_pair_verification",
@@ -15,10 +15,10 @@
     "document_a": {
       "label": "Certificate of Origin (structured JSON)",
       "assumed_role": "certificate",
-      "document_type": "certificate_of_origin"
+      "document_type": "structured_json_certificate_of_origin"
     },
     "document_b": {
-      "label": "Attached PDF",
+      "label": "Commercial Invoice PDF",
       "assumed_role": "invoice",
       "document_type": "commercial_invoice"
     }
@@ -35,6 +35,14 @@
       {
         "rule_id": "4.2.2.1.1",
         "rule_name": "Avkortning av certifikatets mottagarnamn"
+      },
+      {
+        "rule_id": "4.4.3.6",
+        "rule_name": "Total vikt i faktura"
+      },
+      {
+        "rule_id": "8.6",
+        "rule_name": "Obligatorisk parningsvalidering"
       }
     ]
   },
@@ -43,27 +51,39 @@
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.99,
-      "certificate_value": "Company: Ekman & Co AB\nAddress1: Polhemsplatsen 5\nAddress2: P.O. BOX 230\nZipCode: SE-401 23\nCity: Gothenburg\nCountry: Sweden\nCompanyVatNumber: SE556020459501",
+      "certificate_value": "Ekman & Co AB | Polhemsplatsen 5 | P.O. BOX 230 | SE-401 23 | Gothenburg | Sweden | VAT: SE556020459501",
       "invoice_value": "Ekman & Co AB\nPolhemsplatsen 5\nPO Box 230\nSE-401 23 Gothenburg, Sweden\nVAT NO: SE556020459501",
       "rules_applied": [
         {
-          "rule_id": "4.1.2",
+          "rule_id": "8.6",
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.1.4",
+          "rule_id": "4.1.2.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.3.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.5",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets avsändare 'Ekman & Co AB' kan identifieras exakt i fakturans utställarblock. Landet Sverige framgår uttryckligen i adressen och VAT-numret SE556020459501 överensstämmer också, vilket styrker samma juridiska part."
+      "motivation": "Certifikatets avsändare kan identifieras direkt som fakturautställare i fakturans header. Företagsnamnet överensstämmer exakt, och landet Sverige styrks både av adressen 'Gothenburg, Sweden' och VAT-numret med SE-prefix."
     },
     "consignee": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.91,
-      "certificate_value": "DeliveryCompany: Amishi Drugs & Chemicals Private Li\nDeliveryAddress1: Plot No.621-622, Phase IV\nDeliveryAddress2: G.I.D.C., Naroda, Ahmedabad\nDeliveryAddress3: Gujarat, 382330\nDeliveryCountry: India",
+      "confidence": 0.93,
+      "certificate_value": "Amishi Drugs & Chemicals Private Li | Plot No.621-622, Phase IV | G.I.D.C., Naroda, Ahmedabad | Gujarat, 382330 | India",
       "invoice_value": "SOLD TO: Amishi Drugs & Chemicals Private\nLimited\nPlot No.621-622, Phase IV\nG.I.D.C., Naroda, Ahmedabad\nGujarat, 382330\nIndia",
       "rules_applied": [
+        {
+          "rule_id": "8.6",
+          "outcome": "MATCH"
+        },
         {
           "rule_id": "4.2.0.2",
           "outcome": "MATCH"
@@ -75,37 +95,49 @@
         {
           "rule_id": "4.2.3",
           "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.2.4",
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets mottagarnamn 'Amishi Drugs & Chemicals Private Li' är en exakt inledande del av fakturans 'Amishi Drugs & Chemicals Private Limited' i SOLD TO-fältet. Landet India överensstämmer uttryckligen, så mottagaren är verifierad enligt regeln för avkortat certifikatnamn."
+      "motivation": "Certifikatets mottagare återfinns i fakturans 'SOLD TO'-fält. Namnet i certifikatet är avkortat till 'Amishi Drugs & Chemicals Private Li', vilket är ett exakt prefix till fakturans fullständiga namn 'Amishi Drugs & Chemicals Private Limited', och landet India överensstämmer."
     },
     "goods_description": {
       "applicable": true,
       "status": "MATCH",
       "confidence": 0.97,
-      "certificate_value": "Domsjö Cellulose Quality 2240\nH.S.Code: 470200",
+      "certificate_value": "Domsjö Cellulose Quality 2240 | H.S.Code: 470200",
       "invoice_value": "Domsjö Cellulose Quality 2240\n\"RAYON GRADE WOOD PULP\"\nH.S. Code: 470200",
       "rules_applied": [
         {
           "rule_id": "4.3.2",
-          "outcome": "Prioritet 2 tillämpad"
+          "outcome": "ARTICLE_NUMBER_NOT_USED"
         },
         {
           "rule_id": "4.3.3",
           "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.3.8.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.3.8",
+          "outcome": "MATCH"
         }
       ],
-      "motivation": "Den identitetsbärande huvudbeteckningen 'Domsjö Cellulose Quality 2240' återfinns exakt i fakturans varubeskrivning. Den andra certifikatraden 'H.S.Code: 470200' återfinns också i fakturan som 'H.S. Code: 470200', vilket är godtagbart efter tillåten normalisering av punktnotation och mellanslag."
+      "motivation": "Den identitetsbärande huvudbeteckningen 'Domsjö Cellulose Quality 2240' återfinns exakt i fakturans varubeskrivning. Den separata certifikatraden 'H.S.Code: 470200' stöds också av fakturans 'H.S. Code: 470200' och utgör metadata som är konsistent med varan."
     },
     "quantity": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.99,
-      "certificate_value": "OriginRows[0].Quantity: GW: 25 650 KGS\nOriginPackages[0].Package: 114 Bales",
-      "invoice_value": "Gross Weight: 25 650 KGS\n114 Bales",
+      "confidence": 0.98,
+      "certificate_value": "GW: 25 650 KGS",
+      "invoice_value": "Gross Weight: 25 650 KGS",
       "rules_applied": [
         {
-          "rule_id": "4.4.2.2",
+          "rule_id": "4.4.2.1",
           "outcome": "MATCH"
         },
         {
@@ -113,16 +145,20 @@
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.4.3.1",
+          "rule_id": "4.4.3.6",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.4.7",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatets verifieringsgrundande kvantitetsfält anger 'GW: 25 650 KGS', och fakturan innehåller exakt 'Gross Weight: 25 650 KGS'. Certifikatet innehåller dessutom '114 Bales' som också återfinns i fakturan, och ingen kvantitetsuppgift motsäger certifikatet."
+      "motivation": "Certifikatet anger ett uttryckligt viktvärde med kategori och enhet: 'GW: 25 650 KGS'. Fakturan innehåller den explicita totalvikten 'Gross Weight: 25 650 KGS', vilket verifierar samma numeriska värde, samma vikttyp och samma enhet utan behov av undantag eller omräkning."
     },
     "origin": {
       "applicable": true,
       "status": "MATCH",
-      "confidence": 0.99,
+      "confidence": 0.88,
       "certificate_value": "Sweden",
       "invoice_value": "We hereby certify that this invoice is true and correct and that the goods are of Swedish origin.",
       "rules_applied": [
@@ -131,26 +167,27 @@
           "outcome": "MATCH"
         },
         {
-          "rule_id": "4.5.5",
+          "rule_id": "4.5.6",
           "outcome": "MATCH"
         }
       ],
-      "motivation": "Certifikatet anger ursprungsland 'Sweden'. Fakturan innehåller en uttrycklig ursprungsangivelse: 'the goods are of Swedish origin', vilket verifierar certifikatets uppgift direkt."
+      "motivation": "Fakturan innehåller en uttrycklig ursprungsangivelse i meningen 'the goods are of Swedish origin'. Detta är en explicit origin-uppgift för varorna och verifierar certifikatets ursprungsland Sweden."
     }
   },
   "overall_assessment": {
     "comparison_result": "IDENTICAL",
     "workflow_recommendation": "AUTO_APPROVAL_ELIGIBLE",
     "auto_approval_eligible": true,
-    "confidence": 0.97,
+    "confidence": 0.95,
     "critical_failures": [],
     "manual_review_triggers": [],
-    "decision_summary": "LC-undantaget är inte tillämpligt. Fakturan är läsbar och textbaserad, dokumentparningen är giltig, och avsändare, mottagare, varubeskrivning, kvantitet och ursprungsland kan alla verifieras mot fakturan enligt regelverket.",
-    "human_explanation": "Alla uppgifter i certifikatet kan återfinnas i fakturan. Avsändare Ekman & Co AB, mottagare Amishi Drugs & Chemicals Private Limited, varubeskrivning, bruttovikt 25 650 KGS och ursprung Sverige stämmer överens. Dokumentparet kan godkännas automatiskt."
+    "manual_review_reason": "NOT_APPLICABLE",
+    "decision_summary": "LC-undantaget är inte tillämpligt. Avsändare, mottagare, varubeskrivning, kvantitet och ursprungsland kan alla verifieras mot fakturan, och inga tillämpliga kontrollpunkter gav MISMATCH eller MANUAL_REVIEW.",
+    "human_explanation": "Certifikatet och fakturan stämmer överens på avsändare, mottagare, varubeskrivning, kvantitet och ursprungsland. Mottagarnamnet i certifikatet är avkortat men motsvarar tydligt det fullständiga namnet i fakturan. Dokumentparet kan godkännas automatiskt."
   },
   "_meta": {
-    "tested_at": "2026-06-01T15:27:40.730332+00:00",
-    "prompt_hash": "d498a4785374",
+    "tested_at": "2026-06-06T09:16:06.639599+00:00",
+    "prompt_hash": "4690e976915d",
     "model": "gpt-5.4",
     "tier": 2,
     "pair": "P021_MATCH",
