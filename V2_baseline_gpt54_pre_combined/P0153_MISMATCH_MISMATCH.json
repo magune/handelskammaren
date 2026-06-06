@@ -1,0 +1,168 @@
+{
+  "schema_version": "3.0",
+  "metadata": {
+    "verification_timestamp": "2026-06-01T00:00:00Z",
+    "document_pair_id": "SEG-23D-868933__INV-1903",
+    "certificate_issue_date": null,
+    "source_documents_received": 2
+  },
+  "task": {
+    "task_type": "customs_document_pair_verification",
+    "comparison_mode": "certificate_vs_invoice",
+    "strictness": "conservative"
+  },
+  "documents": {
+    "document_a": {
+      "label": "CERTIFICATE OF ORIGIN (structured JSON)",
+      "assumed_role": "certificate",
+      "document_type": "certificate_of_origin_json"
+    },
+    "document_b": {
+      "label": "Commercial invoice - 1903",
+      "assumed_role": "invoice",
+      "document_type": "commercial_invoice_pdf"
+    }
+  },
+  "rule_activation": {
+    "lc_exception_active": false,
+    "lc_number_found": null,
+    "general_goods_description_with_invoice_reference_active": false,
+    "mixed_origins_rule_active": false,
+    "to_order_rule_active": false,
+    "quantity_exception_applied": null,
+    "eu_origin_normalization_active": false,
+    "activated_rules": [
+      {
+        "rule_id": "4.1.3.3",
+        "rule_name": "Kommersiell förkortning av consignor-namn"
+      },
+      {
+        "rule_id": "4.2.3",
+        "rule_name": "Landkontroll för consignee"
+      },
+      {
+        "rule_id": "4.4.2.2",
+        "rule_name": "Viktangivelse kräver viktkategori i kvantitetsfältet"
+      },
+      {
+        "rule_id": "4.5.4",
+        "rule_name": "ISO-landskod får normaliseras mot landsnamn"
+      }
+    ]
+  },
+  "control_points": {
+    "consignor": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.93,
+      "certificate_value": "Berg Prop Prod. AB | Tärnvägen 15 | SE-475 40 HÖNÖ | Sweden | VAT 5565683058",
+      "invoice_value": "Berg Propulsion Production AB | Tärnvägen 15 | 475 40 HÖNÖ | SWEDEN | Corp. ID: SE5565683058",
+      "rules_applied": [
+        {
+          "rule_id": "4.1.3.3",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.4",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatet anger consignor som \"Berg Prop Prod. AB\" i Sverige. Fakturan anger \"Berg Propulsion Production AB\" med adress Tärnvägen 15, 475 40 Hönö, Sweden samt bolagsidentifierare SE5565683058. Förkortningen \"Prop Prod.\" kan verifieras som en kommersiell förkortning av det fullständiga juridiska namnet och landet överensstämmer."
+    },
+    "consignee": {
+      "applicable": true,
+      "status": "MISMATCH",
+      "confidence": 0.98,
+      "certificate_value": "Master M/V Skoul Ruz | Llyr Marine Gabon | Rue du Colonel Parant Littoral | BP 584 Port Gentil | Gabon",
+      "invoice_value": "Delivery address: Master M/V Skoul Ruz, C/o Navitrans CDG, ZA du Moulin Rue de la Croix, 95734 Roissy en France, FRANCE",
+      "rules_applied": [
+        {
+          "rule_id": "4.2.0.2",
+          "outcome": "NAME_FOUND_IN_DELIVERY_ADDRESS"
+        },
+        {
+          "rule_id": "4.2.3",
+          "outcome": "MISMATCH"
+        }
+      ],
+      "motivation": "Mottagarnamnet \"Master M/V Skoul Ruz\" kan identifieras i fakturans leveransadress. Certifikatet anger dock mottagarlandet som Gabon medan fakturan uttryckligen placerar samma mottagare i Frankrike (\"Roissy en France, FRANCE\"). Landet för motsvarande part överensstämmer därför inte."
+    },
+    "goods_description": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.86,
+      "certificate_value": "83x63x67 cm | HS CODE: 84836020 | Country of origin: ES",
+      "invoice_value": "83x63x67cm 180kg | CN code: 84836020 | Country of origin: Spain",
+      "rules_applied": [
+        {
+          "rule_id": "4.3.2.1",
+          "outcome": "HS_CODE_NOT_TREATED_AS_ARTICLE_NUMBER"
+        },
+        {
+          "rule_id": "4.3.3",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatets beskrivningsrader innehåller inte ett separat produktnamn utan identifierande beskrivningselement. Fakturan innehåller samma måttuppgift \"83x63x67cm\" och samma HS/CN-kod \"84836020\". De beskrivningselement som faktiskt anges i certifikatet kan därför återfinnas i fakturan."
+    },
+    "quantity": {
+      "applicable": true,
+      "status": "MISMATCH",
+      "confidence": 0.99,
+      "certificate_value": "180 kg | Package: One case - Skoul Ruz 5467T",
+      "invoice_value": "83x63x67cm 180kg",
+      "rules_applied": [
+        {
+          "rule_id": "4.4.2.2",
+          "outcome": "MISMATCH"
+        },
+        {
+          "rule_id": "4.4.6",
+          "outcome": "MISMATCH"
+        }
+      ],
+      "motivation": "Certifikatets verifieringsgrundande kvantitet i kvantitetsfältet är \"180 kg\". När kvantiteten anges i vikt kräver regelverket att viktkategori (GW eller NW) framgår i samma kvantitetsuppgift. Certifikatet saknar sådan viktkategori, vilket är ett formellt fel som ger MISMATCH; den separata kolliangivelsen \"One case\" ändrar inte detta."
+    },
+    "origin": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.98,
+      "certificate_value": "ES",
+      "invoice_value": "Country of origin: Spain",
+      "rules_applied": [
+        {
+          "rule_id": "4.5.1",
+          "outcome": "EXPLICIT_ORIGIN_FIELD_FOUND"
+        },
+        {
+          "rule_id": "4.5.4",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatet anger ursprungsland som \"ES\". Fakturan innehåller ett explicit ursprungsfält med texten \"Country of origin: Spain\". ISO-koden ES är ekvivalent med landsnamnet Spain, så ursprungslandet är verifierat."
+    }
+  },
+  "overall_assessment": {
+    "comparison_result": "NOT_IDENTICAL",
+    "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
+    "auto_approval_eligible": false,
+    "confidence": 0.96,
+    "critical_failures": [
+      "Consignee-landet avviker: certifikatet anger Gabon medan fakturan anger France för Master M/V Skoul Ruz.",
+      "Kvantitetsfältet i certifikatet anger vikt som \"180 kg\" utan obligatorisk viktkategori GW/NW."
+    ],
+    "manual_review_triggers": [],
+    "decision_summary": "Dokumentparet är inte identiskt. Consignor och ursprungsland kan verifieras, och certifikatets beskrivningselement återfinns i fakturan, men mottagarland och kvantitetsformkrav faller på tydliga regelbrott.",
+    "human_explanation": "Certifikatet anger mottagaren Master M/V Skoul Ruz i Gabon, men fakturan visar samma mottagare i Frankrike. Dessutom anger certifikatet vikten som 180 kg utan att specificera om det är brutto- eller nettovikt. Därför kan dokumentparet inte godkännas automatiskt."
+  },
+  "_meta": {
+    "tested_at": "2026-06-01T15:27:40.704103+00:00",
+    "prompt_hash": "d498a4785374",
+    "model": "gpt-5.4",
+    "tier": 2,
+    "pair": "P0153_MISMATCH",
+    "expected": "NOT_IDENTICAL",
+    "actual": "NOT_IDENTICAL",
+    "status": "PASS"
+  }
+}

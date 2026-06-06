@@ -1,0 +1,195 @@
+{
+  "schema_version": "3.0",
+  "metadata": {
+    "verification_timestamp": "2026-06-01T00:00:00Z",
+    "document_pair_id": "SEG-25D-394888__19110",
+    "certificate_issue_date": null,
+    "source_documents_received": 1
+  },
+  "task": {
+    "task_type": "customs_document_pair_verification",
+    "comparison_mode": "certificate_vs_invoice",
+    "strictness": "conservative"
+  },
+  "documents": {
+    "document_a": {
+      "label": "Certificate of Origin JSON",
+      "assumed_role": "certificate",
+      "document_type": "structured_json"
+    },
+    "document_b": {
+      "label": "Commercial Invoice PDF",
+      "assumed_role": "invoice",
+      "document_type": "commercial_invoice_pdf"
+    }
+  },
+  "rule_activation": {
+    "lc_exception_active": false,
+    "lc_number_found": null,
+    "general_goods_description_with_invoice_reference_active": false,
+    "mixed_origins_rule_active": false,
+    "to_order_rule_active": false,
+    "quantity_exception_applied": null,
+    "eu_origin_normalization_active": false,
+    "activated_rules": [
+      {
+        "rule_id": "4.1.0",
+        "rule_name": "Consignor identified in invoice text/header"
+      },
+      {
+        "rule_id": "4.2.0.2",
+        "rule_name": "Consignee may be identified in any recipient role"
+      },
+      {
+        "rule_id": "4.3.3",
+        "rule_name": "Controlled text match for goods description"
+      },
+      {
+        "rule_id": "4.3.4",
+        "rule_name": "Additional product text that does not alter identity"
+      },
+      {
+        "rule_id": "4.4.2.2",
+        "rule_name": "Weight quantity in certificate must include GW/NW category in quantity field"
+      },
+      {
+        "rule_id": "4.5.1",
+        "rule_name": "Origin must appear explicitly in invoice"
+      },
+      {
+        "rule_id": "8.6",
+        "rule_name": "Mandatory pairing validation"
+      }
+    ]
+  },
+  "control_points": {
+    "consignor": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.99,
+      "certificate_value": "Central National Sweden AB, Södra Larmgatan 6, 411 16 GÖTEBORG, Sweden, VAT SE559187836701",
+      "invoice_value": "Central National Sweden AB, Södra Larmgatan 6, Gothenburg, 41 116, Sweden, VAT NO: SE559187836701",
+      "rules_applied": [
+        {
+          "rule_id": "4.1.0",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.2.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.4",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatets consignor 'Central National Sweden AB' återfinns uttryckligen i fakturans sidhuvud på sida 1 och 2. Landet Sweden verifieras i adressblocket och stöds även av VAT-prefix SE. Samma juridiska part kan identifieras utan tolkning."
+    },
+    "consignee": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.94,
+      "certificate_value": "SOCARTO, BP 5028, DOUALA, Cameroon",
+      "invoice_value": "CONSIGNED TO: Socarto S.A, BP 5028, Douala, Cameroon; SOLD TO: Socarto S.A, BP 5028, Douala, Cameroon",
+      "rules_applied": [
+        {
+          "rule_id": "4.2.0.2",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.3.6",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.2.3",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatets mottagare 'SOCARTO' kan identifieras i fakturans mottagarfält som 'Socarto S.A'. Skillnaden består endast i tillagd juridisk bolagsform 'S.A', vilket är tillåten normalisering. Landet Cameroon överensstämmer exakt."
+    },
+    "goods_description": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.93,
+      "certificate_value": "Unbleached Kraft Standard + XBR",
+      "invoice_value": "Unbleached Kraft Standard + XBR (120+50)",
+      "rules_applied": [
+        {
+          "rule_id": "4.3.2",
+          "outcome": "ARTICLE_NUMBER_NOT_USED"
+        },
+        {
+          "rule_id": "4.3.3",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.3.4",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.3.8.1",
+          "outcome": "APPLIED"
+        }
+      ],
+      "motivation": "Den identitetsbärande huvudbeteckningen 'Unbleached Kraft Standard + XBR' återfinns uttryckligen i fakturan. Tillägget '(120+50)' i fakturan är extra specifikation efter huvudbeteckningen och ändrar inte den identifierade huvudtexten enligt tillåten regel. De separata certifikatraderna 'Net weight:' och 'Gross weight:' behandlas som kvantitetsrelaterad komplettering och inte som separata varor."
+    },
+    "quantity": {
+      "applicable": true,
+      "status": "MISMATCH",
+      "confidence": 0.98,
+      "certificate_value": "15.025 MT; 15.305 MT",
+      "invoice_value": "Total Weight Quantity: 15.025 MT; Total Gross Weight Quantity: 15.305 MT",
+      "rules_applied": [
+        {
+          "rule_id": "4.4.2.2",
+          "outcome": "MISMATCH"
+        },
+        {
+          "rule_id": "4.4.2.1",
+          "outcome": "APPLIED"
+        }
+      ],
+      "motivation": "Certifikatets kvantitetsfält innehåller viktvärdena '15.025 MT' och '15.305 MT', men viktkategori (NW/GW) framgår inte i själva kvantitetsvärdena utan endast i separata beskrivningsrader 'Net weight:' respektive 'Gross weight:'. Regelverket kräver att viktkategori ska framgå i kvantitetsuppgiften i kvantitetsfältet, inte i varubeskrivningen. Fakturan visar visserligen motsvarande net- och gross-vikter, men certifikatets formkrav för kvantitetsfältet är ändå inte uppfyllt, vilket ger MISMATCH."
+    },
+    "origin": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.99,
+      "certificate_value": "Italy",
+      "invoice_value": "Country of Origin: Italy",
+      "rules_applied": [
+        {
+          "rule_id": "4.5.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.5.5",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatets ursprungsland 'Italy' framgår uttryckligen i fakturan som 'Country of Origin: Italy'. Ingen normalisering utöver normal textjämförelse behövs."
+    }
+  },
+  "overall_assessment": {
+    "comparison_result": "NOT_IDENTICAL",
+    "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
+    "auto_approval_eligible": false,
+    "confidence": 0.97,
+    "critical_failures": [
+      "Kvantitetskontrollpunkten är MISMATCH eftersom certifikatets viktvärden saknar obligatorisk GW/NW-kategori i själva kvantitetsfältet."
+    ],
+    "manual_review_triggers": [],
+    "decision_summary": "Dokumentparet passerar parningskontrollen via consignor och consignee, och avsändare, mottagare, varubeskrivning samt ursprungsland kan verifieras mot fakturan. Kvantitetskontrollpunkten ger dock MISMATCH eftersom certifikatets viktvärden inte innehåller viktkategori i kvantitetsfältet, trots att fakturan visar motsvarande net- och gross-vikter. Minst en tillämplig kontrollpunkt är därmed MISMATCH, vilket kräver resultatet NOT_IDENTICAL.",
+    "human_explanation": "Avsändare, mottagare, varubeskrivning och ursprungsland stämmer mot fakturan. Däremot anger certifikatet vikterna 15.025 MT och 15.305 MT utan att själva kvantitetsfältet visar om de avser netto eller brutto. Därför kan dokumentparet inte godkännas automatiskt."
+  },
+  "_meta": {
+    "tested_at": "2026-06-01T15:28:10.715500+00:00",
+    "prompt_hash": "d498a4785374",
+    "model": "gpt-5.4",
+    "tier": 2,
+    "pair": "P065_MATCH",
+    "expected": "IDENTICAL",
+    "actual": "NOT_IDENTICAL",
+    "status": "FAIL"
+  }
+}

@@ -1,0 +1,187 @@
+{
+  "schema_version": "3.0",
+  "metadata": {
+    "verification_timestamp": "2026-06-01T00:00:00Z",
+    "document_pair_id": "SEG-25D-391850__INV-2025001664",
+    "certificate_issue_date": null,
+    "source_documents_received": 1
+  },
+  "task": {
+    "task_type": "customs_document_pair_verification",
+    "comparison_mode": "certificate_vs_invoice",
+    "strictness": "conservative"
+  },
+  "documents": {
+    "document_a": {
+      "label": "Certificate of Origin (structured JSON)",
+      "assumed_role": "certificate",
+      "document_type": "structured_json"
+    },
+    "document_b": {
+      "label": "Invoice PDF",
+      "assumed_role": "invoice",
+      "document_type": "invoice"
+    }
+  },
+  "rule_activation": {
+    "lc_exception_active": false,
+    "lc_number_found": null,
+    "general_goods_description_with_invoice_reference_active": false,
+    "mixed_origins_rule_active": true,
+    "to_order_rule_active": false,
+    "quantity_exception_applied": null,
+    "eu_origin_normalization_active": true,
+    "activated_rules": [
+      {
+        "rule_id": "8.6",
+        "rule_name": "Obligatorisk parningsvalidering"
+      },
+      {
+        "rule_id": "4.1.0",
+        "rule_name": "Consignor kan verifieras var som helst i fakturan"
+      },
+      {
+        "rule_id": "4.2.0.2",
+        "rule_name": "Consignee får identifieras i valfritt mottagarfält"
+      },
+      {
+        "rule_id": "4.3.8.1",
+        "rule_name": "Vikttexter i varubeskrivningsfältet är inte separata varor"
+      },
+      {
+        "rule_id": "4.4.2.2",
+        "rule_name": "Viktkategori måste framgå i kvantitetsfältet"
+      },
+      {
+        "rule_id": "4.5.4.1.1",
+        "rule_name": "EU + specifikt EU-land kan verifieras av enbart landet i fakturan"
+      }
+    ]
+  },
+  "control_points": {
+    "consignor": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.98,
+      "certificate_value": "Elmo Sweden AB",
+      "invoice_value": "POSTADRESS/POSTAL ADRESS: Elmo Sweden AB, SE-512 81 SVENLJUNGA, SWEDEN",
+      "rules_applied": [
+        {
+          "rule_id": "4.1.0",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.2.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.4",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatets consignor 'Elmo Sweden AB' återfinns uttryckligen i fakturans footer/adressblock på båda sidorna. Landet Sverige verifieras explicit genom 'SWEDEN' i adressblocket och stöds även av svensk VAT-/organisationsinformation."
+    },
+    "consignee": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.99,
+      "certificate_value": "Kallfeldts Läder AB",
+      "invoice_value": "Godsmottagare: Kallfeldts Läder AB (11004745), Esbjörnarp 10, SE 561 92 - Huskvarna, Sverige",
+      "rules_applied": [
+        {
+          "rule_id": "4.2.0.2",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.2.3",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatets consignee 'Kallfeldts Läder AB' återfinns direkt i fakturans mottagarfält 'Godsmottagare'. Landet Sverige framgår explicit i samma adressblock."
+    },
+    "goods_description": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.97,
+      "certificate_value": "Elmosoft 99999 III | Gross Weight | Net Weight",
+      "invoice_value": "ELMOSOFT 99999 III",
+      "rules_applied": [
+        {
+          "rule_id": "4.3.2",
+          "outcome": "No article number in certificate description used for matching"
+        },
+        {
+          "rule_id": "4.3.3",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.3.8.1",
+          "outcome": "Applied; 'Gross Weight' and 'Net Weight' treated as supplementary quantity labels, not separate goods"
+        }
+      ],
+      "motivation": "Den identitetsbärande huvudbeteckningen i certifikatet är 'Elmosoft 99999 III', och den återfinns exakt i fakturans varurader som 'ELMOSOFT 99999 III'. Raderna 'Gross Weight' och 'Net Weight' i certifikatets beskrivningsfält behandlas inte som separata varor."
+    },
+    "quantity": {
+      "applicable": true,
+      "status": "MISMATCH",
+      "confidence": 0.97,
+      "certificate_value": "709,56 M2 | 571 Kgs | 501 Kgs | 1 Hrs | HS Code 4107 1291",
+      "invoice_value": "Total M2: 709,56 M2; Gross Weight 571 kgs; Net weight 501 kgs; 1 Hrs",
+      "rules_applied": [
+        {
+          "rule_id": "4.4.3.1",
+          "outcome": "Invoice contains matching numeric values"
+        },
+        {
+          "rule_id": "4.4.2.2",
+          "outcome": "MISMATCH"
+        }
+      ],
+      "motivation": "Fakturan innehåller numeriskt matchande uppgifter för 709,56 M2, 571 kgs och 501 kgs. Certifikatets viktvärden står dock i kvantitetsfältet enbart som '571 Kgs' och '501 Kgs', medan viktkategorierna 'Gross Weight' och 'Net Weight' står i beskrivningsfältet och inte i själva kvantitetsfältet. Enligt regelverket måste GW/NW framgå i kvantitetsuppgiften; därför är kontrollpunkten MISMATCH trots att fakturan visar samma siffror."
+    },
+    "origin": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.93,
+      "certificate_value": "EUROPEAN UNION | Sweden",
+      "invoice_value": "Swedish Origin",
+      "rules_applied": [
+        {
+          "rule_id": "4.5.1",
+          "outcome": "Explicit origin statement found"
+        },
+        {
+          "rule_id": "4.5.4.1.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.5.4.2",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Fakturan anger uttryckligen ursprung som 'Swedish Origin'. Detta verifierar 'Sweden' direkt och verifierar även 'EUROPEAN UNION' eftersom Sverige är en EU-medlemsstat."
+    }
+  },
+  "overall_assessment": {
+    "comparison_result": "NOT_IDENTICAL",
+    "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
+    "auto_approval_eligible": false,
+    "confidence": 0.96,
+    "critical_failures": [
+      "Quantity control point is MISMATCH because the certificate's weight quantities do not include Gross/Net category in the quantity field itself."
+    ],
+    "manual_review_triggers": [],
+    "decision_summary": "Consignor, consignee, goods description and origin are verified against the invoice. Quantity fails because the certificate states '571 Kgs' and '501 Kgs' in the quantity field while 'Gross Weight' and 'Net Weight' appear only in the description field, which the rules classify as a mismatch.",
+    "human_explanation": "Avsändare, mottagare, varubeskrivning och ursprung kan verifieras mot fakturan. Kvantitetsdelen faller däremot eftersom certifikatet anger vikterna 571 Kgs och 501 Kgs utan att Gross/Net står i själva mängdfältet; dessa uppgifter står bara i beskrivningsraderna. Därför är dokumentparet inte identiskt."
+  },
+  "_meta": {
+    "tested_at": "2026-06-01T15:27:17.462006+00:00",
+    "prompt_hash": "d498a4785374",
+    "model": "gpt-5.4",
+    "tier": 2,
+    "pair": "P0123_MATCH",
+    "expected": "IDENTICAL",
+    "actual": "NOT_IDENTICAL",
+    "status": "FAIL"
+  }
+}

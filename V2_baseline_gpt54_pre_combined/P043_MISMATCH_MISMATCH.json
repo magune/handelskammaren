@@ -1,0 +1,207 @@
+{
+  "schema_version": "3.0",
+  "metadata": {
+    "verification_timestamp": "2026-06-01T00:00:00Z",
+    "document_pair_id": "SEG-25D-403416__invoice_1",
+    "certificate_issue_date": null,
+    "source_documents_received": 2
+  },
+  "task": {
+    "task_type": "customs_document_pair_verification",
+    "comparison_mode": "certificate_vs_invoice",
+    "strictness": "conservative"
+  },
+  "documents": {
+    "document_a": {
+      "label": "CERTIFICATE OF ORIGIN (structured JSON)",
+      "assumed_role": "certificate",
+      "document_type": "structured_json"
+    },
+    "document_b": {
+      "label": "Attached PDF",
+      "assumed_role": "invoice",
+      "document_type": "proforma_invoice_pdf"
+    }
+  },
+  "rule_activation": {
+    "lc_exception_active": false,
+    "lc_number_found": null,
+    "general_goods_description_with_invoice_reference_active": false,
+    "mixed_origins_rule_active": false,
+    "to_order_rule_active": false,
+    "quantity_exception_applied": null,
+    "eu_origin_normalization_active": false,
+    "activated_rules": [
+      {
+        "rule_id": "8.6",
+        "rule_name": "Obligatorisk parningsvalidering"
+      },
+      {
+        "rule_id": "4.1.0",
+        "rule_name": "Consignor identifierad i fakturan"
+      },
+      {
+        "rule_id": "4.2.0.2",
+        "rule_name": "Consignee kan verifieras i något mottagarfält"
+      },
+      {
+        "rule_id": "4.3.8.1",
+        "rule_name": "Kategoritext i varubeskrivning är inte separat vara"
+      },
+      {
+        "rule_id": "4.4.2.1",
+        "rule_name": "Kvantitetsfältet är verifieringsgrundande"
+      },
+      {
+        "rule_id": "4.4.3.0b",
+        "rule_name": "Uttrycklig motsägelse i kvantitet ger MISMATCH"
+      },
+      {
+        "rule_id": "4.5.4",
+        "rule_name": "Landnormalisering med ISO-kod"
+      }
+    ]
+  },
+  "control_points": {
+    "consignor": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.99,
+      "certificate_value": "ERICSSON AB; TORSHAMNSGATAN 23; 164 80 STOCKHOLM; SWEDEN; VAT SE556056625801",
+      "invoice_value": "ERICSSON AB PRO FORMA INVOICE, Torshamnsgatan 21-23, S-164 83 STOCKHOLM, SWEDEN; page 2 footer: Ericsson AB ... VAT No: SE556056625801 ... Stockholm, Sweden",
+      "rules_applied": [
+        {
+          "rule_id": "4.1.0",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.2.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.1.4",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatets consignor 'ERICSSON AB' återfinns uttryckligen i fakturans sidhuvud och footer. Landet Sverige verifieras både via adressen Stockholm, Sweden och VAT-numret med SE-prefix. Samma juridiska part kan identifieras entydigt."
+    },
+    "consignee": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.99,
+      "certificate_value": "KCELL JSC; ALIMZHANOVA STREET 51; 050004 ALMATY; KAZAKHSTAN",
+      "invoice_value": "DELIVERY ADDRESS: KCELL JSC, ALIMZHANOVA STREET 51, 050004 ALMATY, KAZAKHSTAN",
+      "rules_applied": [
+        {
+          "rule_id": "4.2.0.2",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.2.3",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatets mottagare kan identifieras exakt i fakturans Delivery Address-fält. Företagsnamn och land överensstämmer utan behov av otillåten tolkning."
+    },
+    "goods_description": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.9,
+      "certificate_value": "TELECOM EQUIPMENT; PL - AIR 3258 B78V and HWACs; PL - AIR 3258 B78V and HWACs",
+      "invoice_value": "Telecommunication Equipment: ... AIR 3258 B78V and HWACs / Приемопередатчик AIR 3258 B78V и Коды аппаратной активации (two rows)",
+      "rules_applied": [
+        {
+          "rule_id": "4.3.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.3.3",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.3.4",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.3.8.1",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "De två konkreta varuraderna i certifikatet ('AIR 3258 B78V and HWACs') återfinns uttryckligen i fakturans två artikelrader. Prefixet 'PL -' behandlas inte som identitetsbärande varunamn utan som kompletterande text. Raden 'TELECOM EQUIPMENT' bedöms som kategoritext/överrubrik och inte som separat varupost enligt regeln om kategoritext."
+    },
+    "quantity": {
+      "applicable": true,
+      "status": "MISMATCH",
+      "confidence": 0.99,
+      "certificate_value": "OriginRows[].Quantity: G.W 5218,000 KG; OriginPackages[].Package: 42 PACKAGES",
+      "invoice_value": "GRAND TOTAL ... GROSS WEIGHT 5 298,000; page 2: Gross Weight: 5.298,000 kg; Box: 42",
+      "rules_applied": [
+        {
+          "rule_id": "4.4.2.2",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.4.2.1",
+          "outcome": "APPLIED"
+        },
+        {
+          "rule_id": "4.4.4",
+          "outcome": "INVOICE_TOTAL_IDENTIFIED"
+        },
+        {
+          "rule_id": "4.4.3.0b",
+          "outcome": "MISMATCH"
+        },
+        {
+          "rule_id": "4.4.6",
+          "outcome": "MISMATCH"
+        }
+      ],
+      "motivation": "Certifikatets verifieringsgrundande kvantitet i kvantitetsfältet är bruttovikt 'G.W 5218,000 KG'. Fakturan anger uttryckligen total bruttovikt '5 298,000 kg', vilket är ett annat numeriskt värde än 5218,000 kg och därmed en positiv motsägelse. Att kolliantalet 42 matchar ändrar inte slutsatsen, eftersom det explicita viktvärdet i kvantitetsfältet måste verifieras och här motsägs av fakturan."
+    },
+    "origin": {
+      "applicable": true,
+      "status": "MATCH",
+      "confidence": 0.97,
+      "certificate_value": "PL",
+      "invoice_value": "Country of origin column shows PL for both item rows; page 2: Country of Origin: mentioned above",
+      "rules_applied": [
+        {
+          "rule_id": "4.5.1",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.5.4",
+          "outcome": "MATCH"
+        },
+        {
+          "rule_id": "4.5.5",
+          "outcome": "MATCH"
+        }
+      ],
+      "motivation": "Certifikatet anger ursprungsland 'PL'. Fakturan anger uttryckligen 'PL' i kolumnen Country of Origin för båda artikelraderna. ISO-landskoden kan därför verifieras direkt."
+    }
+  },
+  "overall_assessment": {
+    "comparison_result": "NOT_IDENTICAL",
+    "workflow_recommendation": "MANUAL_HANDLING_REQUIRED",
+    "auto_approval_eligible": false,
+    "confidence": 0.97,
+    "critical_failures": [
+      "Kvantitet/vikt motsägs uttryckligen: certifikatet anger G.W 5218,000 KG medan fakturan anger total gross weight 5 298,000 kg."
+    ],
+    "manual_review_triggers": [],
+    "decision_summary": "Dokumentparet är giltigt parat via consignor och consignee. Avsändare, mottagare, varubeskrivning och ursprungsland kan verifieras mot fakturan. Kvantitetskontrollpunkten ger dock MISMATCH eftersom certifikatets bruttovikt 5218,000 KG uttryckligen motsägs av fakturans bruttovikt 5298,000 kg. Därför blir totalresultatet NOT_IDENTICAL.",
+    "human_explanation": "Certifikatet anger bruttovikten som 5218,000 KG medan fakturan anger 5298,000 kg. Avsändare, mottagare, varubeskrivning och ursprungsland kan verifieras, men viktuppgiften stämmer inte. Ärendet kräver därför manuell hantering."
+  },
+  "_meta": {
+    "tested_at": "2026-06-01T15:28:10.706030+00:00",
+    "prompt_hash": "d498a4785374",
+    "model": "gpt-5.4",
+    "tier": 2,
+    "pair": "P043_MISMATCH",
+    "expected": "NOT_IDENTICAL",
+    "actual": "NOT_IDENTICAL",
+    "status": "PASS"
+  }
+}
