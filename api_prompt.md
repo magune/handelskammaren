@@ -296,7 +296,7 @@ För FAKTURAN (PDF) ska du identifiera:
 Om fakturan identifieras som skannad eller bildbaserad ska detta noteras som en riskfaktor för verifieringens tillförlitlighet.
 
 **Särskild regel – Packlist, följesedel eller proformafaktura som verifieringsdokument (avsnitt 8.1.2):**
-Fakturan kan vara rubricerad som "Packing List", "Packlist", "Master Packlist", "Delivery Note", "Proforma Invoice", "Shipping Note" eller liknande — inte nödvändigtvis som "Invoice" eller "Commercial Invoice". Om certifikatet UTTRYCKLIGEN refererar till detta dokument (t.ex. "please refer to the attached master packlist shipment nr: 297532006") ska dokumentet behandlas som ett giltigt verifieringsunderlag. Kontrollpunkterna ska verifieras mot de uppgifter som faktiskt framgår av dokumentet (avsändare, mottagare, varor, kvantitet, ursprung etc.). Avsaknad av fakturaspecifika fält (t.ex. pris, betalningsvillkor) ska INTE i sig medföra MANUAL_REVIEW om övriga kontrollpunkter kan verifieras.
+Fakturan kan vara rubricerad som "Packing List", "Packlist", "Master Packlist", "Delivery Note", "Proforma Invoice", "Shipping Note" eller liknande — inte nödvändigtvis som "Invoice" eller "Commercial Invoice". Om certifikatet UTTRYCKLIGEN refererar till detta dokument (t.ex. "please refer to the attached master packlist shipment nr: 415208660") ska dokumentet behandlas som ett giltigt verifieringsunderlag. Kontrollpunkterna ska verifieras mot de uppgifter som faktiskt framgår av dokumentet (avsändare, mottagare, varor, kvantitet, ursprung etc.). Avsaknad av fakturaspecifika fält (t.ex. pris, betalningsvillkor) ska INTE i sig medföra MANUAL_REVIEW om övriga kontrollpunkter kan verifieras.
 
 **KRITISK REGEL – Otillräcklig läsbarhet → MANUAL_REVIEW:**
 Om en kontrollpunkt INTE kan verifieras på grund av att fakturan är bildbaserad/skannad och relevant text inte kan läsas med tillräcklig säkerhet — exempelvis att consignee-blocket, varubeskriving eller kvantitet inte är läsbart — ska den kontrollpunkten sättas till MANUAL_REVIEW, INTE MISMATCH.
@@ -425,7 +425,7 @@ Om systemet inte kan avgöra vilken faktura som avses → MANUAL_REVIEW.
 När fler än en faktura-PDF bifogas gäller följande:
 
 1. **Alla bifogade filer** utgör faktura-/stöddokument och ska SAMTLIGA beaktas vid verifieringen.
-2. **Dokumentparning:** Om certifikatet (`OriginRows[].Description`) uttryckligen refererar till specifika fakturanummer (t.ex. "Invoice 8280581" och "Proforma 0001703399"), ska varje refererat dokument identifieras bland de bifogade filerna. Verifieringen ska ske mot SAMTLIGA refererade dokument gemensamt.
+2. **Dokumentparning:** Om certifikatet (`OriginRows[].Description`) uttryckligen refererar till specifika fakturanummer (t.ex. "Invoice 7150462" och "Proforma 0009912345"), ska varje refererat dokument identifieras bland de bifogade filerna. Verifieringen ska ske mot SAMTLIGA refererade dokument gemensamt.
 3. **Kontrollpunkter vid flera fakturor:**
    - **Consignor (4.1):** Samtliga fakturor ska ha samma utställare, och utställaren ska matcha certifikatets consignor. Om en faktura har en annan utställare → MANUAL_REVIEW.
    - **Consignee (4.2):** Samtliga regler i avsnitt 4.2 gäller FULLT UT även vid flera fakturafiler. Om mottagaren i certifikatet kan identifieras i NÅGOT av fakturornas mottagarfält (Ship-To, Delivery Address, Consignee, Bill-To, Buyer, Sold-To) ska detta anses tillräckligt enligt 4.2.0.2. Regeln att "EN faktura räcker" avser att consignee-fältet inte behöver finnas i varje faktura.
@@ -440,7 +440,7 @@ Motivering: Om flera fakturor från samma företag finns i PDF:en och certifikat
 
 **Normalisering av fakturanummer vid jämförelse (avsnitt 8.5.1.1):**
 Vid jämförelse av certifikatets fakturanummerreferens mot fakturans fakturanummer ska följande normaliseringar tillämpas:
-1. **Ledande nollor:** "632597" och "000632597" ska behandlas som samma fakturanummer. Ledande nollor ska avskalas från båda sidor före jämförelse.
+1. **Ledande nollor:** "845120" och "000845120" ska behandlas som samma fakturanummer. Ledande nollor ska avskalas från båda sidor före jämförelse.
 2. **Suffixvariant:** Om certifikatets fakturanummer är "X-Y" (t.ex. "11428-2") och en bifogad faktura har nummer "X" (t.ex. "11428") utan suffixet, ska detta betraktas som MANUAL_REVIEW — inte MISMATCH — eftersom suffixet kan avse delförsändelse, sida eller revision.
 
 **KRITISK REGEL – Fakturareferens i certifikatet vs bifogade fakturor (avsnitt 8.5.2):**
@@ -449,7 +449,7 @@ Om certifikatet hänvisar till ett specifikt fakturanummer (prioritet 1 ovan) ME
 **8.5.2.1 – Helt avvikande fakturanummer → NOT_IDENTICAL:**
 Om en bifogad faktura har ett fakturanummer som är HELT ANNORLUNDA än certifikatets referens — dvs. numren inte delar en gemensam bas, inte är prefix/suffix-varianter av varandra, och inte kan förklaras av ledande nollor eller formatskillnader — ska resultatet vara NOT_IDENTICAL (inte MANUAL_REVIEW). Motivering: när certifikatet uttryckligen refererar till faktura X men den bifogade fakturan har faktura Y med ett HELT ANNAT nummer, innebär detta att fel faktura har bifogats. Det är inte en osäkerhet som kräver manuell bedömning — det är ett konstaterat faktum att det refererade dokumentet saknas.
 
-Exempel: Certifikatet refererar "Invoice No. 2005654". Den bifogade fakturan är "Invoice No. 3019882". Numren har ingen gemensam bas → NOT_IDENTICAL.
+Exempel: Certifikatet refererar "Invoice No. 3140785". Den bifogade fakturan är "Invoice No. 3019882". Numren har ingen gemensam bas → NOT_IDENTICAL.
 Exempel: Certifikatet refererar "Invoice No. 10998". Den bifogade fakturan är "Invoice No. 11030". Numren är numeriskt närliggande men INTE varianter av varandra → NOT_IDENTICAL.
 
 **8.5.2.2 – Möjlig variant eller osäkerhet → MANUAL_REVIEW:**
@@ -547,7 +547,7 @@ Verifieringen ska baseras uteslutande på uppgiften i detta fält.
 **Landverifiering via indirekta identifierare (avsnitt 4.1.2.1):**
 Landet för consignor behöver inte anges som ett explicit fält "Country: Sweden" i fakturan. Landet anses verifierat om MINST ETT av följande framgår av fakturan:
 - Landet anges explicit i avsändarens adressblock.
-- Landets landskod ingår som prefix i ett VAT-nummer, momsregistreringsnummer eller organisationsnummer (t.ex. SE-prefix i "SE556878121401" verifierar Sverige; GB-prefix verifierar Storbritannien).
+- Landets landskod ingår som prefix i ett VAT-nummer, momsregistreringsnummer eller organisationsnummer (t.ex. SE-prefix i "SE556600110011" verifierar Sverige; GB-prefix verifierar Storbritannien).
 - Bankuppgifter (IBAN) innehåller landskod som entydigt identifierar landet (t.ex. IBAN som börjar med SE verifierar Sverige).
 - Landets telefonnummer-prefix förekommer i kontaktuppgifter på ett entydigt sätt.
 
@@ -832,7 +832,7 @@ Begränsningen om delad varumärkesprefix (4.1.0.1) och landöverensstämmelse (
 - Importer / Importer ref
 - Consignee (om fakturan själv har ett sådant fält)
 
-Företagsnamnet ska vara exakt identifierbart i fakturatexten. Ingen tolkning av koncernrelationer, förkortningar eller handelsnamn får göras. En delad namnprefix (t.ex. "Domasco" i certifikatet vs "DOHA MARKETING SERVICES CO WLL" i fakturan) räcker INTE — det juridiska företagsnamnet måste kunna identifieras explicit.
+Företagsnamnet ska vara exakt identifierbart i fakturatexten. Ingen tolkning av koncernrelationer, förkortningar eller handelsnamn får göras. En delad namnprefix (t.ex. "Almaco" i certifikatet vs "GULF MARKETING SERVICES CO WLL" i fakturan) räcker INTE — det juridiska företagsnamnet måste kunna identifieras explicit.
 
 **KRITISK BEGRÄNSNING – Cargospec och fraktdokument är inte fakturor:**
 Vid multi-faktura-par kan stöddokument såsom cargospecifikationer, fraktlistor eller packlistor ingå bland de bifogade filerna. Dessa dokument får INTE användas som verifieringsunderlag för consignee. Consignee-verifieringen ska enbart baseras på dokument som är fakturor (invoice/commercial invoice). Om certifikatets consignee enbart kan identifieras i en cargospec men INTE i någon bifogad faktura → MISMATCH.
@@ -888,7 +888,7 @@ Samma princip som 4.1.3.2 men med landreferens till 4.2.3. Certifikatets `Delive
 2. Ingen annan juridisk part med motsvarande namnstruktur förekommer i fakturan.
 3. Land överensstämmer enligt 4.2.3.
 
-Exempel: certifikatet anger "Amishi Drugs & Chemicals Private Li", fakturan anger "Amishi Drugs & Chemicals Private Limited" → certifikatets text är ett exakt prefix → MATCH.
+Exempel: certifikatet anger "Sunmark Drugs & Chemicals Private Li", fakturan anger "Sunmark Drugs & Chemicals Private Limited" → certifikatets text är ett exakt prefix → MATCH.
 
 **VIKTIGT:** Skillnader i gatuadress mellan certifikat och faktura ska INTE påverka bedömningen. Det är ENBART företagsnamnet och landet som avgör, i enlighet med 4.2.4.
 
@@ -899,7 +899,7 @@ Certifikatets namn-fält kan innehålla ett kort EFTERFÖLJANDE fragment (högst
 
 ska fragmentet betraktas som en extraktionsartefakt och resultatet vara MATCH — förutsatt att land överensstämmer enligt 4.2.3.
 
-Exempel: certifikatet anger "Kimteks Kimya Tekstil Urunleri Ric", fakturan anger "Kimteks Kimya Tekstil Urunleri" → "Ric" är ett avkapat fragment (3 tecken, inte ett komplett ord) → MATCH.
+Exempel: certifikatet anger "Polmar Tekstil Urunleri Ric", fakturan anger "Polmar Tekstil Urunleri" → "Ric" är ett avkapat fragment (3 tecken, inte ett komplett ord) → MATCH.
 
 ##### 4.2.2.1.2 Kommersiell förkortning
 Samma regler som 4.1.3.3 men med landreferens till 4.2.3.
@@ -970,7 +970,7 @@ Tilläggen får exempelvis avse:
 
 Sådana tillägg ska betraktas som icke identitetsbärande text. Den identitetsbärande huvudbeteckningen ska dock kunna identifieras exakt i fakturan efter tillåten normalisering. Förekomst av icke identitetsbärande tillägg före eller efter huvudbeteckningen ska inte i sig medföra MISMATCH.
 
-Exempel MATCH: Certifikat "SÖDRA BLUE - NORTHERN BLEACHED SOFTWOOD KRAFT PULP (ECF)" och faktura "SÖDRA BLUE - NORTHERN BLEACHED SOFTWOOD KRAFT PULP" → huvudbeteckningen kan identifieras exakt; "(ECF)" är en processkvalifikation som inte ändrar produktens identitet → MATCH.
+Exempel MATCH: Certifikat "NORDIC PINE - NORTHERN BLEACHED SOFTWOOD KRAFT PULP (ECF)" och faktura "NORDIC PINE - NORTHERN BLEACHED SOFTWOOD KRAFT PULP" → huvudbeteckningen kan identifieras exakt; "(ECF)" är en processkvalifikation som inte ändrar produktens identitet → MATCH.
 
 ### 4.3.2 Obligatorisk prioritetsordning
 
@@ -1213,7 +1213,7 @@ Denna bestämmelse gäller ENDAST när certifikatet innehåller flera ursprungsl
 - artikelnummer i certifikatet inte kan identifieras exakt i fakturan (Prioritet 1)
 
 **FÖRTYDLIGANDE – Kategoritext och viktangivelser i varubeskrivningsfältet (avsnitt 4.3.8.1):**
-Certifikatets varubeskrivningsfält kan innehålla dels konkreta varunamn/artikelnummer, dels kompletterande text såsom kategorirubriker, förklaringstexter eller viktangivelser per varugrupp (t.ex. "Friction Spray in Sport - 1006KG Gross Weight"). Sådan kompletterande text som tydligt är en beskrivning eller viktangivelse kopplad till redan identifierade varunamn ovan utgör INTE en separat vara som kräver egen verifiering i fakturan. Systemet ska identifiera de konkreta varunamnen/artikelnumren och verifiera dessa — kompletterande kategori- och vikttexter ska inte behandlas som ytterligare varuposter.
+Certifikatets varubeskrivningsfält kan innehålla dels konkreta varunamn/artikelnummer, dels kompletterande text såsom kategorirubriker, förklaringstexter eller viktangivelser per varugrupp (t.ex. "Grip Spray for Sport - 740KG Gross Weight"). Sådan kompletterande text som tydligt är en beskrivning eller viktangivelse kopplad till redan identifierade varunamn ovan utgör INTE en separat vara som kräver egen verifiering i fakturan. Systemet ska identifiera de konkreta varunamnen/artikelnumren och verifiera dessa — kompletterande kategori- och vikttexter ska inte behandlas som ytterligare varuposter.
 
 Detsamma gäller rader som anger BESKRIVANDE METADATA om varan snarare än en egen vara — t.ex. "Manufacturer: …", "Year of manufacture: …", "Date of …", tillverkningsår, ursprungsmärkning eller förpacknings-/märkningstext. Sådana metadatarader är attribut till den redan identifierade varan och utgör INTE separata varuposter som var för sig måste återfinnas i fakturan. Att en sådan metadatauppgift (t.ex. tillverkningsår) inte återfinns i fakturan får INTE i sig medföra MISMATCH, förutsatt att varans identitetsbärande huvudbeteckning kan verifieras. (En uttrycklig produkt-/varuidentifierare som serienummer/VIN/artikelnummer är dock INTE enbart metadata och ska kunna återfinnas enligt 4.3.5.)
 
@@ -1250,31 +1250,31 @@ Godkända viktkategoribenämningar:
 
 **KRITISK REGEL – kategorin måste höra till kvantiteten, inte till varubeskrivningen:**
 Formkravet är UPPFYLLT (→ kan ge MATCH) när viktkategorin:
-- står i samma kvantitetsuppgift som viktvärdet (t.ex. "37.0 KG GW", "187,905 MT/GW", "Gross Weight: 131,600 KG"), ELLER
-- förekommer i kvantitetsfältet (`OriginRows[].Quantity`) tillsammans med vikten — t.ex. "214,845 kg" jämte "NW", eller "Gross weight = 8,7 kg" jämte annan kvantitetsinfo (antal/kolli). **Ordningen och övriga uppgifter i fältet saknar betydelse** — det avgörande är att kategorin (Gross/GW eller Net/NW) framgår i kvantitetsfältet.
+- står i samma kvantitetsuppgift som viktvärdet (t.ex. "37.0 KG GW", "246,180 MT/GW", "Gross Weight: 210,400 KG"), ELLER
+- förekommer i kvantitetsfältet (`OriginRows[].Quantity`) tillsammans med vikten — t.ex. "330,150 kg" jämte "NW", eller "Gross weight = 9,4 kg" jämte annan kvantitetsinfo (antal/kolli). **Ordningen och övriga uppgifter i fältet saknar betydelse** — det avgörande är att kategorin (Gross/GW eller Net/NW) framgår i kvantitetsfältet.
 
 **KRITISKT FÖRTYDLIGANDE – kategori och värde får ligga i SEPARATA poster i kvantitetsfältet:**
-`OriginRows[].Quantity` kan vara uppdelat i FLERA separata poster/element (t.ex. en lista som `["12.384,000KG", "G.W."]`, eller `["GW in KGs", "598,102", "NW in KGs", "493,829"]`, eller en sträng som `"3.326,400 KG | G.W."`). Kategorin (GW/NW/Gross/Net) och viktvärdet behöver INTE stå i SAMMA post/element — det räcker att BÅDA förekommer NÅGONSTANS i `OriginRows[].Quantity` (samma rad eller en intilliggande post i kvantitetsfältet). Att de står i var sin post är ENBART en formaterings-/extraktionsartefakt och får ALDRIG i sig medföra MISMATCH. Kräv ALDRIG att kategori och värde sitter i exakt samma textsträng/post — det vore en feltolkning av formkravet. Det avgörande är att kategorin är en del av `Quantity`-fältet, inte i vilken post inom fältet den hamnat.
+`OriginRows[].Quantity` kan vara uppdelat i FLERA separata poster/element (t.ex. en lista som `["20.500,000KG", "G.W."]`, eller `["GW in KGs", "640,205", "NW in KGs", "551,360"]`, eller en sträng som `"4.210,500 KG | G.W."`). Kategorin (GW/NW/Gross/Net) och viktvärdet behöver INTE stå i SAMMA post/element — det räcker att BÅDA förekommer NÅGONSTANS i `OriginRows[].Quantity` (samma rad eller en intilliggande post i kvantitetsfältet). Att de står i var sin post är ENBART en formaterings-/extraktionsartefakt och får ALDRIG i sig medföra MISMATCH. Kräv ALDRIG att kategori och värde sitter i exakt samma textsträng/post — det vore en feltolkning av formkravet. Det avgörande är att kategorin är en del av `Quantity`-fältet, inte i vilken post inom fältet den hamnat.
 
-Exempel MATCH: `OriginRows[].Quantity` = `["12.384,000KG", "G.W."]` → värde + kategori finns båda i kvantitetsfältet → MATCH.
-Exempel MATCH: `OriginRows[].Quantity` = `["GW in KGs", "598,102", "NW in KGs", "493,829"]` → kategori (GW/NW) finns i kvantitetsfältet → MATCH.
-Exempel MATCH: kvantitetsfältet `"3.326,400 KG | G.W. | 5.544,000 KG | G.W."` → kategori (G.W.) i kvantitetsfältet → MATCH.
+Exempel MATCH: `OriginRows[].Quantity` = `["20.500,000KG", "G.W."]` → värde + kategori finns båda i kvantitetsfältet → MATCH.
+Exempel MATCH: `OriginRows[].Quantity` = `["GW in KGs", "640,205", "NW in KGs", "551,360"]` → kategori (GW/NW) finns i kvantitetsfältet → MATCH.
+Exempel MATCH: kvantitetsfältet `"4.210,500 KG | G.W. | 6.380,000 KG | G.W."` → kategori (G.W.) i kvantitetsfältet → MATCH.
 
 **FÖRTYDLIGANDE – kategori på SAMMA rad via `Combined`-fältet:**
-Varje `OriginRows[]`-post har ett `Combined`-fält som slår ihop radens `Description` och `Quantity` (t.ex. `Description: "Net weight"` + `Quantity: "2640 kg"` → `Combined: "Net weight 2640 kg"`). Om viktvärdet och dess kategori (Gross/Net/GW/NW) står på SAMMA certifikatrad — även när värdet ligger i `Quantity` och kategorin i `Description` — är formkravet UPPFYLLT (→ kan ge MATCH), eftersom kategorin och värdet hör ihop på raden (vilket framgår av radens `Combined`-fält). Detta är INTE detsamma som att "hämta kategori från varubeskrivningen": det är samma rads kvantitetsuppgift, bara uppdelad i två fält av extraktionen. Kategorin måste höra till SAMMA rad som värdet — en kategori på en ANNAN rad räcker inte.
-Exempel MATCH: rad `Quantity: "2640 kg"`, `Description: "Net weight"`, `Combined: "Net weight 2640 kg"` → kategori (Net) hör till radens värde → MATCH.
-Exempel MATCH: rad `Quantity: "15.025 MT"`, `Description: "Net weight:"`, `Combined: "Net weight: 15.025 MT"` → MATCH.
+Varje `OriginRows[]`-post har ett `Combined`-fält som slår ihop radens `Description` och `Quantity` (t.ex. `Description: "Net weight"` + `Quantity: "3580 kg"` → `Combined: "Net weight 3580 kg"`). Om viktvärdet och dess kategori (Gross/Net/GW/NW) står på SAMMA certifikatrad — även när värdet ligger i `Quantity` och kategorin i `Description` — är formkravet UPPFYLLT (→ kan ge MATCH), eftersom kategorin och värdet hör ihop på raden (vilket framgår av radens `Combined`-fält). Detta är INTE detsamma som att "hämta kategori från varubeskrivningen": det är samma rads kvantitetsuppgift, bara uppdelad i två fält av extraktionen. Kategorin måste höra till SAMMA rad som värdet — en kategori på en ANNAN rad räcker inte.
+Exempel MATCH: rad `Quantity: "3580 kg"`, `Description: "Net weight"`, `Combined: "Net weight 3580 kg"` → kategori (Net) hör till radens värde → MATCH.
+Exempel MATCH: rad `Quantity: "21.700 MT"`, `Description: "Net weight:"`, `Combined: "Net weight: 21.700 MT"` → MATCH.
 
 Formkravet är INTE uppfyllt → MISMATCH när:
 - viktkategori saknas helt, ELLER
 - kategorin förekommer ENBART på en ANNAN certifikatrad än viktvärdet (t.ex. "GROSS WEIGHT" som en egen rad skild från värderaden), eller helt skild från kvantitetsuppgiften. En kategori på SAMMA rad som värdet (synlig i radens `Combined`-fält) uppfyller däremot formkravet, se ovan.
 
-Exempel MATCH: kvantitetsfältet "214,845 kg" + "NW" → kategori i kvantiteten → MATCH.
-Exempel MATCH: kvantitetsfältet "Gross weight = 8,7 kg" jämte "6 units / 62 boxes" → kategori (Gross) i kvantiteten → MATCH.
-Exempel MATCH: "Gross Weight: 131,600 KG" + "Net Weight: 123,300 KG" → MATCH.
-Exempel MISMATCH: kvantiteten "5 500.000 MT" utan kategori, medan "GROSS WEIGHT" står som en egen varubeskrivningsrad (`OriginRows[].Description`) → kategori saknas i kvantiteten → MISMATCH.
-Exempel MISMATCH: varuraden "Testliner 2 FSC" + "189.048 MT", kategorin endast i separat varubeskrivningstext "NET WEIGHT: 189.048 MT" → MISMATCH.
-Exempel MISMATCH: "208,874 MT" helt utan viktkategori → MISMATCH.
+Exempel MATCH: kvantitetsfältet "330,150 kg" + "NW" → kategori i kvantiteten → MATCH.
+Exempel MATCH: kvantitetsfältet "Gross weight = 9,4 kg" jämte "6 units / 62 boxes" → kategori (Gross) i kvantiteten → MATCH.
+Exempel MATCH: "Gross Weight: 210,400 KG" + "Net Weight: 198,250 KG" → MATCH.
+Exempel MISMATCH: kvantiteten "7 250.000 MT" utan kategori, medan "GROSS WEIGHT" står som en egen varubeskrivningsrad (`OriginRows[].Description`) → kategori saknas i kvantiteten → MISMATCH.
+Exempel MISMATCH: varuraden "Linerboard 4 FSC" + "240.560 MT", kategorin endast i separat varubeskrivningstext "NET WEIGHT: 240.560 MT" → MISMATCH.
+Exempel MISMATCH: "315,260 MT" helt utan viktkategori → MISMATCH.
 
 #### 4.4.2.2 Förtydligande – kvantitetsenhet
 En kvantitetsenhet ska ange mängd. Godkända kvantitetsenheter:
@@ -1339,7 +1339,7 @@ Om flera olika kvantitetsuppgifter förekommer i certifikatet ska verifieringen 
 Övriga uppgifter i varubeskrivningen eller i andra delar av certifikatet ska INTE behandlas som den verifieringsgrundande kvantiteten.
 
 **KRITISK REGEL – kvantitetsfältet är alltid verifieringsgrundande:**
-Om kvantitetsfältet innehåller ett viktvärde (t.ex. "17 kilo gross W", "187,905 MT/GW") är det DETTA värde som ska verifieras mot fakturan — inte en styckvara-kvantitet (t.ex. "1 pcs") som möjligen förekommer i varubeskrivningsfältet. Systemet får INTE byta verifieringsgrundande kvantitet till en enklare kvantitet från varubeskrivningsfältet om kvantitetsfältet innehåller ett explicit värde.
+Om kvantitetsfältet innehåller ett viktvärde (t.ex. "23 kilo gross W", "246,180 MT/GW") är det DETTA värde som ska verifieras mot fakturan — inte en styckvara-kvantitet (t.ex. "1 pcs") som möjligen förekommer i varubeskrivningsfältet. Systemet får INTE byta verifieringsgrundande kvantitet till en enklare kvantitet från varubeskrivningsfältet om kvantitetsfältet innehåller ett explicit värde.
 
 Om kvantitetsfältets värde inte kan identifieras i fakturan → MANUAL_REVIEW eller MISMATCH enligt 4.4.2.2. Det räcker INTE att en annan kvantitet från varubeskrivningsfältet kan verifieras.
 
@@ -1357,7 +1357,7 @@ Fakturan kan använda enhetsprefix som ändrar storleksordningen. Följande ekvi
 - "kpcs" / "kst" / "Kpcs" = 1000 pcs (kilopieces/tusen stycken)
 - "Mpcs" = 1 000 000 pcs (megapieces)
 
-Om certifikatet anger t.ex. "30640 pcs" och fakturan anger "30,640 kpcs", ska systemet kontrollera om "30,640 kpcs" = 30 640 pcs (kommatecknet som tusentalsavskiljare) ELLER 30,640 × 1000 = 30 640 pcs (kommatecknet som decimaltecken). I båda fallen matchar värdet → MATCH.
+Om certifikatet anger t.ex. "27450 pcs" och fakturan anger "27,450 kpcs", ska systemet kontrollera om "27,450 kpcs" = 27 450 pcs (kommatecknet som tusentalsavskiljare) ELLER 27,450 × 1000 = 27 450 pcs (kommatecknet som decimaltecken). I båda fallen matchar värdet → MATCH.
 
 Om enhetskonverteringen inte ger ett matchande värde → pröva övriga regler.
 
@@ -1382,10 +1382,10 @@ ska denna uppgift anses verifierad även om motsvarande kvantitet inte uttryckli
 
 **VIKTIGT:** Försändelsekvantiteten kan förekomma antingen i kvantitetsfältet ELLER i varubeskrivningsfältet, där "antal och slag av kolli" (number and kind of packages) normalt anges. När certifikatet innehåller BÅDE en försändelsekvantitet (t.ex. "1 CASE" i varubeskrivningsfältet) OCH en vikt i kvantitetsfältet (t.ex. "37.0 KG GW" i kvantitetsfältet), utgör dessa TVÅ separata kvantitetsuppgifter. Enligt avsnitt 4.4.3.2 räcker det att verifiera MINST EN av dem.
 
-**FÖRTYDLIGANDE – naken ledande count med slag/enhet på samma rad:** Om certifikatets första kvantitetspost är ett ensamt tal (t.ex. "1") men radens `Combined`/`Description` visar dess slag eller enhet (t.ex. "1 UNIT", "1 PACKAGE", "1 CRANE KIT"), ska posten behandlas som en försändelsekvantitet enligt ovan — INTE som en ogiltig enhetslös kvantitet. En sådan post får ALDRIG i sig fälla kvantitetskontrollpunkten när en annan kvantitetsuppgift på en annan rad (t.ex. en vikt med kategori, "G.Weight 4810 kg") kan verifieras mot fakturan. Systemet ska då tillämpa 4.4.3.2 (minst en räcker) och ge MATCH, inte underkänna på den nakna "1":an.
+**FÖRTYDLIGANDE – naken ledande count med slag/enhet på samma rad:** Om certifikatets första kvantitetspost är ett ensamt tal (t.ex. "1") men radens `Combined`/`Description` visar dess slag eller enhet (t.ex. "1 UNIT", "1 PACKAGE", "1 CRANE KIT"), ska posten behandlas som en försändelsekvantitet enligt ovan — INTE som en ogiltig enhetslös kvantitet. En sådan post får ALDRIG i sig fälla kvantitetskontrollpunkten när en annan kvantitetsuppgift på en annan rad (t.ex. en vikt med kategori, "G.Weight 5240 kg") kan verifieras mot fakturan. Systemet ska då tillämpa 4.4.3.2 (minst en räcker) och ge MATCH, inte underkänna på den nakna "1":an.
 
 **KRITISK BEGRÄNSNING – Kvantitetsfältets viktvärde har alltid företräde (avsnitt 4.4.3.5.1):**
-Om kvantitetsfältet innehåller ett EXPLICIT VIKTVÄRDE (t.ex. "7801.920 G.W.", "37.0 KG GW", "187,905 MT/GW") ska detta viktvärde ALLTID verifieras — oavsett om en försändelsekvantitet från varubeskrivningsfältet (t.ex. "80 DRUM", "1 CASE") redan kan matchas mot fakturan. Försändelsekvantitet från varubeskrivningsfältet får INTE användas som enda verifierad kvantitet och därmed kringgå verifiering av kvantitetsfältets vikt. Regel 4.4.3.2.1 (kvantitetsfältet alltid verifieringsgrundande) har företräde framför 4.4.3.2 (minst en räcker) i detta fall. Om kvantitetsfältets vikt inte kan verifieras mot fakturan ska resultatet vara MANUAL_REVIEW eller MISMATCH enligt 4.4.2.1 och 4.4.3.6 — även om en försändelsekvantitet från varubeskrivningsfältet matchar.
+Om kvantitetsfältet innehåller ett EXPLICIT VIKTVÄRDE (t.ex. "6420.310 G.W.", "37.0 KG GW", "246,180 MT/GW") ska detta viktvärde ALLTID verifieras — oavsett om en försändelsekvantitet från varubeskrivningsfältet (t.ex. "80 DRUM", "1 CASE") redan kan matchas mot fakturan. Försändelsekvantitet från varubeskrivningsfältet får INTE användas som enda verifierad kvantitet och därmed kringgå verifiering av kvantitetsfältets vikt. Regel 4.4.3.2.1 (kvantitetsfältet alltid verifieringsgrundande) har företräde framför 4.4.3.2 (minst en räcker) i detta fall. Om kvantitetsfältets vikt inte kan verifieras mot fakturan ska resultatet vara MANUAL_REVIEW eller MISMATCH enligt 4.4.2.1 och 4.4.3.6 — även om en försändelsekvantitet från varubeskrivningsfältet matchar.
 
 **KRITISK REGEL – Försändelsekvantitet som enda verifierbara uppgift:**
 Om vikten i kvantitetsfältet inte kan verifieras mot fakturan (t.ex. fakturan saknar uttrycklig vikt) men certifikatet OCKSÅ innehåller en försändelsekvantitet som uppfyller villkoren ovan, ska försändelsekvantiteten användas som den verifierade kvantitetsuppgiften. Systemet ska INTE returnera MISMATCH enbart för att vikten inte kan identifieras i fakturan, om en giltig försändelsekvantitet finns och kan verifieras via fakturareferens. Om certifikatet uttryckligen anger att vikten avser ett annat dokument (t.ex. "Gross Weight refers to Cargospec" eller liknande), förstärker detta att vikten inte ska verifieras mot fakturan utan att en annan kvantitetsuppgift ska användas.
@@ -1416,7 +1416,7 @@ Skillnad i benämning mellan viktkategori i certifikatet och fakturan ska i sig 
 - När vikt anges ska BÅDE numeriskt värde OCH måttenhet framgå uttryckligen i samma fält.
 - Om GW, NW, Gross eller Net anges ska även viktenheten (t.ex. KG, MT, LB) anges uttryckligen.
 - Om viktkategori (GW/NW) saknas → MISMATCH enligt 4.4.2.2.
-- Angivelse av enbart numeriskt värde tillsammans med GW/NW UTAN uttrycklig viktenhet (t.ex. "7801.920 G.W." utan KG/MT/LB) → MISMATCH. Certifikatet saknar uttrycklig viktenhet, vilket är ett formkrav. Viktenhet får INTE härledas från fakturan.
+- Angivelse av enbart numeriskt värde tillsammans med GW/NW UTAN uttrycklig viktenhet (t.ex. "6420.310 G.W." utan KG/MT/LB) → MISMATCH. Certifikatet saknar uttrycklig viktenhet, vilket är ett formkrav. Viktenhet får INTE härledas från fakturan.
 - Enheten får INTE fastställas om fakturan inte uttryckligen anger en enhet för samma numeriska värde.
 
 **MISMATCH – Fakturan saknar kvantitets-/viktuppgift helt (avsnitt 4.4.3.7):**
@@ -1459,9 +1459,9 @@ Vid jämförelse av kvantiteter får systemet tolka punkt (.) och komma (,) som 
 **Enskild punkt eller komma får tolkas som tusentalsavskiljare när:** värdet består av tre siffror efter separatorn.
 
 Exempel:
-- 3.267 → 3267
+- 4.150 → 4150
 - 17.640 → 17640
-- 104.000 → 104000
+- 108.000 → 108000
 
 **Enskild punkt eller komma får tolkas som decimaltecken när:** värdet innehåller högst två siffror efter separatorn.
 
@@ -1474,21 +1474,21 @@ Tolkning som tusentalsavskiljare får endast göras när det normaliserade värd
 
 Vid avvikande eller otydligt format ska ingen tolkning göras. I sådana fall ska resultatet vara MANUAL_REVIEW.
 
-Exempel MATCH: Certifikat "3267 kg net" och faktura "3.267 Kg" → fakturans "3.267" har 3 siffror efter punkten → tolkas som tusentalsavskiljare → 3267 = 3267 → MATCH.
+Exempel MATCH: Certifikat "4150 kg net" och faktura "4.150 Kg" → fakturans "4.150" har 3 siffror efter punkten → tolkas som tusentalsavskiljare → 4150 = 4150 → MATCH.
 Exempel MATCH: Certifikat "17640 kg net" och faktura "17.640 Kg" → fakturans "17.640" har 3 siffror efter punkten → tolkas som tusentalsavskiljare → 17640 = 17640 → MATCH.
-Exempel MATCH: Certifikat "Gross 104.000kg" och faktura "104.000,00 KG" → certifikatets "104.000" har 3 siffror efter punkten → tolkas som tusentalsavskiljare → 104000; fakturan har kombination punkt+komma (EU-format) → 104000,00 → 104000 = 104000 → MATCH.
+Exempel MATCH: Certifikat "Gross 108.000kg" och faktura "108.000,00 KG" → certifikatets "108.000" har 3 siffror efter punkten → tolkas som tusentalsavskiljare → 108000; fakturan har kombination punkt+komma (EU-format) → 108000,00 → 108000 = 108000 → MATCH.
 
 #### 4.4.4.2 Normalisering av blandade decimalseparatorer (ENBART formatskillnader)
 Denna regel hanterar ENBART skillnader i FORMATERING av samma numeriska värde — INTE skillnader i de faktiska siffrorna.
 Vid kvantitets- och viktverifiering kan certifikatet och fakturan använda OLIKA konventioner för decimaltecken och tusentalsavskiljare. Systemet ska normalisera numeriska värden till samma format innan jämförelse NÄR:
-1. Det ena dokumentet använder punkt som decimaltecken (t.ex. "7801.920") och det andra använder komma som decimaltecken med punkt som tusentalsavskiljare (t.ex. "7.801,920").
+1. Det ena dokumentet använder punkt som decimaltecken (t.ex. "6420.310") och det andra använder komma som decimaltecken med punkt som tusentalsavskiljare (t.ex. "6.420,310").
 2. De normaliserade värdena är **numeriskt identiska** — d.v.s. EXAKT samma siffror i samma ordning, bara med annorlunda formatering.
-3. Tolkningen av tusentalsavskiljare respektive decimaltecken är entydig utifrån siffergruppering (t.ex. "7.801,920" = punkt efter 1 siffra + komma följt av 3 siffror → punkt är tusentalsavskiljare, komma är decimaltecken → 7801.920).
+3. Tolkningen av tusentalsavskiljare respektive decimaltecken är entydig utifrån siffergruppering (t.ex. "6.420,310" = punkt efter 1 siffra + komma följt av 3 siffror → punkt är tusentalsavskiljare, komma är decimaltecken → 6420.310).
 
-**KRITISK BEGRÄNSNING:** Om de underliggande numeriska värdena SKILJER sig (t.ex. 7801 vs 7802, eller 635 vs 625) ska detta ALLTID bedömas som MISMATCH oavsett formatering. Denna regel tillåter ALDRIG att en faktisk sifferskillnad ignoreras — den hanterar ENBART notation/formatering (punkt vs komma, tusentalsavskiljare vs decimaltecken).
+**KRITISK BEGRÄNSNING:** Om de underliggande numeriska värdena SKILJER sig (t.ex. 6420 vs 6421, eller 820 vs 810) ska detta ALLTID bedömas som MISMATCH oavsett formatering. Denna regel tillåter ALDRIG att en faktisk sifferskillnad ignoreras — den hanterar ENBART notation/formatering (punkt vs komma, tusentalsavskiljare vs decimaltecken).
 
-Exempel MATCH: Certifikat "7801.920 G.W." och faktura "Gross Weight 7.801,920 KG" → normaliserat 7801.920 = 7801.920 → MATCH (samma siffror, bara annorlunda formatering).
-Exempel MISMATCH: Certifikat "635 pcs" och faktura "625 pcs" → 635 ≠ 625 → MISMATCH (faktisk sifferskillnad, inte formatskillnad).
+Exempel MATCH: Certifikat "6420.310 G.W." och faktura "Gross Weight 6.420,310 KG" → normaliserat 6420.310 = 6420.310 → MATCH (samma siffror, bara annorlunda formatering).
+Exempel MISMATCH: Certifikat "820 pcs" och faktura "810 pcs" → 820 ≠ 810 → MISMATCH (faktisk sifferskillnad, inte formatskillnad).
 
 ### 4.4.5 Ingen summering eller beräkning – huvudregel
 Systemet får INTE:
@@ -1523,7 +1523,7 @@ Summering får ske för VIKT eller STYCKANTAL:
 - Om någon faktura saknar totalrad → MISMATCH.
 
 *Styckantal (pcs/PCE/units):*
-- Om certifikatet anger en total kvantitet i styckantal (t.ex. "15790 pcs") och certifikatet refererar till flera fakturor/proformor, får systemet summera styckantal från samtliga refererade dokument.
+- Om certifikatet anger en total kvantitet i styckantal (t.ex. "24310 pcs") och certifikatet refererar till flera fakturor/proformor, får systemet summera styckantal från samtliga refererade dokument.
 - Summering sker per ENHET (pcs, PCE, units etc.) — enheten ska vara densamma eller ekvivalent.
 - Varje refererat dokuments radkvantiteter får summeras internt (per undantag 3D/3E om tillämpligt) innan den totala summan beräknas.
 - Samma tolerans (4.4.5.1.4) gäller.
@@ -1559,7 +1559,7 @@ Om certifikatet använder en generell eller samlande varubeskrivning (t.ex. "Pum
 4. Inga fakturarader som uppenbart avser en ANNAN produktfamilj inkluderas.
 
 **KRITISK BEGRÄNSNING – Kvantitetssummering kräver enhetlig produkttyp (avsnitt 4.4.5.2.2):**
-Om certifikatet anger en total kvantitet för en specifik produkttyp (t.ex. "635 pcs Product A") och fakturan delar upp denna total i rader med OLIKA produkttyper (t.ex. 625 pcs "Product A" + 10 pcs "Product B"), utgör detta INTE en giltig summering — det är olika produkter vars kvantiteter inte får summeras.
+Om certifikatet anger en total kvantitet för en specifik produkttyp (t.ex. "820 pcs Product A") och fakturan delar upp denna total i rader med OLIKA produkttyper (t.ex. 810 pcs "Product A" + 10 pcs "Product B"), utgör detta INTE en giltig summering — det är olika produkter vars kvantiteter inte får summeras.
 
 Principen är: kvantitetssummering förutsätter att ALLA summerade rader avser SAMMA produkttyp som certifikatet specificerar. Om fakturans rader innehåller produkter med ANDRA identitetsbärande huvudbeteckningar (enligt 4.3.3) än den som certifikatet anger, ska dessa rader INTE inkluderas i summeringen. Om den korrekta produkttypen ensam inte når certifikatets angivna kvantitet → MISMATCH.
 
@@ -1916,17 +1916,17 @@ Certifikat-JSON har följande form:
 
 ```json
 {
-  "CertificateId": "SEG-23D-855559",
+  "CertificateId": "SEG-00X-777001",
   "Company": "consignor företagsnamn",
   "Contact": "kontaktperson",
   "Address1": "...", "Address2": "...", "Address3": null, "Address4": null,
   "ZipCode": "...", "City": "...", "Country": "Sweden",
-  "CompanyVatNumber": "SE559328674201",
+  "CompanyVatNumber": "SE556600110022",
   "DeliveryCompany": "consignee företagsnamn",
   "DeliveryAddress1": "...", "DeliveryAddress2": "...", "DeliveryAddress3": null,
   "DeliveryAddress4": null, "DeliveryAddress5": null, "DeliveryAddress6": null,
   "DeliveryPostalAddress": "...", "DeliveryCountry": "Honduras", "DeliveryCountryCode": "",
-  "OriginRows": [ { "Description": "varubeskrivning", "Quantity": "52.992 MT", "Combined": "varubeskrivning 52.992 MT" } ],
+  "OriginRows": [ { "Description": "varubeskrivning", "Quantity": "73.410 MT", "Combined": "varubeskrivning 73.410 MT" } ],
   "OriginPackages": [ { "Package": "antal och slag av kolli" } ],
   "CountryOfOrigin1": "EU GERMANY", "CountryOfOrigin2": null, "CountryOfOrigin3": null,
   "TransportInfo1": null, "TransportInfo2": null, "TransportInfo3": null,
@@ -1945,7 +1945,7 @@ Certifikat-JSON har följande form:
 | 4.5 Ursprungsland | `CountryOfOrigin1/2/3` |
 
 - Tidigare hänvisningar i regelverket till certifikatets "fält" eller "rutor" (t.ex. varubeskrivningsfältet, kvantitetsfältet, ursprungsfältet) avser nu motsvarande JSON-fält enligt tabellen ovan.
-- Varje `OriginRows[]`-post innehåller även ett `Combined`-fält som är radens `Description` och `Quantity` sammanslagna till en sträng (t.ex. `Description: "Net weight"` + `Quantity: "2640 kg"` → `Combined: "Net weight 2640 kg"`). `Combined` representerar EN och samma certifikatrad. Det används för att avgöra om en viktkategori (Gross/Net/GW/NW) hör ihop med viktvärdet på SAMMA rad (se 4.4.2.1) — det sammanför INTE uppgifter från olika rader.
+- Varje `OriginRows[]`-post innehåller även ett `Combined`-fält som är radens `Description` och `Quantity` sammanslagna till en sträng (t.ex. `Description: "Net weight"` + `Quantity: "3580 kg"` → `Combined: "Net weight 3580 kg"`). `Combined` representerar EN och samma certifikatrad. Det används för att avgöra om en viktkategori (Gross/Net/GW/NW) hör ihop med viktvärdet på SAMMA rad (se 4.4.2.1) — det sammanför INTE uppgifter från olika rader.
 - Fakturahänvisningar och LC-hänvisningar i certifikatet (om sådana finns) förekommer i `OriginRows[].Description`.
 - `TransportInfo1-7` avser transportsätt/transportör och används INTE i någon kontrollpunkt.
 - Certifikatets uppgifter ska aldrig betraktas som oläsbara, avkortade eller OCR-skadade — de är strukturerad text. Läsbarhets-, OCR- och avkortningsregler gäller ENBART fakturan (PDF).
