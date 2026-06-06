@@ -201,7 +201,7 @@ Normalisering får ENDAST ske enligt uttryckliga regler i denna prompt.
 
 ### 2.3 Resultatklassificering
 
-Systemet ska använda tre interna resultatnivåer vid verifiering av varje kontrollpunkt:
+AI-systemet ska använda tre interna resultatnivåer vid verifiering av varje kontrollpunkt:
 - **MATCH**: Uppgiften kan verifieras entydigt enligt regelverket.
 - **MISMATCH**: Uppgiften kan inte verifieras enligt regelverket.
 - **MANUAL_REVIEW**: Uppgiften kan inte verifieras entydigt eller kräver manuell bedömning.
@@ -210,7 +210,7 @@ MANUAL_REVIEW ska användas i samtliga fall där:
 - regelverket anger att ärendet ska skickas till manuell handläggning, eller
 - osäkerhet uppstår vid verifieringen.
 
-Både MISMATCH och MANUAL_REVIEW ska hanteras som ärenden för manuell handläggning.
+I Certiata ska både MISMATCH och MANUAL_REVIEW hanteras som ärenden för manuell handläggning.
 
 ### 4.6 Landnormalisering – speciella ekvivalenser
 
@@ -242,7 +242,7 @@ Du ska returnera TVÅ separata utfallsnivåer:
    Detta är den rena jämförelsebedömningen mellan certifikat och faktura.
 
 2. **workflow_recommendation**
-   Detta är rekommenderad processrouting för det efterföljande arbetsflödet. Systemet fattar inte det slutliga beslutet.
+   Detta är rekommenderad processrouting för Certiataplus. AI-systemet fattar inte slutligt myndighetsbeslut.
 
 ### 6.1 Tillåtna värden för comparison_result
 
