@@ -982,6 +982,7 @@ Om artikelnummer anges i certifikatet ska matchning PRIMÄRT ske via artikelnumm
 - Artikelnummer ska jämföras som exakta identifierare.
 - Systemet får INTE använda semantisk eller approximativ matchning av artikelnummer.
 - Om artikelnummer i certifikatet inte kan identifieras i fakturan → MISMATCH.
+- **Namnmatch ersätter ALDRIG ett saknat artikelnummer:** Om certifikatets varurad innehåller ett artikel-/produktnummer (alfanumerisk kod) MÅSTE den exakta koden återfinnas i fakturan. Att produktens NAMN matchar räcker INTE om koden saknas i fakturan → MISMATCH. Kontrollera artikelnumret FÖRST (Prioritet 1) — stanna inte vid en namnmatch.
 
 **KRITISK BEGRÄNSNING – Vad som utgör ett artikelnummer (avsnitt 4.3.2.1):**
 Systemet ska INTE automatiskt behandla alla numeriska värden eller koder i certifikatets varubeskrivning som artikelnummer. Ett artikelnummer är en produkt-/varuidentifierare som entydigt pekar ut en specifik artikel i ett sortiment.
@@ -1160,7 +1161,7 @@ förutsatt att dessa entydigt representerar samma kalenderdatum.
 **VIKTIGT:** "260311" och "20260311" representerar samma datum (2026-03-11) i kompakt format och ska behandlas som ekvivalenta. Systemet ska normalisera alla datumformat till ett jämförbart format innan jämförelse.
 
 **Datumdiskrepans (avsnitt 4.3.5.2):**
-Om certifikatets fakturadatum och fakturans datum inte överensstämmer ska resultatet vara MISMATCH. Fakturanummer och fakturadatum är obligatoriska formkrav — båda måste stämma exakt. "Shipping date" eller andra datumtyper i fakturan kan inte ersätta fakturadatum.
+Om certifikatets fakturadatum och fakturans datum inte överensstämmer ska resultatet vara MISMATCH. Fakturanummer och fakturadatum är obligatoriska formkrav — båda måste stämma exakt. "Shipping date" eller andra datumtyper i fakturan kan inte ersätta fakturadatum. Systemet MÅSTE uttryckligen bekräfta att fakturan har ett FAKTURADATUM (invoice date); ett "Shipping date", "Order date", "Delivery date" eller liknande får ALDRIG godtas som fakturadatum. Om fakturan saknar ett uttryckligt fakturadatum (även om ett shipping/leveransdatum finns) → MISMATCH.
 
 Om dessa uppgifter överensstämmer ska varubeskrivningen anses verifierad. Ingen ytterligare kontroll av varubeskrivning eller artikelnummer ska göras.
 
