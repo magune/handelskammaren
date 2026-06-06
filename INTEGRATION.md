@@ -48,6 +48,10 @@ som `response_format` så att svaret garanterat är giltig, strukturerad JSON.
 - Faktura-`file`-block läggs **först**, JSON-`text`-blocket **sist**.
 - Certifikat-JSON:en ska ha fältstrukturen enligt §16 i system-prompten
   (`Company`, `DeliveryCompany`, `OriginRows[]`, `CountryOfOrigin1/2/3`, …).
+- **Varje `OriginRows[]`-post ska innehålla ett `Combined`-fält** = radens `Description`
+  och `Quantity` sammanslagna till en sträng (t.ex. `"Net weight 2640 kg"`). Det krävs för
+  att viktkategori (Gross/Net) på samma rad som viktvärdet ska godkännas (regel 4.4.2.1).
+  Exempel: `{ "Description": "Net weight", "Quantity": "2640 kg", "Combined": "Net weight 2640 kg" }`.
 - Faktura-PDF:erna laddas upp via **Files API** (`purpose: "user_data"`) för att få
   `file_id` — det är de id:na som refereras i `file`-blocken.
 

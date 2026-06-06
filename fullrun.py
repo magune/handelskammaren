@@ -5,7 +5,7 @@ The model/version is version-agnostic in the filenames; change the single MODEL
 constant (e.g. "gpt-5.5" → "gpt-5.6") and it is printed to the console at startup.
 
 v2 input model: each pair is one CERTIFICATE supplied as structured JSON
-(Testdata/v2 JSON files/origin_json) + one or more INVOICE PDFs. The certificate
+(Testdata/v2 JSON files/origin_json joined fields) + one or more INVOICE PDFs. The certificate
 JSON is matched to an existing test pair by the certificate id (SEG-...) printed
 inside the old certificate PDF, which supplies the invoice PDF(s) and the
 MATCH/MISMATCH label.
@@ -47,7 +47,7 @@ SCHEMA_FILE     = BASE_DIR / "schema_slim_strict.json"
 STATE_FILE      = BASE_DIR / "fullrun_state.json"
 
 # v2: certificates supplied as structured JSON
-ORIGIN_JSON_DIR = BASE_DIR / "Testdata" / "v2 JSON files" / "origin_json"
+ORIGIN_JSON_DIR = BASE_DIR / "Testdata" / "v2 JSON files" / "origin_json joined fields"
 CERT_ID_CACHE   = BASE_DIR / "v2_cert_id_cache.json"  # cert PDF path -> SEG id
 
 RESULTS_DIR.mkdir(exist_ok=True)
