@@ -779,6 +779,8 @@ Om fakturan innehåller uppgifter som AKTIVT MOTSÄGER certifikatets consignor-l
 Land som anges för avsändaren i certifikatet ska överensstämma EXAKT med det land som anges för motsvarande part i fakturan efter normalisering av landsnamn (versaler/gemener, fullständigt namn vs vedertagen kortform/ISO-kod).
 Om land inte överensstämmer → MISMATCH.
 
+**KRITISK REGEL – en stad är inte ett land:** En ort/stad (t.ex. Hanoi, Shanghai, Istanbul) räcker ALDRIG för att verifiera landet. Landet måste framgå uttryckligen — som landsnamn eller ISO-landskod, eller via en indirekt landidentifierare enligt 4.1.2.1 (VAT-/landsprefix, IBAN, telefonprefix). Systemet får INTE härleda landet från att en stad är belägen i ett visst land. Om landet inte uttryckligen kan identifieras i fakturan → MISMATCH.
+
 ### 4.1.5 MATCH / MISMATCH
 **MATCH** föreligger när:
 - företagsnamnet i certifikatet kan identifieras som samma juridiska part i fakturan (direkt, via 4.1.0 koncernstruktur, eller via 4.1.3.1–4.1.3.6), OCH
@@ -925,6 +927,8 @@ Systemet får INTE:
 Land som anges för mottagaren i certifikatet ska överensstämma med det land som anges för motsvarande part i fakturan efter normalisering av landsnamn.
 Normalisering inkluderar: versaler/gemener, fullständigt namn vs kortform, ISO-kod, samt officiellt landsnamn på landets eget språk (t.ex. Türkiye = Turkey, Deutschland = Germany).
 Om land inte överensstämmer → MISMATCH.
+
+**KRITISK REGEL – en stad är inte ett land:** En ort/stad (t.ex. Hanoi, Shanghai, Istanbul) räcker ALDRIG för att verifiera mottagarens land. Landet måste framgå uttryckligen — som landsnamn eller ISO-landskod (eller via en indirekt landidentifierare som VAT-/landsprefix, IBAN, telefonprefix). Systemet får INTE härleda landet från att en stad ligger i ett visst land. Om mottagarens land inte uttryckligen kan identifieras i fakturan → MISMATCH (eller MANUAL_REVIEW om fakturan är skannad/oläsbar enligt 8.1.3).
 
 ### 4.2.4 MATCH / MISMATCH
 **MATCH:** mottagarens företagsnamn kan identifieras i fakturan OCH land överensstämmer.
@@ -1140,6 +1144,8 @@ Exempel på FÖRENLIGA kombinationer:
 Om fakturanummer och fakturadatum matchar OCH certifikatets varor kan identifieras i fakturan → MATCH.
 Strikt textmatchning av den generella varubeskrivningen krävs INTE — regeln med generell varubeskrivning och fakturareferens ersätter kravet på exakt textmatchning.
 
+**KRITISK BEGRÄNSNING – Specifik identifierare måste ändå återfinnas:** Även när varubeskrivningen godkänns via fakturareferens (denna regel) gäller att om certifikatet UTTRYCKLIGEN anger en specifik produkt-/varuidentifierare — t.ex. VIN-/chassinummer, serienummer eller artikelnummer (ofta med etikett som "VIN number:", "Serial no:", "Art nr") — ska den exakta identifieraren kunna återfinnas i fakturan (efter tillåten normalisering). Fakturareferensen befriar INTE från detta. Om en sådan uttryckligen angiven identifierare INTE kan återfinnas i fakturan → MISMATCH. Ingen bryggning mellan olika identifierartyper får göras (t.ex. ett VIN får ALDRIG likställas med ett annat, avvikande nummer).
+
 **Datumformatnormalisering (avsnitt 4.3.5):**
 Vid normalisering av datum får systemet acceptera olika standardiserade datumformat:
 - YYYY-MM-DD
@@ -1208,6 +1214,8 @@ Denna bestämmelse gäller ENDAST när certifikatet innehåller flera ursprungsl
 
 **FÖRTYDLIGANDE – Kategoritext och viktangivelser i varubeskrivningsfältet (avsnitt 4.3.8.1):**
 Certifikatets varubeskrivningsfält kan innehålla dels konkreta varunamn/artikelnummer, dels kompletterande text såsom kategorirubriker, förklaringstexter eller viktangivelser per varugrupp (t.ex. "Friction Spray in Sport - 1006KG Gross Weight"). Sådan kompletterande text som tydligt är en beskrivning eller viktangivelse kopplad till redan identifierade varunamn ovan utgör INTE en separat vara som kräver egen verifiering i fakturan. Systemet ska identifiera de konkreta varunamnen/artikelnumren och verifiera dessa — kompletterande kategori- och vikttexter ska inte behandlas som ytterligare varuposter.
+
+Detsamma gäller rader som anger BESKRIVANDE METADATA om varan snarare än en egen vara — t.ex. "Manufacturer: …", "Year of manufacture: …", "Date of …", tillverkningsår, ursprungsmärkning eller förpacknings-/märkningstext. Sådana metadatarader är attribut till den redan identifierade varan och utgör INTE separata varuposter som var för sig måste återfinnas i fakturan. Att en sådan metadatauppgift (t.ex. tillverkningsår) inte återfinns i fakturan får INTE i sig medföra MISMATCH, förutsatt att varans identitetsbärande huvudbeteckning kan verifieras. (En uttrycklig produkt-/varuidentifierare som serienummer/VIN/artikelnummer är dock INTE enbart metadata och ska kunna återfinnas enligt 4.3.5.)
 
 ---
 
@@ -1373,6 +1381,8 @@ När certifikatet anger kvantitet som avser hela försändelsen eller ett kolli,
 ska denna uppgift anses verifierad även om motsvarande kvantitet inte uttryckligen framgår i fakturan per artikelrad.
 
 **VIKTIGT:** Försändelsekvantiteten kan förekomma antingen i kvantitetsfältet ELLER i varubeskrivningsfältet, där "antal och slag av kolli" (number and kind of packages) normalt anges. När certifikatet innehåller BÅDE en försändelsekvantitet (t.ex. "1 CASE" i varubeskrivningsfältet) OCH en vikt i kvantitetsfältet (t.ex. "37.0 KG GW" i kvantitetsfältet), utgör dessa TVÅ separata kvantitetsuppgifter. Enligt avsnitt 4.4.3.2 räcker det att verifiera MINST EN av dem.
+
+**FÖRTYDLIGANDE – naken ledande count med slag/enhet på samma rad:** Om certifikatets första kvantitetspost är ett ensamt tal (t.ex. "1") men radens `Combined`/`Description` visar dess slag eller enhet (t.ex. "1 UNIT", "1 PACKAGE", "1 CRANE KIT"), ska posten behandlas som en försändelsekvantitet enligt ovan — INTE som en ogiltig enhetslös kvantitet. En sådan post får ALDRIG i sig fälla kvantitetskontrollpunkten när en annan kvantitetsuppgift på en annan rad (t.ex. en vikt med kategori, "G.Weight 4810 kg") kan verifieras mot fakturan. Systemet ska då tillämpa 4.4.3.2 (minst en räcker) och ge MATCH, inte underkänna på den nakna "1":an.
 
 **KRITISK BEGRÄNSNING – Kvantitetsfältets viktvärde har alltid företräde (avsnitt 4.4.3.5.1):**
 Om kvantitetsfältet innehåller ett EXPLICIT VIKTVÄRDE (t.ex. "7801.920 G.W.", "37.0 KG GW", "187,905 MT/GW") ska detta viktvärde ALLTID verifieras — oavsett om en försändelsekvantitet från varubeskrivningsfältet (t.ex. "80 DRUM", "1 CASE") redan kan matchas mot fakturan. Försändelsekvantitet från varubeskrivningsfältet får INTE användas som enda verifierad kvantitet och därmed kringgå verifiering av kvantitetsfältets vikt. Regel 4.4.3.2.1 (kvantitetsfältet alltid verifieringsgrundande) har företräde framför 4.4.3.2 (minst en räcker) i detta fall. Om kvantitetsfältets vikt inte kan verifieras mot fakturan ska resultatet vara MANUAL_REVIEW eller MISMATCH enligt 4.4.2.1 och 4.4.3.6 — även om en försändelsekvantitet från varubeskrivningsfältet matchar.
