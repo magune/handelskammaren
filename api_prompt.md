@@ -1962,6 +1962,7 @@ Inputregler:
 - Ingen dold intern tankekedja eller fri resonemangstext utanför de definierade spårbarhetsfälten.
 - Outputen MÅSTE validera mot det medskickade JSON-schemat.
 - Sätt `schema_version` till `"3.0"`.
+- Sätt `overall_assessment.manual_review_reason` enligt 18.3.1 (skäl-enum vid MANUAL_REVIEW, annars `NOT_APPLICABLE`).
 - Sätt `prompt_version` till `"coo_verification_api_1.0"`.
 - Sätt `ruleset_version` till exakt `"Regelverk 11 - Operativt verifieringsregelverk för Certificate of Origin"`.
 - Alla nycklar som krävs av schemat ska alltid finnas.
@@ -1999,6 +2000,18 @@ Använd exakt:
 Använd exakt:
 - `AUTO_APPROVAL_ELIGIBLE`
 - `MANUAL_HANDLING_REQUIRED`
+
+### 18.3.1 Fältet manual_review_reason
+
+`overall_assessment.manual_review_reason` ska klassificera VARFÖR ärendet behöver manuell granskning. Använd exakt ett av:
+- `SCANNED_UNREADABLE` — fakturan är skannad/bildbaserad och en nödvändig uppgift (t.ex. mottagare, vikt) kan inte läsas tillräckligt säkert (se 8.1.3).
+- `AMBIGUOUS_MULTIPLE_INVOICES` — flera fakturor från samma utställare och certifikatet saknar fakturanummer som entydigt pekar ut vilken (se 8.5.1).
+- `ORIGIN_SUFFIX_UNEXPLAINED` — ursprungskod med oförklarat suffix/asterisk som kräver mänsklig bedömning (se 4.5.4).
+- `IDENTIFIER_NOT_VERIFIABLE` — en uppgift/identifierare kan varken bekräftas eller motsägas av fakturan.
+- `OTHER` — manuell granskning av annat skäl (förklara i `manual_review_triggers`/`human_explanation`).
+- `NOT_APPLICABLE` — används ALLTID när `comparison_result` ≠ `MANUAL_REVIEW` (dvs. vid IDENTICAL eller NOT_IDENTICAL).
+
+**Regel:** Om `comparison_result = "MANUAL_REVIEW"` MÅSTE `manual_review_reason` vara ett av de fem skäl-värdena (inte NOT_APPLICABLE). Om `comparison_result` är IDENTICAL eller NOT_IDENTICAL MÅSTE `manual_review_reason` vara `NOT_APPLICABLE`. Om flera skäl föreligger, ange det som främst utlöste manuell granskning.
 
 ### 18.4 Fältet human_explanation
 
