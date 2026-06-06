@@ -75,6 +75,7 @@ Relevanta fält i `overall_assessment`:
 
 - `comparison_result`: `IDENTICAL` | `NOT_IDENTICAL` | `MANUAL_REVIEW`
 - `workflow_recommendation`: `AUTO_APPROVAL_ELIGIBLE` | `MANUAL_HANDLING_REQUIRED`
+- `manual_review_reason`: strukturerat skäl när `comparison_result = MANUAL_REVIEW`, annars `NOT_APPLICABLE`. Värden: `SCANNED_UNREADABLE` (bildbaserad/oläsbar faktura), `AMBIGUOUS_MULTIPLE_INVOICES` (flera fakturor, oklart vilken), `ORIGIN_SUFFIX_UNEXPLAINED`, `IDENTIFIER_NOT_VERIFIABLE`, `OTHER`. Använd för att **routa** manuella ärenden (t.ex. `SCANNED_UNREADABLE` → begär bättre scan).
 - `human_explanation`: kort förklaring på svenska för en handläggare
 
 Auto-godkännande får ske endast när `workflow_recommendation = AUTO_APPROVAL_ELIGIBLE`
