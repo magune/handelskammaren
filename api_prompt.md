@@ -983,13 +983,6 @@ Om artikelnummer anges i certifikatet ska matchning PRIMÄRT ske via artikelnumm
 - Systemet får INTE använda semantisk eller approximativ matchning av artikelnummer.
 - Om artikelnummer i certifikatet inte kan identifieras i fakturan → MISMATCH.
 
-**FÖRTYDLIGANDE – unik identifierare verifierar varan trots extra beskrivande ord (avsnitt 4.3.2.2):**
-Serienummer, VIN och liknande unika produktidentifierare räknas som artikelnummer enligt Prioritet 1. Om certifikatet anger en sådan unik identifierare för en vara och den EXAKT återfinns i fakturan för motsvarande vara, är varans identitet verifierad via identifieraren. Ett ytterligare beskrivande ord i certifikatets varunamn som saknas i fakturan (t.ex. ett adjektiv eller marknadsföringsord) får då INTE ensamt medföra MISMATCH — den exakta identifierarmatchningen har företräde — förutsatt att:
-1. varans identitetsbärande huvudbeteckning (huvudnoun) ändå förekommer i fakturan, OCH
-2. skillnaden avser ett beskrivande/adjektiviskt ord, INTE en material-, grad- eller specifikationskvalifikator enligt 4.3.3.4, OCH
-3. ingen uppgift i fakturan motsäger att det rör sig om samma vara.
-Exempel MATCH: certifikat "Secret Video Recorder, serial no: 986519", faktura "VIDEO RECORDER ... Serial no 986519" → serienumret matchar exakt och "Video Recorder" förekommer; "Secret" är ett beskrivande tillägg → MATCH.
-
 **KRITISK BEGRÄNSNING – Vad som utgör ett artikelnummer (avsnitt 4.3.2.1):**
 Systemet ska INTE automatiskt behandla alla numeriska värden eller koder i certifikatets varubeskrivning som artikelnummer. Ett artikelnummer är en produkt-/varuidentifierare som entydigt pekar ut en specifik artikel i ett sortiment.
 
